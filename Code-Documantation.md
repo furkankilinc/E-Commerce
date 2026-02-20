@@ -333,7 +333,7 @@ Bu doküman, **E-Ticaret Yönetim ve Satış Platformu**’nun yazılım ekibi t
 - **socket.io-client**: Frontend’den Socket.IO sunucusuna bağlanmak için.
 - **recharts**: Admin dashboard’ta grafik ve chart bileşenleri.
 - **@mui/material** veya **antd** (örnek): Formlar, tablolar, modal’lar için UI componentleri.
-- **react-hook-form** / **formik**: Form yönetimi ve validasyon.
+- **react-hook-form**: Form yönetimi ve validasyon.
 
 ---
 
