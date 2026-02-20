@@ -14,19 +14,6 @@ Dosya Depolama: Görsel ve döküman yönetimi için S3 uyumlu MinIO kullanılma
 
 Güvenlik: Kimlik doğrulama JWT (RS256) ile sağlanır. Şifreler bcrypt ile hashlenir ve hassas veriler Redis üzerinde saklanan blacklist mekanizmasıyla korunur.
 
-Proje Yapısı
-Plaintext
-.
-├── apps
-│   ├── backend/          # Express API, Prisma modelleri ve iş mantığı
-│   ├── storefront/       # Müşteri tarafı React uygulaması
-│   └── admin/            # Yönetim paneli React uygulaması
-├── packages
-│   ├── shared/           # Ortak tip tanımları ve validation şemaları
-│   └── config/           # ESlint, Prettier ve TS konfigürasyonları
-├── docker-compose.yml    # Geliştirme altyapısı (DB, Redis, MinIO)
-└── README.md
-Kurulum ve Çalıştırma
 Bağımlılıkları Yükle:
 npm install
 
