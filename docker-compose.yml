@@ -1,0 +1,20 @@
+services:
+  storefront:
+    build: ./storefront
+    container_name: react_storefront
+    ports:
+      - "5173:5173"  
+    volumes:
+      - ./storefront:/app
+      - /app/node_modules
+
+  storebackend:
+    build: ./storebackend
+    container_name: node_storebackend
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./storebackend:/app
+      - /app/node_modules
+    depends_on:
+      - storefront
