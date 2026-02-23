@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+@theme {
+    --color-brand-indigo: #4f46e5;
+    --color-brand-indigo-hover: #4338ca;
+    --color-admin-bg: #f8fafc;
+    --color-admin-dark: #1e293b;
+}
+
+:root {
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
+    background-color: var(--color-admin-bg);
+}
+
+body {
+    margin: 0;
+    min-width: 320px;
+    min-height: 100vh;
+}

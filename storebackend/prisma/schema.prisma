@@ -7,9 +7,106 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ─────────────────────────────────────────────
+// USER  (storefront müşterileri)
+// ─────────────────────────────────────────────
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  name      String?
+  id           String         @id @default(cuid())
+  email        String         @unique
+  password     String
+  name         String?
+  phone        String?
+  isVerified   Boolean        @default(false)
+  isActive     Boolean        @default(true)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  refreshTokens UserRefreshToken[]
+
+  @@map("users")
+}
+
+model UserRefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
   createdAt DateTime @default(now())
+  revoked   Boolean  @default(false)
+  userAgent String?
+  ipAddress String?
+
+  @@map("user_refresh_tokens")
+}
+
+// ─────────────────────────────────────────────
+// MERCHANT  (vendor panel satıcıları)
+// ─────────────────────────────────────────────
+model Merchant {
+  id              String             @id @default(cuid())
+  email           String             @unique
+  password        String
+  companyName     String
+  taxId           String?
+  contactPerson   String?
+  phone           String?
+  isVerified      Boolean            @default(false)
+  isActive        Boolean            @default(true)
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  refreshTokens   MerchantRefreshToken[]
+
+  @@map("merchants")
+}
+
+model MerchantRefreshToken {
+  id         String    @id @default(cuid())
+  token      String    @unique
+  merchantId String
+  merchant   Merchant  @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+  expiresAt  DateTime
+  createdAt  DateTime  @default(now())
+  revoked    Boolean   @default(false)
+  userAgent  String?
+  ipAddress  String?
+
+  @@map("merchant_refresh_tokens")
+}
+
+// ─────────────────────────────────────────────
+// ADMIN  (platform yöneticileri)
+// ─────────────────────────────────────────────
+enum AdminRole {
+  SUPER_ADMIN
+  ADMIN
+  MODERATOR
+}
+
+model Admin {
+  id            String           @id @default(cuid())
+  email         String           @unique
+  password      String
+  name          String
+  role          AdminRole        @default(ADMIN)
+  isActive      Boolean          @default(true)
+  lastLoginAt   DateTime?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  refreshTokens AdminRefreshToken[]
+
+  @@map("admins")
+}
+
+model AdminRefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  adminId   String
+  admin     Admin    @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  revoked   Boolean  @default(false)
+  userAgent String?
+  ipAddress String?
+
+  @@map("admin_refresh_tokens")
 }
