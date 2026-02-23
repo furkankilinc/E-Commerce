@@ -1,0 +1,28 @@
+{
+  "name": "frontend",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:storefront": "npm run dev -w storefront",
+    "dev:admin": "npm run dev -w admin",
+    "dev:vendor": "npm run dev -w vendor-panel",
+    "build:storefront": "npm run build -w storefront",
+    "build:admin": "npm run build -w admin",
+    "build:vendor": "npm run build -w vendor-panel",
+    "preview:storefront": "npm run preview -w storefront",
+    "preview:admin": "npm run preview -w admin",
+    "preview:vendor": "npm run preview -w vendor-panel"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.2.2",
+    "vite": "^5.2.0"
+  }
+}
