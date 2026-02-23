@@ -1,4 +1,33 @@
 services:
+  # --- Veritabanı ---
+  db:
+    image: postgres:16-alpine
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password123
+      POSTGRES_DB: fuira_ecommerce
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # --- Backend ---
+  storebackend:
+    build: ./storebackend
+    container_name: node_storebackend
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./storebackend:/app
+      - /app/node_modules
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgresql://postgres:password123@db:5432/fuira_ecommerce
+
+  # --- Frontend Servisleri ---
   storefront:
     build: ./frontend
     container_name: react_storefront
@@ -35,15 +64,7 @@ services:
       - storebackend
     command: npm run dev:vendor
 
-  storebackend:
-    build: ./storebackend
-    container_name: node_storebackend
-    ports:
-      - "5000:5000"
-    volumes:
-      - ./storebackend:/app
-      - /app/node_modules
-
+  # --- Proxy ---
   nginx:
     image: nginx:alpine
     container_name: ecommerce_nginx
@@ -56,3 +77,6 @@ services:
       - admin
       - vendorpanel
       - storebackend
+
+volumes:
+  postgres_data:
