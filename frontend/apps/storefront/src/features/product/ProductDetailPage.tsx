@@ -6,7 +6,11 @@ interface Product {
     name: string;
     price: number;
     description: string;
-    category: { name: string; slug: string };
+    category: {
+        name: string;
+        slug: string;
+        parent?: { name: string; slug: string }
+    };
     merchant: { companyName: string };
     images: { url: string; isMain: boolean }[];
     variants: { id: string; name: string; value: string; price?: number }[];
@@ -79,8 +83,21 @@ const ProductDetailPage: React.FC = () => {
                 {/* Breadcrumbs */}
                 <nav className="flex items-center gap-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-16 italic">
                     <Link to="/" className="hover:text-gray-900 transition-colors">ANASAYFA</Link>
+
+                    {product.category?.parent && (
+                        <>
+                            <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                            <Link to={`/shop?category=${product.category.parent.slug}`} className="hover:text-gray-900 transition-colors">
+                                {product.category.parent.name.toUpperCase()}
+                            </Link>
+                        </>
+                    )}
+
                     <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                    <Link to="/shop" className="hover:text-gray-900 transition-colors">{product.category?.name || 'KATEGORİ'}</Link>
+                    <Link to={`/shop?category=${product.category?.slug}`} className="hover:text-gray-900 transition-colors">
+                        {product.category?.name?.toUpperCase() || 'KATEGORİ'}
+                    </Link>
+
                     <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
                     <span className="text-gray-900">{product.name}</span>
                 </nav>

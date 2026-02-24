@@ -1,7 +1,73 @@
 import React from 'react';
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet, Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { useAuth } from '../../features/auth/useAuth';
 
 const MainLayout: React.FC = () => {
+    const { logout, user, isAuthenticated } = useAuth();
+    const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
+    const [searchValue, setSearchValue] = React.useState(searchParams.get('search') || '');
+    const [suggestions, setSuggestions] = React.useState<any[]>([]);
+    const [showSuggestions, setShowSuggestions] = React.useState(false);
+    const [isSuggesting, setIsSuggesting] = React.useState(false);
+    const [showUserMenu, setShowUserMenu] = React.useState(false);
+    const searchRef = React.useRef<HTMLDivElement>(null);
+    const userMenuRef = React.useRef<HTMLDivElement>(null);
+
+    // Close suggestions when clicking outside
+    React.useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+                setShowSuggestions(false);
+            }
+            if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+                setShowUserMenu(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    const handleLogout = () => {
+        logout();
+        setShowUserMenu(false);
+        navigate('/login');
+    };
+
+    // Fetch suggestions as user types
+    React.useEffect(() => {
+        const fetchSuggestions = async () => {
+            if (searchValue.trim().length < 2) {
+                setSuggestions([]);
+                return;
+            }
+            setIsSuggesting(true);
+            try {
+                const res = await fetch(`/api/products?search=${encodeURIComponent(searchValue)}&limit=5`);
+                if (res.ok) {
+                    const data = await res.json();
+                    setSuggestions(data.products);
+                }
+            } catch (err) {
+                console.error('Suggestion fetch failed:', err);
+            } finally {
+                setIsSuggesting(false);
+            }
+        };
+
+        const timer = setTimeout(fetchSuggestions, 300);
+        return () => clearTimeout(timer);
+    }, [searchValue]);
+
+    const handleSearch = (e: React.FormEvent) => {
+        e.preventDefault();
+        setShowSuggestions(false);
+        const params = new URLSearchParams(searchParams);
+        if (searchValue) params.set('search', searchValue);
+        else params.delete('search');
+        navigate(`/shop?${params.toString()}`);
+    };
+
     return (
         <div className="min-h-screen flex flex-col bg-white">
             {/* Header */}
@@ -23,17 +89,70 @@ const MainLayout: React.FC = () => {
                         </div>
 
                         {/* Search Bar */}
-                        <div className="flex-1 max-w-lg mx-12 hidden md:block">
-                            <div className="relative group">
+                        <div ref={searchRef} className="flex-1 max-w-lg mx-12 hidden md:block relative">
+                            <form onSubmit={handleSearch} className="relative group z-10">
                                 <input
                                     type="text"
                                     placeholder="Ürünleri ara..."
+                                    value={searchValue}
+                                    onChange={(e) => {
+                                        setSearchValue(e.target.value);
+                                        setShowSuggestions(true);
+                                    }}
+                                    onFocus={() => setShowSuggestions(true)}
+                                    onClick={() => setShowSuggestions(true)}
                                     className="w-full bg-gray-50 border border-gray-100 rounded-2xl py-3.5 pl-14 pr-6 focus:ring-4 focus:ring-brand-pink/5 focus:bg-white focus:border-brand-pink transition-all text-xs font-bold"
                                 />
                                 <svg className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300 group-focus-within:text-brand-pink transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                 </svg>
-                            </div>
+                            </form>
+
+                            {/* Suggestions Dropdown */}
+                            {showSuggestions && (searchValue.trim().length >= 2) && (
+                                <div className="absolute top-full left-0 right-0 mt-4 bg-white rounded-[2rem] shadow-2xl border border-gray-50 overflow-hidden z-20 animate-in fade-in slide-in-from-top-2 duration-300">
+                                    {isSuggesting && suggestions.length === 0 ? (
+                                        <div className="p-8 text-center">
+                                            <div className="w-6 h-6 border-2 border-brand-pink border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+                                            <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest italic">Aranıyor...</span>
+                                        </div>
+                                    ) : suggestions.length > 0 ? (
+                                        <div className="py-4">
+                                            <div className="px-8 pb-4 border-b border-gray-50 mb-2 flex justify-between items-center">
+                                                <span className="text-[9px] font-black text-gray-300 uppercase tracking-widest">ÖNERİLEN ÜRÜNLER</span>
+                                            </div>
+                                            {suggestions.map((product) => (
+                                                <Link
+                                                    key={product.id}
+                                                    to={`/product/${product.id}`}
+                                                    onClick={() => setShowSuggestions(false)}
+                                                    className="flex items-center gap-6 px-8 py-4 hover:bg-gray-50 transition-colors group"
+                                                >
+                                                    <div className="w-14 h-14 bg-[#fdfaf5] rounded-xl flex items-center justify-center p-2 border border-gray-50">
+                                                        <img
+                                                            src={(product.images.find((img: any) => img.isMain) || product.images[0])?.url}
+                                                            alt=""
+                                                            className="w-full h-full object-contain group-hover:scale-110 transition-transform"
+                                                        />
+                                                    </div>
+                                                    <div className="flex-1 truncate">
+                                                        <h4 className="text-[11px] font-black text-gray-900 uppercase italic truncate leading-none mb-1.5">{product.name}</h4>
+                                                        <div className="flex items-center gap-3">
+                                                            <span className="text-[10px] font-bold text-brand-pink italic">${product.price.toLocaleString()}</span>
+                                                            <span className="text-[8px] font-black text-gray-300 uppercase tracking-widest">{product.category?.name}</span>
+                                                        </div>
+                                                    </div>
+                                                    <svg className="w-4 h-4 text-gray-200 group-hover:text-brand-pink transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    ) : !isSuggesting && (
+                                        <div className="p-10 text-center">
+                                            <p className="text-[10px] font-black text-gray-300 uppercase tracking-widest italic leading-relaxed">Sonuç bulunamadı.<br /></p>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
 
                         {/* Icons */}
@@ -44,11 +163,63 @@ const MainLayout: React.FC = () => {
                                 </svg>
                                 <span className="absolute -top-1 -right-1 w-4 h-4 bg-brand-pink text-white text-[9px] font-black rounded-full flex items-center justify-center shadow-lg shadow-brand-pink/40 border-2 border-white">0</span>
                             </button>
-                            <Link to="/profile" className="w-10 h-10 rounded-2xl bg-gray-50 flex items-center justify-center border border-gray-100 group hover:border-brand-pink transition-all">
-                                <svg className="w-5 h-5 text-gray-900 group-hover:text-brand-pink transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                </svg>
-                            </Link>
+
+                            <div ref={userMenuRef} className="relative">
+                                {isAuthenticated ? (
+                                    <>
+                                        <button
+                                            onClick={() => setShowUserMenu(!showUserMenu)}
+                                            className={`w-10 h-10 rounded-2xl bg-gray-50 flex items-center justify-center border transition-all ${showUserMenu ? 'border-brand-pink ring-4 ring-brand-pink/5' : 'border-gray-100 hover:border-brand-pink'}`}
+                                        >
+                                            <svg className="w-5 h-5 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                            </svg>
+                                        </button>
+
+                                        {showUserMenu && (
+                                            <div className="absolute top-full right-0 mt-2 w-60 bg-white rounded-[2rem] shadow-2xl border border-gray-50 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-300">
+                                                <div className="p-4 border-b border-gray-50 bg-gray-50/50">
+                                                    <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">HOŞ GELDİN</p>
+                                                    <p className="text-xs font-black text-gray-900 truncate italic uppercase">{user?.name || 'Kullanıcı'}</p>
+                                                </div>
+                                                <div className="p-3">
+                                                    <Link
+                                                        to="/profile"
+                                                        onClick={() => setShowUserMenu(false)}
+                                                        className="flex items-center gap-4 px-5 py-3.5 rounded-xl text-[10px] font-black text-gray-400 uppercase tracking-widest hover:bg-gray-50 hover:text-gray-900 transition-all italic"
+                                                    >
+                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                                                        Profil Ayarları
+                                                    </Link>
+                                                    <Link
+                                                        to="/profile/orders"
+                                                        onClick={() => setShowUserMenu(false)}
+                                                        className="flex items-center gap-4 px-5 py-3.5 rounded-xl text-[10px] font-black text-gray-400 uppercase tracking-widest hover:bg-gray-50 hover:text-gray-900 transition-all italic"
+                                                    >
+                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
+                                                        Siparişlerim
+                                                    </Link>
+                                                    <div className="h-px bg-gray-50 my-2 mx-5" />
+                                                    <button
+                                                        onClick={handleLogout}
+                                                        className="w-full flex cursor-pointer items-center gap-4 px-5 py-3.5 rounded-xl text-[10px] font-black text-red-400 uppercase tracking-widest hover:bg-red-50 transition-all italic"
+                                                    >
+                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                                                        Çıkış Yap
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </>
+                                ) : (
+                                    <Link
+                                        to="/login"
+                                        className="px-6 h-10 rounded-2xl bg-gray-900 text-white text-[10px] font-black uppercase tracking-widest flex items-center justify-center hover:bg-brand-pink transition-all shadow-lg shadow-gray-200"
+                                    >
+                                        GİRİŞ YAP
+                                    </Link>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>
