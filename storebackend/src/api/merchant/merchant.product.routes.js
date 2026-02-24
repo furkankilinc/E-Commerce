@@ -30,21 +30,24 @@ const merchantAuth = async (req, res, next) => {
 router.post('/', merchantAuth, async (req, res) => {
     try {
         const {
-            name, description, price, categoryId, images, variants, sku, stock
+            name, description, price, categoryId, images, variants, sku, stock,
+            status, metadata
         } = req.body;
 
         const product = await prisma.product.create({
             data: {
                 name,
-                slug: name.toLowerCase().replace(/ /g, '-'),
+                slug: name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-') + '-' + Date.now(),
                 description,
                 price: parseFloat(price),
                 sku: sku || `SKU-${Date.now()}`,
                 stock: parseInt(stock) || 0,
                 merchantId: req.merchantId,
                 categoryId,
+                status: status || 'PUBLISHED',
+                metadata: metadata || {},
                 images: {
-                    create: images.map((url, index) => ({
+                    create: (images || []).map((url, index) => ({
                         url,
                         isMain: index === 0,
                         order: index

@@ -73,9 +73,6 @@ const ProductDetailPage: React.FC = () => {
         );
     }
 
-    const sizes = product.variants.filter(v => v.name.toLowerCase() === 'size').map(v => v.value) || [];
-    const colors = product.variants.filter(v => v.name.toLowerCase() === 'color') || [];
-
     return (
         <div className="bg-white">
             <div className="max-w-[1440px] mx-auto px-4 sm:px-10 lg:px-20 py-10">
