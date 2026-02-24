@@ -5,8 +5,8 @@ export const useAuth = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(authStore.isAuthenticated());
     const [merchant, setMerchant] = useState(authStore.getMerchant());
 
-    const login = useCallback((accessToken: string, refreshToken: string, merchantData: any) => {
-        authStore.setAuth(accessToken, refreshToken, merchantData);
+    const login = useCallback((accessToken: string, merchantData: any) => {
+        authStore.setAuth(accessToken, merchantData);
         setIsAuthenticated(true);
         setMerchant(merchantData);
     }, []);

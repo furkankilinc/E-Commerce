@@ -33,7 +33,7 @@ router.post('/register', async (req, res) => {
         return res.status(201).json({
             message: 'Kayıt başarılı.',
             accessToken, refreshToken,
-            user: { id: user.id, email: user.email, name: user.name },
+            user: { id: user.id, email: user.email, name: user.name, phone: user.phone },
         });
     } catch (err) {
         console.error('[user/register]', err);
@@ -67,7 +67,7 @@ router.post('/login', async (req, res) => {
         return res.status(200).json({
             message: 'Giriş başarılı.',
             accessToken, refreshToken,
-            user: { id: user.id, email: user.email, name: user.name },
+            user: { id: user.id, email: user.email, name: user.name, phone: user.phone },
         });
     } catch (err) {
         console.error('[user/login]', err);

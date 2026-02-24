@@ -4,19 +4,53 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const router = Router();
 
+// Helper to get all descendant category IDs
+async function getDescendantIds(slug) {
+    if (!slug) return null;
+    const allCategories = await prisma.category.findMany({
+        where: { isActive: true },
+        select: { id: true, parentId: true, slug: true }
+    });
+    const root = allCategories.find(c => c.slug === slug);
+    if (!root) return [];
+    const ids = [root.id];
+    const findChildren = (parentId) => {
+        const children = allCategories.filter(c => c.parentId === parentId);
+        children.forEach(child => {
+            ids.push(child.id);
+            findChildren(child.id);
+        });
+    };
+    findChildren(root.id);
+    return ids;
+}
+
 // GET /api/products
-// Fetch all products with images and categories (with pagination)
 router.get('/', async (req, res) => {
     try {
-        const { category, search, page = 1, limit = 20 } = req.query;
+        const {
+            category,
+            search,
+            minPrice,
+            maxPrice,
+            rating,
+            merchants,
+            sort,
+            variants,
+            page = 1,
+            limit = 20
+        } = req.query;
+
         const skip = (parseInt(page) - 1) * parseInt(limit);
 
         const where = {
             isActive: true,
+            status: 'PUBLISHED'
         };
 
         if (category) {
-            where.category = { slug: category };
+            const categoryIds = await getDescendantIds(category);
+            where.categoryId = { in: categoryIds };
         }
 
         if (search) {
@@ -26,21 +60,61 @@ router.get('/', async (req, res) => {
             ];
         }
 
+        if (minPrice || maxPrice) {
+            where.price = {};
+            if (minPrice) where.price.gte = parseFloat(minPrice);
+            if (maxPrice) where.price.lte = parseFloat(maxPrice);
+        }
+
+        if (rating) {
+            where.rating = { gte: parseFloat(rating) };
+        }
+
+        if (merchants) {
+            const merchantList = merchants.split(',');
+            where.merchantId = { in: merchantList };
+        }
+
+        if (variants) {
+            const variantGroups = variants.split(';');
+            const variantConditions = variantGroups.map(group => {
+                const [name, valuesStr] = group.split(':');
+                const values = valuesStr.split(',');
+                return {
+                    variants: {
+                        some: {
+                            name,
+                            value: { in: values }
+                        }
+                    }
+                };
+            });
+            where.AND = [...(where.AND || []), ...variantConditions];
+        }
+
+        let orderBy = { createdAt: 'desc' };
+        if (sort) {
+            switch (sort) {
+                case 'newest': orderBy = { createdAt: 'desc' }; break;
+                case 'price-low': orderBy = { price: 'asc' }; break;
+                case 'price-high': orderBy = { price: 'desc' }; break;
+                case 'rating': orderBy = { rating: 'desc' }; break;
+                case 'popular': orderBy = { reviewCount: 'desc' }; break;
+            }
+        }
+
         const [products, total] = await prisma.$transaction([
             prisma.product.findMany({
                 where,
                 include: {
                     images: true,
                     category: true,
-                    merchant: {
-                        select: {
-                            companyName: true
-                        }
-                    }
+                    variants: true,
+                    merchant: { select: { id: true, companyName: true } }
                 },
                 skip,
                 take: parseInt(limit),
-                orderBy: { createdAt: 'desc' }
+                orderBy
             }),
             prisma.product.count({ where })
         ]);
@@ -69,28 +143,14 @@ router.get('/:id', async (req, res) => {
                 images: true,
                 category: true,
                 variants: true,
-                merchant: {
-                    select: {
-                        companyName: true
-                    }
-                },
+                merchant: { select: { companyName: true } },
                 reviews: {
-                    include: {
-                        user: {
-                            select: {
-                                name: true
-                            }
-                        }
-                    },
+                    include: { user: { select: { name: true } } },
                     orderBy: { createdAt: 'desc' }
                 }
             }
         });
-
-        if (!product) {
-            return res.status(404).json({ message: 'Ürün bulunamadı.' });
-        }
-
+        if (!product) return res.status(404).json({ message: 'Ürün bulunamadı.' });
         return res.json(product);
     } catch (err) {
         console.error('[products/getById]', err);
