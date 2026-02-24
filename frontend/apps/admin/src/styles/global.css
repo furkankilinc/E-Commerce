@@ -1,10 +1,13 @@
 @import "tailwindcss";
 
 @theme {
+    --color-brand-pink: #e91e8c;
+    --color-brand-pink-hover: #c91779;
     --color-brand-indigo: #4f46e5;
     --color-brand-indigo-hover: #4338ca;
     --color-admin-bg: #f8fafc;
     --color-admin-dark: #1e293b;
+    --color-admin-navy: #0f172a;
 }
 
 :root {
@@ -18,4 +21,21 @@ body {
     margin: 0;
     min-width: 320px;
     min-height: 100vh;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #e2e8f0;
+    border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #cbd5e1;
 }

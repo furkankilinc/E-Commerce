@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
 
 interface Product {
@@ -6,12 +6,11 @@ interface Product {
     name: string;
     price: number;
     description: string;
-    merchant: { companyName: string };
+    merchant: { id: string; companyName: string };
     category: { name: string; slug: string };
     images: { url: string; isMain: boolean }[];
     rating: number;
     reviewCount: number;
-    badge?: string;
 }
 
 interface Pagination {
@@ -21,16 +20,144 @@ interface Pagination {
     totalPages: number;
 }
 
+interface FilterMeta {
+    categories: { id: string; name: string; slug: string; parentId: string | null }[];
+    merchants: { id: string; companyName: string }[];
+    priceRange: { min: number; max: number };
+    variants: Record<string, string[]>;
+}
+
+const CategoryItem: React.FC<{
+    category: { id: string; name: string; slug: string; parentId: string | null },
+    allCategories: { id: string; name: string; slug: string; parentId: string | null }[],
+    selectedSlug: string,
+    onSelect: (slug: string) => void
+}> = ({ category, allCategories, selectedSlug, onSelect }) => {
+    const children = allCategories.filter(c => c.parentId === category.id);
+    const isSelected = selectedSlug === category.slug;
+
+    const isChildSelected = useCallback((parentId: string, currentSelectedSlug: string): boolean => {
+        const item = allCategories.find(c => c.slug === currentSelectedSlug);
+        if (!item || !item.parentId) return false;
+        if (item.parentId === parentId) return true;
+        let up = allCategories.find(c => c.id === item.parentId);
+        while (up) {
+            if (up.id === parentId) return true;
+            up = allCategories.find(c => c.id === up?.parentId);
+        }
+        return false;
+    }, [allCategories]);
+
+    const activeChildBranch = isChildSelected(category.id, selectedSlug);
+    // Open if selected or if a child is selected
+    const showChildren = isSelected || activeChildBranch;
+
+    return (
+        <div className="space-y-1">
+            <button
+                onClick={() => onSelect(category.slug)}
+                className={`w-full flex items-center justify-between px-5 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest italic transition-all group ${isSelected ? 'bg-brand-pink text-white shadow-xl shadow-brand-pink/20' : activeChildBranch ? 'bg-gray-900 text-white' : 'text-gray-400 hover:bg-gray-50'}`}
+            >
+                <span className="truncate pr-4">{category.name}</span>
+                {children.length > 0 && (
+                    <svg
+                        className={`w-3.5 h-3.5 transition-transform duration-500 ${showChildren ? 'rotate-90' : ''} ${isSelected || activeChildBranch ? 'text-white' : 'text-gray-300'}`}
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    >
+                        <path d="M9 5l7 7-7 7" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                )}
+            </button>
+
+            {showChildren && children.length > 0 && (
+                <div className="ml-5 mt-1 space-y-1 border-l-2 border-brand-pink/20 pl-4 py-1 animate-in slide-in-from-top-2 duration-300">
+                    {children.map(child => (
+                        <CategoryItem
+                            key={child.id}
+                            category={child}
+                            allCategories={allCategories}
+                            selectedSlug={selectedSlug}
+                            onSelect={onSelect}
+                        />
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+};
+
 const HomePage: React.FC = () => {
     const [products, setProducts] = useState<Product[]>([]);
     const [pagination, setPagination] = useState<Pagination | null>(null);
+    const [meta, setMeta] = useState<FilterMeta | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [isMetaLoading, setIsMetaLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
+    const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
 
-    const fetchProducts = async (page: number) => {
+    const isFirstLoad = useRef(true);
+
+    // Filter State
+    const [filters, setFilters] = useState({
+        search: '',
+        category: '',
+        minPrice: '',
+        maxPrice: '',
+        rating: 0,
+        merchants: [] as string[],
+        selectedVariants: {} as Record<string, string[]>,
+        sort: 'popular',
+        filterSearch: ''
+    });
+
+    const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({});
+
+    const fetchMeta = async (catSlug: string) => {
+        setIsMetaLoading(true);
+        try {
+            const res = await fetch(`/api/products-meta/filters?category=${catSlug}`);
+            if (res.ok) {
+                const data = await res.json();
+                setMeta(data);
+
+                if (isFirstLoad.current) {
+                    setFilters(prev => ({
+                        ...prev,
+                        minPrice: data.priceRange.min.toString(),
+                        maxPrice: data.priceRange.max.toString()
+                    }));
+                    isFirstLoad.current = false;
+                }
+            }
+        } catch (err) {
+            console.error('Failed to fetch meta:', err);
+        } finally {
+            setIsMetaLoading(false);
+        }
+    };
+
+    const fetchProducts = useCallback(async () => {
         setIsLoading(true);
         try {
-            const res = await fetch(`/api/products?page=${page}&limit=12`);
+            const variantQuery = Object.entries(filters.selectedVariants)
+                .filter(([_, values]) => values.length > 0)
+                .map(([name, values]) => `${name}:${values.join(',')}`)
+                .join(';');
+
+            const queryParams = new URLSearchParams({
+                page: currentPage.toString(),
+                limit: '12',
+                sort: filters.sort,
+                ...(filters.category && { category: filters.category }),
+                ...(filters.search && { search: filters.search }),
+                ...(filters.minPrice && { minPrice: filters.minPrice }),
+                ...(filters.maxPrice && { maxPrice: filters.maxPrice }),
+                ...(filters.rating > 0 && { rating: filters.rating.toString() }),
+                ...(filters.merchants.length > 0 && { merchants: filters.merchants.join(',') }),
+                ...(variantQuery && { variants: variantQuery })
+            });
+
+            const res = await fetch(`/api/products?${queryParams.toString()}`);
             if (res.ok) {
                 const data = await res.json();
                 setProducts(data.products);
@@ -41,11 +168,22 @@ const HomePage: React.FC = () => {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [currentPage, filters]);
 
+    // Update meta (features/merchants) when category changes
     useEffect(() => {
-        fetchProducts(currentPage);
-    }, [currentPage]);
+        if (!isFirstLoad.current) {
+            setFilters(prev => ({
+                ...prev,
+                selectedVariants: {},
+                merchants: []
+            }));
+            setCurrentPage(1);
+        }
+        fetchMeta(filters.category);
+    }, [filters.category]);
+
+    useEffect(() => { fetchProducts(); }, [fetchProducts]);
 
     const handlePageChange = (newPage: number) => {
         if (pagination && newPage >= 1 && newPage <= pagination.totalPages) {
@@ -54,7 +192,54 @@ const HomePage: React.FC = () => {
         }
     };
 
-    if (isLoading) {
+    const toggleMerchant = (id: string) => {
+        setFilters(prev => ({
+            ...prev,
+            merchants: prev.merchants.includes(id)
+                ? prev.merchants.filter(m => m !== id)
+                : [...prev.merchants, id]
+        }));
+        setCurrentPage(1);
+    };
+
+    const toggleVariant = (name: string, value: string) => {
+        setFilters(prev => {
+            const currentValues = prev.selectedVariants[name] || [];
+            const newValues = currentValues.includes(value)
+                ? currentValues.filter(v => v !== value)
+                : [...currentValues, value];
+
+            return {
+                ...prev,
+                selectedVariants: {
+                    ...prev.selectedVariants,
+                    [name]: newValues
+                }
+            };
+        });
+        setCurrentPage(1);
+    };
+
+    const clearFilters = () => {
+        setFilters({
+            search: '',
+            category: '',
+            minPrice: meta?.priceRange.min.toString() || '',
+            maxPrice: meta?.priceRange.max.toString() || '',
+            rating: 0,
+            merchants: [],
+            selectedVariants: {},
+            sort: 'popular',
+            filterSearch: ''
+        });
+        setCurrentPage(1);
+    };
+
+    const toggleSection = (name: string) => {
+        setCollapsedSections(prev => ({ ...prev, [name]: !prev[name] }));
+    };
+
+    if (!meta && isLoading) {
         return (
             <div className="min-h-[60vh] flex items-center justify-center text-center flex-col gap-4">
                 <div className="w-16 h-16 border-4 border-brand-pink border-t-transparent rounded-full animate-spin"></div>
@@ -64,210 +249,330 @@ const HomePage: React.FC = () => {
     }
 
     return (
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-10 lg:px-20 py-10">
+        <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-20 py-10">
             {/* Breadcrumb */}
-            <div className="mb-6 flex items-center gap-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                <Link to="/" className="hover:text-gray-900 transition-colors">ANASAYFA</Link>
+            <div className="mb-6 flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest italic">
+                <Link to="/" className="hover:text-brand-pink transition-colors">ANASAYFA</Link>
                 <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                <span className="text-gray-900">TÜM ÜRÜNLER</span>
+                <span className="text-gray-900 border-b-2 border-brand-pink/20">TEKNOLOJİ MAĞAZASI</span>
             </div>
 
-            {/* Title & Count */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
+            {/* Header */}
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
                 <div>
-                    <h1 className="text-[64px] font-[900] text-gray-900 leading-[0.9] tracking-tighter mb-4 italic">Koleksiyonumuz</h1>
-                    {pagination && (
-                        <p className="text-gray-400 text-sm font-bold">{pagination.total} premium üründen <span className="text-gray-900">{((pagination.page - 1) * pagination.limit) + 1}-{Math.min(pagination.page * pagination.limit, pagination.total)}</span> arası gösteriliyor</p>
-                    )}
+                    <h1 className="text-4xl sm:text-5xl lg:text-[72px] font-[1000] text-gray-900 leading-[0.85] tracking-tighter mb-4 italic uppercase">
+                        Tech & <span className="text-brand-pink">Future</span>
+                    </h1>
+                    <p className="text-sm font-bold text-gray-400 italic">En yeni teknolojiler, Fuira güvencesiyle kapınızda.</p>
                 </div>
+
                 <div className="flex items-center gap-4">
-                    <div className="flex bg-gray-50 p-1.5 rounded-xl border border-gray-100">
-                        <button className="p-2.5 bg-brand-pink text-white rounded-lg shadow-lg shadow-brand-pink/20">
-                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
-                        </button>
-                        <button className="p-2.5 text-gray-400 hover:text-gray-900 transition-colors">
-                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" /></svg>
-                        </button>
-                    </div>
-                    <div className="flex items-center bg-white border border-gray-100 rounded-xl px-6 py-3.5 text-xs font-black text-gray-900 shadow-sm cursor-pointer hover:border-gray-200 transition-all uppercase tracking-widest italic">
-                        Sıralama: <span className="ml-2 text-gray-400 group-hover:text-gray-900 transition-colors">Öne Çıkanlar</span>
-                        <svg className="w-4 h-4 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                    <button
+                        onClick={() => setIsMobileFiltersOpen(true)}
+                        className="lg:hidden flex items-center gap-3 px-6 h-16 bg-gray-900 text-white rounded-[2rem] text-[11px] font-black uppercase tracking-widest italic shadow-xl shadow-gray-200"
+                    >
+                        <svg className="w-5 h-5 text-brand-pink" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" strokeWidth="2.5" strokeLinecap="round" /></svg>
+                        FİLTRELER
+                    </button>
+
+                    <div className="relative">
+                        <select
+                            value={filters.sort}
+                            onChange={(e) => setFilters(prev => ({ ...prev, sort: e.target.value }))}
+                            className="appearance-none bg-white border-2 border-gray-50 h-16 pl-8 pr-14 rounded-[2rem] text-[11px] font-black text-gray-900 italic uppercase tracking-widest focus:outline-none focus:border-brand-pink transition-all shadow-sm"
+                        >
+                            <option value="popular">Popülerlik</option>
+                            <option value="newest">En Yeniler</option>
+                            <option value="price-low">Fiyat: Artan</option>
+                            <option value="price-high">Fiyat: Azalan</option>
+                            <option value="rating">Puan</option>
+                        </select>
+                        <svg className="absolute right-6 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
                     </div>
                 </div>
             </div>
 
-            {/* MOST POPULAR SECTION */}
-            <div className="mb-20">
-                <h2 className="text-sm font-black uppercase tracking-[0.3em] italic mb-10 text-gray-900">EN POPÜLER ÜRÜNLER</h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-                    {products.slice(0, 3).map((product, i) => (
-                        <Link to={`/product/${product.id}`} key={product.id} className="group cursor-pointer">
-                            <div className="relative aspect-[4/3] rounded-[2.5rem] overflow-hidden mb-8 bg-[#fdfaf5] shadow-sm border border-gray-50">
-                                <img src={(product.images.find(img => img.isMain) || product.images[0])?.url} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 ease-out p-6" />
-                                <div className="absolute top-6 left-6 flex items-center gap-2 bg-brand-pink text-white text-[9px] font-black tracking-[0.2em] px-3.5 py-1.5 rounded-lg shadow-xl uppercase italic">
-                                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
-                                    EN ÇOK SATAN
-                                </div>
-                            </div>
-                            <div className="flex justify-between items-start px-2">
-                                <div>
-                                    <span className="text-[9px] font-black text-brand-pink tracking-[0.2em] uppercase mb-1.5 block leading-none">{product.category?.name || 'CORETECH'}</span>
-                                    <h3 className="text-xl font-black text-gray-900 group-hover:text-brand-pink transition-colors line-clamp-1 italic">{product.name}</h3>
-                                    <p className="text-lg font-black text-gray-900 mt-2">${product.price.toLocaleString()}</p>
-                                </div>
-                                <button className="w-12 h-12 rounded-full bg-white shadow-xl flex items-center justify-center text-brand-pink group-hover:bg-brand-pink group-hover:text-white transition-all transform group-hover:scale-110 border border-gray-50 flex-shrink-0">
-                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M12 4v16m8-8H4" />
-                                    </svg>
-                                </button>
-                            </div>
-                        </Link>
-                    ))}
-                </div>
-            </div>
+            <div className="flex flex-col lg:flex-row gap-16 relative">
+                {isMobileFiltersOpen && (
+                    <div
+                        className="lg:hidden fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-[90]"
+                        onClick={() => setIsMobileFiltersOpen(false)}
+                    />
+                )}
 
-            <div className="flex flex-col lg:flex-row gap-20">
-                {/* Sidebar */}
-                <aside className="w-full lg:w-64 flex-shrink-0 border-r border-gray-50 lg:pr-12">
-                    <div className="mb-14">
-                        <h3 className="text-[10px] font-black uppercase tracking-[0.25em] text-gray-400 mb-8 italic">KATEGORİLER</h3>
-                        <div className="space-y-4">
-                            {[
-                                { label: 'Aksesuarlar', checked: true },
-                                { label: 'Elektronik', checked: false },
-                                { label: 'Yaşam', checked: false }
-                            ].map((cat, i) => (
-                                <label key={i} className="flex items-center group cursor-pointer">
-                                    <div className="relative flex items-center">
-                                        <input type="checkbox" checked={cat.checked} className="w-5 h-5 border-2 border-gray-200 rounded text-brand-pink focus:ring-brand-pink transition-all cursor-pointer appearance-none checked:bg-brand-pink checked:border-brand-pink" />
-                                        {cat.checked && <svg className="absolute w-3.5 h-3.5 text-white left-0.5 top-0.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" /></svg>}
-                                    </div>
-                                    <span className="ml-4 text-xs font-black text-gray-600 group-hover:text-gray-900 transition-colors uppercase tracking-tight italic">{cat.label}</span>
-                                </label>
-                            ))}
+                <aside className={`
+                    fixed lg:sticky top-0 lg:top-24 left-0 w-[85%] sm:w-80 lg:w-80 h-full lg:h-auto 
+                    bg-white lg:bg-transparent z-[100] lg:z-0 p-8 lg:p-0
+                    transition-transform duration-500 ease-in-out lg:transition-none
+                    ${isMobileFiltersOpen ? 'translate-x-0 shadow-2xl overflow-y-auto' : '-translate-x-full lg:translate-x-0'}
+                    flex-shrink-0
+                `}>
+                    <div className="space-y-10">
+                        <div className="lg:hidden flex items-center justify-between mb-10 pb-6 border-b-2 border-gray-50">
+                            <h2 className="text-xl font-[1000] text-gray-900 italic uppercase">FİLTRELER</h2>
+                            <button onClick={() => setIsMobileFiltersOpen(false)} className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-400">
+                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" strokeWidth="3" /></svg>
+                            </button>
                         </div>
-                    </div>
 
-                    <div className="mb-14">
-                        <h3 className="text-[10px] font-black uppercase tracking-[0.25em] text-gray-400 mb-8 italic">FİYAT ARALIĞI</h3>
-                        <div className="px-1">
-                            <div className="relative h-1 bg-gray-100 rounded-full mb-8">
-                                <div className="absolute left-[0%] right-[30%] top-0 bottom-0 bg-brand-pink rounded-full shadow-[0_0_10px_rgba(255,51,102,0.3)]"></div>
-                                <div className="absolute left-[0%] top-1/2 -translate-y-1/2 w-3.5 h-3.5 bg-brand-pink border-[3px] border-white rounded-full shadow-lg cursor-pointer"></div>
-                                <div className="absolute right-[30%] top-1/2 -translate-y-1/2 w-3.5 h-3.5 bg-brand-pink border-[3px] border-white rounded-full shadow-lg cursor-pointer"></div>
-                            </div>
+                        <div className="relative">
+                            <input
+                                type="text"
+                                placeholder="Model, özellik veya satici..."
+                                value={filters.filterSearch}
+                                onChange={(e) => setFilters(prev => ({ ...prev, filterSearch: e.target.value }))}
+                                className="w-full h-14 pl-12 pr-6 bg-gray-50 rounded-2xl text-[11px] font-bold italic focus:bg-white border-2 border-transparent focus:border-brand-pink outline-none transition-all placeholder:text-gray-300"
+                            />
+                            <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" strokeWidth="3" /></svg>
+                        </div>
+
+                        <div>
+                            <button onClick={() => toggleSection('category')} className="w-full flex items-center justify-between text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-6 italic hover:text-gray-900 transition-colors">
+                                KATEGORİ
+                                <svg className={`w-4 h-4 transform transition-transform ${collapsedSections['category'] ? '-rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" strokeWidth="3" /></svg>
+                            </button>
+                            {!collapsedSections['category'] && (
+                                <div className="space-y-2 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                                    <button
+                                        onClick={() => setFilters(prev => ({ ...prev, category: '' }))}
+                                        className={`w-full flex items-center justify-between px-5 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest italic transition-all ${!filters.category ? 'bg-gray-900 text-white shadow-xl' : 'text-gray-400 hover:bg-gray-50'}`}
+                                    >
+                                        Hepsi
+                                    </button>
+                                    {meta?.categories
+                                        .filter(c => c.parentId === null)
+                                        .map(cat => (
+                                            <CategoryItem
+                                                key={cat.id}
+                                                category={cat}
+                                                allCategories={meta.categories}
+                                                selectedSlug={filters.category}
+                                                onSelect={(slug) => setFilters(prev => ({ ...prev, category: slug }))}
+                                            />
+                                        ))}
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="py-2">
+                            <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-8 italic">FİYAT ARALIĞI</h3>
                             <div className="flex gap-4">
-                                <div className="flex-1 bg-white border border-gray-100 h-10 flex items-center justify-center rounded-xl text-[11px] font-[900] text-gray-900 italic shadow-sm">$50</div>
-                                <div className="flex-1 bg-white border border-gray-100 h-10 flex items-center justify-center rounded-xl text-[11px] font-[900] text-gray-900 italic shadow-sm">$800</div>
+                                <div className="flex-1 bg-white border-2 border-gray-50 p-4 rounded-2xl shadow-sm">
+                                    <span className="text-[8px] font-black text-gray-300 uppercase block mb-1">MİN</span>
+                                    <div className="flex items-center text-xs font-black text-gray-900 italic">
+                                        $<input type="number" value={filters.minPrice} onChange={e => setFilters(prev => ({ ...prev, minPrice: e.target.value }))} className="bg-transparent w-full outline-none ml-1" />
+                                    </div>
+                                </div>
+                                <div className="flex-1 bg-white border-2 border-gray-50 p-4 rounded-2xl shadow-sm">
+                                    <span className="text-[8px] font-black text-gray-300 uppercase block mb-1">MAX</span>
+                                    <div className="flex items-center text-xs font-black text-gray-900 italic">
+                                        $<input type="number" value={filters.maxPrice} onChange={e => setFilters(prev => ({ ...prev, maxPrice: e.target.value }))} className="bg-transparent w-full outline-none ml-1" />
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div className="mb-14">
-                        <h3 className="text-[10px] font-black uppercase tracking-[0.25em] text-gray-400 mb-8 italic text-left">DEĞERLENDİRME</h3>
-                        <div className="space-y-4">
-                            {[4].map(r => (
-                                <div key={r} className="flex items-center gap-1.5 group cursor-pointer group">
-                                    {[...Array(5)].map((_, i) => (
-                                        <svg key={i} className={`w-3.5 h-3.5 ${i < r ? 'text-yellow-400' : 'text-gray-200'}`} fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                        </svg>
-                                    ))}
-                                    <span className="ml-2 text-[10px] font-[900] text-gray-400 group-hover:text-gray-900 transition-colors mt-0.5">& Üzeri</span>
+                        <div className={`relative transition-opacity duration-300 ${isMetaLoading ? 'opacity-40' : 'opacity-100'}`}>
+                            {isMetaLoading && (
+                                <div className="absolute top-0 right-0">
+                                    <div className="w-4 h-4 border-2 border-brand-pink border-t-transparent rounded-full animate-spin"></div>
                                 </div>
-                            ))}
-                        </div>
-                    </div>
+                            )}
 
-                    {/* Promo Card */}
-                    <div className="bg-[#fff1f5] rounded-[2.5rem] p-10 relative overflow-hidden group border border-[#ffe4ec]">
-                        <div className="relative z-10">
-                            <h4 className="text-xl font-black text-brand-pink mb-2 leading-none italic">Yaz İndirimi!</h4>
-                            <p className="text-[#a85b74] text-[10px] font-bold mb-8 leading-relaxed italic opacity-80">Tüm aksesuarlarda %40'a varan indirimleri kaçırmayın.</p>
-                            <button className="w-full bg-brand-pink text-white py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-brand-pink/20 hover:bg-brand-pink-hover transition-all active:scale-95 italic">FIRSATLARI GÖR</button>
+                            {meta && Object.keys(meta.variants).length === 0 && filters.category && !isMetaLoading && (
+                                <div className="mb-10 text-center py-6 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-100">
+                                    <p className="text-[10px] font-black text-gray-300 uppercase tracking-widest italic">Bu kategoriye özel filtre tanımlanmamış</p>
+                                </div>
+                            )}
+
+                            {meta && Object.entries(meta.variants).map(([name, values]) => {
+                                const label = name === 'Color' ? 'RENK' : name === 'Size' ? 'BEDEN' : name.toUpperCase();
+                                const isColorFilter = name === 'Color' || name.toLowerCase() === 'renk' || name.toLowerCase() === 'color';
+                                return (
+                                    <div key={name} className="mb-10 animate-in fade-in slide-in-from-top-2">
+                                        <button onClick={() => toggleSection(name)} className="w-full flex items-center justify-between text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-6 italic">
+                                            {label}
+                                            <svg className={`w-4 h-4 transform transition-transform ${collapsedSections[name] ? '-rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" strokeWidth="3" /></svg>
+                                        </button>
+                                        {!collapsedSections[name] && (
+                                            <div className={`
+                                            ${isColorFilter ? 'flex flex-wrap gap-3' : 'flex flex-col gap-3 max-h-48 overflow-y-auto pr-2 custom-scrollbar'}
+                                        `}>
+                                                {values.map(val => (
+                                                    isColorFilter ? (
+                                                        <button
+                                                            key={val}
+                                                            onClick={() => toggleVariant(name, val)}
+                                                            title={val}
+                                                            className={`w-8 h-8 rounded-full border-2 transition-all transform hover:scale-125 ${filters.selectedVariants[name]?.includes(val) ? 'border-brand-pink ring-4 ring-brand-pink/10 shadow-lg' : 'border-gray-100'}`}
+                                                            style={{ backgroundColor: val.toLowerCase() }}
+                                                        />
+                                                    ) : (
+                                                        <label key={val} className="flex items-center group cursor-pointer">
+                                                            <div className="relative">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    checked={filters.selectedVariants[name]?.includes(val)}
+                                                                    onChange={() => toggleVariant(name, val)}
+                                                                    className="w-5 h-5 border-2 border-gray-200 rounded-lg appearance-none checked:bg-brand-pink checked:border-brand-pink cursor-pointer transition-all"
+                                                                />
+                                                                {filters.selectedVariants[name]?.includes(val) && <svg className="absolute w-3.5 h-3.5 text-white left-0.5 top-0.8 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" /></svg>}
+                                                            </div>
+                                                            <span className="ml-3 text-[11px] font-black text-gray-500 group-hover:text-gray-900 transition-colors uppercase italic">{val}</span>
+                                                        </label>
+                                                    )
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })}
+
+                            <div>
+                                <button onClick={() => toggleSection('merchants')} className="w-full flex items-center justify-between text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-6 italic">
+                                    SATICILAR
+                                    <svg className={`w-4 h-4 transform transition-transform ${collapsedSections['merchants'] ? '-rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" strokeWidth="3" /></svg>
+                                </button>
+                                {!collapsedSections['merchants'] && (
+                                    <div className="space-y-3 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
+                                        {meta?.merchants.filter(m => m.companyName.toLowerCase().includes(filters.filterSearch.toLowerCase())).map(m => (
+                                            <label key={m.id} className="flex items-center group cursor-pointer">
+                                                <div className="relative">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={filters.merchants.includes(m.id)}
+                                                        onChange={() => toggleMerchant(m.id)}
+                                                        className="w-5 h-5 border-2 border-gray-200 rounded-lg appearance-none checked:bg-brand-pink checked:border-brand-pink cursor-pointer transition-all"
+                                                    />
+                                                    {filters.merchants.includes(m.id) && <svg className="absolute w-3.5 h-3.5 text-white left-0.5 top-0.8 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" /></svg>}
+                                                </div>
+                                                <span className="ml-3 text-[11px] font-black text-gray-500 group-hover:text-gray-900 transition-colors uppercase italic">{m.companyName}</span>
+                                            </label>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                        <div className="absolute top-[-20%] right-[-20%] w-40 h-40 bg-white/20 rounded-full blur-3xl pointer-events-none group-hover:scale-125 transition-transform duration-1000"></div>
+
+                        <div className="pt-10">
+                            <button onClick={clearFilters} className="w-full py-5 bg-gray-50 text-gray-400 rounded-[2rem] text-[11px] font-black uppercase tracking-widest italic hover:bg-brand-pink hover:text-white transition-all shadow-sm">FİLTRELERİ SIFIRLA</button>
+                        </div>
                     </div>
                 </aside>
 
-                {/* Main Content Product Grid */}
                 <div className="flex-1">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-16">
-                        {products.map(product => (
-                            <Link to={`/product/${product.id}`} key={product.id} className="group flex flex-col h-full bg-white rounded-[2.5rem] p-4 transition-all border border-transparent hover:border-gray-50 cursor-pointer">
-                                <div className="relative aspect-square rounded-[2rem] overflow-hidden mb-8 bg-[#fdfaf5] border border-gray-50 flex items-center justify-center p-8">
-                                    <img src={(product.images.find(img => img.isMain) || product.images[0])?.url} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-out" />
-                                    <div className="absolute top-5 left-5 px-3.5 py-1.5 rounded-lg text-[9px] font-black tracking-[0.2em] bg-white/90 backdrop-blur-md shadow-sm text-gray-900 uppercase italic">
-                                        STOKTA
-                                    </div>
-                                    <button className="absolute top-5 right-5 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center text-gray-200 hover:text-brand-pink transition-colors opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 duration-300">
-                                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" /></svg>
-                                    </button>
-                                </div>
-                                <div className="flex flex-col flex-grow px-2">
-                                    <span className="text-[9px] font-black text-brand-pink tracking-[0.2em] uppercase mb-2 block leading-none">{product.category?.name || 'MİNİMALİST'}</span>
-                                    <h3 className="text-sm font-[900] text-gray-900 mb-4 leading-tight group-hover:text-brand-pink transition-colors italic line-clamp-1">{product.name}</h3>
-
-                                    <div className="flex items-center gap-1.5 mb-6">
-                                        {[...Array(5)].map((_, i) => (
-                                            <svg key={i} className={`w-3 h-3 ${i < 4 ? 'text-yellow-400' : 'text-gray-100'}`} fill="currentColor" viewBox="0 0 20 20">
-                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                            </svg>
-                                        ))}
-                                        <span className="text-[10px] font-black text-gray-400 leading-none mt-0.5">(4.5)</span>
+                    {isLoading ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
+                            {[...Array(6)].map((_, i) => (
+                                <div key={i} className="aspect-[3/4] bg-gray-50 rounded-[3rem] animate-pulse"></div>
+                            ))}
+                        </div>
+                    ) : products.length > 0 ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-8 gap-y-12">
+                            {products.map(product => (
+                                <Link to={`/product/${product.id}`} key={product.id} className="group flex flex-col bg-white rounded-[3.5rem] p-6 transition-all border-2 border-transparent hover:border-gray-50 hover:shadow-2xl hover:shadow-gray-200/50">
+                                    <div className="relative aspect-square rounded-[3rem] overflow-hidden mb-8 bg-[#fdfaf5] border border-gray-50 flex items-center justify-center p-8">
+                                        <img src={(product.images.find(img => img.isMain) || product.images[0])?.url} alt={product.name} className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700" />
+                                        <div className="absolute top-6 left-6 flex flex-col gap-2">
+                                            {product.rating >= 4.5 && <div className="px-3.5 py-1.5 rounded-xl text-[8px] font-black tracking-[0.2em] bg-gray-900 text-white shadow-xl uppercase italic">EN POPÜLER</div>}
+                                            {product.price > 1000 && <div className="px-3.5 py-1.5 rounded-xl text-[8px] font-black tracking-[0.2em] bg-brand-pink text-white shadow-xl uppercase italic">PREMIUM</div>}
+                                        </div>
                                     </div>
 
-                                    <div className="mt-auto flex justify-between items-center bg-gray-50/50 hover:bg-white p-5 rounded-[2rem] border border-gray-100 hover:shadow-xl hover:shadow-gray-100 transition-all hover:border-transparent">
-                                        <span className="text-xl font-[900] text-gray-900 tracking-tighter italic">${product.price.toLocaleString()}</span>
-                                        <button className="w-10 h-10 rounded-2xl bg-brand-pink text-white flex items-center justify-center hover:bg-brand-pink-hover transition-all transform hover:scale-110 shadow-lg shadow-brand-pink/20">
-                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M12 4v16m8-8H4" />
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </div>
-                            </Link>
-                        ))}
-                    </div>
+                                    <div className="flex flex-col flex-grow px-2">
+                                        <div className="flex justify-between items-center mb-3">
+                                            <span className="text-[9px] font-[1000] text-brand-pink tracking-[0.3em] uppercase italic">{product.category?.name}</span>
+                                            <div className="flex items-center gap-1 bg-gray-50 px-2.5 py-1 rounded-full text-gray-900">
+                                                <svg className="w-3 h-3 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                                                <span className="text-[10px] font-black">{product.rating}</span>
+                                            </div>
+                                        </div>
 
-                    {/* Pagination */}
+                                        <h3 className="text-lg font-[1000] text-gray-900 mb-8 leading-[1.1] group-hover:text-brand-pink transition-colors italic line-clamp-2 uppercase tracking-tighter">{product.name}</h3>
+
+                                        <div className="mt-auto flex justify-between items-center pt-8 border-t border-gray-50">
+                                            <div className="flex flex-col">
+                                                <span className="text-[8px] font-black text-gray-400 uppercase tracking-widest italic leading-none mb-1">FUIRA FİYAT</span>
+                                                <span className="text-3xl font-[1000] text-gray-900 tracking-tighter italic leading-none">${product.price.toLocaleString()}</span>
+                                            </div>
+                                            <button className="w-16 h-16 rounded-[1.8rem] bg-gray-900 text-white flex items-center justify-center hover:bg-brand-pink transition-all transform hover:scale-110 shadow-2xl shadow-gray-200">
+                                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3.5"><path d="M12 4v16m8-8H4" /></svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </Link>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="min-h-[500px] flex flex-col items-center justify-center text-center p-12 sm:p-20 bg-gray-50 rounded-[4rem] border-4 border-dashed border-gray-100">
+                            <div className="w-24 h-24 bg-white rounded-[2.5rem] flex items-center justify-center text-gray-200 mb-10 border-2 border-gray-100 shadow-sm">
+                                <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" strokeWidth="2" /></svg>
+                            </div>
+                            <h3 className="text-2xl sm:text-3xl font-[1000] text-gray-900 italic uppercase mb-4 tracking-tighter">Aradığını bulamadık...</h3>
+                            <button onClick={clearFilters} className="px-12 py-5 bg-brand-pink text-white rounded-[2rem] text-[11px] font-black uppercase tracking-[0.25em] shadow-2xl shadow-brand-pink/20 hover:scale-105 transition-all italic">FİLTRELERİ SIFIRLA</button>
+                        </div>
+                    )}
+
                     {pagination && pagination.totalPages > 1 && (
-                        <div className="mt-24 flex justify-center items-center gap-4">
+                        <div className="mt-24 flex justify-center items-center gap-6">
                             <button
                                 onClick={() => handlePageChange(currentPage - 1)}
                                 disabled={currentPage === 1}
-                                className="w-14 h-14 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-gray-400 hover:text-brand-pink disabled:opacity-20 transition-all shadow-sm active:scale-90"
+                                className="w-16 h-16 rounded-[2rem] bg-white border-2 border-gray-50 flex items-center justify-center text-gray-400 hover:text-brand-pink disabled:opacity-20 transition-all shadow-sm active:scale-90 group"
                             >
-                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                                <svg className="w-6 h-6 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="4"><path d="M15 19l-7-7 7-7" /></svg>
                             </button>
 
-                            <div className="flex items-center gap-3 bg-white px-8 py-2.5 rounded-[2.2rem] border border-gray-100 shadow-sm">
-                                {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
-                                    let pageNum = currentPage;
-                                    if (currentPage <= 3) pageNum = i + 1;
-                                    else if (currentPage >= pagination.totalPages - 2) pageNum = pagination.totalPages - 4 + i;
-                                    else pageNum = currentPage - 2 + i;
+                            <div className="flex items-center gap-2 sm:gap-3 bg-white p-3 rounded-[3rem] border-2 border-gray-50 shadow-sm">
+                                {(() => {
+                                    const pages: (number | string)[] = [];
+                                    const total = pagination.totalPages;
+                                    const current = currentPage;
 
-                                    if (pageNum <= 0 || pageNum > pagination.totalPages) return null;
+                                    if (total <= 7) {
+                                        for (let i = 1; i <= total; i++) pages.push(i);
+                                    } else {
+                                        pages.push(1);
+                                        if (current > 3) pages.push('...');
 
-                                    return (
-                                        <button
-                                            key={pageNum}
-                                            onClick={() => handlePageChange(pageNum)}
-                                            className={`w-11 h-11 rounded-xl text-xs font-black transition-all ${currentPage === pageNum ? 'bg-brand-pink text-white shadow-xl shadow-brand-pink/40 scale-110' : 'text-gray-400 hover:text-gray-900'}`}
-                                        >
-                                            {pageNum}
-                                        </button>
-                                    );
-                                })}
+                                        const start = Math.max(2, current - 1);
+                                        const end = Math.min(total - 1, current + 1);
+
+                                        let rangeStart = start;
+                                        let rangeEnd = end;
+                                        if (current <= 3) rangeEnd = 4;
+                                        if (current >= total - 2) rangeStart = total - 3;
+
+                                        for (let i = Math.max(2, rangeStart); i <= Math.min(total - 1, rangeEnd); i++) {
+                                            pages.push(i);
+                                        }
+
+                                        if (current < total - 2) pages.push('...');
+                                        pages.push(total);
+                                    }
+
+                                    return pages.map((p, i) => (
+                                        p === '...' ? (
+                                            <span key={`dots-${i}`} className="w-10 sm:w-12 text-center text-gray-300 font-black italic">...</span>
+                                        ) : (
+                                            <button
+                                                key={p}
+                                                onClick={() => handlePageChange(Number(p))}
+                                                className={`w-12 sm:w-14 h-12 sm:h-14 rounded-[1.5rem] text-[11px] font-black transition-all ${current === p ? 'bg-brand-pink text-white shadow-xl shadow-brand-pink/40 scale-110' : 'text-gray-400 hover:text-gray-900 hover:bg-gray-50'}`}
+                                            >
+                                                {p}
+                                            </button>
+                                        )
+                                    ));
+                                })()}
                             </div>
 
                             <button
                                 onClick={() => handlePageChange(currentPage + 1)}
                                 disabled={currentPage === pagination.totalPages}
-                                className="w-14 h-14 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-gray-400 hover:text-brand-pink disabled:opacity-20 transition-all shadow-sm active:scale-90"
+                                className="w-16 h-16 rounded-[2rem] bg-white border-2 border-gray-50 flex items-center justify-center text-gray-400 hover:text-brand-pink disabled:opacity-20 transition-all shadow-sm active:scale-90 group"
                             >
-                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                                <svg className="w-6 h-6 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="4"><path d="M9 5l7 7-7 7" /></svg>
                             </button>
                         </div>
                     )}

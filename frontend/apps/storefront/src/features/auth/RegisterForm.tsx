@@ -9,7 +9,8 @@ const RegisterForm: React.FC = () => {
     const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState({
-        fullName: '',
+        firstName: '',
+        lastName: '',
         email: '',
         password: ''
     });
@@ -37,8 +38,18 @@ const RegisterForm: React.FC = () => {
         const newErrors = { email: '', password: '' };
         let hasError = false;
 
+        if (!formData.firstName.trim()) {
+            newErrors.email = 'Adınız gereklidir.';
+            hasError = true;
+        }
+
+        if (!formData.lastName.trim()) {
+            newErrors.email = newErrors.email || 'Soyadınız gereklidir.';
+            hasError = true;
+        }
+
         if (!EMAIL_REGEX.test(formData.email)) {
-            newErrors.email = 'Enter a valid email address.';
+            newErrors.email = newErrors.email || 'Enter a valid email address.';
             hasError = true;
         }
 
@@ -59,7 +70,7 @@ const RegisterForm: React.FC = () => {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        name: formData.fullName,
+                        name: `${formData.firstName} ${formData.lastName}`.trim(),
                         email: formData.email,
                         password: formData.password
                     })
@@ -71,7 +82,7 @@ const RegisterForm: React.FC = () => {
                     setApiError(data.message || 'Registration failed');
                 } else {
                     setApiSuccess('Account created successfully! Redirecting...');
-                    setFormData({ fullName: '', email: '', password: '' });
+                    setFormData({ firstName: '', lastName: '', email: '', password: '' });
                     setTimeout(() => navigate('/login'), 2000);
                 }
             } catch (err) {
@@ -116,19 +127,32 @@ const RegisterForm: React.FC = () => {
                         {apiSuccess}
                     </div>
                 )}
-                <div className="space-y-1">
-                    <label className="flex items-center gap-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">
-                        Full Name
-                    </label>
-                    <input
-                        type="text"
-                        name="fullName"
-                        value={formData.fullName}
-                        onChange={handleChange}
-                        placeholder="John Doe"
-                        required
-                        className="w-full p-4 rounded-xl border border-gray-50 bg-gray-50/50 text-gray-900 text-sm focus:bg-white focus:border-gray-900 focus:ring-4 focus:ring-gray-900/5 outline-none transition-all placeholder:text-gray-300 font-medium"
-                    />
+
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                        <label className="flex items-center gap-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Adınız</label>
+                        <input
+                            type="text"
+                            name="firstName"
+                            value={formData.firstName}
+                            onChange={handleChange}
+                            placeholder="John"
+                            required
+                            className="w-full p-4 rounded-xl border border-gray-50 bg-gray-50/50 text-gray-900 text-sm focus:bg-white focus:border-gray-900 outline-none transition-all placeholder:text-gray-300 font-medium"
+                        />
+                    </div>
+                    <div className="space-y-1">
+                        <label className="flex items-center gap-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Soyadınız</label>
+                        <input
+                            type="text"
+                            name="lastName"
+                            value={formData.lastName}
+                            onChange={handleChange}
+                            placeholder="Doe"
+                            required
+                            className="w-full p-4 rounded-xl border border-gray-50 bg-gray-50/50 text-gray-900 text-sm focus:bg-white focus:border-gray-900 outline-none transition-all placeholder:text-gray-300 font-medium"
+                        />
+                    </div>
                 </div>
 
                 <div className="space-y-1">

@@ -33,7 +33,7 @@ const VendorLoginPage: React.FC = () => {
                 setApiError(data.message || 'Giriş başarısız.');
             } else {
                 setApiSuccess('Başarıyla giriş yapıldı!');
-                login(data.accessToken, data.refreshToken, data.merchant);
+                login(data.accessToken, data.merchant);
                 setTimeout(() => navigate('/dashboard'), 1000);
             }
         } catch (err) {
