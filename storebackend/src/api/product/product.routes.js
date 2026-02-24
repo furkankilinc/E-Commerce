@@ -54,10 +54,19 @@ router.get('/', async (req, res) => {
         }
 
         if (search) {
-            where.OR = [
-                { name: { contains: search, mode: 'insensitive' } },
-                { description: { contains: search, mode: 'insensitive' } }
-            ];
+            // PostgreSQL Full-Text Search integration
+            // Uses 'turkish' dictionary for stemming and stop-words
+            // Also supports prefix matching with :* for "search as you type" feel
+            const formattedSearch = search.trim().split(/\s+/).join(' & ') + ':*';
+
+            const searchResults = await prisma.$queryRaw`
+                SELECT id FROM products 
+                WHERE to_tsvector('turkish', name || ' ' || description) @@ to_tsquery('turkish', ${formattedSearch})
+                AND "isActive" = true AND status = 'PUBLISHED'
+            `;
+
+            const matchingIds = searchResults.map(r => r.id);
+            where.id = { in: matchingIds };
         }
 
         if (minPrice || maxPrice) {
@@ -141,7 +150,11 @@ router.get('/:id', async (req, res) => {
             where: { id: req.params.id },
             include: {
                 images: true,
-                category: true,
+                category: {
+                    include: {
+                        parent: true
+                    }
+                },
                 variants: true,
                 merchant: { select: { companyName: true } },
                 reviews: {
