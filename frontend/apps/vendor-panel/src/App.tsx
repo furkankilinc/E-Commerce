@@ -2,6 +2,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import VendorLoginPage from './features/auth/LoginPage';
 import VendorRegisterPage from './features/auth/RegisterPage';
 import VendorLayout from './app/layouts/VendorLayout';
+import DashboardPage from './features/dashboard/DashboardPage';
+import ProductListPage from './features/products/ProductListPage';
 import ProductCreatePage from './features/products/ProductCreatePage';
 import ProtectedRoute from './app/ProtectedRoute';
 import './styles/global.css';
@@ -12,11 +14,11 @@ function App() {
       <Routes>
         <Route element={<ProtectedRoute />}>
           <Route element={<VendorLayout />}>
-            <Route path="/dashboard" element={<div className="font-black text-4xl">DASHBOARD COMING SOON</div>} />
-            <Route path="/products" element={<div className="font-black text-4xl">PRODUCT LIST COMING SOON</div>} />
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/products" element={<ProductListPage />} />
             <Route path="/products/create" element={<ProductCreatePage />} />
-            <Route path="/orders" element={<div className="font-black text-4xl">ORDERS COMING SOON</div>} />
-            <Route path="/settings" element={<div className="font-black text-4xl">SETTINGS COMING SOON</div>} />
+            <Route path="/orders" element={<div className="font-black text-4xl italic uppercase">Orders Coming Soon</div>} />
+            <Route path="/settings" element={<div className="font-black text-4xl italic uppercase">Settings Coming Soon</div>} />
           </Route>
         </Route>
         <Route path="/register" element={<VendorRegisterPage />} />

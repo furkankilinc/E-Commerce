@@ -5,19 +5,29 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const router = Router();
 
-// Middleware placeholder for merchant auth
-// In a real app, you'd use authenticate('merchant')
-const mockMerchantAuth = async (req, res, next) => {
-    // For demonstration, we'll assume a merchant is logged in
-    // In production, this would come from the JWT payload
-    const merchant = await prisma.merchant.findFirst();
-    if (!merchant) return res.status(401).json({ message: 'Merchant not found' });
-    req.merchantId = merchant.id;
-    next();
+const { verifyToken } = require('../../utils/token.util');
+
+// Real merchant authentication based on JWT token
+const merchantAuth = async (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ message: 'Yetkilendirme token\'ı bulunamadı.' });
+    }
+
+    const token = authHeader.split(' ')[1];
+
+    try {
+        const payload = verifyToken(token, 'merchant');
+        req.merchantId = payload.sub; // sub contains the merchant ID
+        next();
+    } catch (err) {
+        console.error('[merchant/auth]', err);
+        return res.status(401).json({ message: 'Token geçersiz veya süresi dolmuş.' });
+    }
 };
 
 // POST /api/merchant/products
-router.post('/', mockMerchantAuth, async (req, res) => {
+router.post('/', merchantAuth, async (req, res) => {
     try {
         const {
             name, description, price, categoryId, images, variants, sku, stock
@@ -58,16 +68,37 @@ router.post('/', mockMerchantAuth, async (req, res) => {
 });
 
 // GET /api/merchant/products
-router.get('/', mockMerchantAuth, async (req, res) => {
+router.get('/', merchantAuth, async (req, res) => {
     try {
-        const products = await prisma.product.findMany({
-            where: { merchantId: req.merchantId },
-            include: {
-                images: true,
-                category: true
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+
+        const [products, total] = await prisma.$transaction([
+            prisma.product.findMany({
+                where: { merchantId: req.merchantId },
+                include: {
+                    images: true,
+                    category: true
+                },
+                orderBy: { createdAt: 'desc' },
+                skip,
+                take: limit
+            }),
+            prisma.product.count({
+                where: { merchantId: req.merchantId }
+            })
+        ]);
+
+        return res.json({
+            products,
+            pagination: {
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit)
             }
         });
-        return res.json(products);
     } catch (err) {
         console.error('[merchant/getProducts]', err);
         return res.status(500).json({ message: 'Ürünler listelenemedi.' });

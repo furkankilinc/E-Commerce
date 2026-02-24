@@ -5,10 +5,11 @@ const prisma = new PrismaClient();
 const router = Router();
 
 // GET /api/products
-// Fetch all products with images and categories
+// Fetch all products with images and categories (with pagination)
 router.get('/', async (req, res) => {
     try {
-        const { category, search, limit = 20 } = req.query;
+        const { category, search, page = 1, limit = 20 } = req.query;
+        const skip = (parseInt(page) - 1) * parseInt(limit);
 
         const where = {
             isActive: true,
@@ -25,22 +26,34 @@ router.get('/', async (req, res) => {
             ];
         }
 
-        const products = await prisma.product.findMany({
-            where,
-            include: {
-                images: true,
-                category: true,
-                merchant: {
-                    select: {
-                        companyName: true
+        const [products, total] = await prisma.$transaction([
+            prisma.product.findMany({
+                where,
+                include: {
+                    images: true,
+                    category: true,
+                    merchant: {
+                        select: {
+                            companyName: true
+                        }
                     }
-                }
-            },
-            take: parseInt(limit),
-            orderBy: { createdAt: 'desc' }
-        });
+                },
+                skip,
+                take: parseInt(limit),
+                orderBy: { createdAt: 'desc' }
+            }),
+            prisma.product.count({ where })
+        ]);
 
-        return res.json(products);
+        return res.json({
+            products,
+            pagination: {
+                total,
+                page: parseInt(page),
+                limit: parseInt(limit),
+                totalPages: Math.ceil(total / parseInt(limit))
+            }
+        });
     } catch (err) {
         console.error('[products/getAll]', err);
         return res.status(500).json({ message: 'Sunucu hatası.' });
