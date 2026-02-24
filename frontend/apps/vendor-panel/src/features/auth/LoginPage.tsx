@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from './useAuth';
 
 const VendorLoginPage: React.FC = () => {
     const navigate = useNavigate();
+    const { login } = useAuth();
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -28,13 +30,14 @@ const VendorLoginPage: React.FC = () => {
             const data = await res.json();
 
             if (!res.ok) {
-                setApiError(data.message || 'Login failed');
+                setApiError(data.message || 'Giriş başarısız.');
             } else {
-                setApiSuccess('Logged in successfully!');
-                setTimeout(() => navigate('/'), 1000);
+                setApiSuccess('Başarıyla giriş yapıldı!');
+                login(data.accessToken, data.refreshToken, data.merchant);
+                setTimeout(() => navigate('/dashboard'), 1000);
             }
         } catch (err) {
-            setApiError('Network error. Please try again.');
+            setApiError('Bağlantı hatası. Lütfen tekrar deneyin.');
         } finally {
             setIsLoading(false);
         }

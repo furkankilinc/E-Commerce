@@ -51,13 +51,13 @@ const VendorRegisterPage: React.FC = () => {
             const data = await res.json();
 
             if (!res.ok) {
-                setApiError(data.message || 'Registration failed');
+                setApiError(data.message || 'Kayıt başarısız.');
             } else {
-                setApiSuccess('Registration successful! Redirecting to login...');
+                setApiSuccess('Kayıt başarılı! Giriş sayfasına yönlendiriliyorsunuz...');
                 setTimeout(() => navigate('/login'), 2000);
             }
         } catch (err) {
-            setApiError('Network error. Please try again.');
+            setApiError('Bağlantı hatası. Lütfen tekrar deneyin.');
         } finally {
             setIsLoading(false);
         }
