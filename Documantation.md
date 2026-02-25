@@ -512,7 +512,7 @@ Sistem, **RBAC (Role-Based Access Control)** mimarisi üzerine kurgulanmış olu
 **Kabul Kriterleri:**
 - Aşağıdaki raporlar XLSX formatında indirilebilir olmalıdır: Sipariş Listesi Raporu, Ürün Satış Raporu, Stok Durum Raporu, Müşteri Listesi Raporu.
 - Her rapor için tarih aralığı, kategori ve durum filtreleri uygulanabilmeli; yalnızca filtrelenmiş veri çıktıya alınmalıdır.
-- XLSX çıktısı kurumsal görünümde olmalıdır: başlık satırı kalın ve renkli, sayısal kolonlar sağa hizalı, tarih formatı `GG.AA.YYYY`, para birimi kolonları `₺` sembollü.
+- XLSX çıktısı kurumsal görünümde olmalıdır: başlık satırı kalın ve renkli, sayısal kolonlar sağa hizalı, tarih formatı `GG.AA.YYYY`, para birimi kolonları `TL` sembollü.
 - 10.000 satırı aşan raporlar Bull queue'ya alınmalı; arka planda üretilmeli ve hazır olduğunda kullanıcıya bildirim gönderilmelidir.
 - Üretilen rapor dosyaları MinIO'da 7 gün süreyle saklanmalı; bu süreden sonra otomatik olarak silinmelidir.
 

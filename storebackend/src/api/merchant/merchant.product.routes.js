@@ -31,7 +31,7 @@ router.post('/', merchantAuth, async (req, res) => {
     try {
         const {
             name, description, price, categoryId, images, variants, sku, stock,
-            status, metadata, currency = '₺'
+            status, metadata, currency = 'TL'
         } = req.body;
 
         const product = await prisma.product.create({
@@ -78,11 +78,17 @@ router.get('/', merchantAuth, async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
+        const status = req.query.status; // Get status from query
         const skip = (page - 1) * limit;
+
+        const where = { merchantId: req.merchantId };
+        if (status) {
+            where.status = status;
+        }
 
         const [products, total] = await prisma.$transaction([
             prisma.product.findMany({
-                where: { merchantId: req.merchantId },
+                where,
                 include: {
                     images: true,
                     category: true
@@ -167,9 +173,21 @@ router.put('/:id', merchantAuth, async (req, res) => {
                 metadata: {
                     ...(metadata || (existing.metadata || {})),
                     ...(currency ? { currency } : {})
-                }
-                // images and variants update logic can be complex, skipping for brevity or 
-                // typically handled with separate endpoints or full overwrite
+                },
+                // Update images: delete all existing and create new ones
+                images: images ? {
+                    deleteMany: {},
+                    create: images.map((url, index) => ({
+                        url,
+                        isMain: index === 0,
+                        order: index
+                    }))
+                } : undefined,
+                // Update variants: delete all existing and create new ones
+                variants: variants ? {
+                    deleteMany: {},
+                    create: variants
+                } : undefined
             }
         });
 
@@ -177,6 +195,30 @@ router.put('/:id', merchantAuth, async (req, res) => {
     } catch (err) {
         console.error('[merchant/updateProduct]', err);
         return res.status(500).json({ message: 'Ürün güncellenemedi.' });
+    }
+});
+
+// DELETE /api/merchant/products/:id
+router.delete('/:id', merchantAuth, async (req, res) => {
+    try {
+        const product = await prisma.product.findFirst({
+            where: { id: req.params.id, merchantId: req.merchantId }
+        });
+
+        if (!product) {
+            return res.status(404).json({ message: 'Ürün bulunamadı.' });
+        }
+
+        // Cascade delete is handled by database or manually if needed
+        // Prisma will handle relation cleanup if defined in schema (onDelete: Cascade)
+        await prisma.product.delete({
+            where: { id: req.params.id }
+        });
+
+        return res.json({ message: 'Ürün başarıyla silindi.' });
+    } catch (err) {
+        console.error('[merchant/deleteProduct]', err);
+        return res.status(500).json({ message: 'Ürün silinemedi.' });
     }
 });
 

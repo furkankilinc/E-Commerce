@@ -171,7 +171,7 @@ const ProductDetailPage: React.FC = () => {
                             <div className="flex flex-col gap-1 mb-6">
                                 <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">PERAKENDE SATIŞ FİYATI</span>
                                 <span className="text-5xl font-black text-gray-900 tracking-tighter italic">
-                                    {(product.metadata as any)?.currency || '₺'}{product.price.toLocaleString()}
+                                    {product.price.toLocaleString()}&nbsp;{(product.metadata as any)?.currency || '  TL'}
                                 </span>
                             </div>
                             <p className="text-gray-500 text-sm font-bold leading-relaxed opacity-70 italic max-w-sm">

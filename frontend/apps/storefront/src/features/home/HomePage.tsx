@@ -644,7 +644,7 @@ const HomePage: React.FC = () => {
                                             <div className="flex flex-col">
                                                 <span className="text-[8px] font-black text-gray-400 uppercase tracking-widest italic leading-none mb-1">FUIRA FİYAT</span>
                                                 <span className="text-3xl font-[1000] text-gray-900 tracking-tighter italic leading-none">
-                                                    {product.price.toLocaleString()}{(product.metadata as any)?.currency || ' ₺'}
+                                                    {product.price.toLocaleString()}{(product.metadata as any)?.currency || ' TL'}
                                                 </span>
                                             </div>
                                             <button

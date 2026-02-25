@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate, useBlocker } from 'react-router-dom';
+import { useNavigate, useBlocker, useParams } from 'react-router-dom';
 import { authStore } from '../auth/auth.store';
 import { toast } from 'react-toastify';
-import Swal from 'sweetalert2';
 
 interface Category {
     id: string;
@@ -22,7 +21,9 @@ const ProductCreatePage: React.FC = () => {
     const token = authStore.getToken();
     const [isLoading, setIsLoading] = useState(false);
     const [isDirty, setIsDirty] = useState(false);
+    const { id } = useParams();
     const submitLock = useRef(false);
+    const isSavingDraft = useRef(false);
 
     // Category States
     const [allCategories, setAllCategories] = useState<Category[]>([]);
@@ -45,9 +46,11 @@ const ProductCreatePage: React.FC = () => {
         discountPrice: '',
         stock: '',
         taxRate: '20%',
-        currency: '₺',
+        currency: 'TL',
         status: 'PUBLISHED' // PUBLISHED or DRAFT
     });
+    const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+    const [isUploading, setIsUploading] = useState(false);
 
     // Navigation Blocker
     const blocker = useBlocker(
@@ -55,105 +58,100 @@ const ProductCreatePage: React.FC = () => {
             isDirty && currentLocation.pathname !== nextLocation.pathname
     );
 
-    // Initial Load & Draft Recovery
+    // Initial Load: Categories & Existing Product (if editing)
     useEffect(() => {
-        const fetchCategories = async () => {
+        const loadData = async () => {
+            setIsLoading(true);
             try {
-                const res = await fetch('/api/categories');
-                if (res.ok) {
-                    const data = await res.json();
-                    setAllCategories(data);
-                    setLevel1Categories(data.filter((c: Category) => !c.parentId));
+                // 1. Fetch Categories
+                const catRes = await fetch('/api/categories');
+                let catData: Category[] = [];
+                if (catRes.ok) {
+                    catData = await catRes.json();
+                    setAllCategories(catData);
+                    setLevel1Categories(catData.filter((c: Category) => !c.parentId));
+                }
+
+                // 2. Fetch Product if ID exists
+                if (id) {
+                    const prodRes = await fetch(`/api/merchant/products/${id}`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (prodRes.ok) {
+                        const prod = await prodRes.json();
+                        setFormData({
+                            name: prod.name || '',
+                            slug: prod.slug || '',
+                            description: prod.description || '',
+                            price: prod.price?.toString() || '',
+                            discountPrice: prod.metadata?.discountPrice || '',
+                            stock: prod.stock?.toString() || '',
+                            taxRate: prod.metadata?.taxRate || '20%',
+                            currency: prod.metadata?.currency || 'TL',
+                            status: prod.status || 'DRAFT'
+                        });
+                        setUploadedImages(prod.images?.map((img: any) => img.url) || []);
+
+                        // Set Category Levels
+                        if (prod.categoryId && catData.length > 0) {
+                            const cat3 = catData.find(c => c.id === prod.categoryId);
+                            if (cat3) {
+                                if (cat3.parentId) {
+                                    const cat2 = catData.find(c => c.id === cat3.parentId);
+                                    if (cat2 && cat2.parentId) {
+                                        // Level 3
+                                        setSelectedLevel3(cat3.id);
+                                        setSelectedLevel2(cat2.id);
+                                        setSelectedLevel1(cat2.parentId);
+                                        setLevel2Categories(catData.filter(c => c.parentId === cat2.parentId));
+                                        setLevel3Categories(catData.filter(c => c.parentId === cat2.id));
+                                    } else if (cat2) {
+                                        // Level 2
+                                        setSelectedLevel2(cat3.id);
+                                        setSelectedLevel1(cat2.id);
+                                        setLevel2Categories(catData.filter(c => c.parentId === cat2.id));
+                                    }
+                                } else {
+                                    // Level 1
+                                    setSelectedLevel1(cat3.id);
+                                }
+                            }
+                        }
+
+                        // Set Attributes
+                        if (prod.variants) {
+                            setAttributes(prod.variants.map((v: any) => ({ key: v.name, value: v.value })));
+                        }
+                    }
                 }
             } catch (err) {
-                console.error('Kategoriler çekilemedi:', err);
+                console.error('Veri yükleme hatası:', err);
+            } finally {
+                setIsLoading(false);
+                setIsDirty(false); // Reset dirty state after initial load
             }
         };
-        fetchCategories();
+        loadData();
+    }, [id]);
 
-        // Check for local draft
-        const savedDraft = localStorage.getItem('fuira_product_draft');
-        if (savedDraft) {
-            Swal.fire({
-                title: 'Taslak Bulundu!',
-                text: 'Yarım kalan bir ürün girişiniz var, devam etmek ister misiniz?',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#ff3366',
-                cancelButtonColor: '#94a3b8',
-                confirmButtonText: 'Evet, Devam Et',
-                cancelButtonText: 'Hayır, Sil',
-                background: '#ffffff',
-                customClass: {
-                    title: 'font-black italic uppercase tracking-tighter',
-                    popup: 'rounded-[3rem]',
-                    confirmButton: 'rounded-2xl px-8 py-4 font-black uppercase tracking-widest text-xs',
-                    cancelButton: 'rounded-2xl px-8 py-4 font-black uppercase tracking-widest text-xs'
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    try {
-                        const parsed = JSON.parse(savedDraft);
-                        setFormData(parsed.formData);
-                        setAttributes(parsed.attributes || []);
-                        setSelectedLevel1(parsed.selectedLevel1 || '');
-                        setSelectedLevel2(parsed.selectedLevel2 || '');
-                        setSelectedLevel3(parsed.selectedLevel3 || '');
-                        toast.info('Taslak başarıyla yüklendi.');
-                    } catch (e) {
-                        localStorage.removeItem('fuira_product_draft');
+    // Silent Auto-save on exit
+    useEffect(() => {
+        if (blocker.state === "blocked" && !submitLock.current && !isSavingDraft.current) {
+            const autoSaveAndLeave = async () => {
+                isSavingDraft.current = true;
+                try {
+                    // Only auto-save if product has a name or some content
+                    if (formData.name || uploadedImages.length > 0) {
+                        await handleSubmit('DRAFT', true);
                     }
-                } else {
-                    localStorage.removeItem('fuira_product_draft');
-                }
-            });
-        }
-    }, []);
-
-    // Local Auto-save
-    useEffect(() => {
-        if (isDirty) {
-            const timer = setTimeout(() => {
-                const draftData = { formData, attributes, selectedLevel1, selectedLevel2, selectedLevel3 };
-                localStorage.setItem('fuira_product_draft', JSON.stringify(draftData));
-            }, 2000);
-            return () => clearTimeout(timer);
-        }
-    }, [formData, attributes, selectedLevel1, selectedLevel2, selectedLevel3, isDirty]);
-
-    // Handle Blocker Trigger
-    useEffect(() => {
-        if (blocker.state === "blocked") {
-            Swal.fire({
-                title: 'Kaydedilmemiş Değişiklikler!',
-                text: 'Sayfadan ayrılmadan önce ürününüzü taslak olarak kaydetmek ister misiniz?',
-                icon: 'warning',
-                showDenyButton: true,
-                showCancelButton: true,
-                confirmButtonText: 'Taslak Olarak Kaydet',
-                denyButtonText: 'Hayır, Sil',
-                cancelButtonText: 'Vazgeç',
-                confirmButtonColor: '#ff3366',
-                denyButtonColor: '#94a3b8',
-                background: '#ffffff',
-                customClass: {
-                    title: 'font-black italic uppercase tracking-tighter',
-                    popup: 'rounded-[3rem]',
-                    confirmButton: 'rounded-2xl px-6 py-4 font-black uppercase tracking-widest text-[10px]',
-                    denyButton: 'rounded-2xl px-6 py-4 font-black uppercase tracking-widest text-[10px]',
-                    cancelButton: 'rounded-2xl px-6 py-4 font-black uppercase tracking-widest text-[10px]'
-                }
-            }).then(async (result) => {
-                if (result.isConfirmed) {
-                    await handleSubmit('DRAFT', true);
+                } catch (err) {
+                    console.error('Auto-save error:', err);
+                } finally {
+                    isDirty && setIsDirty(false); // Clear dirty to allow blocker leave
                     blocker.proceed();
-                } else if (result.isDenied) {
-                    localStorage.removeItem('fuira_product_draft');
-                    blocker.proceed();
-                } else {
-                    blocker.reset();
                 }
-            });
+            };
+            autoSaveAndLeave();
         }
     }, [blocker]);
 
@@ -222,6 +220,65 @@ const ProductCreatePage: React.FC = () => {
         }
     };
 
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
+        if (!files || files.length === 0) return;
+
+        setIsUploading(true);
+        const uploadFormData = new FormData();
+        Array.from(files).forEach(file => {
+            uploadFormData.append('images', file);
+        });
+
+        try {
+            const res = await fetch('/api/upload/bulk', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                body: uploadFormData
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                setUploadedImages(prev => [...prev, ...data.urls]);
+                toast.success('Resimler başarıyla WebP formatına yüklendi.');
+            } else {
+                toast.error('Görsel yükleme başarısız oldu.');
+            }
+        } catch (err) {
+            console.error('Upload error:', err);
+            toast.error('Görsel sunucuya gönderilemedi.');
+        } finally {
+            setIsUploading(false);
+        }
+    };
+
+    const removeImage = async (url: string) => {
+        try {
+            // MinIO'dan sil
+            const res = await fetch('/api/upload', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ url })
+            });
+
+            if (res.ok) {
+                // UI'dan sil
+                setUploadedImages(prev => prev.filter(img => img !== url));
+                toast.success('Görsel başarıyla silindi.');
+            } else {
+                toast.error('Görsel sunucudan silinemedi.');
+            }
+        } catch (err) {
+            console.error('Delete error:', err);
+            toast.error('Silme işlemi başarısız oldu.');
+        }
+    };
+
     const handleSubmit = async (submitStatus?: string, fromBlocker = false) => {
         if (submitLock.current) return;
 
@@ -236,7 +293,10 @@ const ProductCreatePage: React.FC = () => {
         setIsLoading(true);
         submitLock.current = true;
         try {
-            const metadata: Record<string, string> = {};
+            const metadata: Record<string, string> = {
+                taxRate: formData.taxRate,
+                discountPrice: formData.discountPrice
+            };
             const variants: { name: string, value: string }[] = [];
             attributes.forEach(attr => {
                 if (attr.key && attr.value) {
@@ -245,8 +305,11 @@ const ProductCreatePage: React.FC = () => {
                 }
             });
 
-            const response = await fetch('/api/merchant/products', {
-                method: 'POST',
+            const method = id ? 'PUT' : 'POST';
+            const url = id ? `/api/merchant/products/${id}` : '/api/merchant/products';
+
+            const response = await fetch(url, {
+                method,
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
@@ -254,13 +317,12 @@ const ProductCreatePage: React.FC = () => {
                 body: JSON.stringify({
                     ...formData,
                     price: parseFloat(formData.price) || 0,
-                    categoryId: categoryId || 'ckv1234567890', // Default if leaving
+                    categoryId: categoryId || (id ? undefined : 'ckv1234567890'),
                     status: finalStatus,
                     metadata,
                     stock: parseInt(formData.stock) || 0,
-                    images: ["https://images.unsplash.com/photo-1523275335684-37898b6baf30"], // Mock
+                    images: uploadedImages.length > 0 ? uploadedImages : ["https://images.unsplash.com/photo-1523275335684-37898b6baf30"],
                     variants
-
                 }),
             });
 
@@ -290,9 +352,11 @@ const ProductCreatePage: React.FC = () => {
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-10">
                 <div className="relative group">
                     <h1 className="text-7xl font-[1000] text-slate-900 tracking-tighter mb-4 italic leading-none">
-                        Ürün <span className="text-brand-pink">Ekle</span>
+                        {id ? 'Ürünü' : 'Ürün'} <span className="text-brand-pink">{id ? 'Düzenle' : 'Ekle'}</span>
                     </h1>
-                    <p className="text-slate-400 font-bold text-lg max-w-lg italic opacity-70">Ürününüzü tüm detaylarıyla listeleyin, müşterilerinize en doğru bilgiyi ulaştırın.</p>
+                    <p className="text-slate-400 font-bold text-lg max-w-lg italic opacity-70">
+                        {id ? 'Mevcut ürün bilgilerinizi güncelleyin ve kaydedin.' : 'Ürününüzü tüm detaylarıyla listeleyin, müşterilerinize en doğru bilgiyi ulaştırın.'}
+                    </p>
                 </div>
                 <div className="flex gap-6">
                     <button
@@ -301,25 +365,13 @@ const ProductCreatePage: React.FC = () => {
                     >
                         VAZGEÇ
                     </button>
-                    {!isDirty && (
-                        <div className="flex items-center gap-3 px-8 bg-slate-50 rounded-[2rem] border border-slate-100 text-[10px] font-black text-slate-400 uppercase italic">
-                            <div className="w-2 h-2 bg-slate-300 rounded-full"></div>
-                            Değişiklik Yok
-                        </div>
-                    )}
-                    {isDirty && (
-                        <div className="flex items-center gap-3 px-8 bg-indigo-50 rounded-[2rem] border border-indigo-100 text-[10px] font-black text-indigo-500 uppercase italic animate-pulse">
-                            <div className="w-2 h-2 bg-indigo-500 rounded-full"></div>
-                            Otomatik Kaydediliyor...
-                        </div>
-                    )}
                     <button
                         onClick={() => handleSubmit('PUBLISHED')}
                         disabled={isLoading}
                         className="px-12 py-5 bg-brand-pink text-white rounded-[2rem] text-[11px] font-black uppercase tracking-[0.2em] shadow-2xl shadow-brand-pink/30 hover:bg-brand-pink-hover transition-all active:scale-95 flex items-center gap-4 italic"
                     >
                         {isLoading && <div className="w-5 h-5 border-2 border-white/50 border-t-white rounded-full animate-spin"></div>}
-                        YAYINLA
+                        ŞİMDİ YAYINLA
                     </button>
                 </div>
             </div>
@@ -466,6 +518,49 @@ const ProductCreatePage: React.FC = () => {
                             />
                         </div>
                     </div>
+
+                    {/* Image Upload Area */}
+                    <div className="bg-white rounded-[3.5rem] p-12 shadow-sm border border-slate-50 relative group">
+                        <div className="flex items-center gap-6 mb-12">
+                            <div className="w-14 h-14 bg-pink-50 rounded-2xl flex items-center justify-center text-brand-pink shadow-inner">
+                                <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                            </div>
+                            <h3 className="text-2xl font-[900] text-slate-900 uppercase tracking-tighter italic">ÜRÜN GÖRSELLERİ</h3>
+
+                        </div>
+
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                            {uploadedImages.map((url, i) => (
+                                <div key={i} className="relative aspect-square rounded-[2rem] overflow-hidden border-2 border-slate-100 group/img bg-slate-50">
+                                    <img src={url} alt="" className="w-full h-full object-cover" />
+                                    <button
+                                        onClick={() => removeImage(url)}
+                                        className="absolute top-3 right-3 w-8 h-8 bg-white/90 backdrop-blur rounded-xl flex items-center justify-center text-red-500 shadow-lg opacity-0 group-hover/img:opacity-100 transition-all hover:bg-red-500 hover:text-white"
+                                    >
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12" /></svg>
+                                    </button>
+                                    <div className="absolute bottom-3 left-3 px-2 py-1 bg-black/50 backdrop-blur rounded-lg text-[8px] font-black text-white uppercase italic">WEBP</div>
+                                </div>
+                            ))}
+
+                            <label className="relative aspect-square rounded-[2rem] border-4 border-dashed border-slate-100 flex flex-col items-center justify-center gap-4 cursor-pointer hover:border-brand-pink hover:bg-brand-pink/5 transition-all group/upload">
+                                <input type="file" multiple accept="image/*" onChange={handleImageUpload} className="hidden" />
+                                {isUploading ? (
+                                    <div className="w-10 h-10 border-4 border-brand-pink/20 border-t-brand-pink rounded-full animate-spin"></div>
+                                ) : (
+                                    <>
+                                        <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-300 group-hover/upload:text-brand-pink group-hover/upload:scale-110 transition-all shadow-inner">
+                                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M12 4v16m8-8H4" /></svg>
+                                        </div>
+                                        <div className="text-center">
+                                            <span className="text-[10px] font-black text-slate-400 group-hover/upload:text-brand-pink uppercase tracking-widest italic block">GÖRSEL EKLE</span>
+                                            <span className="text-[8px] font-bold text-slate-300 mt-1 block">PNG, JPG, WEBP</span>
+                                        </div>
+                                    </>
+                                )}
+                            </label>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Right Column (Sidebar) */}
@@ -489,7 +584,7 @@ const ProductCreatePage: React.FC = () => {
                                         onChange={handleChange}
                                         className="w-full h-16 px-8 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-green-500 outline-none font-black text-slate-700 shadow-inner italic appearance-none cursor-pointer"
                                     >
-                                        <option value="₺">₺ (TL)</option>
+                                        <option value="TL">TL (TL)</option>
                                         <option value="$">$ (USD)</option>
                                         <option value="€">€ (EUR)</option>
                                         <option value="£">£ (GBP)</option>
