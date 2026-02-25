@@ -45,6 +45,7 @@ const ProductCreatePage: React.FC = () => {
         discountPrice: '',
         stock: '',
         taxRate: '20%',
+        currency: '₺',
         status: 'PUBLISHED' // PUBLISHED or DRAFT
     });
 
@@ -479,16 +480,33 @@ const ProductCreatePage: React.FC = () => {
                         </div>
 
                         <div className="space-y-10">
-                            <div className="space-y-4">
-                                <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 italic ml-2">SATIŞ FİYATI ($)</label>
-                                <input
-                                    type="number"
-                                    name="price"
-                                    value={formData.price}
-                                    onChange={handleChange}
-                                    placeholder="0.00"
-                                    className="w-full h-16 px-8 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-green-500 outline-none font-black text-slate-700 shadow-inner italic"
-                                />
+                            <div className="grid grid-cols-2 gap-6">
+                                <div className="space-y-4">
+                                    <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 italic ml-2">PARA CİNSİ</label>
+                                    <select
+                                        name="currency"
+                                        value={formData.currency}
+                                        onChange={handleChange}
+                                        className="w-full h-16 px-8 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-green-500 outline-none font-black text-slate-700 shadow-inner italic appearance-none cursor-pointer"
+                                    >
+                                        <option value="₺">₺ (TL)</option>
+                                        <option value="$">$ (USD)</option>
+                                        <option value="€">€ (EUR)</option>
+                                        <option value="£">£ (GBP)</option>
+                                    </select>
+                                </div>
+
+                                <div className="space-y-4">
+                                    <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 italic ml-2">SATIŞ FİYATI</label>
+                                    <input
+                                        type="number"
+                                        name="price"
+                                        value={formData.price}
+                                        onChange={handleChange}
+                                        placeholder="0.00"
+                                        className="w-full h-16 px-8 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-green-500 outline-none font-black text-slate-700 shadow-inner italic"
+                                    />
+                                </div>
                             </div>
 
                             <div className="space-y-4">

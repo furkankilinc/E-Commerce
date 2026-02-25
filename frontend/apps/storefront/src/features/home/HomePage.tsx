@@ -103,26 +103,94 @@ const HomePage: React.FC = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const categoryParam = searchParams.get('category') || '';
 
-    const [filters, setFilters] = useState({
-        search: searchParams.get('search') || '',
-        category: categoryParam,
-        minPrice: '',
-        maxPrice: '',
-        rating: 0,
-        merchants: [] as string[],
-        selectedVariants: {} as Record<string, string[]>,
-        sort: 'popular',
-        filterSearch: ''
+    const [filters, setFilters] = useState(() => {
+        const s = searchParams.get('search') || '';
+        const c = searchParams.get('category') || '';
+        const minP = searchParams.get('minPrice') || '';
+        const maxP = searchParams.get('maxPrice') || '';
+        const r = parseInt(searchParams.get('rating') || '0');
+        const m = searchParams.get('merchants')?.split(',').filter(Boolean) || [];
+        const sort = searchParams.get('sort') || 'popular';
+
+        // Parse variants from URL (format: key1:val1,val2;key2:val3)
+        const v: Record<string, string[]> = {};
+        const vParam = searchParams.get('variants');
+        if (vParam) {
+            vParam.split(';').forEach(pair => {
+                const [key, values] = pair.split(':');
+                if (key && values) v[key] = values.split(',');
+            });
+        }
+
+        return {
+            search: s,
+            category: c,
+            minPrice: minP,
+            maxPrice: maxP,
+            rating: r,
+            merchants: m,
+            selectedVariants: v,
+            sort,
+            filterSearch: ''
+        };
     });
 
-    // Update filters when URL params change
+    // Sync URL params to local state (for browser back/forward)
     useEffect(() => {
-        const cat = searchParams.get('category') || '';
         const s = searchParams.get('search') || '';
-        if (cat !== filters.category || s !== filters.search) {
-            setFilters(prev => ({ ...prev, category: cat, search: s }));
+        const c = searchParams.get('category') || '';
+        const minP = searchParams.get('minPrice') || '';
+        const maxP = searchParams.get('maxPrice') || '';
+        const r = parseInt(searchParams.get('rating') || '0');
+        const m = searchParams.get('merchants')?.split(',').filter(Boolean) || [];
+        const sort = searchParams.get('sort') || 'popular';
+
+        const v: Record<string, string[]> = {};
+        const vParam = searchParams.get('variants');
+        if (vParam) {
+            vParam.split(';').forEach(pair => {
+                const [key, values] = pair.split(':');
+                if (key && values) v[key] = values.split(',');
+            });
         }
+
+        setFilters(prev => ({
+            ...prev,
+            search: s,
+            category: c,
+            minPrice: minP,
+            maxPrice: maxP,
+            rating: r,
+            merchants: m,
+            selectedVariants: v,
+            sort
+        }));
     }, [searchParams]);
+
+    // Sync local filters to URL
+    useEffect(() => {
+        const newParams = new URLSearchParams(searchParams);
+
+        // Update all params based on current filters
+        if (filters.search) newParams.set('search', filters.search); else newParams.delete('search');
+        if (filters.category) newParams.set('category', filters.category); else newParams.delete('category');
+        if (filters.minPrice) newParams.set('minPrice', filters.minPrice); else newParams.delete('minPrice');
+        if (filters.maxPrice) newParams.set('maxPrice', filters.maxPrice); else newParams.delete('maxPrice');
+        if (filters.rating > 0) newParams.set('rating', filters.rating.toString()); else newParams.delete('rating');
+        if (filters.merchants.length > 0) newParams.set('merchants', filters.merchants.join(',')); else newParams.delete('merchants');
+        if (filters.sort !== 'popular') newParams.set('sort', filters.sort); else newParams.delete('sort');
+
+        const vQuery = Object.entries(filters.selectedVariants)
+            .filter(([_, vals]) => vals.length > 0)
+            .map(([k, vals]) => `${k}:${vals.join(',')}`)
+            .join(';');
+        if (vQuery) newParams.set('variants', vQuery); else newParams.delete('variants');
+
+        // Check if anything actually changed before updating to prevent infinite loops
+        if (newParams.toString() !== searchParams.toString()) {
+            setSearchParams(newParams, { replace: true });
+        }
+    }, [filters.search, filters.category, filters.minPrice, filters.maxPrice, filters.rating, filters.merchants, filters.selectedVariants, filters.sort]);
 
     const updateCategory = (slug: string) => {
         const newParams = new URLSearchParams(searchParams);
@@ -139,18 +207,15 @@ const HomePage: React.FC = () => {
         setLocalSearch(filters.search);
     }, [filters.search]);
 
-    // Debounce search update
+    // Debounce search update to filters state
     useEffect(() => {
+        if (localSearch === filters.search) return;
+
         const timer = setTimeout(() => {
-            if (localSearch !== filters.search) {
-                const newParams = new URLSearchParams(searchParams);
-                if (localSearch) newParams.set('search', localSearch);
-                else newParams.delete('search');
-                setSearchParams(newParams);
-            }
+            setFilters(prev => ({ ...prev, search: localSearch }));
         }, 500);
         return () => clearTimeout(timer);
-    }, [localSearch, setSearchParams, filters.search, searchParams]);
+    }, [localSearch, filters.search]);
 
     const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({});
 
@@ -162,14 +227,25 @@ const HomePage: React.FC = () => {
                 const data = await res.json();
                 setMeta(data);
 
-                if (isFirstLoad.current) {
-                    setFilters(prev => ({
+                setFilters(prev => {
+                    const newMin = data.priceRange.min;
+                    const newMax = data.priceRange.max;
+
+                    let currentMin = parseFloat(prev.minPrice);
+                    let currentMax = parseFloat(prev.maxPrice);
+
+                    // If user had manual filters, keep them but clip to new category bounds
+                    // If no manual filters or invalid numbers, use the category bounds
+                    const updatedMin = isNaN(currentMin) ? newMin : Math.max(newMin, Math.min(newMax, currentMin));
+                    const updatedMax = isNaN(currentMax) ? newMax : Math.min(newMax, Math.max(newMin, currentMax));
+
+                    return {
                         ...prev,
-                        minPrice: data.priceRange.min.toString(),
-                        maxPrice: data.priceRange.max.toString()
-                    }));
-                    isFirstLoad.current = false;
-                }
+                        minPrice: updatedMin.toString(),
+                        maxPrice: updatedMax.toString()
+                    };
+                });
+                isFirstLoad.current = false;
             }
         } catch (err: any) {
             if (err.name !== 'AbortError') {
@@ -284,6 +360,7 @@ const HomePage: React.FC = () => {
             sort: 'popular',
             filterSearch: ''
         });
+        setLocalSearch(''); // Clear the input field immediately
         setCurrentPage(1);
     };
 
@@ -333,9 +410,9 @@ const HomePage: React.FC = () => {
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
                 <div>
                     <h1 className="text-4xl sm:text-5xl lg:text-[72px] font-[1000] text-gray-900 leading-[0.85] tracking-tighter mb-4 italic uppercase">
-                        Tech & <span className="text-brand-pink">Future</span>
+                        FUI & <span className="text-brand-pink">RA</span>
                     </h1>
-                    <p className="text-sm font-bold text-gray-400 italic">En yeni teknolojiler, Fuira güvencesiyle kapınızda.</p>
+                    <p className="text-sm font-bold text-gray-400">En yeni teknolojiler, Fuira güvencesiyle kapınızda.</p>
                 </div>
 
                 <div className="flex items-center gap-4">
@@ -351,7 +428,7 @@ const HomePage: React.FC = () => {
                         <select
                             value={filters.sort}
                             onChange={(e) => setFilters(prev => ({ ...prev, sort: e.target.value }))}
-                            className="appearance-none bg-white border-2 border-gray-50 h-16 pl-8 pr-14 rounded-[2rem] text-[11px] font-black text-gray-900 italic uppercase tracking-widest focus:outline-none focus:border-brand-pink transition-all shadow-sm"
+                            className="appearance-none cursor-pointer  bg-white border-2 border-gray-50 h-16 pl-8 pr-14 rounded-[2rem] text-[11px] font-black text-gray-900 italic uppercase tracking-widest focus:outline-none focus:border-brand-pink transition-all shadow-sm"
                         >
                             <option value="popular">Popülerlik</option>
                             <option value="newest">En Yeniler</option>
@@ -432,13 +509,13 @@ const HomePage: React.FC = () => {
                                 <div className="flex-1 bg-white border-2 border-gray-50 p-4 rounded-2xl shadow-sm">
                                     <span className="text-[8px] font-black text-gray-300 uppercase block mb-1">MİN</span>
                                     <div className="flex items-center text-xs font-black text-gray-900 italic">
-                                        $<input type="number" value={filters.minPrice} onChange={e => setFilters(prev => ({ ...prev, minPrice: e.target.value }))} className="bg-transparent w-full outline-none ml-1" />
+                                        <input type="number" value={filters.minPrice} onChange={e => setFilters(prev => ({ ...prev, minPrice: e.target.value }))} className="bg-transparent w-full outline-none ml-1" />
                                     </div>
                                 </div>
                                 <div className="flex-1 bg-white border-2 border-gray-50 p-4 rounded-2xl shadow-sm">
                                     <span className="text-[8px] font-black text-gray-300 uppercase block mb-1">MAX</span>
                                     <div className="flex items-center text-xs font-black text-gray-900 italic">
-                                        $<input type="number" value={filters.maxPrice} onChange={e => setFilters(prev => ({ ...prev, maxPrice: e.target.value }))} className="bg-transparent w-full outline-none ml-1" />
+                                        <input type="number" value={filters.maxPrice} onChange={e => setFilters(prev => ({ ...prev, maxPrice: e.target.value }))} className="bg-transparent w-full outline-none ml-1" />
                                     </div>
                                 </div>
                             </div>
@@ -563,7 +640,9 @@ const HomePage: React.FC = () => {
                                         <div className="mt-auto flex justify-between items-center pt-8 border-t border-gray-50">
                                             <div className="flex flex-col">
                                                 <span className="text-[8px] font-black text-gray-400 uppercase tracking-widest italic leading-none mb-1">FUIRA FİYAT</span>
-                                                <span className="text-3xl font-[1000] text-gray-900 tracking-tighter italic leading-none">${product.price.toLocaleString()}</span>
+                                                <span className="text-3xl font-[1000] text-gray-900 tracking-tighter italic leading-none">
+                                                    {(product.metadata as any)?.currency || '₺'}{product.price.toLocaleString()}
+                                                </span>
                                             </div>
                                             <button
                                                 onClick={(e) => {
@@ -655,7 +734,7 @@ const HomePage: React.FC = () => {
                     )}
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 

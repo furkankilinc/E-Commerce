@@ -165,7 +165,9 @@ const ProductDetailPage: React.FC = () => {
                         <div className="mb-12 p-8 bg-gray-50/50 border border-gray-100 rounded-[2.5rem] shadow-inner">
                             <div className="flex flex-col gap-1 mb-6">
                                 <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">PERAKENDE SATIŞ FİYATI</span>
-                                <span className="text-5xl font-black text-gray-900 tracking-tighter italic">${product.price.toLocaleString()}</span>
+                                <span className="text-5xl font-black text-gray-900 tracking-tighter italic">
+                                    {(product.metadata as any)?.currency || '₺'}{product.price.toLocaleString()}
+                                </span>
                             </div>
                             <p className="text-gray-500 text-sm font-bold leading-relaxed opacity-70 italic max-w-sm">
                                 {product.description.length > 150 ? product.description.substring(0, 150) + '...' : product.description}

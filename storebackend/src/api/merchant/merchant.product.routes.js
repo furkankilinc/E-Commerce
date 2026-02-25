@@ -31,7 +31,7 @@ router.post('/', merchantAuth, async (req, res) => {
     try {
         const {
             name, description, price, categoryId, images, variants, sku, stock,
-            status, metadata
+            status, metadata, currency = '₺'
         } = req.body;
 
         const product = await prisma.product.create({
@@ -45,7 +45,10 @@ router.post('/', merchantAuth, async (req, res) => {
                 merchantId: req.merchantId,
                 categoryId,
                 status: status || 'PUBLISHED',
-                metadata: metadata || {},
+                metadata: {
+                    ...(metadata || {}),
+                    currency
+                },
                 images: {
                     create: (images || []).map((url, index) => ({
                         url,
@@ -105,6 +108,75 @@ router.get('/', merchantAuth, async (req, res) => {
     } catch (err) {
         console.error('[merchant/getProducts]', err);
         return res.status(500).json({ message: 'Ürünler listelenemedi.' });
+    }
+});
+
+// GET /api/merchant/products/:id
+router.get('/:id', merchantAuth, async (req, res) => {
+    try {
+        const product = await prisma.product.findFirst({
+            where: {
+                id: req.params.id,
+                merchantId: req.merchantId
+            },
+            include: {
+                images: true,
+                variants: true,
+                category: true
+            }
+        });
+
+        if (!product) {
+            return res.status(404).json({ message: 'Ürün bulunamadı.' });
+        }
+
+        return res.json(product);
+    } catch (err) {
+        console.error('[merchant/getProduct]', err);
+        return res.status(500).json({ message: 'Ürün bilgisi alınamadı.' });
+    }
+});
+
+// PUT /api/merchant/products/:id
+router.put('/:id', merchantAuth, async (req, res) => {
+    try {
+        const {
+            name, description, price, categoryId, images, variants, sku, stock,
+            status, metadata, currency
+        } = req.body;
+
+        // Check if product belongs to merchant
+        const existing = await prisma.product.findFirst({
+            where: { id: req.params.id, merchantId: req.merchantId }
+        });
+
+        if (!existing) {
+            return res.status(404).json({ message: 'Ürün bulunamadı.' });
+        }
+
+        const product = await prisma.product.update({
+            where: { id: req.params.id },
+            data: {
+                name,
+                description,
+                price: price !== undefined ? parseFloat(price) : undefined,
+                sku,
+                stock: stock !== undefined ? parseInt(stock) : undefined,
+                categoryId,
+                status,
+                metadata: {
+                    ...(metadata || (existing.metadata || {})),
+                    ...(currency ? { currency } : {})
+                }
+                // images and variants update logic can be complex, skipping for brevity or 
+                // typically handled with separate endpoints or full overwrite
+            }
+        });
+
+        return res.json(product);
+    } catch (err) {
+        console.error('[merchant/updateProduct]', err);
+        return res.status(500).json({ message: 'Ürün güncellenemedi.' });
     }
 });
 
