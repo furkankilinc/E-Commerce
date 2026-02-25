@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import { useCart } from '../cart/cart.store';
 
 interface Product {
     id: string;
@@ -87,6 +88,7 @@ const CategoryItem: React.FC<{
 };
 
 const HomePage: React.FC = () => {
+    const { addItem } = useCart();
     const [products, setProducts] = useState<Product[]>([]);
     const [pagination, setPagination] = useState<Pagination | null>(null);
     const [meta, setMeta] = useState<FilterMeta | null>(null);
@@ -152,10 +154,10 @@ const HomePage: React.FC = () => {
 
     const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({});
 
-    const fetchMeta = async (catSlug: string) => {
+    const fetchMeta = async (catSlug: string, signal?: AbortSignal) => {
         setIsMetaLoading(true);
         try {
-            const res = await fetch(`/api/products-meta/filters?category=${catSlug}`);
+            const res = await fetch(`/api/products-meta/filters?category=${catSlug}`, { signal });
             if (res.ok) {
                 const data = await res.json();
                 setMeta(data);
@@ -169,14 +171,16 @@ const HomePage: React.FC = () => {
                     isFirstLoad.current = false;
                 }
             }
-        } catch (err) {
-            console.error('Failed to fetch meta:', err);
+        } catch (err: any) {
+            if (err.name !== 'AbortError') {
+                console.error('Failed to fetch meta:', err);
+            }
         } finally {
             setIsMetaLoading(false);
         }
     };
 
-    const fetchProducts = useCallback(async () => {
+    const fetchProducts = useCallback(async (signal?: AbortSignal) => {
         setIsLoading(true);
         try {
             const variantQuery = Object.entries(filters.selectedVariants)
@@ -197,14 +201,16 @@ const HomePage: React.FC = () => {
                 ...(variantQuery && { variants: variantQuery })
             });
 
-            const res = await fetch(`/api/products?${queryParams.toString()}`);
+            const res = await fetch(`/api/products?${queryParams.toString()}`, { signal });
             if (res.ok) {
                 const data = await res.json();
                 setProducts(data.products);
                 setPagination(data.pagination);
             }
-        } catch (err) {
-            console.error('Failed to fetch products:', err);
+        } catch (err: any) {
+            if (err.name !== 'AbortError') {
+                console.error('Failed to fetch products:', err);
+            }
         } finally {
             setIsLoading(false);
         }
@@ -212,6 +218,7 @@ const HomePage: React.FC = () => {
 
     // Update meta (features/merchants) when category changes
     useEffect(() => {
+        const controller = new AbortController();
         if (!isFirstLoad.current) {
             setFilters(prev => ({
                 ...prev,
@@ -220,10 +227,15 @@ const HomePage: React.FC = () => {
             }));
             setCurrentPage(1);
         }
-        fetchMeta(filters.category);
+        fetchMeta(filters.category, controller.signal);
+        return () => controller.abort();
     }, [filters.category]);
 
-    useEffect(() => { fetchProducts(); }, [fetchProducts]);
+    useEffect(() => {
+        const controller = new AbortController();
+        fetchProducts(controller.signal);
+        return () => controller.abort();
+    }, [fetchProducts]);
 
     const handlePageChange = (newPage: number) => {
         if (pagination && newPage >= 1 && newPage <= pagination.totalPages) {
@@ -440,9 +452,7 @@ const HomePage: React.FC = () => {
                             )}
 
                             {meta && Object.keys(meta.variants).length === 0 && filters.category && !isMetaLoading && (
-                                <div className="mb-10 text-center py-6 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-100">
-                                    <p className="text-[10px] font-black text-gray-300 uppercase tracking-widest italic">Bu kategoriye özel filtre tanımlanmamış</p>
-                                </div>
+                                <div></div>
                             )}
 
                             {meta && Object.entries(meta.variants).map(([name, values]) => {
@@ -555,7 +565,14 @@ const HomePage: React.FC = () => {
                                                 <span className="text-[8px] font-black text-gray-400 uppercase tracking-widest italic leading-none mb-1">FUIRA FİYAT</span>
                                                 <span className="text-3xl font-[1000] text-gray-900 tracking-tighter italic leading-none">${product.price.toLocaleString()}</span>
                                             </div>
-                                            <button className="w-16 h-16 rounded-[1.8rem] bg-gray-900 text-white flex items-center justify-center hover:bg-brand-pink transition-all transform hover:scale-110 shadow-2xl shadow-gray-200">
+                                            <button
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    addItem(product);
+                                                }}
+                                                className="w-16 h-16 rounded-[1.8rem] bg-gray-900 text-white flex items-center justify-center hover:bg-brand-pink transition-all transform hover:scale-110 shadow-2xl shadow-gray-200"
+                                            >
                                                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3.5"><path d="M12 4v16m8-8H4" /></svg>
                                             </button>
                                         </div>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { useCart } from '../cart/cart.store';
 
 interface Product {
     id: string;
@@ -28,24 +29,38 @@ interface Product {
 
 const ProductDetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
+    const { addItem } = useCart();
     const [product, setProduct] = useState<Product | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [selectedSize, setSelectedSize] = useState('M');
     const [activeTab, setActiveTab] = useState('description');
     const [mainImage, setMainImage] = useState('');
+    const [isAdding, setIsAdding] = useState(false);
+
+    const handleAddToCart = () => {
+        if (product) {
+            setIsAdding(true);
+            addItem(product, selectedSize);
+            setTimeout(() => setIsAdding(false), 1000);
+        }
+    };
 
     useEffect(() => {
+        const controller = new AbortController();
+
         const fetchProduct = async () => {
             try {
-                const res = await fetch(`/api/products/${id}`);
+                const res = await fetch(`/api/products/${id}`, { signal: controller.signal });
                 if (res.ok) {
                     const data = await res.json();
                     setProduct(data);
                     const mainImg = data.images.find((img: any) => img.isMain) || data.images[0];
                     if (mainImg) setMainImage(mainImg.url);
                 }
-            } catch (err) {
-                console.error('Failed to fetch product:', err);
+            } catch (err: any) {
+                if (err.name !== 'AbortError') {
+                    console.error('Failed to fetch product:', err);
+                }
             } finally {
                 setIsLoading(false);
             }
@@ -54,6 +69,8 @@ const ProductDetailPage: React.FC = () => {
         if (id) {
             fetchProduct();
         }
+
+        return () => controller.abort();
     }, [id]);
 
     if (isLoading) {
@@ -177,13 +194,17 @@ const ProductDetailPage: React.FC = () => {
                         </div>
 
                         <div className="flex gap-4 mt-4">
-                            <button className="flex-grow h-20 bg-brand-pink text-white rounded-[2rem] font-black text-[11px] uppercase tracking-[0.2em] flex items-center justify-center gap-4 hover:bg-brand-pink-hover transition-all transform hover:-translate-y-1 shadow-2xl shadow-brand-pink/40 italic">
-                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
-                                SEPETE EKLE
+                            <button
+                                onClick={handleAddToCart}
+                                disabled={isAdding}
+                                className={`flex-grow h-20 rounded-[2rem] font-black text-[11px] uppercase tracking-[0.2em] flex items-center justify-center gap-4 transition-all transform hover:-translate-y-1 shadow-2xl italic ${isAdding ? 'bg-green-500 shadow-green-500/40' : 'bg-brand-pink hover:bg-brand-pink-hover shadow-brand-pink/40 text-white'}`}
+                            >
+                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d={isAdding ? "M5 13l4 4L19 7" : "M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"} /></svg>
+                                {isAdding ? 'EKLENDİ!' : 'SEPETE EKLE'}
                             </button>
-                            <button className="w-20 h-20 bg-gray-50 text-gray-900 border border-gray-100 rounded-[2rem] flex items-center justify-center hover:bg-white hover:border-brand-pink hover:text-brand-pink transition-all shadow-sm">
+                            <Link to="/wishlist" className="w-20 h-20 bg-gray-50 text-gray-900 border border-gray-100 rounded-[2rem] flex items-center justify-center hover:bg-white hover:border-brand-pink hover:text-brand-pink transition-all shadow-sm">
                                 <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
-                            </button>
+                            </Link>
                         </div>
 
                         <div className="mt-8 flex items-center justify-center gap-6 text-[9px] font-black text-gray-300 uppercase tracking-widest italic">

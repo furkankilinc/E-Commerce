@@ -1,9 +1,11 @@
 import React from 'react';
 import { Outlet, Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../features/auth/useAuth';
+import { useCart } from '../../features/cart/cart.store';
 
 const MainLayout: React.FC = () => {
     const { logout, user, isAuthenticated } = useAuth();
+    const { items, removeItem, decrementItem, itemCount, total } = useCart();
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const [searchValue, setSearchValue] = React.useState(searchParams.get('search') || '');
@@ -11,8 +13,10 @@ const MainLayout: React.FC = () => {
     const [showSuggestions, setShowSuggestions] = React.useState(false);
     const [isSuggesting, setIsSuggesting] = React.useState(false);
     const [showUserMenu, setShowUserMenu] = React.useState(false);
+    const [showCart, setShowCart] = React.useState(false);
     const searchRef = React.useRef<HTMLDivElement>(null);
     const userMenuRef = React.useRef<HTMLDivElement>(null);
+    const cartRef = React.useRef<HTMLDivElement>(null);
 
     // Close suggestions when clicking outside
     React.useEffect(() => {
@@ -22,6 +26,9 @@ const MainLayout: React.FC = () => {
             }
             if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
                 setShowUserMenu(false);
+            }
+            if (cartRef.current && !cartRef.current.contains(event.target as Node)) {
+                setShowCart(false);
             }
         };
         document.addEventListener('mousedown', handleClickOutside);
@@ -36,6 +43,8 @@ const MainLayout: React.FC = () => {
 
     // Fetch suggestions as user types
     React.useEffect(() => {
+        const controller = new AbortController();
+
         const fetchSuggestions = async () => {
             if (searchValue.trim().length < 2) {
                 setSuggestions([]);
@@ -43,20 +52,27 @@ const MainLayout: React.FC = () => {
             }
             setIsSuggesting(true);
             try {
-                const res = await fetch(`/api/products?search=${encodeURIComponent(searchValue)}&limit=5`);
+                const res = await fetch(`/api/products?search=${encodeURIComponent(searchValue)}&limit=5`, {
+                    signal: controller.signal
+                });
                 if (res.ok) {
                     const data = await res.json();
                     setSuggestions(data.products);
                 }
-            } catch (err) {
-                console.error('Suggestion fetch failed:', err);
+            } catch (err: any) {
+                if (err.name !== 'AbortError') {
+                    console.error('Suggestion fetch failed:', err);
+                }
             } finally {
                 setIsSuggesting(false);
             }
         };
 
         const timer = setTimeout(fetchSuggestions, 300);
-        return () => clearTimeout(timer);
+        return () => {
+            clearTimeout(timer);
+            controller.abort();
+        };
     }, [searchValue]);
 
     const handleSearch = (e: React.FormEvent) => {
@@ -157,12 +173,90 @@ const MainLayout: React.FC = () => {
 
                         {/* Icons */}
                         <div className="flex items-center gap-8">
-                            <button className="relative group">
+                            <Link to="/wishlist" className="relative group">
                                 <svg className="w-7 h-7 text-gray-900 group-hover:text-brand-pink transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                                 </svg>
-                                <span className="absolute -top-1 -right-1 w-4 h-4 bg-brand-pink text-white text-[9px] font-black rounded-full flex items-center justify-center shadow-lg shadow-brand-pink/40 border-2 border-white">0</span>
-                            </button>
+                                <span className="absolute -top-1 -right-1 w-4 h-4 bg-gray-900 text-white text-[9px] font-black rounded-full flex items-center justify-center shadow-lg border-2 border-white">0</span>
+                            </Link>
+
+                            <div ref={cartRef} className="relative">
+                                <button
+                                    onClick={() => setShowCart(!showCart)}
+                                    className={`relative group p-2 rounded-2xl transition-all ${showCart ? 'bg-brand-pink/5 text-brand-pink' : 'text-gray-900 hover:bg-gray-50'}`}
+                                >
+                                    <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                                    </svg>
+                                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-brand-pink text-white text-[9px] font-black rounded-full flex items-center justify-center shadow-lg shadow-brand-pink/40 border-2 border-white">{itemCount}</span>
+                                </button>
+
+                                {showCart && (
+                                    <div className="absolute top-full right-0 mt-2 w-[380px] bg-white rounded-[2.5rem] shadow-2xl border border-gray-50 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-300">
+                                        <div className="p-8 border-b border-gray-50 bg-gray-50/30">
+                                            <div className="flex justify-between items-center mb-1">
+                                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">ALIŞVERİŞ SEPETİ</p>
+                                                <span className="text-[10px] font-black text-brand-pink bg-brand-pink/5 px-3 py-1 rounded-full italic">{itemCount} ÜRÜN</span>
+                                            </div>
+                                        </div>
+
+                                        <div className="max-h-[400px] overflow-y-auto p-4 space-y-4">
+                                            {items.length === 0 ? (
+                                                <div className="py-20 text-center">
+                                                    <p className="text-[10px] font-black text-gray-300 uppercase tracking-widest italic">Sepetiniz boş.</p>
+                                                </div>
+                                            ) : (
+                                                items.map((item) => (
+                                                    <div key={`${item.id}-${item.variant}`} className="flex gap-4 p-4 rounded-3xl hover:bg-gray-50 transition-colors group relative overflow-hidden">
+                                                        <div className="w-20 h-20 bg-white rounded-2xl border border-gray-100 flex items-center justify-center p-2 flex-shrink-0 group-hover:scale-105 transition-transform">
+                                                            <img src={item.image} alt={item.name} className="w-full h-full object-contain" />
+                                                        </div>
+                                                        <div className="flex-1 min-w-0 flex flex-col justify-center">
+                                                            <h4 className="text-[11px] font-[1000] text-gray-900 uppercase italic truncate mb-1">{item.name}</h4>
+                                                            <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-2">{item.variant || 'Standard Edition'}</p>
+                                                            <div className="flex justify-between items-center">
+                                                                <span className="text-xs font-black text-brand-pink italic">${item.price.toLocaleString()}</span>
+                                                                <span className="text-[10px] font-black text-gray-300 italic">x {item.quantity}</span>
+                                                            </div>
+                                                        </div>
+                                                        <button
+                                                            onClick={() => decrementItem(item.id, item.variant)}
+                                                            className="absolute top-1/2 -translate-y-1/2 -right-12 group-hover:right-4 w-10 h-10 rounded-2xl bg-white shadow-xl shadow-red-500/10 border border-gray-50 flex items-center justify-center text-gray-300 hover:text-red-500 transition-all duration-300"
+                                                        >
+                                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                            </svg>
+                                                        </button>
+                                                    </div>
+                                                ))
+                                            )}
+                                        </div>
+
+                                        <div className="p-8 bg-gray-50/50 border-t border-gray-50">
+                                            <div className="flex justify-between items-center mb-8">
+                                                <span className="text-[10px] font-[1000] text-gray-400 uppercase tracking-widest italic">TOPLAM TUTAR</span>
+                                                <span className="text-2xl font-[1000] text-gray-900 tracking-tighter italic leading-none">${total.toLocaleString()}</span>
+                                            </div>
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <Link
+                                                    to="/cart"
+                                                    onClick={() => setShowCart(false)}
+                                                    className="py-4 rounded-2xl bg-white border border-gray-100 text-[10px] font-black text-gray-900 uppercase tracking-widest text-center hover:bg-gray-900 hover:text-white transition-all italic"
+                                                >
+                                                    SEPETE GİT
+                                                </Link>
+                                                <Link
+                                                    to="/checkout"
+                                                    onClick={() => setShowCart(false)}
+                                                    className="py-4 rounded-2xl bg-brand-pink text-white text-[10px] font-black uppercase tracking-widest text-center shadow-xl shadow-brand-pink/20 hover:scale-105 transition-all italic"
+                                                >
+                                                    ÖDEME YAP
+                                                </Link>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
 
                             <div ref={userMenuRef} className="relative">
                                 {isAuthenticated ? (

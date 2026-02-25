@@ -13,6 +13,14 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  # --- Cache & Session (Redis) ---
+  redis:
+    image: redis:alpine
+    container_name: ecommerce_redis
+    restart: always
+    ports:
+      - "6379:6379"
+
   # --- Backend ---
   storebackend:
     build: ./storebackend
@@ -24,8 +32,10 @@ services:
       - /app/node_modules
     depends_on:
       - db
+      - redis
     environment:
       - DATABASE_URL=postgresql://postgres:password123@db:5432/fuira_ecommerce
+      - REDIS_URL=redis://redis:6379
 
   # --- Frontend Servisleri ---
   storefront:
