@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useCart } from '../cart/cart.store';
+import { toast } from 'react-toastify';
 
 interface Product {
     id: string;
@@ -101,7 +102,6 @@ const HomePage: React.FC = () => {
 
     // Filter State
     const [searchParams, setSearchParams] = useSearchParams();
-    const categoryParam = searchParams.get('category') || '';
 
     const [filters, setFilters] = useState(() => {
         const s = searchParams.get('search') || '';
@@ -286,9 +286,12 @@ const HomePage: React.FC = () => {
         } catch (err: any) {
             if (err.name !== 'AbortError') {
                 console.error('Failed to fetch products:', err);
+                setIsLoading(false);
             }
         } finally {
-            setIsLoading(false);
+            if (!signal?.aborted) {
+                setIsLoading(false);
+            }
         }
     }, [currentPage, filters]);
 
@@ -641,7 +644,7 @@ const HomePage: React.FC = () => {
                                             <div className="flex flex-col">
                                                 <span className="text-[8px] font-black text-gray-400 uppercase tracking-widest italic leading-none mb-1">FUIRA FİYAT</span>
                                                 <span className="text-3xl font-[1000] text-gray-900 tracking-tighter italic leading-none">
-                                                    {(product.metadata as any)?.currency || '₺'}{product.price.toLocaleString()}
+                                                    {product.price.toLocaleString()}{(product.metadata as any)?.currency || ' ₺'}
                                                 </span>
                                             </div>
                                             <button
@@ -649,8 +652,12 @@ const HomePage: React.FC = () => {
                                                     e.preventDefault();
                                                     e.stopPropagation();
                                                     addItem(product);
+                                                    toast.success(`${product.name} isimli ürün sepete eklendi.`, {
+                                                        autoClose: 2000,
+
+                                                    });
                                                 }}
-                                                className="w-16 h-16 rounded-[1.8rem] bg-gray-900 text-white flex items-center justify-center hover:bg-brand-pink transition-all transform hover:scale-110 shadow-2xl shadow-gray-200"
+                                                className="w-16 h-16 rounded-[1.8rem] cursor-pointer bg-gray-900 text-white flex items-center justify-center hover:bg-brand-pink transition-all transform hover:scale-110 shadow-2xl shadow-gray-200"
                                             >
                                                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3.5"><path d="M12 4v16m8-8H4" /></svg>
                                             </button>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useCart } from '../cart/cart.store';
+import { toast } from 'react-toastify';
 
 interface Product {
     id: string;
@@ -41,7 +42,11 @@ const ProductDetailPage: React.FC = () => {
         if (product) {
             setIsAdding(true);
             addItem(product, selectedSize);
-            setTimeout(() => setIsAdding(false), 1000);
+            toast.success(`${product.name} isimli ürün sepete eklendi.`, {
+                autoClose: 2000
+
+            });
+            setTimeout(() => setIsAdding(false), 2000);
         }
     };
 

@@ -94,7 +94,7 @@ const MainLayout: React.FC = () => {
                         <div className="flex items-center gap-16">
                             <Link to="/" className="flex items-center">
                                 <span className="text-3xl font-[1000] tracking-tighter text-gray-900 italic uppercase">
-                                    <span className="text-brand-pink">F</span>UIRA
+                                    <span className="text-brand-pink">FUI & </span>RA
                                 </span>
                             </Link>
                             <nav className="hidden lg:flex items-center gap-10 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">
@@ -235,7 +235,7 @@ const MainLayout: React.FC = () => {
                                         <div className="p-8 bg-gray-50/50 border-t border-gray-50">
                                             <div className="flex justify-between items-center mb-8">
                                                 <span className="text-[10px] font-[1000] text-gray-400 uppercase tracking-widest italic">TOPLAM TUTAR</span>
-                                                <span className="text-2xl font-[1000] text-gray-900 tracking-tighter italic leading-none">${total.toLocaleString()}</span>
+                                                <span className="text-2xl font-[1000] text-gray-900 tracking-tighter italic leading-none">{total.toLocaleString()} TL</span>
                                             </div>
                                             <div className="grid grid-cols-2 gap-4">
                                                 <Link
