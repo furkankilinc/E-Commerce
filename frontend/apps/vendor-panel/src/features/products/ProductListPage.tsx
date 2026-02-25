@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { authStore } from '../auth/auth.store';
+import { apiClient } from '../../shared/api/apiClient';
 
 const ProductListPage: React.FC = () => {
     const [products, setProducts] = useState<any[]>([]);
@@ -15,11 +15,7 @@ const ProductListPage: React.FC = () => {
     const fetchProducts = async (page: number) => {
         setIsLoading(true);
         try {
-            const res = await fetch(`/api/merchant/products?page=${page}&limit=10`, {
-                headers: {
-                    'Authorization': `Bearer ${authStore.getToken()}`
-                }
-            });
+            const res = await apiClient.get(`/api/merchant/products?page=${page}&limit=10`);
             if (res.ok) {
                 const data = await res.json();
                 setProducts(data.products);
@@ -31,6 +27,7 @@ const ProductListPage: React.FC = () => {
             setIsLoading(false);
         }
     };
+
 
     useEffect(() => {
         fetchProducts(1);

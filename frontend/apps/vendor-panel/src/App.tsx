@@ -11,6 +11,7 @@ import ProtectedRoute from './app/ProtectedRoute';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './styles/global.css';
+import OfflineDetector from './shared/components/OfflineDetector';
 
 const router = createBrowserRouter(
   [
@@ -97,6 +98,7 @@ function App() {
         pauseOnHover
         theme="light"
       />
+      <OfflineDetector />
     </>
   );
 }

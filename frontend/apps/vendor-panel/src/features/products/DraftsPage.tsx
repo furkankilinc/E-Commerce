@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { authStore } from '../auth/auth.store';
+import { apiClient } from '../../shared/api/apiClient';
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
 
@@ -16,16 +16,11 @@ interface Product {
 const DraftsPage: React.FC = () => {
     const [drafts, setDrafts] = useState<Product[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const token = authStore.getToken();
     const navigate = useNavigate();
 
     const fetchDrafts = async () => {
         try {
-            const res = await fetch('/api/merchant/products?status=DRAFT', {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
+            const res = await apiClient.get('/api/merchant/products?status=DRAFT');
             if (res.ok) {
                 const data = await res.json();
                 setDrafts(data.products);
@@ -66,12 +61,7 @@ const DraftsPage: React.FC = () => {
 
         if (result.isConfirmed) {
             try {
-                const res = await fetch(`/api/merchant/products/${id}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
+                const res = await apiClient.delete(`/api/merchant/products/${id}`);
                 if (res.ok) {
                     toast.success('Taslak silindi.');
                     fetchDrafts();
@@ -84,6 +74,7 @@ const DraftsPage: React.FC = () => {
             }
         }
     };
+
 
     if (isLoading) {
         return (

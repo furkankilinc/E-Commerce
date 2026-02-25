@@ -1,10 +1,21 @@
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
+// ── Startup Guard ─────────────────────────────────────────────────────────────
+// If any JWT secret is missing the application MUST NOT start.
+// This prevents accidental deployment with predictable fallback keys.
+const REQUIRED_SECRETS = ['JWT_USER_SECRET', 'JWT_MERCHANT_SECRET', 'JWT_ADMIN_SECRET'];
+for (const key of REQUIRED_SECRETS) {
+    if (!process.env[key]) {
+        console.error(`❌ FATAL: Environment variable "${key}" is not set. Refusing to start.`);
+        process.exit(1);
+    }
+}
+
 const SECRETS = {
-    user: process.env.JWT_USER_SECRET || 'user_secret_fallback',
-    merchant: process.env.JWT_MERCHANT_SECRET || 'merchant_secret_fallback',
-    admin: process.env.JWT_ADMIN_SECRET || 'admin_secret_fallback',
+    user: process.env.JWT_USER_SECRET,
+    merchant: process.env.JWT_MERCHANT_SECRET,
+    admin: process.env.JWT_ADMIN_SECRET,
 };
 
 const generateAccessToken = (payload) => {
@@ -26,3 +37,4 @@ const refreshTokenExpiry = () => {
 };
 
 module.exports = { generateAccessToken, generateRefreshToken, verifyToken, refreshTokenExpiry };
+

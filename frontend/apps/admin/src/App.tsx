@@ -6,6 +6,7 @@ import CategoriesPage from './features/categories/pages/CategoriesPage';
 import './styles/global.css';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import OfflineDetector from './shared/components/OfflineDetector';
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
           pauseOnHover
           theme="light"
         />
+        <OfflineDetector />
       </div>
     </Router>
   );

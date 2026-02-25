@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useCart } from '../cart/cart.store';
+import { useWishlist } from '../wishlist/store/wishlist.store';
+import AddToCollectionModal from '../collections/components/AddToCollectionModal';
 import { toast } from 'react-toastify';
 
 interface Product {
@@ -90,6 +92,8 @@ const CategoryItem: React.FC<{
 
 const HomePage: React.FC = () => {
     const { addItem } = useCart();
+    const { toggleItem, isInWishlist } = useWishlist();
+    const [collectionModalProduct, setCollectionModalProduct] = useState<any | null>(null);
     const [products, setProducts] = useState<Product[]>([]);
     const [pagination, setPagination] = useState<Pagination | null>(null);
     const [meta, setMeta] = useState<FilterMeta | null>(null);
@@ -382,8 +386,15 @@ const HomePage: React.FC = () => {
 
     return (
         <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-20 py-10">
+            {/* Collection Modal */}
+            {collectionModalProduct && (
+                <AddToCollectionModal
+                    product={collectionModalProduct}
+                    onClose={() => setCollectionModalProduct(null)}
+                />
+            )}
             {/* Breadcrumb */}
-            <div className="mb-6 flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest italic">
+            <div className="mb-6 flex items-center gap-2 text-[10px] font-black text-gray-500 uppercase tracking-widest italic">
                 <Link to="/" className="hover:text-brand-pink transition-colors">ANASAYFA</Link>
 
                 {(() => {
@@ -415,7 +426,7 @@ const HomePage: React.FC = () => {
                     <h1 className="text-4xl sm:text-5xl lg:text-[72px] font-[1000] text-gray-900 leading-[0.85] tracking-tighter mb-4 italic uppercase">
                         FUI & <span className="text-brand-pink">RA</span>
                     </h1>
-                    <p className="text-sm font-bold text-gray-400">En yeni teknolojiler, Fuira güvencesiyle kapınızda.</p>
+                    <p className="text-sm font-bold text-gray-500">En yeni teknolojiler, Fuira güvencesiyle kapınızda.</p>
                 </div>
 
                 <div className="flex items-center gap-4">
@@ -429,6 +440,7 @@ const HomePage: React.FC = () => {
 
                     <div className="relative">
                         <select
+                            aria-label="Sıralama Seçeneği"
                             value={filters.sort}
                             onChange={(e) => setFilters(prev => ({ ...prev, sort: e.target.value }))}
                             className="appearance-none cursor-pointer  bg-white border-2 border-gray-50 h-16 pl-8 pr-14 rounded-[2rem] text-[11px] font-black text-gray-900 italic uppercase tracking-widest focus:outline-none focus:border-brand-pink transition-all shadow-sm"
@@ -462,13 +474,14 @@ const HomePage: React.FC = () => {
                     <div className="space-y-10">
                         <div className="lg:hidden flex items-center justify-between mb-10 pb-6 border-b-2 border-gray-50">
                             <h2 className="text-xl font-[1000] text-gray-900 italic uppercase">FİLTRELER</h2>
-                            <button onClick={() => setIsMobileFiltersOpen(false)} className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-400">
+                            <button aria-label="Filtreleri Kapat" onClick={() => setIsMobileFiltersOpen(false)} className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-400">
                                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" strokeWidth="3" /></svg>
                             </button>
                         </div>
 
                         <div className="relative">
                             <input
+                                aria-label="Filtrelerde Ara"
                                 type="text"
                                 placeholder="Model, özellik veya satici..."
                                 value={localSearch}
@@ -479,7 +492,7 @@ const HomePage: React.FC = () => {
                         </div>
 
                         <div>
-                            <button onClick={() => toggleSection('category')} className="w-full flex items-center justify-between text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-6 italic hover:text-gray-900 transition-colors">
+                            <button onClick={() => toggleSection('category')} className="w-full flex items-center justify-between text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-6 italic hover:text-gray-900 transition-colors">
                                 KATEGORİ
                                 <svg className={`w-4 h-4 transform transition-transform ${collapsedSections['category'] ? '-rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" strokeWidth="3" /></svg>
                             </button>
@@ -507,18 +520,18 @@ const HomePage: React.FC = () => {
                         </div>
 
                         <div className="py-2">
-                            <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-8 italic">FİYAT ARALIĞI</h3>
+                            <div role="heading" aria-level={2} className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-8 italic">FİYAT ARALIĞI</div>
                             <div className="flex gap-4">
                                 <div className="flex-1 bg-white border-2 border-gray-50 p-4 rounded-2xl shadow-sm">
-                                    <span className="text-[8px] font-black text-gray-300 uppercase block mb-1">MİN</span>
+                                    <span className="text-[8px] font-black text-gray-500 uppercase block mb-1">MİN</span>
                                     <div className="flex items-center text-xs font-black text-gray-900 italic">
-                                        <input type="number" value={filters.minPrice} onChange={e => setFilters(prev => ({ ...prev, minPrice: e.target.value }))} className="bg-transparent w-full outline-none ml-1" />
+                                        <input aria-label="Minimum Fiyat" type="number" value={filters.minPrice} onChange={e => setFilters(prev => ({ ...prev, minPrice: e.target.value }))} className="bg-transparent w-full outline-none ml-1" />
                                     </div>
                                 </div>
                                 <div className="flex-1 bg-white border-2 border-gray-50 p-4 rounded-2xl shadow-sm">
-                                    <span className="text-[8px] font-black text-gray-300 uppercase block mb-1">MAX</span>
+                                    <span className="text-[8px] font-black text-gray-500 uppercase block mb-1">MAX</span>
                                     <div className="flex items-center text-xs font-black text-gray-900 italic">
-                                        <input type="number" value={filters.maxPrice} onChange={e => setFilters(prev => ({ ...prev, maxPrice: e.target.value }))} className="bg-transparent w-full outline-none ml-1" />
+                                        <input aria-label="Maksimum Fiyat" type="number" value={filters.maxPrice} onChange={e => setFilters(prev => ({ ...prev, maxPrice: e.target.value }))} className="bg-transparent w-full outline-none ml-1" />
                                     </div>
                                 </div>
                             </div>
@@ -540,7 +553,7 @@ const HomePage: React.FC = () => {
                                 const isColorFilter = name === 'Color' || name.toLowerCase() === 'renk' || name.toLowerCase() === 'color';
                                 return (
                                     <div key={name} className="mb-10 animate-in fade-in slide-in-from-top-2">
-                                        <button onClick={() => toggleSection(name)} className="w-full flex items-center justify-between text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-6 italic">
+                                        <button onClick={() => toggleSection(name)} className="w-full flex items-center justify-between text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-6 italic">
                                             {label}
                                             <svg className={`w-4 h-4 transform transition-transform ${collapsedSections[name] ? '-rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" strokeWidth="3" /></svg>
                                         </button>
@@ -579,7 +592,7 @@ const HomePage: React.FC = () => {
                             })}
 
                             <div>
-                                <button onClick={() => toggleSection('merchants')} className="w-full flex items-center justify-between text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-6 italic">
+                                <button onClick={() => toggleSection('merchants')} className="w-full flex items-center justify-between text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-6 italic">
                                     SATICILAR
                                     <svg className={`w-4 h-4 transform transition-transform ${collapsedSections['merchants'] ? '-rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" strokeWidth="3" /></svg>
                                 </button>
@@ -605,16 +618,26 @@ const HomePage: React.FC = () => {
                         </div>
 
                         <div className="pt-10">
-                            <button onClick={clearFilters} className="w-full py-5 bg-gray-50 text-gray-400 rounded-[2rem] text-[11px] font-black uppercase tracking-widest italic hover:bg-brand-pink hover:text-white transition-all shadow-sm">FİLTRELERİ SIFIRLA</button>
+                            <button onClick={clearFilters} className="w-full py-5 bg-gray-50 text-gray-500 rounded-[2rem] text-[11px] font-black uppercase tracking-widest italic hover:bg-brand-pink hover:text-white transition-all shadow-sm">FİLTRELERİ SIFIRLA</button>
                         </div>
                     </div>
                 </aside>
 
                 <div className="flex-1">
                     {isLoading ? (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-8 gap-y-12">
                             {[...Array(6)].map((_, i) => (
-                                <div key={i} className="aspect-[3/4] bg-gray-50 rounded-[3rem] animate-pulse"></div>
+                                <div key={i} className="flex flex-col bg-white rounded-[3.5rem] p-6 border-2 border-transparent">
+                                    <div className="aspect-square rounded-[3rem] bg-gray-50 mb-8 animate-pulse"></div>
+                                    <div className="flex flex-col flex-grow px-2">
+                                        <div className="w-1/3 h-3 bg-gray-50 rounded-full mb-4 animate-pulse"></div>
+                                        <div className="w-3/4 h-5 bg-gray-50 rounded-full mb-8 animate-pulse"></div>
+                                        <div className="mt-auto flex justify-between items-center pt-8 border-t border-gray-50">
+                                            <div className="w-1/2 h-8 bg-gray-50 rounded-full animate-pulse"></div>
+                                            <div className="w-16 h-16 rounded-[1.8rem] bg-gray-50 animate-pulse"></div>
+                                        </div>
+                                    </div>
+                                </div>
                             ))}
                         </div>
                     ) : products.length > 0 ? (
@@ -627,6 +650,43 @@ const HomePage: React.FC = () => {
                                             {product.rating >= 4.5 && <div className="px-3.5 py-1.5 rounded-xl text-[8px] font-black tracking-[0.2em] bg-gray-900 text-white shadow-xl uppercase italic">EN POPÜLER</div>}
                                             {product.price > 1000 && <div className="px-3.5 py-1.5 rounded-xl text-[8px] font-black tracking-[0.2em] bg-brand-pink text-white shadow-xl uppercase italic">PREMIUM</div>}
                                         </div>
+                                        {/* Wishlist Button */}
+                                        <button
+                                            aria-label={isInWishlist(product.id) ? 'Favorilerden Çıkar' : 'Favorilere Ekle'}
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                toggleItem(product);
+                                                toast[isInWishlist(product.id) ? 'info' : 'success'](
+                                                    isInWishlist(product.id)
+                                                        ? `${product.name} favorilerden çıkarıldı.`
+                                                        : `${product.name} favorilere eklendi!`,
+                                                    { autoClose: 1500 }
+                                                );
+                                            }}
+                                            className={`absolute top-6 right-6 w-10 h-10 rounded-2xl flex items-center justify-center shadow-lg border transition-all hover:scale-110 ${isInWishlist(product.id)
+                                                ? 'bg-brand-pink border-brand-pink text-white'
+                                                : 'bg-white border-gray-100 text-gray-300 opacity-0 group-hover:opacity-100'
+                                                }`}
+                                        >
+                                            <svg className="w-4 h-4" fill={isInWishlist(product.id) ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                            </svg>
+                                        </button>
+                                        {/* Collection Button */}
+                                        <button
+                                            aria-label="Koleksiyona Ekle"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                setCollectionModalProduct(product);
+                                            }}
+                                            className="absolute bottom-6 right-6 w-10 h-10 rounded-2xl bg-white border border-gray-100 text-gray-300 flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-all hover:scale-110 hover:border-gray-900 hover:text-gray-900"
+                                        >
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                                            </svg>
+                                        </button>
                                     </div>
 
                                     <div className="flex flex-col flex-grow px-2">
@@ -642,12 +702,13 @@ const HomePage: React.FC = () => {
 
                                         <div className="mt-auto flex justify-between items-center pt-8 border-t border-gray-50">
                                             <div className="flex flex-col">
-                                                <span className="text-[8px] font-black text-gray-400 uppercase tracking-widest italic leading-none mb-1">FUIRA FİYAT</span>
+                                                <span className="text-[8px] font-black text-gray-500 uppercase tracking-widest italic leading-none mb-1">FUIRA FİYAT</span>
                                                 <span className="text-3xl font-[1000] text-gray-900 tracking-tighter italic leading-none">
                                                     {product.price.toLocaleString()}{(product.metadata as any)?.currency || ' TL'}
                                                 </span>
                                             </div>
                                             <button
+                                                aria-label={`${product.name} modelini sepete ekle`}
                                                 onClick={(e) => {
                                                     e.preventDefault();
                                                     e.stopPropagation();
@@ -679,9 +740,10 @@ const HomePage: React.FC = () => {
                     {pagination && pagination.totalPages > 1 && (
                         <div className="mt-24 flex justify-center items-center gap-6">
                             <button
+                                aria-label="Önceki Sayfa"
                                 onClick={() => handlePageChange(currentPage - 1)}
                                 disabled={currentPage === 1}
-                                className="w-16 h-16 rounded-[2rem] bg-white border-2 border-gray-50 flex items-center justify-center text-gray-400 hover:text-brand-pink disabled:opacity-20 transition-all shadow-sm active:scale-90 group"
+                                className="w-16 h-16 rounded-[2rem] bg-white border-2 border-gray-50 flex items-center justify-center text-gray-500 hover:text-brand-pink disabled:opacity-20 transition-all shadow-sm active:scale-90 group"
                             >
                                 <svg className="w-6 h-6 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="4"><path d="M15 19l-7-7 7-7" /></svg>
                             </button>
@@ -716,12 +778,13 @@ const HomePage: React.FC = () => {
 
                                     return pages.map((p, i) => (
                                         p === '...' ? (
-                                            <span key={`dots-${i}`} className="w-10 sm:w-12 text-center text-gray-300 font-black italic">...</span>
+                                            <span key={`dots-${i}`} className="w-10 sm:w-12 text-center text-gray-500 font-black italic">...</span>
                                         ) : (
                                             <button
                                                 key={p}
+                                                aria-label={`Sayfa ${p}`}
                                                 onClick={() => handlePageChange(Number(p))}
-                                                className={`w-12 sm:w-14 h-12 sm:h-14 rounded-[1.5rem] text-[11px] font-black transition-all ${current === p ? 'bg-brand-pink text-white shadow-xl shadow-brand-pink/40 scale-110' : 'text-gray-400 hover:text-gray-900 hover:bg-gray-50'}`}
+                                                className={`w-12 sm:w-14 h-12 sm:h-14 rounded-[1.5rem] text-[11px] font-black transition-all ${current === p ? 'bg-brand-pink text-white shadow-xl shadow-brand-pink/40 scale-110' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'}`}
                                             >
                                                 {p}
                                             </button>
@@ -731,9 +794,10 @@ const HomePage: React.FC = () => {
                             </div>
 
                             <button
+                                aria-label="Sonraki Sayfa"
                                 onClick={() => handlePageChange(currentPage + 1)}
                                 disabled={currentPage === pagination.totalPages}
-                                className="w-16 h-16 rounded-[2rem] bg-white border-2 border-gray-50 flex items-center justify-center text-gray-400 hover:text-brand-pink disabled:opacity-20 transition-all shadow-sm active:scale-90 group"
+                                className="w-16 h-16 rounded-[2rem] bg-white border-2 border-gray-50 flex items-center justify-center text-gray-500 hover:text-brand-pink disabled:opacity-20 transition-all shadow-sm active:scale-90 group"
                             >
                                 <svg className="w-6 h-6 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="4"><path d="M9 5l7 7-7 7" /></svg>
                             </button>

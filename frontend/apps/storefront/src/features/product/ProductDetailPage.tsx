@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useCart } from '../cart/cart.store';
+import { useWishlist } from '../wishlist/store/wishlist.store';
+import AddToCollectionModal from '../collections/components/AddToCollectionModal';
 import { toast } from 'react-toastify';
 
 interface Product {
@@ -26,17 +28,21 @@ interface Product {
     }[];
     rating: number;
     reviewCount: number;
+    stock: number;
 }
 
 const ProductDetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const { addItem } = useCart();
+    const { toggleItem, isInWishlist } = useWishlist();
+    const [showCollectionModal, setShowCollectionModal] = useState(false);
     const [product, setProduct] = useState<Product | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [selectedSize, setSelectedSize] = useState('M');
     const [activeTab, setActiveTab] = useState('description');
     const [mainImage, setMainImage] = useState('');
     const [isAdding, setIsAdding] = useState(false);
+    const [cartCount, setCartCount] = useState(0);
 
     const handleAddToCart = () => {
         if (product) {
@@ -52,6 +58,9 @@ const ProductDetailPage: React.FC = () => {
 
     useEffect(() => {
         const controller = new AbortController();
+        setIsLoading(true);
+        setProduct(null);
+        window.scrollTo(0, 0);
 
         const fetchProduct = async () => {
             try {
@@ -61,6 +70,13 @@ const ProductDetailPage: React.FC = () => {
                     setProduct(data);
                     const mainImg = data.images.find((img: any) => img.isMain) || data.images[0];
                     if (mainImg) setMainImage(mainImg.url);
+                }
+
+                // Fetch cart stats
+                const statsRes = await fetch(`/api/cart/stats/${id}`, { signal: controller.signal });
+                if (statsRes.ok) {
+                    const statsData = await statsRes.json();
+                    setCartCount(statsData.count);
                 }
             } catch (err: any) {
                 if (err.name !== 'AbortError') {
@@ -78,7 +94,10 @@ const ProductDetailPage: React.FC = () => {
         return () => controller.abort();
     }, [id]);
 
-    if (isLoading) {
+    // Prevent flicker: if id changed but product hasn't been fetched yet, show loading
+    const isFetchingNewProduct = product?.id !== id;
+
+    if (isLoading || isFetchingNewProduct) {
         return (
             <div className="min-h-screen bg-white flex flex-col items-center justify-center gap-4">
                 <div className="w-16 h-16 border-4 border-brand-pink border-t-transparent rounded-full animate-spin"></div>
@@ -133,29 +152,29 @@ const ProductDetailPage: React.FC = () => {
                                 onClick={() => setMainImage(img.url)}
                                 className={`aspect-square w-full rounded-2xl overflow-hidden border-2 transition-all p-2 bg-[#fdfaf5] ${mainImage === img.url ? 'border-brand-pink shadow-lg shadow-brand-pink/10' : 'border-transparent opacity-50 hover:opacity-100 hover:border-gray-200'}`}
                             >
-                                <img src={img.url} alt="" className="w-full h-full object-contain" />
+                                {img.url && <img src={img.url} alt="" className="w-full h-full object-contain" width="200" height="200" loading="lazy" />}
                             </button>
                         ))}
                     </div>
 
                     {/* Main Image View */}
-                    <div className="lg:col-span-6 relative group">
-                        <div className="aspect-[4/5] rounded-[3rem] overflow-hidden bg-[#fdfaf5] border border-gray-50 flex items-center justify-center p-12 shadow-sm group-hover:shadow-2xl transition-all duration-700">
-                            <img src={mainImage} alt={product.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-1000" />
+                    <div className="lg:col-span-4 relative group flex flex-col items-start">
+                        <div className="w-full aspect-square relative rounded-[2rem] overflow-hidden bg-white border border-gray-100 flex items-center justify-center p-4 shadow-sm transition-all duration-700">
+                            {mainImage && <img src={mainImage} alt={product.name} width="800" height="800" fetchPriority="high" className="absolute inset-0 w-full h-full object-contain p-8 transition-transform duration-1000" />}
                         </div>
-                        <div className="absolute top-10 left-10 flex flex-col gap-3">
-                            <span className="px-5 py-2.5 bg-white shadow-xl text-[10px] font-black tracking-widest text-gray-900 uppercase italic rounded-xl">
+                        <div className="absolute top-4 left-4 flex flex-col gap-3">
+                            <span className="px-5 py-2.5 bg-white/90 backdrop-blur shadow-sm border border-gray-100 text-[10px] font-black tracking-widest text-gray-900 uppercase italic rounded-xl">
                                 {product.category?.name || 'CORETECH'}
                             </span>
                         </div>
-                        <button className="absolute top-10 right-10 w-14 h-14 rounded-full bg-white shadow-2xl flex items-center justify-center text-gray-200 hover:text-brand-pink transition-all transform hover:scale-110 border border-gray-50">
-                            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" /></svg>
+                        <button className="absolute top-4 right-4 w-12 h-12 rounded-full bg-white shadow-md flex items-center justify-center text-gray-400 hover:text-brand-pink transition-all transform hover:scale-110 border border-gray-100">
+                            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" /></svg>
                         </button>
                     </div>
 
                     {/* Product Info Panel */}
-                    <div className="lg:col-span-5 flex flex-col pt-4">
-                        <div className="mb-10 flex items-center gap-4">
+                    <div className="lg:col-span-7 flex flex-col pt-2">
+                        <div className="mb-6 flex items-center gap-4">
                             <span className="text-[10px] font-black text-brand-pink tracking-[0.2em] uppercase bg-brand-pink/5 px-4 py-2 rounded-lg">{product.merchant?.companyName || 'FUIRA STORE'}</span>
                             <div className="w-1 h-1 bg-gray-200 rounded-full"></div>
                             <div className="flex items-center gap-1.5">
@@ -165,7 +184,21 @@ const ProductDetailPage: React.FC = () => {
                             </div>
                         </div>
 
-                        <h1 className="text-6xl font-[900] text-gray-900 leading-[1] tracking-tighter mb-8 italic uppercase">{product.name}</h1>
+                        <h1 className="text-2xl lg:text-[1.75rem] font-semibold text-gray-800 leading-[1.3] mb-8">{product.name}</h1>
+
+
+                        {cartCount > 0 && product.stock > 0 && cartCount >= (product.stock * 0.8) && (
+                            <div className="mb-8 flex items-center gap-3 p-4 bg-orange-50 border border-orange-100 rounded-2xl animate-pulse">
+                                <div className="w-8 h-8 bg-orange-500/10 rounded-full flex items-center justify-center">
+                                    <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                                    </svg>
+                                </div>
+                                <p className="text-[11px] font-[900] text-orange-900 uppercase tracking-tight">
+                                    DİKKAT! <span className="text-orange-600 text-sm mx-0.5">{cartCount}</span> kişi bu ürünü sepetinde tutuyor ve stoklar tükenmek üzere!
+                                </p>
+                            </div>
+                        )}
 
                         <div className="mb-12 p-8 bg-gray-50/50 border border-gray-100 rounded-[2.5rem] shadow-inner">
                             <div className="flex flex-col gap-1 mb-6">
@@ -174,9 +207,7 @@ const ProductDetailPage: React.FC = () => {
                                     {product.price.toLocaleString()}&nbsp;{(product.metadata as any)?.currency || '  TL'}
                                 </span>
                             </div>
-                            <p className="text-gray-500 text-sm font-bold leading-relaxed opacity-70 italic max-w-sm">
-                                {product.description.length > 150 ? product.description.substring(0, 150) + '...' : product.description}
-                            </p>
+
                         </div>
 
                         {/* Variants Placeholder Section */}
@@ -209,10 +240,44 @@ const ProductDetailPage: React.FC = () => {
                                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d={isAdding ? "M5 13l4 4L19 7" : "M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"} /></svg>
                                 {isAdding ? 'EKLENDİ!' : 'SEPETE EKLE'}
                             </button>
-                            <Link to="/wishlist" className="w-20 h-20 bg-gray-50 text-gray-900 border border-gray-100 rounded-[2rem] flex items-center justify-center hover:bg-white hover:border-brand-pink hover:text-brand-pink transition-all shadow-sm">
-                                <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
-                            </Link>
+                            <button
+                                onClick={() => {
+                                    if (product) {
+                                        const wasInWishlist = isInWishlist(product.id);
+                                        toggleItem(product);
+                                        toast[wasInWishlist ? 'info' : 'success'](
+                                            wasInWishlist
+                                                ? `${product.name} favorilerden çıkarıldı.`
+                                                : `${product.name} favorilere eklendi!`,
+                                            { autoClose: 1500 }
+                                        );
+                                    }
+                                }}
+                                aria-label={product && isInWishlist(product.id) ? 'Favorilerden Çıkar' : 'Favorilere Ekle'}
+                                className={`w-20 h-20 border rounded-[2rem] flex items-center justify-center transition-all shadow-sm ${product && isInWishlist(product.id)
+                                    ? 'bg-brand-pink border-brand-pink text-white shadow-brand-pink/30'
+                                    : 'bg-gray-50 text-gray-900 border-gray-100 hover:bg-white hover:border-brand-pink hover:text-brand-pink'
+                                    }`}
+                            >
+                                <svg className="w-7 h-7" fill={product && isInWishlist(product.id) ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                </svg>
+                            </button>
+                            {/* Add to Collection Button */}
+                            <button
+                                onClick={() => setShowCollectionModal(true)}
+                                aria-label="Koleksiyona Ekle"
+                                className="w-20 h-20 bg-gray-50 text-gray-900 border border-gray-100 rounded-[2rem] flex items-center justify-center hover:bg-white hover:border-gray-900 transition-all shadow-sm"
+                            >
+                                <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                                </svg>
+                            </button>
                         </div>
+
+                        {showCollectionModal && product && (
+                            <AddToCollectionModal product={product} onClose={() => setShowCollectionModal(false)} />
+                        )}
 
                         <div className="mt-8 flex items-center justify-center gap-6 text-[9px] font-black text-gray-300 uppercase tracking-widest italic">
                             <div className="flex items-center gap-2">
@@ -248,29 +313,8 @@ const ProductDetailPage: React.FC = () => {
 
                     <div className="min-h-[400px]">
                         {activeTab === 'description' && (
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center animate-fadeIn">
-                                <div className="max-w-xl">
-                                    <h2 className="text-4xl font-black text-gray-900 leading-[1.1] tracking-tighter mb-10 italic uppercase">Ürün Detayları & Tasarım</h2>
-                                    <p className="text-gray-500 text-base font-bold leading-[1.8] mb-12 opacity-80 italic">
-                                        {product.description}
-                                    </p>
-                                    <div className="grid grid-cols-2 gap-8">
-                                        <div className="p-6 bg-[#fdfaf5] rounded-3xl border border-gray-50">
-                                            <span className="text-[9px] font-black text-brand-pink uppercase tracking-widest mb-2 block">MALZEME</span>
-                                            <span className="text-sm font-black text-gray-900 italic uppercase tracking-tight">Premium Kalite</span>
-                                        </div>
-                                        <div className="p-6 bg-[#fdfaf5] rounded-3xl border border-gray-50">
-                                            <span className="text-[9px] font-black text-brand-pink uppercase tracking-widest mb-2 block">ÜRETİM</span>
-                                            <span className="text-sm font-black text-gray-900 italic uppercase tracking-tight">Özel Seri</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="relative group">
-                                    <div className="aspect-square rounded-[4rem] overflow-hidden bg-[#fdfaf5] rotate-3 group-hover:rotate-0 transition-transform duration-1000 p-16 shadow-inner border border-gray-50">
-                                        <img src={mainImage} alt="Detail" className="w-full h-full object-contain scale-110 group-hover:scale-100 transition-transform duration-1000" />
-                                    </div>
-                                    <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-brand-pink/5 rounded-full blur-3xl"></div>
-                                </div>
+                            <div className="animate-fadeIn max-w-[900px] mx-auto py-10">
+                                <DescriptionRenderer content={product.description} mainImage={mainImage} />
                             </div>
                         )}
 
@@ -332,20 +376,33 @@ const ProductDetailPage: React.FC = () => {
                         )}
 
                         {activeTab === 'specs' && (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-20 gap-y-12 animate-fadeIn">
-                                {[
-                                    { label: 'MALZEME', value: 'Premium Karbon Çelik & Deri' },
-                                    { label: 'AĞIRLIK', value: '1.2 kg' },
-                                    { label: 'BOYUTLAR', value: '45cm x 30cm x 15cm' },
-                                    { label: 'GARANTİ', value: '2 YIL SINIRSIZ' },
-                                    { label: 'MENŞEİ', value: 'EUROPEAN CRAFT' },
-                                    { label: 'BAKIM', value: 'SADECE KURU TEMİZLEME' }
-                                ].map((spec, i) => (
-                                    <div key={i} className="flex justify-between items-center py-6 border-b border-gray-50 group cursor-default">
-                                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest group-hover:text-brand-pink transition-colors italic">{spec.label}</span>
-                                        <span className="text-sm font-black text-gray-900 uppercase tracking-tight italic group-hover:translate-x-[-10px] transition-transform">{spec.value}</span>
+                            <div className="animate-fadeIn max-w-[900px] mx-auto">
+                                <div className="bg-white border border-gray-100 rounded-3xl overflow-hidden">
+                                    <div className="p-10 border-b border-gray-50 bg-gray-50/30">
+                                        <h3 className="text-xl font-black text-gray-900 uppercase tracking-tight italic">TEKNİK ÖZELLİKLER</h3>
                                     </div>
-                                ))}
+                                    <div className="divide-y divide-gray-50">
+                                        {product.variants && product.variants.length > 0 ? product.variants.map((v, i) => (
+                                            <div key={i} className="flex flex-col md:flex-row p-6 hover:bg-gray-50/50 transition-colors">
+                                                <div className="w-full md:w-1/3 text-[11px] font-black text-gray-400 uppercase tracking-widest mb-2 md:mb-0 italic">{v.name}</div>
+                                                <div className="w-full md:w-2/3 text-sm font-bold text-gray-900 italic leading-relaxed">{v.value}</div>
+                                            </div>
+                                        )) : (
+                                            <div className="p-20 text-center text-gray-300 font-bold italic uppercase tracking-widest text-[10px]">
+                                                ÖZELLİK BİLGİSİ BULUNMUYOR
+                                            </div>
+                                        )}
+                                        {/* Basic Specs Fallback */}
+                                        <div className="flex flex-col md:flex-row p-6 hover:bg-gray-50/50 transition-colors">
+                                            <div className="w-full md:w-1/3 text-[11px] font-black text-gray-400 uppercase tracking-widest mb-2 md:mb-0 italic">MARKA</div>
+                                            <div className="w-full md:w-2/3 text-sm font-bold text-gray-900 italic leading-relaxed">{product.merchant?.companyName || 'BİLİNMİYOR'}</div>
+                                        </div>
+                                        <div className="flex flex-col md:flex-row p-6 hover:bg-gray-50/50 transition-colors">
+                                            <div className="w-full md:w-1/3 text-[11px] font-black text-gray-400 uppercase tracking-widest mb-2 md:mb-0 italic">GARANTİ</div>
+                                            <div className="w-full md:w-2/3 text-sm font-bold text-gray-900 italic leading-relaxed">2 Yıl Distribütör Garantili</div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         )}
                     </div>
@@ -364,6 +421,74 @@ const ProductDetailPage: React.FC = () => {
                     </div>
                 </div>
             </div>
+        </div>
+    );
+};
+
+const DescriptionRenderer: React.FC<{ content: string; mainImage: string }> = ({ content, mainImage }) => {
+    let blocks: any[] = [];
+    let isRich = false;
+
+    try {
+        if (content && (content.startsWith('[') || content.startsWith('{'))) {
+            blocks = JSON.parse(content);
+            isRich = true;
+        }
+    } catch (e) {
+        isRich = false;
+    }
+
+    if (!isRich) {
+        return (
+            <div className="space-y-10">
+                {mainImage && <img src={mainImage} alt="" width="800" height="800" className="w-full aspect-square object-contain rounded-3xl bg-gray-50 p-10 border border-gray-100 shadow-sm" fetchPriority="high" />}
+                <div className="leading-relaxed text-gray-600 font-bold italic text-lg whitespace-pre-line">
+                    {content}
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="space-y-10">
+            {blocks.map((block: any, idx: number) => {
+                switch (block.type) {
+                    case 'HEADING':
+                        return <h2 key={idx} className="text-3xl font-black text-gray-900 tracking-tight italic uppercase mb-6">{block.content}</h2>;
+                    case 'TEXT':
+                        return <p key={idx} className="text-gray-600 text-lg font-bold leading-[1.8] italic whitespace-pre-line">{block.content}</p>;
+                    case 'IMAGE':
+                        return (
+                            <div key={idx} className="my-10 w-full aspect-video relative rounded-lg overflow-hidden bg-gray-50 border border-gray-100 shadow-sm">
+                                <img src={block.content} alt="Product Detail" width="1200" height="675" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+                            </div>
+                        );
+                    case 'FEATURES':
+                        return (
+                            <div key={idx} className="grid grid-cols-1 md:grid-cols-2 gap-8 py-8">
+                                {block.content.map((feat: string, fIdx: number) => (
+                                    <div key={fIdx} className="flex items-start gap-4">
+                                        <div className="w-2 h-2 mt-2 bg-brand-pink rounded-full flex-shrink-0"></div>
+                                        <span className="text-sm font-black text-gray-800 uppercase italic tracking-tight leading-tight">{feat}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        );
+                    case 'SPLIT':
+                        return (
+                            <div key={idx} className={`flex flex-col md:flex-row gap-12 items-center py-10 ${block.content.reverse ? 'md:flex-row-reverse' : ''}`}>
+                                <div className="flex-1">
+                                    <p className="text-gray-600 text-lg font-bold leading-relaxed italic whitespace-pre-line">{block.content.text}</p>
+                                </div>
+                                <div className="flex-1 w-full aspect-[4/3] relative rounded-[2rem] overflow-hidden bg-gray-50 border border-gray-100 shadow-sm">
+                                    <img src={block.content.image} alt="Feature Element" width="800" height="600" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+                                </div>
+                            </div>
+                        );
+                    default:
+                        return null;
+                }
+            })}
         </div>
     );
 };

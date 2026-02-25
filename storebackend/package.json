@@ -11,6 +11,7 @@
     "db:generate": "npx prisma generate",
     "db:push": "npx prisma db push",
     "db:studio": "npx prisma studio",
+    "db:seed-admin": "node prisma/seed_admin.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
@@ -19,11 +20,15 @@
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
+    "express-rate-limit": "^7.4.1",
+    "helmet": "^8.0.0",
     "ioredis": "^5.9.3",
     "jsonwebtoken": "^9.0.2",
     "minio": "^8.0.6",
     "multer": "^2.0.2",
-    "sharp": "^0.34.5"
+    "sharp": "^0.34.5",
+    "winston": "^3.19.0",
+    "@datalust/winston-seq": "^1.0.0"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
