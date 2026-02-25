@@ -15,6 +15,7 @@ const merchantAuthRoutes = require('./src/api/auth/merchant.auth.routes');
 const adminAuthRoutes = require('./src/api/auth/admin.auth.routes');
 const productRoutes = require('./src/api/product/product.routes');
 const categoryRoutes = require('./src/api/product/category.routes');
+const uploadRoutes = require('./src/api/upload/upload.routes');
 
 app.use('/api/auth/user', userAuthRoutes);
 app.use('/api/auth/merchant', merchantAuthRoutes);
@@ -24,6 +25,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/products-meta', require('./src/api/product/filter.routes'));
 app.use('/api/categories', categoryRoutes);
 app.use('/api/cart', require('./src/api/cart/cart.routes'));
+app.use('/api/upload', uploadRoutes);
 
 const merchantProductRoutes = require('./src/api/merchant/merchant.product.routes');
 app.use('/api/merchant/products', merchantProductRoutes);

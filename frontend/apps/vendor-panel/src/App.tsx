@@ -5,6 +5,7 @@ import VendorLayout from './app/layouts/VendorLayout';
 import DashboardPage from './features/dashboard/DashboardPage';
 import ProductListPage from './features/products/ProductListPage';
 import ProductCreatePage from './features/products/ProductCreatePage';
+import DraftsPage from './features/products/DraftsPage';
 import SettingsPage from './features/settings/SettingsPage';
 import ProtectedRoute from './app/ProtectedRoute';
 import { ToastContainer } from 'react-toastify';
@@ -45,6 +46,14 @@ const router = createBrowserRouter(
               element: <ProductCreatePage />,
             },
             {
+              path: 'products/edit/:id',
+              element: <ProductCreatePage />,
+            },
+            {
+              path: 'products/drafts',
+              element: <DraftsPage />,
+            },
+            {
               path: 'orders',
               element: <div className="font-black text-4xl italic uppercase">Orders Coming Soon</div>,
             },
@@ -63,7 +72,6 @@ const router = createBrowserRouter(
   ],
   {
     future: {
-      v7_startTransition: true,
       v7_relativeSplatPath: true,
       v7_fetcherPersist: true,
       v7_normalizeFormMethod: true,
