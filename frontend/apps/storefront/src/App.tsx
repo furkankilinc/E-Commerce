@@ -5,6 +5,7 @@ import MainLayout from './app/layouts/MainLayout';
 import HomePage from './features/home/HomePage';
 import ProductDetailPage from './features/product/ProductDetailPage';
 import ProfilePage from './features/profile/ProfilePage';
+import WishlistPage from './features/wishlist/pages/WishlistPage';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -19,6 +20,7 @@ function App() {
           <Route path="/sale" element={<HomePage />} />
           <Route path="/product/:id" element={<ProductDetailPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/wishlist" element={<WishlistPage />} />
         </Route>
 
         <Route path="/register" element={<RegisterPage />} />

@@ -23,6 +23,7 @@ app.use('/api/user', require('./src/api/user/user.routes'));
 app.use('/api/products', productRoutes);
 app.use('/api/products-meta', require('./src/api/product/filter.routes'));
 app.use('/api/categories', categoryRoutes);
+app.use('/api/cart', require('./src/api/cart/cart.routes'));
 
 const merchantProductRoutes = require('./src/api/merchant/merchant.product.routes');
 app.use('/api/merchant/products', merchantProductRoutes);
