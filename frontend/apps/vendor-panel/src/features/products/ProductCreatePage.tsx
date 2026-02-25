@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useBlocker, useParams } from 'react-router-dom';
-import { authStore } from '../auth/auth.store';
+import { apiClient } from '../../shared/api/apiClient';
 import { toast } from 'react-toastify';
 
 interface Category {
@@ -16,14 +16,20 @@ interface Attribute {
     value: string;
 }
 
+interface ContentBlock {
+    id: string;
+    type: 'HEADING' | 'TEXT' | 'IMAGE' | 'FEATURES' | 'SPLIT';
+    content: any;
+}
+
 const ProductCreatePage: React.FC = () => {
     const navigate = useNavigate();
-    const token = authStore.getToken();
+    const { id } = useParams();
     const [isLoading, setIsLoading] = useState(false);
     const [isDirty, setIsDirty] = useState(false);
-    const { id } = useParams();
     const submitLock = useRef(false);
     const isSavingDraft = useRef(false);
+    const isTransitioning = useRef(false);
 
     // Category States
     const [allCategories, setAllCategories] = useState<Category[]>([]);
@@ -49,7 +55,9 @@ const ProductCreatePage: React.FC = () => {
         currency: 'TL',
         status: 'PUBLISHED' // PUBLISHED or DRAFT
     });
+
     const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+    const [blocks, setBlocks] = useState<ContentBlock[]>([]);
     const [isUploading, setIsUploading] = useState(false);
 
     // Navigation Blocker
@@ -64,7 +72,7 @@ const ProductCreatePage: React.FC = () => {
             setIsLoading(true);
             try {
                 // 1. Fetch Categories
-                const catRes = await fetch('/api/categories');
+                const catRes = await apiClient.get('/api/categories');
                 let catData: Category[] = [];
                 if (catRes.ok) {
                     catData = await catRes.json();
@@ -74,9 +82,7 @@ const ProductCreatePage: React.FC = () => {
 
                 // 2. Fetch Product if ID exists
                 if (id) {
-                    const prodRes = await fetch(`/api/merchant/products/${id}`, {
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
+                    const prodRes = await apiClient.get(`/api/merchant/products/${id}`);
                     if (prodRes.ok) {
                         const prod = await prodRes.json();
                         setFormData({
@@ -118,6 +124,17 @@ const ProductCreatePage: React.FC = () => {
                             }
                         }
 
+                        // Set Description Blocks
+                        try {
+                            if (prod.description && (prod.description.startsWith('[') || prod.description.startsWith('{'))) {
+                                setBlocks(JSON.parse(prod.description));
+                            } else {
+                                setBlocks([{ id: 'init', type: 'TEXT', content: prod.description || '' }]);
+                            }
+                        } catch (e) {
+                            setBlocks([{ id: 'init', type: 'TEXT', content: prod.description || '' }]);
+                        }
+
                         // Set Attributes
                         if (prod.variants) {
                             setAttributes(prod.variants.map((v: any) => ({ key: v.name, value: v.value })));
@@ -128,7 +145,7 @@ const ProductCreatePage: React.FC = () => {
                 console.error('Veri yükleme hatası:', err);
             } finally {
                 setIsLoading(false);
-                setIsDirty(false); // Reset dirty state after initial load
+                setIsDirty(false);
             }
         };
         loadData();
@@ -136,33 +153,35 @@ const ProductCreatePage: React.FC = () => {
 
     // Silent Auto-save on exit
     useEffect(() => {
-        if (blocker.state === "blocked" && !submitLock.current && !isSavingDraft.current) {
+        if (blocker.state === "blocked" && !submitLock.current && !isSavingDraft.current && !isTransitioning.current && isDirty) {
             const autoSaveAndLeave = async () => {
                 isSavingDraft.current = true;
                 try {
-                    // Only auto-save if product has a name or some content
                     if (formData.name || uploadedImages.length > 0) {
                         await handleSubmit('DRAFT', true);
                     }
                 } catch (err) {
                     console.error('Auto-save error:', err);
                 } finally {
-                    isDirty && setIsDirty(false); // Clear dirty to allow blocker leave
+                    setIsDirty(false);
                     blocker.proceed();
                 }
             };
             autoSaveAndLeave();
+        } else if (blocker.state === "blocked") {
+            // If we are locked or transitioning, just proceed without auto-saving as draft
+            blocker.proceed();
         }
-    }, [blocker]);
+    }, [blocker, isDirty]);
 
     const handleLevel1Change = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const id = e.target.value;
-        setSelectedLevel1(id);
+        const catId = e.target.value;
+        setSelectedLevel1(catId);
         setSelectedLevel2('');
         setSelectedLevel3('');
         setIsDirty(true);
-        if (id) {
-            setLevel2Categories(allCategories.filter(c => c.parentId === id));
+        if (catId) {
+            setLevel2Categories(allCategories.filter(c => c.parentId === catId));
         } else {
             setLevel2Categories([]);
             setLevel3Categories([]);
@@ -170,12 +189,12 @@ const ProductCreatePage: React.FC = () => {
     };
 
     const handleLevel2Change = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const id = e.target.value;
-        setSelectedLevel2(id);
+        const catId = e.target.value;
+        setSelectedLevel2(catId);
         setSelectedLevel3('');
         setIsDirty(true);
-        if (id) {
-            setLevel3Categories(allCategories.filter(c => c.parentId === id));
+        if (catId) {
+            setLevel3Categories(allCategories.filter(c => c.parentId === catId));
         } else {
             setLevel3Categories([]);
         }
@@ -231,20 +250,14 @@ const ProductCreatePage: React.FC = () => {
         });
 
         try {
-            const res = await fetch('/api/upload/bulk', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                },
-                body: uploadFormData
-            });
+            const res = await apiClient.post('/api/upload/bulk', uploadFormData);
 
             if (res.ok) {
                 const data = await res.json();
                 setUploadedImages(prev => [...prev, ...data.urls]);
-                toast.success('Resimler başarıyla WebP formatına yüklendi.');
+                toast.success('Görseller yüklendi.');
             } else {
-                toast.error('Görsel yükleme başarısız oldu.');
+                toast.error('Görsel yükleme başarısız.');
             }
         } catch (err) {
             console.error('Upload error:', err);
@@ -256,26 +269,86 @@ const ProductCreatePage: React.FC = () => {
 
     const removeImage = async (url: string) => {
         try {
-            // MinIO'dan sil
-            const res = await fetch('/api/upload', {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
+            const res = await apiClient.delete('/api/upload', {
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ url })
             });
 
             if (res.ok) {
-                // UI'dan sil
                 setUploadedImages(prev => prev.filter(img => img !== url));
-                toast.success('Görsel başarıyla silindi.');
+                toast.success('Görsel silindi.');
             } else {
-                toast.error('Görsel sunucudan silinemedi.');
+                toast.error('Görsel silinemedi.');
             }
         } catch (err) {
             console.error('Delete error:', err);
-            toast.error('Silme işlemi başarısız oldu.');
+        }
+    };
+
+    // --- Block Builder Logic ---
+    const addBlock = (type: ContentBlock['type']) => {
+        const newBlock: ContentBlock = {
+            id: Date.now().toString(),
+            type,
+            content: type === 'FEATURES' ? ['Yeni Özellik'] :
+                type === 'SPLIT' ? { text: '', image: '', reverse: false } :
+                    type === 'IMAGE' ? { url: '', width: '100', align: 'center' } : ''
+        };
+        setBlocks([...blocks, newBlock]);
+        setIsDirty(true);
+    };
+
+    const removeBlock = (blockId: string) => {
+        setBlocks(blocks.filter(b => b.id !== blockId));
+        setIsDirty(true);
+    };
+
+    const moveBlock = (index: number, direction: 'up' | 'down') => {
+        const newBlocks = [...blocks];
+        const targetIndex = direction === 'up' ? index - 1 : index + 1;
+        if (targetIndex < 0 || targetIndex >= blocks.length) return;
+
+        const temp = newBlocks[index]!;
+        newBlocks[index] = newBlocks[targetIndex]!;
+        newBlocks[targetIndex] = temp;
+        setBlocks(newBlocks);
+        setIsDirty(true);
+    };
+
+    const updateBlock = (blockId: string, content: any) => {
+        setBlocks(blocks.map(b => b.id === blockId ? { ...b, content } : b));
+        setIsDirty(true);
+    };
+
+    const handleBlockImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, blockId: string, splitKey?: 'image') => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const uploadFormData = new FormData();
+        uploadFormData.append('images', file);
+
+        try {
+            const res = await apiClient.post('/api/upload/bulk', uploadFormData);
+
+            if (res.ok) {
+                const data = await res.json();
+                const url = data.urls[0];
+                if (splitKey) {
+                    const block = blocks.find(b => b.id === blockId);
+                    updateBlock(blockId, { ...block?.content, image: url });
+                } else {
+                    const block = blocks.find(b => b.id === blockId);
+                    if (block?.type === 'IMAGE') {
+                        const currentContent = typeof block.content === 'string' ? { url: '', width: '100', align: 'center' } : (block.content || { url: '', width: '100', align: 'center' });
+                        updateBlock(blockId, { ...currentContent, url });
+                    } else {
+                        updateBlock(blockId, url);
+                    }
+                }
+                toast.success('Görsel yüklendi.');
+            }
+        } catch (err) {
+            toast.error('Görsel yüklenemedi.');
         }
     };
 
@@ -308,14 +381,14 @@ const ProductCreatePage: React.FC = () => {
             const method = id ? 'PUT' : 'POST';
             const url = id ? `/api/merchant/products/${id}` : '/api/merchant/products';
 
-            const response = await fetch(url, {
+            const response = await apiClient.fetch(url, {
                 method,
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     ...formData,
+                    description: JSON.stringify(blocks),
                     price: parseFloat(formData.price) || 0,
                     categoryId: categoryId || (id ? undefined : 'ckv1234567890'),
                     status: finalStatus,
@@ -327,11 +400,11 @@ const ProductCreatePage: React.FC = () => {
             });
 
             if (response.ok) {
-                localStorage.removeItem('fuira_product_draft');
                 setIsDirty(false);
                 if (!fromBlocker) {
-                    toast.success(finalStatus === 'PUBLISHED' ? 'Ürün başarıyla yayınlandı!' : 'Ürün taslaklara kaydedildi.');
-                    navigate('/products');
+                    isTransitioning.current = true;
+                    toast.success(finalStatus === 'PUBLISHED' ? 'Ürün yayına alındı!' : 'Taslak başarıyla kaydedildi.');
+                    setTimeout(() => navigate('/products'), 500);
                 }
             } else {
                 const err = await response.json();
@@ -351,90 +424,75 @@ const ProductCreatePage: React.FC = () => {
             {/* Page Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-10">
                 <div className="relative group">
-                    <h1 className="text-7xl font-[1000] text-slate-900 tracking-tighter mb-4 italic leading-none">
-                        {id ? 'Ürünü' : 'Ürün'} <span className="text-brand-pink">{id ? 'Düzenle' : 'Ekle'}</span>
+                    <h1 className="text-5xl font-black text-slate-800 tracking-tight mb-2">
+                        {id ? 'Ürünü' : 'Yeni Ürün'} <span className="text-indigo-600">{id ? 'Güncelle' : 'Tanımla'}</span>
                     </h1>
-                    <p className="text-slate-400 font-bold text-lg max-w-lg italic opacity-70">
-                        {id ? 'Mevcut ürün bilgilerinizi güncelleyin ve kaydedin.' : 'Ürününüzü tüm detaylarıyla listeleyin, müşterilerinize en doğru bilgiyi ulaştırın.'}
+                    <p className="text-slate-500 font-medium text-base max-w-lg">
+                        {id ? 'Mevcut ürün verilerini ve içerik bloklarını düzenleyin.' : 'Ürün kataloğu için yeni bir kayıt oluşturun.'}
                     </p>
                 </div>
                 <div className="flex gap-6">
                     <button
                         onClick={() => navigate('/products')}
-                        className="px-12 py-5 bg-white border-2 border-slate-100 rounded-[2rem] text-[11px] font-black uppercase tracking-widest text-slate-400 hover:text-red-500 hover:border-red-100 transition-all active:scale-95 shadow-sm italic"
+                        className="px-8 py-4 bg-white border border-slate-200 rounded-2xl text-xs font-bold uppercase tracking-wider text-slate-400 hover:bg-slate-50 transition-all"
                     >
-                        VAZGEÇ
+                        İPTAL
+                    </button>
+                    <button
+                        onClick={() => handleSubmit('DRAFT')}
+                        disabled={isLoading}
+                        className="px-8 py-4 bg-white border border-indigo-100 rounded-2xl text-xs font-bold uppercase tracking-widest text-indigo-600 hover:bg-indigo-50 transition-all shadow-sm"
+                    >
+                        TASLAK KAYDET
                     </button>
                     <button
                         onClick={() => handleSubmit('PUBLISHED')}
                         disabled={isLoading}
-                        className="px-12 py-5 bg-brand-pink text-white rounded-[2rem] text-[11px] font-black uppercase tracking-[0.2em] shadow-2xl shadow-brand-pink/30 hover:bg-brand-pink-hover transition-all active:scale-95 flex items-center gap-4 italic"
+                        className="px-10 py-4 bg-indigo-600 text-white rounded-2xl text-xs font-bold uppercase tracking-widest shadow-lg shadow-indigo-100 transition-all active:scale-95 flex items-center gap-3"
                     >
-                        {isLoading && <div className="w-5 h-5 border-2 border-white/50 border-t-white rounded-full animate-spin"></div>}
-                        ŞİMDİ YAYINLA
+                        {isLoading && <div className="w-4 h-4 border-2 border-white/50 border-t-white rounded-full animate-spin"></div>}
+                        ÜRÜNÜ YAYINLA
                     </button>
                 </div>
             </div>
 
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-12">
-                {/* Left Column (Main Form) */}
                 <div className="xl:col-span-2 space-y-12">
-
                     {/* Basic Info */}
                     <div className="bg-white rounded-[3.5rem] p-12 shadow-sm border border-slate-50 relative overflow-hidden group">
                         <div className="absolute top-0 right-0 w-64 h-64 bg-slate-50 rounded-bl-[5rem] -translate-x-12 -translate-y-12 opacity-50 pointer-events-none group-hover:scale-110 transition-transform duration-1000"></div>
-
-                        <div className="flex items-center gap-6 mb-12 relative z-10">
-                            <div className="w-14 h-14 bg-brand-pink/10 rounded-2xl flex items-center justify-center text-brand-pink shadow-inner shadow-brand-pink/5">
-                                <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        <div className="flex items-center gap-4 mb-10 relative z-10">
+                            <div className="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600">
+                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                             </div>
-                            <h3 className="text-2xl font-[900] text-slate-900 uppercase tracking-tighter italic">TEMEL BİLGİLER</h3>
+                            <h3 className="text-xl font-bold text-slate-800 uppercase tracking-tight">Genel Bilgiler</h3>
                         </div>
 
                         <div className="space-y-10 relative z-10">
-                            <div className="space-y-4">
-                                <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 italic ml-2">ÜRÜN ADI</label>
+                            <div className="space-y-3">
+                                <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 ml-1">ÜRÜN ADI</label>
                                 <input
                                     type="text"
                                     name="name"
                                     value={formData.name}
                                     onChange={handleChange}
-                                    placeholder="Örn: Premium Kablosuz Kulaklık G2"
-                                    className="w-full h-20 px-10 rounded-[2.5rem] bg-slate-50 border-2 border-transparent focus:border-brand-pink focus:bg-white outline-none transition-all font-bold text-slate-800 placeholder:text-slate-300 shadow-inner italic"
+                                    placeholder="Ürün başlığını buraya yazın..."
+                                    className="w-full h-16 px-8 rounded-2xl bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:bg-white outline-none transition-all font-semibold text-slate-700"
                                 />
                             </div>
 
                             <div className="space-y-4">
-                                <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 italic ml-2">KATEGORİ SEÇİMİ (Hepsiburada Tarzı)</label>
+                                <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 italic ml-2">KATEGORİ SEÇİMİ</label>
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                    <select
-                                        value={selectedLevel1}
-                                        onChange={handleLevel1Change}
-                                        className="h-16 px-6 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-brand-pink focus:bg-white outline-none font-bold text-slate-600 shadow-inner italic"
-                                    >
+                                    <select value={selectedLevel1} onChange={handleLevel1Change} className="h-16 px-6 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-brand-pink outline-none font-bold italic">
                                         <option value="">Ana Kategori</option>
                                         {level1Categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
                                     </select>
-
-                                    <select
-                                        value={selectedLevel2}
-                                        onChange={handleLevel2Change}
-                                        disabled={!selectedLevel1 || level2Categories.length === 0}
-                                        className="h-16 px-6 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-brand-pink focus:bg-white outline-none font-bold text-slate-600 shadow-inner italic disabled:opacity-30"
-                                    >
+                                    <select value={selectedLevel2} onChange={handleLevel2Change} disabled={!selectedLevel1 || level2Categories.length === 0} className="h-16 px-6 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-brand-pink outline-none font-bold italic disabled:opacity-30">
                                         <option value="">Alt Kategori</option>
                                         {level2Categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
                                     </select>
-
-                                    <select
-                                        value={selectedLevel3}
-                                        onChange={(e) => {
-                                            setSelectedLevel3(e.target.value);
-                                            setIsDirty(true);
-                                        }}
-                                        disabled={!selectedLevel2 || level3Categories.length === 0}
-                                        className="h-16 px-6 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-brand-pink focus:bg-white outline-none font-bold text-slate-600 shadow-inner italic disabled:opacity-30"
-                                    >
+                                    <select value={selectedLevel3} onChange={(e) => { setSelectedLevel3(e.target.value); setIsDirty(true); }} disabled={!selectedLevel2 || level3Categories.length === 0} className="h-16 px-6 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-brand-pink outline-none font-bold italic disabled:opacity-30">
                                         <option value="">Detay Kategori</option>
                                         {level3Categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
                                     </select>
@@ -499,179 +557,186 @@ const ProductCreatePage: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Description */}
                     <div className="bg-white rounded-[3.5rem] p-12 shadow-sm border border-slate-50 relative group">
-                        <div className="flex items-center gap-6 mb-12">
-                            <div className="w-14 h-14 bg-amber-50 rounded-2xl flex items-center justify-center text-amber-500 shadow-inner">
-                                <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                        <div className="flex items-center justify-between mb-10">
+                            <div className="flex items-center gap-4">
+                                <div className="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center text-amber-600">
+                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+                                </div>
+                                <h3 className="text-xl font-bold text-slate-800 uppercase tracking-tight">Ürün İçerik Editörü</h3>
                             </div>
-                            <h3 className="text-2xl font-[900] text-slate-900 uppercase tracking-tighter italic">ÜRÜN AÇIKLAMASI</h3>
                         </div>
 
-                        <div className="bg-slate-50/50 rounded-[2.5rem] border border-slate-100 overflow-hidden shadow-inner">
-                            <textarea
-                                name="description"
-                                value={formData.description}
-                                onChange={handleChange}
-                                placeholder="Ürününüzün benzersiz özelliklerini, kullanım alanlarını ve fark yaratan detaylarını buraya yazın..."
-                                className="w-full min-h-[400px] p-12 bg-transparent outline-none font-bold text-slate-600 resize-none leading-relaxed placeholder:text-slate-300 placeholder:italic italic"
-                            />
+                        <div className="space-y-6 mb-10">
+                            {blocks.length === 0 && (
+                                <div className="py-16 text-center bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
+                                    <p className="text-slate-400 font-bold text-xs uppercase tracking-widest">Henüz içerik bloğu eklenmedi.</p>
+                                </div>
+                            )}
+
+                            {blocks.map((block, index) => (
+                                <div key={block.id} className="group/block relative bg-white rounded-2xl p-6 border border-slate-200 hover:border-indigo-300 hover:shadow-md transition-all">
+                                    <div className="absolute -left-3 top-1/2 -translate-y-1/2 flex flex-col gap-1 opacity-0 group-hover/block:opacity-100 transition-all z-10">
+                                        <button onClick={() => moveBlock(index, 'up')} className="w-8 h-8 bg-white border border-slate-200 shadow-sm rounded-lg flex items-center justify-center text-slate-400 hover:text-indigo-600"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 15l7-7 7 7" /></svg></button>
+                                        <button onClick={() => moveBlock(index, 'down')} className="w-8 h-8 bg-white border border-slate-200 shadow-sm rounded-lg flex items-center justify-center text-slate-400 hover:text-indigo-600"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7" /></svg></button>
+                                    </div>
+                                    <div className="absolute -right-3 top-1/2 -translate-y-1/2 opacity-0 group-hover/block:opacity-100 transition-all z-10">
+                                        <button onClick={() => removeBlock(block.id)} className="w-8 h-8 bg-white border border-red-100 shadow-sm rounded-lg flex items-center justify-center text-red-400 hover:bg-red-500 hover:text-white transition-colors"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12" /></svg></button>
+                                    </div>
+
+                                    {block.type === 'HEADING' && (
+                                        <div className="space-y-2">
+                                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">BÖLÜM BAŞLIĞI</span>
+                                            <input type="text" value={block.content} onChange={(e) => updateBlock(block.id, e.target.value)} placeholder="Başlık..." className="w-full bg-transparent text-2xl font-bold text-slate-800 outline-none" />
+                                        </div>
+                                    )}
+
+                                    {block.type === 'TEXT' && (
+                                        <div className="space-y-2">
+                                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">PARAGRAF METNİ</span>
+                                            <textarea value={block.content} onChange={(e) => updateBlock(block.id, e.target.value)} placeholder="Açıklama metni..." className="w-full min-h-[100px] bg-transparent text-sm font-medium text-slate-600 outline-none leading-relaxed resize-none" />
+                                        </div>
+                                    )}
+
+                                    {block.type === 'IMAGE' && (
+                                        <div className="space-y-4">
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">GÖRSEL BLOĞU</span>
+                                                {block.content && typeof block.content !== 'string' && block.content.url && (
+                                                    <div className="flex bg-slate-100 p-1 rounded-xl gap-1">
+                                                        <div className="flex border-r border-slate-200 pr-1 gap-1">
+                                                            {['33', '50', '75', '100'].map(w => (
+                                                                <button key={w} onClick={() => updateBlock(block.id, { ...block.content, width: w })} className={`px-2 py-1 text-[9px] font-black rounded-lg transition-all ${block.content.width === w ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}>{w}%</button>
+                                                            ))}
+                                                        </div>
+                                                        <div className="flex pl-1 gap-1">
+                                                            {['left', 'center', 'right'].map(a => (
+                                                                <button key={a} onClick={() => updateBlock(block.id, { ...block.content, align: a })} className={`px-2 py-1 text-[9px] font-black rounded-lg transition-all uppercase ${block.content.align === a ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}>{a[0]}</button>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className="relative rounded-xl overflow-hidden bg-slate-50 border border-slate-200 min-h-[100px] flex items-center justify-center">
+                                                {block.content && (typeof block.content === 'string' ? block.content : block.content.url) ? (
+                                                    <div className="relative group/img w-full">
+                                                        <img src={typeof block.content === 'string' ? block.content : block.content.url} className="w-full h-auto max-h-[400px] object-contain p-4 transition-all" alt="" />
+                                                        <label className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover/img:opacity-100 transition-all flex items-center justify-center cursor-pointer">
+                                                            <input type="file" className="hidden" onChange={(e) => handleBlockImageUpload(e, block.id)} />
+                                                            <span className="text-white font-black text-[10px] uppercase tracking-widest backdrop-blur-sm px-4 py-2 rounded-xl bg-white/10 border border-white/20">DEĞİŞTİR</span>
+                                                        </label>
+                                                    </div>
+                                                ) : (
+                                                    <label className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer bg-slate-50 hover:bg-slate-100 transition-colors">
+                                                        <input type="file" className="hidden" onChange={(e) => handleBlockImageUpload(e, block.id)} />
+                                                        <svg className="w-6 h-6 text-slate-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">GÖRSEL EKLE</span>
+                                                    </label>
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {block.type === 'FEATURES' && (
+                                        <div className="space-y-3">
+                                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">TEKNİK DETAY LİSTESİ</span>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                                {block.content.map((feature: string, fIdx: number) => (
+                                                    <input key={fIdx} value={feature} onChange={(e) => {
+                                                        const newFeats = [...block.content];
+                                                        newFeats[fIdx] = e.target.value;
+                                                        updateBlock(block.id, newFeats);
+                                                    }} className="h-10 px-4 rounded-lg bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 outline-none focus:border-indigo-500 focus:bg-white" />
+                                                ))}
+                                                <button onClick={() => updateBlock(block.id, [...block.content, 'Yeni Detay'])} className="h-10 border border-dashed border-slate-300 rounded-lg flex items-center justify-center text-slate-400 hover:bg-slate-50">+</button>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {block.type === 'SPLIT' && (
+                                        <div className="space-y-3">
+                                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">METİN & GÖRSEL (IKILI)</span>
+                                            <div className={`flex flex-col md:flex-row gap-6 ${block.content.reverse ? 'md:flex-row-reverse' : ''}`}>
+                                                <textarea value={block.content.text} onChange={(e) => updateBlock(block.id, { ...block.content, text: e.target.value })} placeholder="Metin..." className="flex-1 min-h-[120px] bg-slate-50 rounded-xl p-4 border border-slate-200 text-xs font-medium text-slate-600 outline-none focus:bg-white focus:border-indigo-500" />
+                                                <div className="flex-1 aspect-video rounded-xl bg-slate-50 border border-slate-200 overflow-hidden relative">
+                                                    {block.content.image ? <img src={block.content.image} className="w-full h-full object-contain p-2" alt="" /> : (
+                                                        <label className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer"><input type="file" className="hidden" onChange={(e) => handleBlockImageUpload(e, block.id, 'image')} /><span className="text-[10px] font-bold text-slate-400 uppercase">+ GÖRSEL</span></label>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Add Block Menu Toolbar */}
+                        <div className="flex flex-wrap gap-2 p-3 bg-slate-50 border border-slate-200 rounded-2xl">
+                            <button onClick={() => addBlock('HEADING')} className="px-4 h-10 bg-white hover:bg-slate-100 text-slate-600 text-xs font-bold rounded-lg border border-slate-200 transition-colors">H Başlık</button>
+                            <button onClick={() => addBlock('TEXT')} className="px-4 h-10 bg-white hover:bg-slate-100 text-slate-600 text-xs font-bold rounded-lg border border-slate-200 transition-colors">Metin Paragrafı</button>
+                            <button onClick={() => addBlock('IMAGE')} className="px-4 h-10 bg-white hover:bg-slate-100 text-slate-600 text-xs font-bold rounded-lg border border-slate-200 transition-colors">Görsel Blok</button>
+                            <button onClick={() => addBlock('FEATURES')} className="px-4 h-10 bg-white hover:bg-slate-100 text-slate-600 text-xs font-bold rounded-lg border border-slate-200 transition-colors">Detay Listesi</button>
+                            <button onClick={() => addBlock('SPLIT')} className="ml-auto px-6 h-10 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-lg transition-colors">Metin + Görsel Ekle</button>
                         </div>
                     </div>
 
                     {/* Image Upload Area */}
-                    <div className="bg-white rounded-[3.5rem] p-12 shadow-sm border border-slate-50 relative group">
+                    <div className="bg-white rounded-[3.5rem] p-12 shadow-sm border border-slate-50">
                         <div className="flex items-center gap-6 mb-12">
-                            <div className="w-14 h-14 bg-pink-50 rounded-2xl flex items-center justify-center text-brand-pink shadow-inner">
+                            <div className="w-14 h-14 bg-pink-50 rounded-2xl flex items-center justify-center text-brand-pink">
                                 <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                             </div>
                             <h3 className="text-2xl font-[900] text-slate-900 uppercase tracking-tighter italic">ÜRÜN GÖRSELLERİ</h3>
-
                         </div>
-
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                             {uploadedImages.map((url, i) => (
-                                <div key={i} className="relative aspect-square rounded-[2rem] overflow-hidden border-2 border-slate-100 group/img bg-slate-50">
+                                <div key={i} className="relative aspect-square rounded-[2rem] overflow-hidden border-2 border-slate-100 group bg-slate-50">
                                     <img src={url} alt="" className="w-full h-full object-cover" />
-                                    <button
-                                        onClick={() => removeImage(url)}
-                                        className="absolute top-3 right-3 w-8 h-8 bg-white/90 backdrop-blur rounded-xl flex items-center justify-center text-red-500 shadow-lg opacity-0 group-hover/img:opacity-100 transition-all hover:bg-red-500 hover:text-white"
-                                    >
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12" /></svg>
-                                    </button>
-                                    <div className="absolute bottom-3 left-3 px-2 py-1 bg-black/50 backdrop-blur rounded-lg text-[8px] font-black text-white uppercase italic">WEBP</div>
+                                    <button onClick={() => removeImage(url)} className="absolute top-3 right-3 w-8 h-8 bg-white/90 rounded-xl flex items-center justify-center text-red-500 opacity-0 group-hover:opacity-100 transition-all">X</button>
                                 </div>
                             ))}
-
-                            <label className="relative aspect-square rounded-[2rem] border-4 border-dashed border-slate-100 flex flex-col items-center justify-center gap-4 cursor-pointer hover:border-brand-pink hover:bg-brand-pink/5 transition-all group/upload">
+                            {isUploading && (
+                                <div className="aspect-square rounded-[2rem] border-2 border-slate-100 bg-slate-50 flex items-center justify-center">
+                                    <div className="w-8 h-8 border-4 border-brand-pink border-t-white rounded-full animate-spin"></div>
+                                </div>
+                            )}
+                            <label className="relative aspect-square rounded-[2rem] border-4 border-dashed border-slate-100 flex items-center justify-center cursor-pointer hover:bg-slate-50">
                                 <input type="file" multiple accept="image/*" onChange={handleImageUpload} className="hidden" />
-                                {isUploading ? (
-                                    <div className="w-10 h-10 border-4 border-brand-pink/20 border-t-brand-pink rounded-full animate-spin"></div>
-                                ) : (
-                                    <>
-                                        <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-300 group-hover/upload:text-brand-pink group-hover/upload:scale-110 transition-all shadow-inner">
-                                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M12 4v16m8-8H4" /></svg>
-                                        </div>
-                                        <div className="text-center">
-                                            <span className="text-[10px] font-black text-slate-400 group-hover/upload:text-brand-pink uppercase tracking-widest italic block">GÖRSEL EKLE</span>
-                                            <span className="text-[8px] font-bold text-slate-300 mt-1 block">PNG, JPG, WEBP</span>
-                                        </div>
-                                    </>
-                                )}
+                                <span className="text-[10px] font-black text-slate-400 italic">+ EKLE</span>
                             </label>
                         </div>
                     </div>
                 </div>
 
-                {/* Right Column (Sidebar) */}
                 <div className="space-y-12">
-                    {/* Pricing */}
-                    <div className="bg-white rounded-[3.5rem] p-12 shadow-sm border border-slate-50 relative group">
+                    {/* Pricing & Stock */}
+                    <div className="bg-white rounded-[3.5rem] p-12 shadow-sm border border-slate-50">
                         <div className="flex items-center gap-6 mb-12">
-                            <div className="w-14 h-14 bg-green-50 rounded-2xl flex items-center justify-center text-green-500 shadow-inner">
-                                <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                            <div className="w-14 h-14 bg-green-50 rounded-2xl flex items-center justify-center text-green-500">
+                                <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2" strokeWidth="3" /></svg>
                             </div>
                             <h3 className="text-2xl font-[900] text-slate-900 uppercase tracking-tighter italic">FİYAT & STOK</h3>
                         </div>
-
                         <div className="space-y-10">
                             <div className="grid grid-cols-2 gap-6">
                                 <div className="space-y-4">
-                                    <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 italic ml-2">PARA CİNSİ</label>
-                                    <select
-                                        name="currency"
-                                        value={formData.currency}
-                                        onChange={handleChange}
-                                        className="w-full h-16 px-8 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-green-500 outline-none font-black text-slate-700 shadow-inner italic appearance-none cursor-pointer"
-                                    >
-                                        <option value="TL">TL (TL)</option>
-                                        <option value="$">$ (USD)</option>
-                                        <option value="€">€ (EUR)</option>
-                                        <option value="£">£ (GBP)</option>
+                                    <label className="text-[11px] font-black uppercase text-slate-400 italic">PARA CİNSİ</label>
+                                    <select name="currency" value={formData.currency} onChange={handleChange} className="w-full h-16 px-8 rounded-2xl bg-slate-50 border-2 border-transparent outline-none font-black italic">
+                                        <option value="TL">TL</option>
+                                        <option value="$">USD</option>
+                                        <option value="€">EUR</option>
                                     </select>
                                 </div>
-
                                 <div className="space-y-4">
-                                    <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 italic ml-2">SATIŞ FİYATI</label>
-                                    <input
-                                        type="number"
-                                        name="price"
-                                        value={formData.price}
-                                        onChange={handleChange}
-                                        placeholder="0.00"
-                                        className="w-full h-16 px-8 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-green-500 outline-none font-black text-slate-700 shadow-inner italic"
-                                    />
+                                    <label className="text-[11px] font-black uppercase text-slate-400 italic">FİYAT</label>
+                                    <input type="number" name="price" value={formData.price} onChange={handleChange} placeholder="0.00" className="w-full h-16 px-8 rounded-2xl bg-slate-50 border-2 border-transparent outline-none font-black italic" />
                                 </div>
                             </div>
-
                             <div className="space-y-4">
-                                <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 italic ml-2">STOK ADEDİ</label>
-                                <input
-                                    type="number"
-                                    name="stock"
-                                    value={formData.stock}
-                                    onChange={handleChange}
-                                    placeholder="0"
-                                    className="w-full h-16 px-8 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-green-500 outline-none font-black text-slate-700 shadow-inner italic"
-                                />
-                            </div>
-
-                            <div className="space-y-4">
-                                <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 italic ml-2">KDV ORANI</label>
-                                <select
-                                    name="taxRate"
-                                    value={formData.taxRate}
-                                    onChange={handleChange}
-                                    className="w-full h-16 px-8 rounded-2xl bg-slate-50 border-2 border-transparent outline-none font-black text-slate-700 appearance-none cursor-pointer shadow-inner italic"
-                                >
-                                    <option>%0</option>
-                                    <option>%1</option>
-                                    <option>%10</option>
-                                    <option>%20</option>
-                                </select>
+                                <label className="text-[11px] font-black uppercase text-slate-400 italic">STOK</label>
+                                <input type="number" name="stock" value={formData.stock} onChange={handleChange} placeholder="0" className="w-full h-16 px-8 rounded-2xl bg-slate-50 border-2 border-transparent outline-none font-black italic" />
                             </div>
                         </div>
-                    </div>
-
-                    {/* Status Display Card */}
-                    <div className="bg-slate-900 rounded-[3.5rem] p-12 shadow-2xl shadow-slate-900/40 relative overflow-hidden group border border-white/5">
-                        <div className="absolute top-[-20%] right-[-20%] w-64 h-64 bg-brand-pink/10 rounded-full blur-3xl pointer-events-none group-hover:scale-125 transition-transform duration-1000"></div>
-
-                        <h3 className="text-3xl font-[900] text-white mb-2 relative z-10 tracking-tight italic uppercase">LİSTELEME ÖZETİ</h3>
-                        <p className="text-slate-400 text-sm font-bold mb-10 relative z-10 italic">Ürününüz şu anki ayarlara göre {formData.name || 'isimsiz'} olarak kaydedilecektir.</p>
-
-                        <div className="space-y-4 relative z-10">
-                            <div className="flex justify-between items-center py-4 border-b border-white/5">
-                                <span className="text-[10px] font-black text-slate-500 tracking-widest uppercase italic">Kategori</span>
-                                <span className="text-xs font-black text-slate-200 italic">{level1Categories.find(c => c.id === selectedLevel1)?.name || '-'}</span>
-                            </div>
-                            <div className="flex justify-between items-center py-4 border-b border-white/5">
-                                <span className="text-[10px] font-black text-slate-500 tracking-widest uppercase italic">Detay Özellikler</span>
-                                <span className="text-xs font-black text-slate-200 italic">{attributes.length} Adet</span>
-                            </div>
-                        </div>
-
-                        <div className="mt-12 flex items-center justify-center p-6 bg-white/5 rounded-3xl border border-white/5 italic">
-                            <span className="text-[10px] font-black text-brand-pink tracking-[0.3em] uppercase">Hazır - Yayına Alabilirsin</span>
-                        </div>
-                    </div>
-
-                    {/* Guidelines */}
-                    <div className="bg-brand-pink/5 rounded-[3.5rem] p-12 border border-brand-pink/10">
-                        <h3 className="text-xl font-[900] text-brand-pink mb-6 italic uppercase">HIZLI İPUÇLARI</h3>
-                        <ul className="space-y-6">
-                            {[
-                                "Ürün adında marka ve model belirtin.",
-                                "Açıklamada madde imleri kullanın.",
-                                "Yüksek çözünürlüklü fotoğraflar yükleyin.",
-                                "Tüm detay özellikleri eksiksiz doldurun."
-                            ].map((tip, i) => (
-                                <li key={i} className="flex gap-4 items-start text-xs font-bold text-slate-600 italic">
-                                    <div className="w-5 h-5 rounded-lg bg-brand-pink/20 flex-shrink-0 flex items-center justify-center text-brand-pink text-[10px] font-black">{i + 1}</div>
-                                    {tip}
-                                </li>
-                            ))}
-                        </ul>
                     </div>
                 </div>
             </div>

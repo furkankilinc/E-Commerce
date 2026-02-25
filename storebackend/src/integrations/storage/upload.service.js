@@ -33,7 +33,7 @@ const uploadImage = async (fileBuffer, originalName) => {
     // 2. Convert to WebP
     const processedBuffer = await sharp(fileBuffer)
         .webp({
-            quality: 90,     // Daha yüksek kalite (%80'den %90'a)
+            quality: 75,     // Daha yüksek kalite (%80'den %90'a)
             smartSubsample: true, // Renk geçişlerini daha keskin yapar
             effort: 6        // En iyi sıkıştırma algoritmasını kullanır (görüntü bozulmaz)
         })

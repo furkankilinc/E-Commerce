@@ -24,13 +24,13 @@ const LoginPage: React.FC = () => {
                     </span>
                 </div>
 
-                {/* Desktop Nav */}
+                {/* Masaüstü Nav */}
                 <nav className="hidden lg:flex items-center gap-8">
-                    <a href="#" className="text-[11px] font-bold text-gray-400 hover:text-gray-900 transition-colors uppercase tracking-[0.2em]">Shop</a>
-                    <a href="#" className="text-[11px] font-bold text-gray-400 hover:text-gray-900 transition-colors uppercase tracking-[0.2em]">Community</a>
-                    <a href="#" className="text-[11px] font-bold text-gray-400 hover:text-gray-900 transition-colors uppercase tracking-[0.2em]">Drops</a>
+                    <a href="#" className="text-[11px] font-bold text-gray-400 hover:text-gray-900 transition-colors uppercase tracking-[0.2em]">Mağaza</a>
+                    <a href="#" className="text-[11px] font-bold text-gray-400 hover:text-gray-900 transition-colors uppercase tracking-[0.2em]">Topluluk</a>
+                    <a href="#" className="text-[11px] font-bold text-gray-400 hover:text-gray-900 transition-colors uppercase tracking-[0.2em]">Yenilikler</a>
                     <Link to="/register" className="px-6 py-2 rounded-full border-2 border-gray-900 text-[11px] font-[1000] text-gray-900 hover:bg-gray-900 hover:text-white transition-all transform active:scale-95 uppercase tracking-widest shadow-sm">
-                        Sign Up
+                        Üye Ol
                     </Link>
                 </nav>
 
@@ -61,14 +61,14 @@ const LoginPage: React.FC = () => {
                     </button>
                 </div>
                 <div className="flex-1 overflow-y-auto py-6 px-6 space-y-4">
-                    <button className="w-full text-left py-4 text-xl font-[1000] text-gray-900 uppercase italic border-b border-gray-50">SHOP</button>
-                    <button className="w-full text-left py-4 text-xl font-[1000] text-gray-900 uppercase italic border-b border-gray-50">COMMUNITY</button>
-                    <button className="w-full text-left py-4 text-xl font-[1000] text-gray-900 uppercase italic border-b border-gray-50 flex justify-between">DROPS <span className="bg-brand-pink text-white text-[9px] px-2 py-0.5 rounded-full">HOT</span></button>
+                    <button className="w-full text-left py-4 text-xl font-[1000] text-gray-900 uppercase italic border-b border-gray-50">MAĞAZA</button>
+                    <button className="w-full text-left py-4 text-xl font-[1000] text-gray-900 uppercase italic border-b border-gray-50">TOPLULUK</button>
+                    <button className="w-full text-left py-4 text-xl font-[1000] text-gray-900 uppercase italic border-b border-gray-50 flex justify-between">YENİLİKLER <span className="bg-brand-pink text-white text-[9px] px-2 py-0.5 rounded-full">HOT</span></button>
                 </div>
                 <div className="p-6 bg-[#fafafa] border-t border-gray-50 space-y-8">
                     <div className="grid grid-cols-2 gap-4">
-                        <Link to="/login" className="py-4 border-2 border-gray-900 rounded-lg text-gray-900 font-[1000] text-center text-sm uppercase italic">Sign In</Link>
-                        <Link to="/register" className="py-4 bg-brand-pink rounded-lg text-white font-[1000] text-center text-sm uppercase italic">Sign Up</Link>
+                        <Link to="/login" className="py-4 border-2 border-gray-900 rounded-lg text-gray-900 font-[1000] text-center text-sm uppercase italic">Giriş Yap</Link>
+                        <Link to="/register" className="py-4 bg-brand-pink rounded-lg text-white font-[1000] text-center text-sm uppercase italic">Üye Ol</Link>
                     </div>
                 </div>
             </div>
@@ -84,7 +84,7 @@ const LoginPage: React.FC = () => {
             <footer className="w-full py-8 px-6 md:px-12 bg-white/40 backdrop-blur-md border-t border-gray-100/50 hidden md:flex flex-row justify-between items-center gap-6 z-20">
                 <div className="flex flex-col items-start gap-1">
                     <span className="text-sm font-[1000] text-gray-900 uppercase tracking-tighter italic">FUI<span className="text-brand-pink">RA</span></span>
-                    <p className="text-[10px] font-bold text-gray-300 tracking-wider">© 2024 DESIGNED FOR THE BOLD.</p>
+                    <p className="text-[10px] font-bold text-gray-300 tracking-wider">Tüm Hakları Saklıdır © {/**/}</p>
                 </div>
                 <div className="flex items-center gap-8 md:gap-10">
                     {['Instagram', 'Twitter', 'Discord'].map(link => (

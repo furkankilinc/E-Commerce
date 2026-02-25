@@ -1,12 +1,13 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { authStore } from './auth.store';
+
 
 export const useAuth = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(authStore.isAuthenticated());
     const [merchant, setMerchant] = useState(authStore.getMerchant());
 
-    const login = useCallback((accessToken: string, merchantData: any) => {
-        authStore.setAuth(accessToken, merchantData);
+    const login = useCallback((accessToken: string, refreshToken: string, merchantData: any) => {
+        authStore.setAuth(accessToken, refreshToken, merchantData);
         setIsAuthenticated(true);
         setMerchant(merchantData);
     }, []);
@@ -17,6 +18,35 @@ export const useAuth = () => {
         setMerchant(null);
     }, []);
 
+    // Periodic background refresh (every 10 minutes)
+    useEffect(() => {
+        if (!isAuthenticated) return;
+
+        const interval = setInterval(async () => {
+            try {
+                const rfToken = authStore.getRefreshToken();
+                if (rfToken) {
+                    await fetch('/api/auth/merchant/refresh', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ refreshToken: rfToken })
+                    }).then(async res => {
+                        if (res.ok) {
+                            const data = await res.json();
+                            authStore.setAuth(data.accessToken, data.refreshToken, authStore.getMerchant()!);
+                        } else if (res.status === 401) {
+                            logout();
+                        }
+                    });
+                }
+            } catch (err) {
+                console.error('Background refresh failed:', err);
+            }
+        }, 10 * 60 * 1000); // 10 minutes
+
+        return () => clearInterval(interval);
+    }, [isAuthenticated, logout]);
+
     return {
         isAuthenticated,
         merchant,
@@ -24,3 +54,5 @@ export const useAuth = () => {
         logout
     };
 };
+
+

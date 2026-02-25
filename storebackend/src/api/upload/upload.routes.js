@@ -1,8 +1,26 @@
 const { Router } = require('express');
 const multer = require('multer');
 const { uploadImage, deleteImage } = require('../../integrations/storage/upload.service');
+const { verifyToken } = require('../../utils/token.util');
 
 const router = Router();
+
+// ── Auth Middleware ──────────────────────────────────────────────────────────
+// Only authenticated merchants may upload or delete images.
+const merchantAuth = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ message: 'Yetkilendirme token\'ı bulunamadı.' });
+    }
+    const token = authHeader.split(' ')[1];
+    try {
+        const payload = verifyToken(token, 'merchant');
+        req.merchantId = payload.sub;
+        next();
+    } catch {
+        return res.status(401).json({ message: 'Token geçersiz veya süresi dolmuş.' });
+    }
+};
 
 // Multer config - memory storage
 const storage = multer.memoryStorage();
@@ -18,7 +36,7 @@ const upload = multer({
     }
 });
 
-router.post('/', upload.single('image'), async (req, res) => {
+router.post('/', merchantAuth, upload.single('image'), async (req, res) => {
     try {
         if (!req.file) throw new Error('Resim dosyası seçilmedi.');
         const url = await uploadImage(req.file.buffer, req.file.originalname);
@@ -28,7 +46,7 @@ router.post('/', upload.single('image'), async (req, res) => {
     }
 });
 
-router.post('/bulk', upload.array('images', 10), async (req, res) => {
+router.post('/bulk', merchantAuth, upload.array('images', 10), async (req, res) => {
     try {
         if (!req.files || req.files.length === 0) throw new Error('Resim seçilmedi.');
         const urls = await Promise.all(req.files.map(f => uploadImage(f.buffer, f.originalname)));
@@ -38,11 +56,10 @@ router.post('/bulk', upload.array('images', 10), async (req, res) => {
     }
 });
 
-router.delete('/', async (req, res) => {
+router.delete('/', merchantAuth, async (req, res) => {
     try {
         const { url } = req.body;
         if (!url) throw new Error('Silinecek resim URL\'i belirtilmedi.');
-
         await deleteImage(url);
         res.json({ message: 'Resim MinIO\'dan başarıyla silindi.' });
     } catch (err) {
@@ -51,3 +68,4 @@ router.delete('/', async (req, res) => {
 });
 
 module.exports = router;
+
