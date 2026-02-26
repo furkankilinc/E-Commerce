@@ -12,6 +12,10 @@ let helmet;
 try { helmet = require('helmet'); } catch { helmet = null; }
 if (helmet) app.use(helmet());
 
+// ── Security: Cookie Parser ──────────────────────────────────────────────────
+const cookieParser = require('cookie-parser');
+app.use(cookieParser());
+
 // ── Security: CORS ─────────────────────────────────────────────────────────────
 // Only allow requests from known frontend origins.
 const ALLOWED_ORIGINS = (process.env.CORS_ORIGINS || 'http://localhost:5173,http://localhost:5174')
