@@ -88,17 +88,19 @@ const requestLogger = (req, res, next) => {
             userIdentity = `ID:${userId} (LegacyAuth)`;
         }
 
-        // Eğer hala bulunamadıysa Header'ı zorla!
-        const authHeader = req.headers['authorization'] || req.headers['Authorization']; // Case-sensitive kontrol
-        if (userIdentity === 'Ziyaretçi (Anonymous)' && authHeader) {
+        // Eğer hala bulunamadıysa Header veya Cookie'yi zorla!
+        const authHeader = req.headers['authorization'] || req.headers['Authorization'];
+        const cookieToken = req.cookies ? req.cookies.token : null;
+
+        if (userIdentity === 'Ziyaretçi (Anonymous)' && (authHeader || cookieToken)) {
             try {
-                const token = authHeader.includes(' ') ? authHeader.split(' ')[1] : authHeader;
+                const token = cookieToken || (authHeader.includes(' ') ? authHeader.split(' ')[1] : authHeader);
                 const decoded = jwt.decode(token);
                 if (decoded) {
                     userId = decoded.sub || decoded.id;
                     userEmail = decoded.email;
                     userRole = decoded.role || decoded.audience || 'USER';
-                    userIdentity = (decoded.email || decoded.name || userId) + ' (AuthHeader)';
+                    userIdentity = (decoded.email || decoded.name || userId) + (cookieToken ? ' (Cookie)' : ' (AuthHeader)');
                 }
             } catch (e) {
                 // Sessiz hata

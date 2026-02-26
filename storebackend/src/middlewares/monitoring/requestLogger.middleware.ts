@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 const logger = require('../../utils/logger');
+const jwt = require('jsonwebtoken');
 
 /**
  * Hassas verileri loglardan gizlemek için yardımcı fonksiyon
@@ -7,7 +8,7 @@ const logger = require('../../utils/logger');
 const maskSensitiveData = (data: any): any => {
     if (!data || typeof data !== 'object') return data;
     const masked = Array.isArray(data) ? [...data] : { ...data };
-    const sensitiveKeys = ['password', 'token', 'refreshToken', 'accessToken', 'creditCard', 'cvv', 'secret'];
+    const sensitiveKeys = ['password', 'token', 'refreshToken', 'accessToken', 'creditCard', 'cvv', 'secret', 'authorization', 'cookie'];
 
     Object.keys(masked).forEach(key => {
         if (sensitiveKeys.some(s => key.toLowerCase().includes(s))) {
@@ -44,7 +45,7 @@ const getDeviceInfo = (ua: string | undefined): string => {
 };
 
 /**
- * Gelişmiş HTTP İstek Loglayıcı - Detaylı Kullanıcı & Cihaz Takibi (TypeScript)
+ * Gelişmiş HTTP İstek Loglayıcı - Detaylı Kullanıcı & Cihaz Takibi (TypeScript Geliştirilmiş)
  */
 export const requestLogger = (req: Request, res: Response, next: NextFunction) => {
     const startHrTime = process.hrtime();
@@ -62,7 +63,42 @@ export const requestLogger = (req: Request, res: Response, next: NextFunction) =
         if (statusCode >= 500) level = 'error';
         else if (statusCode >= 400) level = 'warn';
 
-        const userPayload = (req as any).tokenPayload || (req as any).adminPayload || (req as any).merchantPayload || null;
+        // --- Kullanıcı Bilgisi Çıkarma ---
+        let userIdentity = 'Ziyaretçi (Anonymous)';
+        let userEmail: string | null = null;
+        let userRole = 'GUEST';
+        let userId: string | null = null;
+
+        const payload = (req as any).tokenPayload || (req as any).adminPayload || (req as any).merchantPayload || (req as any).userPayload;
+
+        if (payload) {
+            userEmail = payload.email || payload.name;
+            userRole = payload.role || payload.audience || 'USER';
+            userId = payload.sub || payload.id;
+            userIdentity = payload.name || payload.email || `${userRole}:${userId}`;
+        }
+        else if ((req as any).userId || (req as any).adminId || (req as any).merchantId) {
+            userId = (req as any).userId || (req as any).adminId || (req as any).merchantId;
+            userRole = (req as any).adminId ? 'ADMIN' : ((req as any).merchantId ? 'MERCHANT' : 'USER');
+            userIdentity = `ID:${userId} (LegacyAuth)`;
+        }
+
+        // Header veya Cookie'den zorla bulmayı dene (Middleware henüz çalışmamış olabilir)
+        const authHeader = req.headers['authorization'] || req.headers['Authorization'] as string;
+        const cookieToken = req.cookies ? req.cookies.token : null;
+
+        if (userIdentity === 'Ziyaretçi (Anonymous)' && (authHeader || cookieToken)) {
+            try {
+                const token = cookieToken || (authHeader.includes(' ') ? authHeader.split(' ')[1] : authHeader);
+                const decoded = jwt.decode(token);
+                if (decoded) {
+                    userId = decoded.sub || decoded.id;
+                    userEmail = decoded.email;
+                    userRole = decoded.role || decoded.audience || 'USER';
+                    userIdentity = (decoded.email || decoded.name || userId) + (cookieToken ? ' (Cookie)' : ' (AuthHeader)');
+                }
+            } catch (e) { /* silent */ }
+        }
 
         const timestamp = new Date().toLocaleString('tr-TR', {
             timeZone: 'Europe/Istanbul',
@@ -81,23 +117,30 @@ export const requestLogger = (req: Request, res: Response, next: NextFunction) =
             Elapsed: durationMs,
             ClientIP: req.ip || req.headers['x-forwarded-for'],
 
-            Kullanıcı: userPayload ? (userPayload.name || userPayload.email) : 'Ziyaretçi (Anonymous)',
-            KullanıcıEmail: userPayload ? userPayload.email : null,
-            KullanıcıRol: userPayload ? userPayload.role : 'GUEST',
+            Kullanıcı: userIdentity,
+            KullanıcıEmail: userEmail,
+            KullanıcıRol: userRole,
+            UserId: userId,
 
             Cihaz: deviceDetail,
-            TarayıcıHamVeri: userAgentRaw,
+            Headers: {
+                Host: req.headers['host'],
+                Referer: req.headers['referer'],
+                HasAuth: !!authHeader,
+                AuthType: authHeader ? authHeader.split(' ')[0] : 'None'
+            },
 
+            IsSlow: durationMs > 1000,
             Query: Object.keys(req.query).length > 0 ? req.query : undefined,
             Body: (['POST', 'PUT', 'PATCH'].includes(req.method) && Object.keys(req.body || {}).length > 0)
                 ? maskSensitiveData(req.body) : undefined,
             SourceContext: 'HttpRequest'
         };
 
-        const msg = `[HTTP] {Method} {Path} responded {Status} in {Elapsed} ms | Cihaz: {Cihaz} | Kullanıcı: {Kullanıcı}`;
+        const msg = `[HTTP] {Method} {Path} responded {Status} in {Elapsed} ms | {Kullanıcı}`;
 
         if (durationMs > 1000) {
-            logger.warn(`🐌 YAVAŞ İSTEK: ${msg}`, logMetadata);
+            logger.warn(`🐌 YAVAŞ: ${msg}`, logMetadata);
         } else {
             logger[level](msg, logMetadata);
         }
