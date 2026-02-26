@@ -4,6 +4,7 @@ import { useCart } from '../cart/cart.store';
 import { useWishlist } from '../wishlist/store/wishlist.store';
 import AddToCollectionModal from '../collections/components/AddToCollectionModal';
 import { toast } from 'react-toastify';
+import { getSizedImageUrl } from '../../shared/utils/image.util';
 
 interface Product {
     id: string;
@@ -29,6 +30,7 @@ interface Product {
     rating: number;
     reviewCount: number;
     stock: number;
+    metadata?: any;
 }
 
 const ProductDetailPage: React.FC = () => {
@@ -152,7 +154,7 @@ const ProductDetailPage: React.FC = () => {
                                 onClick={() => setMainImage(img.url)}
                                 className={`aspect-square w-full rounded-2xl overflow-hidden border-2 transition-all p-2 bg-[#fdfaf5] ${mainImage === img.url ? 'border-brand-pink shadow-lg shadow-brand-pink/10' : 'border-transparent opacity-50 hover:opacity-100 hover:border-gray-200'}`}
                             >
-                                {img.url && <img src={img.url} alt="" className="w-full h-full object-contain" width="200" height="200" loading="lazy" />}
+                                {img.url && <img src={getSizedImageUrl(img.url, 'small')} alt="" className="w-full h-full object-contain" width="200" height="200" loading="lazy" />}
                             </button>
                         ))}
                     </div>
@@ -160,7 +162,7 @@ const ProductDetailPage: React.FC = () => {
                     {/* Main Image View */}
                     <div className="lg:col-span-4 relative group flex flex-col items-start">
                         <div className="w-full aspect-square relative rounded-[2rem] overflow-hidden bg-white border border-gray-100 flex items-center justify-center p-4 shadow-sm transition-all duration-700">
-                            {mainImage && <img src={mainImage} alt={product.name} width="800" height="800" fetchPriority="high" className="absolute inset-0 w-full h-full object-contain p-8 transition-transform duration-1000" />}
+                            {mainImage && <img src={getSizedImageUrl(mainImage, 'large')} alt={product.name} width="800" height="800" fetchPriority="high" className="absolute inset-0 w-full h-full object-contain p-8 transition-transform duration-1000" />}
                         </div>
                         <div className="absolute top-4 left-4 flex flex-col gap-3">
                             <span className="px-5 py-2.5 bg-white/90 backdrop-blur shadow-sm border border-gray-100 text-[10px] font-black tracking-widest text-gray-900 uppercase italic rounded-xl">
@@ -441,7 +443,7 @@ const DescriptionRenderer: React.FC<{ content: string; mainImage: string }> = ({
     if (!isRich) {
         return (
             <div className="space-y-10">
-                {mainImage && <img src={mainImage} alt="" width="800" height="800" className="w-full aspect-square object-contain rounded-3xl bg-gray-50 p-10 border border-gray-100 shadow-sm" fetchPriority="high" />}
+                {mainImage && <img src={getSizedImageUrl(mainImage, 'large')} alt="" width="800" height="800" className="w-full aspect-square object-contain rounded-3xl bg-gray-50 p-10 border border-gray-100 shadow-sm" fetchPriority="high" />}
                 <div className="leading-relaxed text-gray-600 font-bold italic text-lg whitespace-pre-line">
                     {content}
                 </div>
@@ -458,9 +460,10 @@ const DescriptionRenderer: React.FC<{ content: string; mainImage: string }> = ({
                     case 'TEXT':
                         return <p key={idx} className="text-gray-600 text-lg font-bold leading-[1.8] italic whitespace-pre-line">{block.content}</p>;
                     case 'IMAGE':
+                        const imageUrl = typeof block.content === 'string' ? block.content : block.content?.url;
                         return (
                             <div key={idx} className="my-10 w-full aspect-video relative rounded-lg overflow-hidden bg-gray-50 border border-gray-100 shadow-sm">
-                                <img src={block.content} alt="Product Detail" width="1200" height="675" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+                                <img src={getSizedImageUrl(imageUrl, 'original')} alt="Product Detail" width="1200" height="675" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
                             </div>
                         );
                     case 'FEATURES':
@@ -481,7 +484,7 @@ const DescriptionRenderer: React.FC<{ content: string; mainImage: string }> = ({
                                     <p className="text-gray-600 text-lg font-bold leading-relaxed italic whitespace-pre-line">{block.content.text}</p>
                                 </div>
                                 <div className="flex-1 w-full aspect-[4/3] relative rounded-[2rem] overflow-hidden bg-gray-50 border border-gray-100 shadow-sm">
-                                    <img src={block.content.image} alt="Feature Element" width="800" height="600" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+                                    <img src={getSizedImageUrl(block.content.image, 'large')} alt="Feature Element" width="800" height="600" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
                                 </div>
                             </div>
                         );

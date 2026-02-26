@@ -3,6 +3,7 @@ import { Outlet, Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../features/auth/useAuth';
 import { useCart } from '../../features/cart/cart.store';
 import { useWishlist } from '../../features/wishlist/store/wishlist.store';
+import { getSizedImageUrl } from '../../shared/utils/image.util';
 
 const MainLayout: React.FC = () => {
     const { logout, user, isAuthenticated } = useAuth();
@@ -245,8 +246,10 @@ const MainLayout: React.FC = () => {
                                                         >
                                                             <div className="w-14 h-14 bg-[#fdfaf5] rounded-xl flex items-center justify-center p-2 border border-gray-50 shadow-sm group-hover:scale-105 transition-transform">
                                                                 <img
-                                                                    src={(product.images.find((img: any) => img.isMain) || product.images[0])?.url}
+                                                                    src={getSizedImageUrl((product.images.find((img: any) => img.isMain) || product.images[0])?.url, 'small')}
                                                                     alt=""
+                                                                    width="56"
+                                                                    height="56"
                                                                     className="w-full h-full object-contain"
                                                                 />
                                                             </div>
@@ -339,7 +342,7 @@ const MainLayout: React.FC = () => {
                                                 items.map((item) => (
                                                     <div key={`${item.id}-${item.variant}`} className="flex gap-4 p-4 rounded-3xl hover:bg-gray-50 transition-colors group relative overflow-hidden">
                                                         <div className="w-20 h-20 bg-white rounded-2xl border border-gray-100 flex items-center justify-center p-2 flex-shrink-0 group-hover:scale-105 transition-transform">
-                                                            <img src={item.image} alt={item.name} className="w-full h-full object-contain" />
+                                                            <img src={getSizedImageUrl(item.image, 'small')} alt={item.name} width="80" height="80" className="w-full h-full object-contain" />
                                                         </div>
                                                         <div className="flex-1 min-w-0 flex flex-col justify-center">
                                                             <h4 className="text-[11px] font-[1000] text-gray-900 uppercase italic truncate mb-1">{item.name}</h4>

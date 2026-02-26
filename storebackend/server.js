@@ -38,10 +38,10 @@ let rateLimit;
 try { rateLimit = require('express-rate-limit'); } catch { rateLimit = null; }
 
 if (rateLimit) {
-  // General API: 200 requests per 15 minutes per IP
+  // General API: 1000 requests per 15 minutes per IP (Increased for development)
   const generalLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 200,
+    max: 1000,
     standardHeaders: true,
     legacyHeaders: false,
     message: { message: 'Çok fazla istek gönderildi. Lütfen 15 dakika sonra tekrar deneyin.' },

@@ -23,6 +23,7 @@ let cartItems: any[] = (() => {
 })();
 
 const listeners = new Set<(items: any[]) => void>();
+let isFetchTriggered = false;
 
 const syncWithBackend = async (items: any[]) => {
     try {
@@ -93,6 +94,8 @@ export const cartStore = {
         notify();
     },
     fetchFromBackend: async () => {
+        if (isFetchTriggered) return;
+        isFetchTriggered = true;
         try {
             const res = await fetch('/api/cart', {
                 headers: { 'x-cart-id': getCartId() }

@@ -31,6 +31,7 @@ let wishlistItems: WishlistItem[] = (() => {
 })();
 
 const listeners = new Set<(items: WishlistItem[]) => void>();
+let isFetchTriggered = false;
 
 const notify = () => {
     localStorage.setItem(WISHLIST_STORAGE_KEY, JSON.stringify(wishlistItems));
@@ -101,6 +102,8 @@ export const wishlistStore = {
     getCount: (): number => wishlistItems.length,
 
     fetchFromBackend: async () => {
+        if (isFetchTriggered) return;
+        isFetchTriggered = true;
         try {
             const res = await fetch('/api/wishlist', {
                 headers: { 'x-wishlist-id': getWishlistId() },
