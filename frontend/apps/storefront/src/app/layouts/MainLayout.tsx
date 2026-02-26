@@ -506,7 +506,7 @@ const MainLayout: React.FC = () => {
                             <p className="text-[11px] font-bold text-gray-600 mb-8 italic">Özel teklifler ve ilk bakış için abone olun.</p>
                             <div className="flex flex-col gap-4">
                                 <input aria-label="E-posta adresi" type="email" placeholder="E-posta adresi" className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-xs font-bold focus:ring-4 focus:ring-brand-pink/5" />
-                                <button className="w-full bg-brand-pink text-white py-4 rounded-3xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-brand-pink/20 hover:bg-brand-pink-hover transition-all italic">ABONE OL</button>
+                                <button className="w-full bg-brand-pink text-gray-900 py-4.5 rounded-3xl text-[11px] font-[1000] uppercase tracking-widest shadow-xl shadow-brand-pink/20 hover:bg-brand-pink-hover transition-all italic">ABONE OL</button>
                             </div>
                         </div>
                     </div>

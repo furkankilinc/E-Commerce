@@ -1,8 +1,9 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import React, { useEffect, useState, useCallback, useRef, Suspense, lazy } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import { preload } from 'react-dom';
 import { useCart } from '../cart/cart.store';
 import { useWishlist } from '../wishlist/store/wishlist.store';
-import AddToCollectionModal from '../collections/components/AddToCollectionModal';
+const AddToCollectionModal = lazy(() => import('../collections/components/AddToCollectionModal'));
 import { toast } from 'react-toastify';
 import { getSizedImageUrl } from '../../shared/utils/image.util';
 
@@ -102,6 +103,14 @@ const HomePage: React.FC = () => {
     const [isMetaLoading, setIsMetaLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
+
+    // React 19: Preload the first few product images for better LCP
+    products.slice(0, 3).forEach((product: Product) => {
+        const imageUrl = getSizedImageUrl((product.images.find((img: any) => img.isMain) || product.images[0])?.url, 'medium');
+        if (imageUrl) {
+            preload(imageUrl, { as: 'image', fetchPriority: 'high' });
+        }
+    });
 
     const isFirstLoad = useRef(true);
     const [searchParams, setSearchParams] = useSearchParams();
@@ -406,10 +415,12 @@ const HomePage: React.FC = () => {
     return (
         <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-20 py-10">
             {collectionModalProduct && (
-                <AddToCollectionModal
-                    product={collectionModalProduct}
-                    onClose={() => setCollectionModalProduct(null)}
-                />
+                <Suspense fallback={null}>
+                    <AddToCollectionModal
+                        product={collectionModalProduct}
+                        onClose={() => setCollectionModalProduct(null)}
+                    />
+                </Suspense>
             )}
 
             <div className="mb-6 flex items-center gap-2 text-[10px] font-black text-gray-500 uppercase tracking-widest italic min-h-[20px]">
@@ -617,11 +628,11 @@ const HomePage: React.FC = () => {
                         {isLoading && products.length === 0 ? (
                             [...Array(6)].map((_, i) => <ProductSkeleton key={i} />)
                         ) : products.length > 0 ? (
-                            products.map((product, index) => (
+                            products.map((product: Product, index: number) => (
                                 <Link to={`/product/${product.id}`} key={product.id} className="group flex flex-col bg-white rounded-[3.5rem] p-6 transition-all border-2 border-transparent hover:border-gray-50 hover:shadow-2xl hover:shadow-gray-200/50">
                                     <div className="relative aspect-square rounded-[3rem] overflow-hidden mb-8 bg-[#fdfaf5] border border-gray-50 flex items-center justify-center p-8">
                                         <img
-                                            src={getSizedImageUrl((product.images.find(img => img.isMain) || product.images[0])?.url, 'medium')}
+                                            src={getSizedImageUrl((product.images.find((img: any) => img.isMain) || product.images[0])?.url, 'medium')}
                                             alt={product.name}
                                             width="400"
                                             height="400"

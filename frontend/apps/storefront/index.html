@@ -8,8 +8,33 @@
     content="Fuira Store - Özel tasarım, yüksek kalite elektronik ve giyilebilir ürünleri uygun fiyatlarla kapınıza getiriyoruz. En yeni koleksiyonları keşfedin." />
   <meta name="theme-color" content="#FF007F" />
   <title>Fuira Store | Yeni Nesil Teknoloji</title>
-  <!-- Preload Initial Data for LCP -->
-  <link rel="preload" href="/api/products?page=1&limit=12&sort=popular" as="fetch" crossorigin="anonymous" />
+
+  <!-- Resource Prioritization -->
+  <link rel="dns-prefetch" href="//localhost" />
+
+  <!-- Dynamic API Preload Script (Reduces Chain Length) -->
+  <script>
+    (function () {
+      const p = new URLSearchParams(window.location.search);
+      const apiBase = '/api/products?page=1&limit=12&sort=popular';
+      const filters = ['search', 'minPrice', 'maxPrice', 'category', 'sortBy']
+        .filter(f => p.has(f))
+        .map(f => `&${f}=${encodeURIComponent(p.get(f))}`)
+        .join('');
+
+      const preload = (url) => {
+        const l = document.createElement('link');
+        l.rel = 'preload';
+        l.as = 'fetch';
+        l.href = url;
+        l.crossOrigin = 'anonymous';
+        document.head.appendChild(l);
+      };
+
+      preload(apiBase + filters);
+      preload('/api/products-meta/filters' + (p.has('category') ? `?category=${p.get('category')}` : ''));
+    })();
+  </script>
 </head>
 
 <body>

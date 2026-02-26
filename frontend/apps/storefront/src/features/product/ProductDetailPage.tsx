@@ -5,6 +5,7 @@ import { useWishlist } from '../wishlist/store/wishlist.store';
 import AddToCollectionModal from '../collections/components/AddToCollectionModal';
 import { toast } from 'react-toastify';
 import { getSizedImageUrl } from '../../shared/utils/image.util';
+import { preload } from "react-dom";
 
 interface Product {
     id: string;
@@ -45,6 +46,12 @@ const ProductDetailPage: React.FC = () => {
     const [mainImage, setMainImage] = useState('');
     const [isAdding, setIsAdding] = useState(false);
     const [cartCount, setCartCount] = useState(0);
+
+    // React 19: Preload the main image for better LCP
+    const sizedMainImage = getSizedImageUrl(mainImage, 'large');
+    if (sizedMainImage) {
+        preload(sizedMainImage, { as: 'image', fetchPriority: 'high' });
+    }
 
     const handleAddToCart = () => {
         if (product) {
@@ -162,7 +169,17 @@ const ProductDetailPage: React.FC = () => {
                     {/* Main Image View */}
                     <div className="lg:col-span-4 relative group flex flex-col items-start">
                         <div className="w-full aspect-square relative rounded-[2rem] overflow-hidden bg-white border border-gray-100 flex items-center justify-center p-4 shadow-sm transition-all duration-700">
-                            {mainImage && <img src={getSizedImageUrl(mainImage, 'large')} alt={product.name} width="800" height="800" fetchPriority="high" className="absolute inset-0 w-full h-full object-contain p-8 transition-transform duration-1000" />}
+                            {mainImage && (
+                                <img
+                                    src={getSizedImageUrl(mainImage, 'large')}
+                                    alt={product.name}
+                                    width="800"
+                                    height="800"
+                                    fetchPriority="high"
+                                    loading="eager"
+                                    className="absolute inset-0 w-full h-full object-contain p-8 transition-transform duration-1000"
+                                />
+                            )}
                         </div>
                         <div className="absolute top-4 left-4 flex flex-col gap-3">
                             <span className="px-5 py-2.5 bg-white/90 backdrop-blur shadow-sm border border-gray-100 text-[10px] font-black tracking-widest text-gray-900 uppercase italic rounded-xl">
