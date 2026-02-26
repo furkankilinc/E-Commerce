@@ -27,12 +27,19 @@ let isFetchTriggered = false;
 
 const syncWithBackend = async (items: any[]) => {
     try {
+        const token = localStorage.getItem('token');
+        const headers: Record<string, string> = {
+            'Content-Type': 'application/json',
+            'x-cart-id': getCartId()
+        };
+
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+
         await fetch('/api/cart', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-cart-id': getCartId()
-            },
+            headers,
             body: JSON.stringify({ items })
         });
     } catch (err) {
@@ -97,8 +104,17 @@ export const cartStore = {
         if (isFetchTriggered) return;
         isFetchTriggered = true;
         try {
+            const token = localStorage.getItem('token');
+            const headers: Record<string, string> = {
+                'x-cart-id': getCartId()
+            };
+
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+
             const res = await fetch('/api/cart', {
-                headers: { 'x-cart-id': getCartId() }
+                headers
             });
             if (res.ok) {
                 const data = await res.json();
