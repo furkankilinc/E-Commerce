@@ -61,7 +61,7 @@ const CategoryItem: React.FC<{
         <div className="space-y-1">
             <button
                 onClick={() => onSelect(category.slug)}
-                className={`w-full flex items-center justify-between px-5 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest italic transition-all group ${isSelected ? 'bg-brand-pink text-white shadow-xl shadow-brand-pink/20' : activeChildBranch ? 'bg-gray-900 text-white' : 'text-gray-400 hover:bg-gray-50'}`}
+                className={`w-full flex items-center justify-between px-5 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest italic transition-all group ${isSelected ? 'bg-brand-pink text-white shadow-xl shadow-brand-pink/20' : activeChildBranch ? 'bg-gray-900 text-white' : 'text-gray-600 hover:bg-gray-50'}`}
             >
                 <span className="truncate pr-4">{category.name}</span>
                 {children.length > 0 && (
@@ -520,7 +520,7 @@ const HomePage: React.FC = () => {
                                         <>
                                             <button
                                                 onClick={() => updateCategory('')}
-                                                className={`w-full flex items-center justify-between px-5 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest italic transition-all ${!filters.category ? 'bg-gray-900 text-white shadow-xl' : 'text-gray-400 hover:bg-gray-50'}`}
+                                                className={`w-full flex items-center justify-between px-5 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest italic transition-all ${!filters.category ? 'bg-gray-900 text-white shadow-xl' : 'text-gray-600 hover:bg-gray-50'}`}
                                             >
                                                 Hepsi
                                             </button>
@@ -647,7 +647,7 @@ const HomePage: React.FC = () => {
 
                                     <div className="flex flex-col flex-grow px-2">
                                         <div className="flex justify-between items-center mb-3">
-                                            <span className="text-[9px] font-[1000] text-brand-pink tracking-[0.3em] uppercase italic">{product.category?.name}</span>
+                                            <span className="text-[9px] font-[1000] text-gray-900 tracking-[0.3em] uppercase italic">{product.category?.name}</span>
                                             <div className="flex items-center gap-1 bg-gray-50 px-2.5 py-1 rounded-full text-gray-900 font-black text-[10px]">
                                                 <svg className="w-3 h-3 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
                                                 {product.rating}
@@ -661,6 +661,7 @@ const HomePage: React.FC = () => {
                                             </div>
                                             <button
                                                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); addItem(product); toast.success(`${product.name} sepete eklendi.`); }}
+                                                aria-label="Sepete Ekle"
                                                 className="w-16 h-16 rounded-[1.8rem] bg-gray-900 text-white flex items-center justify-center hover:bg-brand-pink transition-all transform hover:scale-110 shadow-2xl shadow-gray-200"
                                             >
                                                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3.5"><path d="M12 4v16m8-8H4" /></svg>
@@ -674,7 +675,7 @@ const HomePage: React.FC = () => {
                                 <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 text-gray-200 border border-gray-50 shadow-sm">
                                     <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" strokeWidth="2" /></svg>
                                 </div>
-                                <p className="text-[10px] font-black text-gray-300 uppercase tracking-widest italic">Ürün bulunamadı.</p>
+                                <p className="text-[10px] font-black text-gray-600 uppercase tracking-widest italic">Ürün bulunamadı.</p>
                                 <button onClick={clearFilters} className="mt-8 text-brand-pink text-[10px] font-black uppercase tracking-widest border-b-2 border-brand-pink/20 hover:border-brand-pink transition-all italic">FİLTRELERİ TEMİZLE</button>
                             </div>
                         )}

@@ -469,7 +469,7 @@ const MainLayout: React.FC = () => {
                                     <span className="text-brand-pink">F</span>UIRA
                                 </span>
                             </Link>
-                            <p className="text-gray-500 text-xs font-bold leading-relaxed mb-10 opacity-80 italic">
+                            <p className="text-gray-600 text-xs font-bold leading-relaxed mb-10 italic">
                                 Dünyanın en canlı ve modern ürünlerini estetik arayanlar için bir araya getiriyoruz. Kalite ve stil, kapınızda.
                             </p>
                             <div className="flex gap-6">
@@ -503,7 +503,7 @@ const MainLayout: React.FC = () => {
 
                         <div>
                             <h4 className="text-[10px] font-black text-gray-900 mb-10 uppercase tracking-[0.2em] italic">BÜLTENİMİZE KATILIN</h4>
-                            <p className="text-[11px] font-bold text-gray-500 mb-8 italic opacity-80">Özel teklifler ve ilk bakış için abone olun.</p>
+                            <p className="text-[11px] font-bold text-gray-600 mb-8 italic">Özel teklifler ve ilk bakış için abone olun.</p>
                             <div className="flex flex-col gap-4">
                                 <input aria-label="E-posta adresi" type="email" placeholder="E-posta adresi" className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-xs font-bold focus:ring-4 focus:ring-brand-pink/5" />
                                 <button className="w-full bg-brand-pink text-white py-4 rounded-3xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-brand-pink/20 hover:bg-brand-pink-hover transition-all italic">ABONE OL</button>
@@ -512,7 +512,7 @@ const MainLayout: React.FC = () => {
                     </div>
 
                     <div className="text-center pt-16 border-t border-gray-50">
-                        <p className="text-[10px] font-black text-gray-500 uppercase tracking-[0.4em] italic leading-relaxed">
+                        <p className="text-[10px] font-black text-gray-600 uppercase tracking-[0.4em] italic leading-relaxed">
                             © 2024 FUIRA STORE. CESURLAR İÇİN TASARLANDI.
                         </p>
                     </div>
