@@ -10,15 +10,22 @@ const { verifyToken } = require('../../utils/token.util');
 // Real merchant authentication based on JWT token
 const merchantAuth = async (req, res, next) => {
     const authHeader = req.headers['authorization'];
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return res.status(401).json({ message: 'Yetkilendirme token\'ı bulunamadı.' });
+    let token = '';
+
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+        token = authHeader.split(' ')[1];
+    } else if (req.cookies && req.cookies.token) {
+        token = req.cookies.token;
     }
 
-    const token = authHeader.split(' ')[1];
+    if (!token) {
+        return res.status(401).json({ message: 'Yetkilendirme token\'ı bulunamadı.' });
+    }
 
     try {
         const payload = verifyToken(token, 'merchant');
         req.merchantId = payload.sub; // sub contains the merchant ID
+        req.tokenPayload = payload; // Logger için
         next();
     } catch (err) {
         console.error('[merchant/auth]', err);
