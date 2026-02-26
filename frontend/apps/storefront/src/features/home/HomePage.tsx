@@ -549,11 +549,11 @@ const HomePage: React.FC = () => {
                             <div className="flex gap-4">
                                 <div className="flex-1 bg-white border-2 border-gray-50 p-4 rounded-2xl shadow-sm min-h-[72px] flex flex-col justify-center">
                                     <span className="text-[8px] font-black text-gray-500 uppercase block mb-1 leading-none">MİN</span>
-                                    <input aria-label="Minimum Fiyat" type="number" value={filters.minPrice} onChange={e => setFilters(prev => ({ ...prev, minPrice: e.target.value }))} className="bg-transparent w-full outline-none text-xs font-black text-gray-900 italic h-5 leading-none" />
+                                    <input aria-label="Minimum Fiyat" type="number" value={filters.minPrice} onChange={e => setFilters(prev => ({ ...prev, minPrice: e.target.value }))} className="bg-transparent w-full outline-none text-xs font-black text-gray-900 italic h-5 leading-none no-spinner" />
                                 </div>
                                 <div className="flex-1 bg-white border-2 border-gray-50 p-4 rounded-2xl shadow-sm min-h-[72px] flex flex-col justify-center">
                                     <span className="text-[8px] font-black text-gray-500 uppercase block mb-1 leading-none">MAX</span>
-                                    <input aria-label="Maksimum Fiyat" type="number" value={filters.maxPrice} onChange={e => setFilters(prev => ({ ...prev, maxPrice: e.target.value }))} className="bg-transparent w-full outline-none text-xs font-black text-gray-900 italic h-5 leading-none" />
+                                    <input aria-label="Maksimum Fiyat" type="number" value={filters.maxPrice} onChange={e => setFilters(prev => ({ ...prev, maxPrice: e.target.value }))} className="bg-transparent w-full outline-none text-xs font-black text-gray-900 italic h-5 leading-none no-spinner" />
                                 </div>
                             </div>
                         </div>
@@ -673,7 +673,7 @@ const HomePage: React.FC = () => {
                                             <button
                                                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); addItem(product); toast.success(`${product.name} sepete eklendi.`); }}
                                                 aria-label="Sepete Ekle"
-                                                className="w-16 h-16 rounded-[1.8rem] bg-gray-900 text-white flex items-center justify-center hover:bg-brand-pink transition-all transform hover:scale-110 shadow-2xl shadow-gray-200"
+                                                className="w-16 h-16 cursor-pointer rounded-[1.8rem] bg-gray-900 text-white flex items-center justify-center hover:bg-brand-pink transition-all transform hover:scale-110 shadow-2xl shadow-gray-200"
                                             >
                                                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3.5"><path d="M12 4v16m8-8H4" /></svg>
                                             </button>

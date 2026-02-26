@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 import path from 'path'
 
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [react() as any, tailwindcss() as any],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -21,5 +21,20 @@ export default defineConfig({
         changeOrigin: true,
       },
     },
+  },
+  build: {
+    minify: 'terser',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom'],
+          'router-vendor': ['react-router-dom'],
+          'ui-vendor': ['react-toastify', 'sweetalert2'],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 600,
+    cssMinify: true,
+    sourcemap: false,
   },
 })

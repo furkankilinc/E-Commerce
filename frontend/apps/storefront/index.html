@@ -12,7 +12,7 @@
   <!-- Resource Prioritization -->
   <link rel="dns-prefetch" href="//localhost" />
 
-  <!-- Dynamic API Preload Script (Reduces Chain Length) -->
+  <!-- Global Fetching Strategy (Reduces Network Dependency Chain) -->
   <script>
     (function () {
       const p = new URLSearchParams(window.location.search);
@@ -21,6 +21,9 @@
         .filter(f => p.has(f))
         .map(f => `&${f}=${encodeURIComponent(p.get(f))}`)
         .join('');
+
+      const productsUrl = apiBase + filters;
+      const filtersUrl = '/api/products-meta/filters' + (p.has('category') ? `?category=${p.get('category')}` : '');
 
       const preload = (url) => {
         const l = document.createElement('link');
@@ -31,15 +34,21 @@
         document.head.appendChild(l);
       };
 
-      preload(apiBase + filters);
-      preload('/api/products-meta/filters' + (p.has('category') ? `?category=${p.get('category')}` : ''));
+      preload(productsUrl);
+      preload(filtersUrl);
+
+      // Store promises for React to consume
+      window.__INITIAL_DATA__ = {
+        products: fetch(productsUrl).then(r => r.ok ? r.json() : null),
+        filters: fetch(filtersUrl).then(r => r.ok ? r.json() : null)
+      };
     })();
   </script>
 </head>
 
 <body>
   <div id="root"></div>
-  <script type="module" src="/src/main.tsx"></script>
+  <script type="module" src="./src/main.tsx"></script>
 </body>
 
 </html>

@@ -1,0 +1,98 @@
+services:
+  # --- Prod Database ---
+  prod-db:
+    image: postgres:16-alpine
+    container_name: prod-postgres-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password123
+      POSTGRES_DB: fuira_ecommerce
+    ports:
+      - "5432:5432" # Standart port
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # --- Prod Cache (Redis) ---
+  prod-redis:
+    image: redis:alpine
+    container_name: prod-ecommerce-redis
+    restart: always
+    ports:
+      - "6379:6379" # Standart port
+
+  # --- Prod Log Management (Seq) ---
+  prod-seq:
+    image: datalust/seq:latest
+    container_name: prod-ecommerce-seq
+    restart: always
+    ports:
+      - "5341:80" # Standart port
+    environment:
+      - ACCEPT_EULA=Y
+      - SEQ_FIRSTRUN_ADMINPASSWORD=Y
+    volumes:
+      - seq_data:/data
+
+  # --- Prod Backend ---
+  prod-backend:
+    build: 
+      context: ./storebackend
+      dockerfile: Dockerfile
+    container_name: prod-node-storebackend
+    restart: always
+    ports:
+      - "5000:5000" # Standart port
+    depends_on:
+      - prod-db
+      - prod-redis
+      - prod-seq
+    env_file:
+      - ./storebackend/.env
+    environment:
+      - DATABASE_URL=postgresql://postgres:password123@prod-db:5432/fuira_ecommerce
+      - REDIS_URL=redis://prod-redis:6379
+      - JWT_USER_SECRET=${JWT_USER_SECRET:-production_secret_key_1}
+      - JWT_MERCHANT_SECRET=${JWT_MERCHANT_SECRET:-production_secret_key_2}
+      - JWT_ADMIN_SECRET=${JWT_ADMIN_SECRET:-production_secret_key_3}
+      - CORS_ORIGINS=http://user.fuira.com,http://admin.fuira.com,http://merchant.fuira.com,http://localhost:80,http://localhost
+      - SEQ_URL=http://prod-seq:80
+      - MINIO_ENDPOINT=prod-minio
+      - MINIO_PORT=9000
+      - MINIO_USE_SSL=false
+      - MINIO_PUBLIC_URL=http://localhost:9090 # Standart MinIO port
+
+  # --- Prod Production Nginx ---
+  prod-nginx:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    container_name: prod-ecommerce-nginx-prod
+    restart: always
+    ports:
+      - "80:80" # Standart HTTP port
+    volumes:
+      - ./nginx.prod.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - prod-backend
+
+  # --- Prod Object Storage (MinIO) ---
+  prod-minio:
+    image: minio/minio:latest
+    container_name: prod-ecommerce-minio
+    ports:
+      - "9090:9000" # Standart API port
+      - "9091:9001" # Standart Console port
+    env_file:
+      - ./storebackend/.env
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-minioadminpassword}
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+
+volumes:
+  postgres_data:
+  minio_data:
+  seq_data:

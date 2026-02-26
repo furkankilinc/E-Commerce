@@ -5,7 +5,7 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "tsc -b && vite build",
+        "build": "vite build",
         "preview": "vite preview",
         "lint": "eslint . --ext ts,tsx"
     },
@@ -21,6 +21,6 @@
         "@types/react-dom": "^19.2.3",
         "@vitejs/plugin-react": "^5.1.1",
         "typescript": "~5.7.2",
-        "vite": "^7.3.1"
+        "vite": "^6.0.0"
     }
 }
