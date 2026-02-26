@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useCart } from '../cart/cart.store';
+import { apiFetch as fetch } from '../../shared/utils/api.util';
 import { useWishlist } from '../wishlist/store/wishlist.store';
 import AddToCollectionModal from '../collections/components/AddToCollectionModal';
 import { toast } from 'react-toastify';

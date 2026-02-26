@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback, useRef, Suspense, lazy } from 
 import { Link, useSearchParams } from 'react-router-dom';
 import { preload } from 'react-dom';
 import { useCart } from '../cart/cart.store';
+import { apiFetch as fetch } from '../../shared/utils/api.util';
 import { useWishlist } from '../wishlist/store/wishlist.store';
 const AddToCollectionModal = lazy(() => import('../collections/components/AddToCollectionModal'));
 import { toast } from 'react-toastify';
