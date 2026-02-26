@@ -80,7 +80,6 @@ const LoginForm: React.FC = () => {
                     Personalize your feed and check your exclusive drops.
                 </p>
             </div>
-
             <form className="space-y-6" onSubmit={handleSubmit}>
                 {apiError && (
                     <div className="p-3 bg-red-50/50 border border-brand-pink/20 rounded-xl text-brand-pink text-xs font-bold text-center">

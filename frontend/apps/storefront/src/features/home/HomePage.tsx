@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 
 interface Product {
     id: string;
@@ -98,9 +98,12 @@ const HomePage: React.FC = () => {
     const isFirstLoad = useRef(true);
 
     // Filter State
+    const [searchParams, setSearchParams] = useSearchParams();
+    const categoryParam = searchParams.get('category') || '';
+
     const [filters, setFilters] = useState({
-        search: '',
-        category: '',
+        search: searchParams.get('search') || '',
+        category: categoryParam,
         minPrice: '',
         maxPrice: '',
         rating: 0,
@@ -109,6 +112,43 @@ const HomePage: React.FC = () => {
         sort: 'popular',
         filterSearch: ''
     });
+
+    // Update filters when URL params change
+    useEffect(() => {
+        const cat = searchParams.get('category') || '';
+        const s = searchParams.get('search') || '';
+        if (cat !== filters.category || s !== filters.search) {
+            setFilters(prev => ({ ...prev, category: cat, search: s }));
+        }
+    }, [searchParams]);
+
+    const updateCategory = (slug: string) => {
+        const newParams = new URLSearchParams(searchParams);
+        if (slug) newParams.set('category', slug);
+        else newParams.delete('category');
+        setSearchParams(newParams);
+    };
+
+    // State for local debounced search
+    const [localSearch, setLocalSearch] = useState(filters.search);
+
+    // Sync localSearch with filters.search (e.g. when navigation happens)
+    useEffect(() => {
+        setLocalSearch(filters.search);
+    }, [filters.search]);
+
+    // Debounce search update
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (localSearch !== filters.search) {
+                const newParams = new URLSearchParams(searchParams);
+                if (localSearch) newParams.set('search', localSearch);
+                else newParams.delete('search');
+                setSearchParams(newParams);
+            }
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [localSearch, setSearchParams, filters.search, searchParams]);
 
     const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({});
 
@@ -253,8 +293,28 @@ const HomePage: React.FC = () => {
             {/* Breadcrumb */}
             <div className="mb-6 flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest italic">
                 <Link to="/" className="hover:text-brand-pink transition-colors">ANASAYFA</Link>
-                <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                <span className="text-gray-900 border-b-2 border-brand-pink/20">TEKNOLOJİ MAĞAZASI</span>
+
+                {(() => {
+                    const currentCat = meta?.categories.find(c => c.slug === filters.category);
+                    const parentCat = currentCat?.parentId ? meta?.categories.find(c => c.id === currentCat.parentId) : null;
+
+                    return (
+                        <>
+                            {parentCat && (
+                                <>
+                                    <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                                    <button onClick={() => updateCategory(parentCat.slug)} className="hover:text-brand-pink transition-colors uppercase">
+                                        {parentCat.name}
+                                    </button>
+                                </>
+                            )}
+                            <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                            <span className="text-gray-900 border-b-2 border-brand-pink/20 uppercase">
+                                {currentCat?.name || "Tüm Ürünler"}
+                            </span>
+                        </>
+                    );
+                })()}
             </div>
 
             {/* Header */}
@@ -319,8 +379,8 @@ const HomePage: React.FC = () => {
                             <input
                                 type="text"
                                 placeholder="Model, özellik veya satici..."
-                                value={filters.filterSearch}
-                                onChange={(e) => setFilters(prev => ({ ...prev, filterSearch: e.target.value }))}
+                                value={localSearch}
+                                onChange={(e) => setLocalSearch(e.target.value)}
                                 className="w-full h-14 pl-12 pr-6 bg-gray-50 rounded-2xl text-[11px] font-bold italic focus:bg-white border-2 border-transparent focus:border-brand-pink outline-none transition-all placeholder:text-gray-300"
                             />
                             <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" strokeWidth="3" /></svg>
@@ -334,7 +394,7 @@ const HomePage: React.FC = () => {
                             {!collapsedSections['category'] && (
                                 <div className="space-y-2 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
                                     <button
-                                        onClick={() => setFilters(prev => ({ ...prev, category: '' }))}
+                                        onClick={() => updateCategory('')}
                                         className={`w-full flex items-center justify-between px-5 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest italic transition-all ${!filters.category ? 'bg-gray-900 text-white shadow-xl' : 'text-gray-400 hover:bg-gray-50'}`}
                                     >
                                         Hepsi
@@ -347,7 +407,7 @@ const HomePage: React.FC = () => {
                                                 category={cat}
                                                 allCategories={meta.categories}
                                                 selectedSlug={filters.category}
-                                                onSelect={(slug) => setFilters(prev => ({ ...prev, category: slug }))}
+                                                onSelect={(slug) => updateCategory(slug)}
                                             />
                                         ))}
                                 </div>
@@ -435,7 +495,7 @@ const HomePage: React.FC = () => {
                                 </button>
                                 {!collapsedSections['merchants'] && (
                                     <div className="space-y-3 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
-                                        {meta?.merchants.filter(m => m.companyName.toLowerCase().includes(filters.filterSearch.toLowerCase())).map(m => (
+                                        {meta?.merchants.filter(m => m.companyName.toLowerCase().includes(localSearch.toLowerCase())).map(m => (
                                             <label key={m.id} className="flex items-center group cursor-pointer">
                                                 <div className="relative">
                                                     <input
