@@ -9,10 +9,17 @@ export default defineConfig({
         alias: {
             '@': path.resolve(__dirname, './src'),
         },
+        dedupe: ['react', 'react-dom'],
     },
     server: {
         port: 5175,
         host: true,
         allowedHosts: ['merchant.fuira.com'],
+        proxy: {
+            '/api': {
+                target: 'http://node_storebackend:5000',
+                changeOrigin: true,
+            },
+        },
     },
 })

@@ -13,10 +13,20 @@ app.use(express.json());
 const userAuthRoutes = require('./src/api/auth/user.auth.routes');
 const merchantAuthRoutes = require('./src/api/auth/merchant.auth.routes');
 const adminAuthRoutes = require('./src/api/auth/admin.auth.routes');
+const productRoutes = require('./src/api/product/product.routes');
+const categoryRoutes = require('./src/api/product/category.routes');
 
 app.use('/api/auth/user', userAuthRoutes);
 app.use('/api/auth/merchant', merchantAuthRoutes);
 app.use('/api/auth/admin', adminAuthRoutes);
+app.use('/api/user', require('./src/api/user/user.routes'));
+app.use('/api/products', productRoutes);
+app.use('/api/products-meta', require('./src/api/product/filter.routes'));
+app.use('/api/categories', categoryRoutes);
+
+const merchantProductRoutes = require('./src/api/merchant/merchant.product.routes');
+app.use('/api/merchant/products', merchantProductRoutes);
+
 
 // ─── Health ──────────────────────────────────────────────────────────────────
 app.get('/', (req, res) => {

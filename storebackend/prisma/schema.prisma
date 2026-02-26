@@ -21,6 +21,7 @@ model User {
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
   refreshTokens UserRefreshToken[]
+  reviews      Review[]
 
   @@map("users")
 }
@@ -55,6 +56,7 @@ model Merchant {
   createdAt       DateTime           @default(now())
   updatedAt       DateTime           @updatedAt
   refreshTokens   MerchantRefreshToken[]
+  products        Product[]
 
   @@map("merchants")
 }
@@ -109,4 +111,102 @@ model AdminRefreshToken {
   ipAddress String?
 
   @@map("admin_refresh_tokens")
+}
+// ─────────────────────────────────────────────
+// PRODUCT DATA
+// ─────────────────────────────────────────────
+
+model Category {
+  id           String    @id @default(cuid())
+  name         String
+  slug         String    @unique
+  description  String?
+  image        String?
+  parentId     String?
+  parent       Category?  @relation("CategoryToCategory", fields: [parentId], references: [id])
+  children     Category[] @relation("CategoryToCategory")
+  products     Product[]
+  isActive     Boolean    @default(true)
+  filterValues Json?      // e.g. {"RAM": ["8GB","16GB"], "CPU": ["i5","i7","i9"]}
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@map("categories")
+}
+
+enum ProductStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model Product {
+  id              String           @id @default(cuid())
+  merchantId      String
+  merchant        Merchant         @relation(fields: [merchantId], references: [id])
+  categoryId      String
+  category        Category         @relation(fields: [categoryId], references: [id])
+  name            String
+  slug            String           @unique
+  description     String
+  shortDescription String?
+  price           Float
+  discountPrice   Float?
+  sku             String           @unique
+  stock           Int              @default(0)
+  isFeatured      Boolean          @default(false)
+  isNewArrival    Boolean          @default(false)
+  isOnSale        Boolean          @default(false)
+  rating          Float            @default(0)
+  reviewCount     Int              @default(0)
+  status          ProductStatus    @default(DRAFT)
+  isActive        Boolean          @default(true)
+  metadata        Json?            // For detailed attributes (Specs)
+  images          ProductImage[]
+  variants        ProductVariant[]
+  reviews         Review[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  @@map("products")
+}
+
+model ProductImage {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url       String
+  isMain    Boolean  @default(false)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@map("product_images")
+}
+
+model ProductVariant {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  name      String   // e.g. "Color", "Size"
+  value     String   // e.g. "Red", "XL"
+  sku       String?  @unique
+  price     Float?   // Override base price if needed
+  stock     Int      @default(0)
+
+  @@map("product_variants")
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  rating    Int
+  title     String?
+  comment   String
+  isVerified Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@map("reviews")
 }

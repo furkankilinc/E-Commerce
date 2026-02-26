@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from './useAuth';
 
 // Regex constants
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 const LoginForm: React.FC = () => {
     const navigate = useNavigate();
+    const { login } = useAuth();
     const [showPassword, setShowPassword] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
     const [formData, setFormData] = useState({
@@ -57,7 +59,7 @@ const LoginForm: React.FC = () => {
                 setApiError(data.message || 'Login failed');
             } else {
                 setApiSuccess('Logged in successfully!');
-                // Wait briefly for UI to update then go to dashboard or home
+                login(data.accessToken, data.user);
                 setTimeout(() => navigate('/'), 1000);
             }
         } catch (err) {

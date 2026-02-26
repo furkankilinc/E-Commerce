@@ -28,13 +28,18 @@ const AdminLoginPage = () => {
             const data = await res.json();
 
             if (!res.ok) {
-                setApiError(data.message || 'Login failed');
+                setApiError(data.message || 'Giriş başarısız.');
             } else {
-                setApiSuccess('Logged in successfully!');
-                setTimeout(() => navigate('/'), 1000);
+                // Persist tokens
+                localStorage.setItem('admin_token', data.accessToken);
+                localStorage.setItem('admin_refresh_token', data.refreshToken);
+                localStorage.setItem('admin_user', JSON.stringify(data.admin));
+
+                setApiSuccess('Giriş başarılı! Yönlendiriliyorsunuz...');
+                setTimeout(() => navigate('/dashboard'), 800);
             }
         } catch (err) {
-            setApiError('Network error. Please try again.');
+            setApiError('Ağ hatası. Lütfen tekrar deneyin.');
         } finally {
             setIsLoading(false);
         }
