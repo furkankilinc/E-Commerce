@@ -47,6 +47,7 @@ services:
       - db
       - redis
       - seq
+      - minio
     environment:
       - DATABASE_URL=postgresql://postgres:password123@db:5432/fuira_ecommerce
       - REDIS_URL=redis://redis:6379
@@ -55,6 +56,12 @@ services:
       - JWT_ADMIN_SECRET=fuira_admin_jwt_s3cr3t_2026_change_in_production
       - CORS_ORIGINS=http://localhost,http://127.0.0.1,http://user.fuira.com,http://admin.fuira.com,http://merchant.fuira.com,http://user.fuira.com:80,http://admin.fuira.com:80,http://merchant.fuira.com:80,http://localhost:5173,http://localhost:5174,http://localhost:5175
       - SEQ_URL=http://seq:80
+      - MINIO_ENDPOINT=${MINIO_ENDPOINT:-minio}
+      - MINIO_PORT=${MINIO_PORT:-9000}
+      - MINIO_USE_SSL=${MINIO_USE_SSL:-false}
+      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY:-minioadmin}
+      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY:-minioadminpassword}
+      - MINIO_BUCKET=${MINIO_BUCKET:-products}
 
   # --- Frontend Servisleri ---
   storefront:
@@ -115,8 +122,8 @@ services:
       - "9090:9000"
       - "9091:9001"
     environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadminpassword
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-minioadminpassword}
     command: server /data --console-address ":9001"
     volumes:
       - minio_data:/data
