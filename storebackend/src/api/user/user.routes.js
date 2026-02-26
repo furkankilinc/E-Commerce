@@ -1,4 +1,6 @@
 const { Router } = require('express');
+const dns = require('dns').promises;
+const logger = require('../../utils/logger');
 const bcrypt = require('bcryptjs');
 const { PrismaClient } = require('@prisma/client');
 const { verifyToken } = require('../../utils/token.util');
@@ -40,6 +42,26 @@ router.get('/me', authenticateUser, async (req, res) => {
 router.put('/profile', authenticateUser, async (req, res) => {
     try {
         const { phone, email } = req.body;
+
+        // MX Kaydı Sorgulaması (Opsiyonel: Eğer email değiştiyse yapılması daha verimli olur)
+        if (email) {
+            const domain = email.split('@')[1];
+            try {
+                logger.info('MX kaydı sorgulanıyor', { domain, email });
+                const mxRecords = await dns.resolveMx(domain);
+
+                if (!mxRecords || mxRecords.length === 0) {
+                    logger.warn('MX kaydı bulunamadı', { domain, email });
+                    return res.status(400).json({ message: 'Girdiğiniz e-posta adresine ait MX kaydı bulunamadı. Lütfen geçerli bir e-posta adresi girin.' });
+                }
+
+                logger.info('MX kaydı doğrulandı', { domain, records: mxRecords });
+            } catch (dnsErr) {
+                logger.error('MX sorgusu sırasında hata oluştu', { domain, email, error: dnsErr.message });
+                return res.status(400).json({ message: 'E-posta domaini doğrulanamadı. Lütfen geçerli bir e-posta adresi girin.' });
+            }
+        }
+
         const updatedUser = await prisma.user.update({
             where: { id: req.userId },
             data: { phone, email }

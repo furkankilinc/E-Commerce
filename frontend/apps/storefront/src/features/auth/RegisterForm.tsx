@@ -49,12 +49,12 @@ const RegisterForm: React.FC = () => {
         }
 
         if (!EMAIL_REGEX.test(formData.email)) {
-            newErrors.email = newErrors.email || 'Enter a valid email address.';
+            newErrors.email = newErrors.email || 'Geçerli bir e-posta adresi girin.';
             hasError = true;
         }
 
         if (!PASSWORD_REGEX.test(formData.password)) {
-            newErrors.password = 'Must be 8+ chars (letters & numbers).';
+            newErrors.password = 'En az 8 karakter, harf ve rakam içermelidir.';
             hasError = true;
         }
 
@@ -79,14 +79,14 @@ const RegisterForm: React.FC = () => {
                 const data = await res.json();
 
                 if (!res.ok) {
-                    setApiError(data.message || 'Registration failed');
+                    setApiError(data.message || 'Kayıt başarısız oldu.');
                 } else {
-                    setApiSuccess('Account created successfully! Redirecting...');
+                    setApiSuccess('Hesabınız oluşturuldu! Yönlendiriliyorsunuz...');
                     setFormData({ firstName: '', lastName: '', email: '', password: '' });
                     setTimeout(() => navigate('/login'), 2000);
                 }
             } catch (err) {
-                setApiError('Network error. Please try again later.');
+                setApiError('Ağ bağlantısı hatası. Lütfen daha sonra tekrar deneyin.');
             } finally {
                 setIsLoading(false);
             }
@@ -109,10 +109,10 @@ const RegisterForm: React.FC = () => {
             {/* Header */}
             <div className="mb-10 text-center">
                 <h2 className="text-3xl md:text-4xl font-extrabold mb-3 tracking-tighter text-gray-900 uppercase">
-                    Create <span className="italic text-brand-pink underline underline-offset-[6px] decoration-gray-900/5">Account</span>
+                    Hesap <span className="italic text-brand-pink underline underline-offset-[6px] decoration-gray-900/5">Oluştur</span>
                 </h2>
                 <p className="text-gray-400 text-xs md:text-sm font-medium px-4">
-                    Join Fuira for a premium shopping experience.
+                    Fuira'ya katıl, premium alışveriş deneyimini yaşa.
                 </p>
             </div>
 
@@ -157,7 +157,7 @@ const RegisterForm: React.FC = () => {
 
                 <div className="space-y-1">
                     <label className="flex items-center gap-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">
-                        Email Address
+                        E-Posta Adresi
                     </label>
                     <input
                         type="email"
@@ -173,7 +173,7 @@ const RegisterForm: React.FC = () => {
 
                 <div className="space-y-1">
                     <label className="flex items-center gap-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">
-                        Password
+                        Şifre
                     </label>
                     <div className="relative">
                         <input
@@ -201,7 +201,7 @@ const RegisterForm: React.FC = () => {
                     disabled={isLoading}
                     className="w-full py-4 bg-gray-900 text-white rounded-xl font-black text-[11px] flex items-center justify-center gap-3 hover:bg-brand-pink transform hover:-translate-y-0.5 transition-all shadow-xl shadow-gray-200 hover:shadow-brand-pink/20 mt-8 active:scale-95 group uppercase tracking-[0.2em] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    {isLoading ? 'Processing...' : 'Get Started'}
+                    {isLoading ? 'İşleniyor...' : 'Hesap Oluştur'}
                     {!isLoading && (
                         <svg className="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
@@ -211,7 +211,7 @@ const RegisterForm: React.FC = () => {
             </form>
 
             <p className="text-center mt-10 text-[11px] text-gray-400 font-bold tracking-tight">
-                Already a member? <Link to="/login" className="font-black text-gray-900 hover:text-brand-pink transition-colors">SIGN IN</Link>
+                Zaten üyemiz misin? <Link to="/login" className="font-black text-gray-900 hover:text-brand-pink transition-colors">GİRİŞ YAP</Link>
             </p>
         </div>
     );

@@ -1,0 +1,39 @@
+# Stage 1: Build - Use full node:20 for maximum compatibility with binaries
+FROM node:20 AS build
+
+WORKDIR /app
+
+# First, copy root package files
+COPY package.json package-lock.json ./
+
+# Explicitly copy each workspace's package.json to ensure links are created correctly
+COPY apps/storefront/package.json ./apps/storefront/
+COPY apps/admin/package.json ./apps/admin/
+COPY apps/vendor-panel/package.json ./apps/vendor-panel/
+COPY packages/ui/package.json ./packages/ui/
+COPY packages/hooks/package.json ./packages/hooks/
+COPY packages/utils/package.json ./packages/utils/
+COPY packages/api/package.json ./packages/api/
+COPY packages/types/package.json ./packages/types/
+
+# Use npm clean install for consistency, fallback if no lockfile
+RUN npm ci || npm install
+
+# Copy everything else (now safely ignoring all node_modules from host)
+COPY . .
+
+# Build all applications
+RUN npm run build:storefront
+RUN npm run build:admin
+RUN npm run build:vendor
+
+# Stage 2: Serve with Nginx for production
+FROM nginx:alpine
+
+# Copy custom nginx configuration if needed, or we can use the one from docker-compose
+# For a standalone build, we copy them into standard locations
+COPY --from=build /app/apps/storefront/dist /usr/share/nginx/html/storefront
+COPY --from=build /app/apps/admin/dist /usr/share/nginx/html/admin
+COPY --from=build /app/apps/vendor-panel/dist /usr/share/nginx/html/vendor
+
+# The standard nginx image will just run, we'll configure it via docker-compose/volumes

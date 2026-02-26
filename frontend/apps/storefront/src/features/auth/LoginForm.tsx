@@ -35,7 +35,7 @@ const LoginForm: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!EMAIL_REGEX.test(formData.email)) {
-            setErrors({ email: 'Please enter a valid email address.' });
+            setErrors({ email: 'Lütfen geçerli bir e-posta adresi girin.' });
             return;
         }
 
@@ -56,14 +56,14 @@ const LoginForm: React.FC = () => {
             const data = await res.json();
 
             if (!res.ok) {
-                setApiError(data.message || 'Login failed');
+                setApiError(data.message || 'Giriş başarısız oldu.');
             } else {
-                setApiSuccess('Logged in successfully!');
+                setApiSuccess('Başarıyla giriş yapıldı!');
                 login(data.accessToken, data.user);
                 setTimeout(() => navigate('/'), 1000);
             }
         } catch (err) {
-            setApiError('Network error. Please try again later.');
+            setApiError('Ağ bağlantısı hatası. Lütfen daha sonra tekrar deneyin.');
         } finally {
             setIsLoading(false);
         }
@@ -74,10 +74,10 @@ const LoginForm: React.FC = () => {
             {/* Header */}
             <div className="mb-10 text-center">
                 <h2 className="text-3xl md:text-4xl font-extrabold mb-3 tracking-tighter text-gray-900 uppercase">
-                    Welcome <span className="italic text-brand-pink underline underline-offset-[6px] decoration-gray-900/5">Back</span>
+                    Hoş <span className="italic text-brand-pink underline underline-offset-[6px] decoration-gray-900/5">Geldin</span>
                 </h2>
                 <p className="text-gray-400 text-xs md:text-sm font-medium px-4">
-                    Personalize your feed and check your exclusive drops.
+                    Keşfet, favorilerini listele ve özel indirimleri kaçırma.
                 </p>
             </div>
             <form className="space-y-6" onSubmit={handleSubmit}>
@@ -93,7 +93,7 @@ const LoginForm: React.FC = () => {
                 )}
                 <div className="space-y-1">
                     <label className="flex items-center gap-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">
-                        Email Address
+                        E-Posta Adresi
                     </label>
                     <input
                         type="email"
@@ -110,9 +110,9 @@ const LoginForm: React.FC = () => {
                 <div className="space-y-1">
                     <div className="flex justify-between items-center ml-1">
                         <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                            Password
+                            Şifre
                         </label>
-                        <a href="#" className="text-[10px] font-black text-gray-300 hover:text-brand-pink transition-colors uppercase tracking-tight">Forgot?</a>
+                        <a href="#" className="text-[10px] font-black text-gray-300 hover:text-brand-pink transition-colors uppercase tracking-tight">Şifiremi Unuttum?</a>
                     </div>
                     <div className="relative">
                         <input
@@ -142,7 +142,7 @@ const LoginForm: React.FC = () => {
                     >
                         {rememberMe && <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="4"><path d="M5 13l4 4L19 7" /></svg>}
                     </button>
-                    <span className="text-[11px] font-bold text-gray-500 cursor-pointer select-none tracking-tight" onClick={() => setRememberMe(!rememberMe)}>KEEP ME SIGNED IN</span>
+                    <span className="text-[11px] font-bold text-gray-500 cursor-pointer select-none tracking-tight" onClick={() => setRememberMe(!rememberMe)}>BİRİ OTURUMUMU AÇIK TUT</span>
                 </div>
 
                 <button
@@ -150,7 +150,7 @@ const LoginForm: React.FC = () => {
                     disabled={isLoading}
                     className="w-full py-4 bg-gray-900 text-white rounded-xl font-black text-[11px] flex items-center justify-center gap-3 hover:bg-brand-pink transform hover:-translate-y-0.5 transition-all shadow-xl shadow-gray-200 hover:shadow-brand-pink/20 mt-8 active:scale-95 group uppercase tracking-[0.2em] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    {isLoading ? 'Signing In...' : 'Sign In'}
+                    {isLoading ? 'Giriş Yapılıyor...' : 'Giriş Yap'}
                     {!isLoading && (
                         <svg className="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
@@ -160,7 +160,7 @@ const LoginForm: React.FC = () => {
             </form>
 
             <p className="text-center mt-10 text-[11px] text-gray-400 font-bold tracking-tight">
-                New here? <Link to="/register" className="font-black text-gray-900 hover:text-brand-pink transition-colors">CREATE ACCOUNT</Link>
+                Hesabın yok mu? <Link to="/register" className="font-black text-gray-900 hover:text-brand-pink transition-colors">ÜYE OL</Link>
             </p>
         </div>
     );

@@ -1,12 +1,54 @@
 <!doctype html>
 <html lang="tr">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Storefront</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="Fuira Store - Özel tasarım, yüksek kalite elektronik ve giyilebilir ürünleri uygun fiyatlarla kapınıza getiriyoruz. En yeni koleksiyonları keşfedin." />
+  <meta name="theme-color" content="#FF007F" />
+  <title>Fuira Store | Yeni Nesil Teknoloji</title>
+
+  <!-- Resource Prioritization -->
+  <link rel="dns-prefetch" href="//localhost" />
+
+  <!-- Global Fetching Strategy (Reduces Network Dependency Chain) -->
+  <script>
+    (function () {
+      const p = new URLSearchParams(window.location.search);
+      const apiBase = '/api/products?page=1&limit=12&sort=popular';
+      const filters = ['search', 'minPrice', 'maxPrice', 'category', 'sortBy']
+        .filter(f => p.has(f))
+        .map(f => `&${f}=${encodeURIComponent(p.get(f))}`)
+        .join('');
+
+      const productsUrl = apiBase + filters;
+      const filtersUrl = '/api/products-meta/filters' + (p.has('category') ? `?category=${p.get('category')}` : '');
+
+      const preload = (url) => {
+        const l = document.createElement('link');
+        l.rel = 'preload';
+        l.as = 'fetch';
+        l.href = url;
+        l.crossOrigin = 'anonymous';
+        document.head.appendChild(l);
+      };
+
+      preload(productsUrl);
+      preload(filtersUrl);
+
+      // Store promises for React to consume
+      window.__INITIAL_DATA__ = {
+        products: fetch(productsUrl).then(r => r.ok ? r.json() : null),
+        filters: fetch(filtersUrl).then(r => r.ok ? r.json() : null)
+      };
+    })();
+  </script>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="./src/main.tsx"></script>
+</body>
+
 </html>

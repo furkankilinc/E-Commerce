@@ -13,6 +13,27 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  # --- Cache & Session (Redis) ---
+  redis:
+    image: redis:alpine
+    container_name: ecommerce_redis
+    restart: always
+    ports:
+      - "6379:6379"
+
+  # --- Log Yönetimi (Seq) ---
+  seq:
+    image: datalust/seq:latest
+    container_name: ecommerce_seq
+    restart: always
+    ports:
+      - "5341:80"    # Web UI → http://localhost:5341
+    environment:
+      - ACCEPT_EULA=Y
+      - SEQ_FIRSTRUN_ADMINPASSWORD=Y
+    volumes:
+      - seq_data:/data
+
   # --- Backend ---
   storebackend:
     build: ./storebackend
@@ -24,8 +45,16 @@ services:
       - /app/node_modules
     depends_on:
       - db
+      - redis
+      - seq
     environment:
       - DATABASE_URL=postgresql://postgres:password123@db:5432/fuira_ecommerce
+      - REDIS_URL=redis://redis:6379
+      - JWT_USER_SECRET=fuira_user_jwt_s3cr3t_2026_change_in_production
+      - JWT_MERCHANT_SECRET=fuira_merchant_jwt_s3cr3t_2026_change_in_production
+      - JWT_ADMIN_SECRET=fuira_admin_jwt_s3cr3t_2026_change_in_production
+      - CORS_ORIGINS=http://localhost,http://127.0.0.1,http://user.fuira.com,http://admin.fuira.com,http://merchant.fuira.com,http://user.fuira.com:80,http://admin.fuira.com:80,http://merchant.fuira.com:80,http://localhost:5173,http://localhost:5174,http://localhost:5175
+      - SEQ_URL=http://seq:80
 
   # --- Frontend Servisleri ---
   storefront:
@@ -78,5 +107,21 @@ services:
       - vendorpanel
       - storebackend
 
+  # --- Object Storage (MinIO) ---
+  minio:
+    image: minio/minio:latest
+    container_name: ecommerce_minio
+    ports:
+      - "9090:9000"
+      - "9091:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadminpassword
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+
 volumes:
   postgres_data:
+  minio_data:
+  seq_data:
