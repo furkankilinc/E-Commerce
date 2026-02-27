@@ -4,6 +4,7 @@ import {
     adminLogin,
     adminRefresh,
     adminLogout,
+    adminGetMe,
 } from '../auth/admin.auth.controller';
 import { authenticate, requireSuperAdmin } from '../../middlewares/auth.middleware';
 
@@ -17,6 +18,9 @@ router.post('/refresh', adminRefresh);
 
 // POST /api/auth/admin/logout
 router.post('/logout', adminLogout);
+
+// GET /api/auth/admin/me (Profile)
+router.get('/me', authenticate('admin'), adminGetMe);
 
 // POST /api/auth/admin/create  (sadece SUPER_ADMIN erişebilir)
 router.post('/create', authenticate('admin'), requireSuperAdmin, adminCreate);
