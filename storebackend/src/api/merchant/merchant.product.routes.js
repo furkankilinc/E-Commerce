@@ -1,40 +1,14 @@
 const { Router } = require('express');
 const { PrismaClient } = require('@prisma/client');
-// const { authenticate } = require('../../middlewares/auth.middleware'); // Assuming authenticate is adapted for JS or used differently
+const { authenticate } = require('../../middlewares/auth.middleware');
+const logger = require('../../utils/logger');
 
 const prisma = new PrismaClient();
 const router = Router();
 
-const { verifyToken } = require('../../utils/token.util');
-
-// Real merchant authentication based on JWT token
-const merchantAuth = async (req, res, next) => {
-    const authHeader = req.headers['authorization'];
-    let token = '';
-
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-        token = authHeader.split(' ')[1];
-    } else if (req.cookies && req.cookies.token) {
-        token = req.cookies.token;
-    }
-
-    if (!token) {
-        return res.status(401).json({ message: 'Yetkilendirme token\'ı bulunamadı.' });
-    }
-
-    try {
-        const payload = verifyToken(token, 'merchant');
-        req.merchantId = payload.sub; // sub contains the merchant ID
-        req.tokenPayload = payload; // Logger için
-        next();
-    } catch (err) {
-        console.error('[merchant/auth]', err);
-        return res.status(401).json({ message: 'Token geçersiz veya süresi dolmuş.' });
-    }
-};
 
 // POST /api/merchant/products
-router.post('/', merchantAuth, async (req, res) => {
+router.post('/', authenticate('merchant'), async (req, res) => {
     try {
         const {
             name, description, price, categoryId, images, variants, sku, stock,
@@ -49,7 +23,7 @@ router.post('/', merchantAuth, async (req, res) => {
                 price: parseFloat(price),
                 sku: sku || `SKU-${Date.now()}`,
                 stock: parseInt(stock) || 0,
-                merchantId: req.merchantId,
+                merchantId: req.user.sub,
                 categoryId,
                 status: status || 'PUBLISHED',
                 metadata: {
@@ -75,20 +49,20 @@ router.post('/', merchantAuth, async (req, res) => {
 
         return res.status(201).json(product);
     } catch (err) {
-        console.error('[merchant/createProduct]', err);
+        logger.error('[merchant/createProduct]', err);
         return res.status(500).json({ message: 'Ürün oluşturulamadı.' });
     }
 });
 
 // GET /api/merchant/products
-router.get('/', merchantAuth, async (req, res) => {
+router.get('/', authenticate('merchant'), async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const status = req.query.status; // Get status from query
         const skip = (page - 1) * limit;
 
-        const where = { merchantId: req.merchantId };
+        const where = { merchantId: req.user.sub };
         if (status) {
             where.status = status;
         }
@@ -105,7 +79,7 @@ router.get('/', merchantAuth, async (req, res) => {
                 take: limit
             }),
             prisma.product.count({
-                where: { merchantId: req.merchantId }
+                where: { merchantId: req.user.sub }
             })
         ]);
 
@@ -119,18 +93,18 @@ router.get('/', merchantAuth, async (req, res) => {
             }
         });
     } catch (err) {
-        console.error('[merchant/getProducts]', err);
+        logger.error('[merchant/getProducts]', err);
         return res.status(500).json({ message: 'Ürünler listelenemedi.' });
     }
 });
 
 // GET /api/merchant/products/:id
-router.get('/:id', merchantAuth, async (req, res) => {
+router.get('/:id', authenticate('merchant'), async (req, res) => {
     try {
         const product = await prisma.product.findFirst({
             where: {
                 id: req.params.id,
-                merchantId: req.merchantId
+                merchantId: req.user.sub
             },
             include: {
                 images: true,
@@ -145,13 +119,13 @@ router.get('/:id', merchantAuth, async (req, res) => {
 
         return res.json(product);
     } catch (err) {
-        console.error('[merchant/getProduct]', err);
+        logger.error('[merchant/getProduct]', err, { productId: req.params.id });
         return res.status(500).json({ message: 'Ürün bilgisi alınamadı.' });
     }
 });
 
 // PUT /api/merchant/products/:id
-router.put('/:id', merchantAuth, async (req, res) => {
+router.put('/:id', authenticate('merchant'), async (req, res) => {
     try {
         const {
             name, description, price, categoryId, images, variants, sku, stock,
@@ -160,7 +134,7 @@ router.put('/:id', merchantAuth, async (req, res) => {
 
         // Check if product belongs to merchant
         const existing = await prisma.product.findFirst({
-            where: { id: req.params.id, merchantId: req.merchantId }
+            where: { id: req.params.id, merchantId: req.user.sub }
         });
 
         if (!existing) {
@@ -200,31 +174,29 @@ router.put('/:id', merchantAuth, async (req, res) => {
 
         return res.json(product);
     } catch (err) {
-        console.error('[merchant/updateProduct]', err);
+        logger.error('[merchant/updateProduct]', err, { productId: req.params.id });
         return res.status(500).json({ message: 'Ürün güncellenemedi.' });
     }
 });
 
 // DELETE /api/merchant/products/:id
-router.delete('/:id', merchantAuth, async (req, res) => {
+router.delete('/:id', authenticate('merchant'), async (req, res) => {
     try {
         const product = await prisma.product.findFirst({
-            where: { id: req.params.id, merchantId: req.merchantId }
+            where: { id: req.params.id, merchantId: req.user.sub }
         });
 
         if (!product) {
             return res.status(404).json({ message: 'Ürün bulunamadı.' });
         }
 
-        // Cascade delete is handled by database or manually if needed
-        // Prisma will handle relation cleanup if defined in schema (onDelete: Cascade)
         await prisma.product.delete({
             where: { id: req.params.id }
         });
 
         return res.json({ message: 'Ürün başarıyla silindi.' });
     } catch (err) {
-        console.error('[merchant/deleteProduct]', err);
+        logger.error('[merchant/deleteProduct]', err, { productId: req.params.id });
         return res.status(500).json({ message: 'Ürün silinemedi.' });
     }
 });

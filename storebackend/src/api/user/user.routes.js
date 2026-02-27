@@ -3,101 +3,81 @@ const dns = require('dns').promises;
 const logger = require('../../utils/logger');
 const bcrypt = require('bcryptjs');
 const { PrismaClient } = require('@prisma/client');
-const { verifyToken } = require('../../utils/token.util');
+const { authenticate } = require('../../middlewares/auth.middleware');
 
 const prisma = new PrismaClient();
 const router = Router();
 
-// Middleware to authenticate user
-const authenticateUser = (req, res, next) => {
-    const authHeader = req.headers['authorization'];
-    let token = '';
-
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-        token = authHeader.split(' ')[1];
-    } else if (req.cookies && req.cookies.token) {
-        token = req.cookies.token;
-    }
-
-    if (!token) {
-        return res.status(401).json({ message: 'Yetkilendirme token\'ı bulunamadı.' });
-    }
-    try {
-        // Correcting function call from verifyAccessToken to verifyToken
-        const payload = verifyToken(token, 'user');
-        req.userId = payload.sub;
-        req.tokenPayload = payload; // Logger için
-        next();
-    } catch (err) {
-        return res.status(401).json({ message: 'Token geçersiz veya süresi dolmuş.' });
-    }
+/**
+ * Standard Auth Error Helper
+ */
+const sendError = (res, status, message) => {
+    return res.status(status).json({ success: false, message });
 };
 
 // GET /api/user/me
-router.get('/me', authenticateUser, async (req, res) => {
+router.get('/me', authenticate('user'), async (req, res) => {
     try {
         const user = await prisma.user.findUnique({
-            where: { id: req.userId },
+            where: { id: req.user.sub },
             select: { id: true, email: true, name: true, phone: true }
         });
-        res.json(user);
+        if (!user) return sendError(res, 404, 'Kullanıcı bulunamadı.');
+        res.json({ success: true, user });
     } catch (err) {
-        res.status(500).json({ message: 'Sunucu hatası' });
+        logger.error('[USER/PROFILE] Get profile error:', err);
+        res.status(500).json({ success: false, message: 'Sunucu hatası' });
     }
 });
 
 // PUT /api/user/profile
-router.put('/profile', authenticateUser, async (req, res) => {
+router.put('/profile', authenticate('user'), async (req, res) => {
     try {
-        const { phone, email } = req.body;
+        const { phone, email, name } = req.body;
 
-        // MX Kaydı Sorgulaması (Opsiyonel: Eğer email değiştiyse yapılması daha verimli olur)
         if (email) {
             const domain = email.split('@')[1];
             try {
-                logger.info('MX kaydı sorgulanıyor', { domain, email });
                 const mxRecords = await dns.resolveMx(domain);
-
                 if (!mxRecords || mxRecords.length === 0) {
-                    logger.warn('MX kaydı bulunamadı', { domain, email });
-                    return res.status(400).json({ message: 'Girdiğiniz e-posta adresine ait MX kaydı bulunamadı. Lütfen geçerli bir e-posta adresi girin.' });
+                    return sendError(res, 400, 'Geçersiz e-posta domaini.');
                 }
-
-                logger.info('MX kaydı doğrulandı', { domain, records: mxRecords });
             } catch (dnsErr) {
-                logger.error('MX sorgusu sırasında hata oluştu', { domain, email, error: dnsErr.message });
-                return res.status(400).json({ message: 'E-posta domaini doğrulanamadı. Lütfen geçerli bir e-posta adresi girin.' });
+                return sendError(res, 400, 'E-posta doğrulanamadı.');
             }
         }
 
         const updatedUser = await prisma.user.update({
-            where: { id: req.userId },
-            data: { phone, email }
+            where: { id: req.user.sub },
+            data: { phone, email, name }
         });
-        res.json({ message: 'Profil güncellendi', user: updatedUser });
+
+        res.json({ success: true, message: 'Profil güncellendi', user: updatedUser });
     } catch (err) {
-        res.status(500).json({ message: 'Sunucu hatası' });
+        logger.error('[USER/PROFILE] Update profile error:', err);
+        res.status(500).json({ success: false, message: 'Sunucu hatası' });
     }
 });
 
 // POST /api/user/change-password
-router.post('/change-password', authenticateUser, async (req, res) => {
+router.post('/change-password', authenticate('user'), async (req, res) => {
     try {
         const { currentPassword, newPassword } = req.body;
-        const user = await prisma.user.findUnique({ where: { id: req.userId } });
+        const user = await prisma.user.findUnique({ where: { id: req.user.sub } });
 
         const isMatch = await bcrypt.compare(currentPassword, user.password);
-        if (!isMatch) return res.status(400).json({ message: 'Mevcut şifre hatalı.' });
+        if (!isMatch) return sendError(res, 400, 'Mevcut şifre hatalı.');
 
         const hashed = await bcrypt.hash(newPassword, 12);
         await prisma.user.update({
-            where: { id: req.userId },
+            where: { id: req.user.sub },
             data: { password: hashed }
         });
 
-        res.json({ message: 'Şifre başarıyla değiştirildi.' });
+        res.json({ success: true, message: 'Şifre başarıyla değiştirildi.' });
     } catch (err) {
-        res.status(500).json({ message: 'Sunucu hatası' });
+        logger.error('[USER/PROFILE] Change password error:', err);
+        res.status(500).json({ success: false, message: 'Sunucu hatası' });
     }
 });
 
