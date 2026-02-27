@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { apiClient } from '../../shared/api/apiClient';
 
 const CART_STORAGE_KEY = 'fuira_cart_items';
 const CART_ID_KEY = 'fuira_cart_id';
@@ -27,19 +28,12 @@ let isFetchTriggered = false;
 
 const syncWithBackend = async (items: any[]) => {
     try {
-        const token = localStorage.getItem('token');
-        const headers: Record<string, string> = {
-            'Content-Type': 'application/json',
-            'x-cart-id': getCartId()
-        };
-
-        if (token) {
-            headers['Authorization'] = `Bearer ${token}`;
-        }
-
-        await fetch('/api/cart', {
+        await apiClient('/api/cart', {
             method: 'POST',
-            headers,
+            headers: {
+                'Content-Type': 'application/json',
+                'x-cart-id': getCartId()
+            },
             body: JSON.stringify({ items })
         });
     } catch (err) {
@@ -104,17 +98,8 @@ export const cartStore = {
         if (isFetchTriggered) return;
         isFetchTriggered = true;
         try {
-            const token = localStorage.getItem('token');
-            const headers: Record<string, string> = {
-                'x-cart-id': getCartId()
-            };
-
-            if (token) {
-                headers['Authorization'] = `Bearer ${token}`;
-            }
-
-            const res = await fetch('/api/cart', {
-                headers
+            const res = await apiClient('/api/cart', {
+                headers: { 'x-cart-id': getCartId() }
             });
             if (res.ok) {
                 const data = await res.json();

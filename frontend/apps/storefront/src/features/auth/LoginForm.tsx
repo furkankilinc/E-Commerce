@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from './useAuth';
+import { apiClient } from '../../shared/api/apiClient';
 
 // Regex constants
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -44,9 +45,8 @@ const LoginForm: React.FC = () => {
         setApiSuccess('');
 
         try {
-            const res = await fetch('/api/auth/user/login', {
+            const res = await apiClient('/api/auth/user/login', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     email: formData.email,
                     password: formData.password

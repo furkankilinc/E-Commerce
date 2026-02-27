@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { apiClient } from '../../shared/api/apiClient';
 
 // Regex constants
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -66,9 +67,8 @@ const RegisterForm: React.FC = () => {
             setApiSuccess('');
 
             try {
-                const res = await fetch('/api/auth/user/register', {
+                const res = await apiClient('/api/auth/user/register', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         name: `${formData.firstName} ${formData.lastName}`.trim(),
                         email: formData.email,
