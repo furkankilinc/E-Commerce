@@ -69,16 +69,16 @@ const requestLogger = (req, res, next) => {
         let userId = null;
 
         // Öncelik Sırası:
-        // 1. tokenPayload (Yeni Auth sistemi)
-        // 2. adminPayload / merchantPayload
-        // 3. userId (Eski sistem rotaları)
-        // 4. Authorization Header (Decode denemesi)
+        // 1. req.user (Yeni "Premium" Auth middleware tarafından sağlanan nesne)
+        // 2. tokenPayload (Legacy/Ekstra payload alanı)
+        // 3. adminPayload / merchantPayload / userPayload
+        // 4. Authorization Header veya Cookie (Decode denemesi)
 
-        const payload = req.tokenPayload || req.adminPayload || req.merchantPayload || req.userPayload;
+        const payload = req.user || req.tokenPayload || req.adminPayload || req.merchantPayload || req.userPayload;
 
         if (payload) {
             userEmail = payload.email || payload.name;
-            userRole = payload.role || payload.audience || 'USER';
+            userRole = (payload.role || payload.audience || 'USER').toUpperCase();
             userId = payload.sub || payload.id;
             userIdentity = payload.name || payload.email || `${userRole}:${userId}`;
         }
@@ -90,7 +90,8 @@ const requestLogger = (req, res, next) => {
 
         // Eğer hala bulunamadıysa Header veya Cookie'yi zorla!
         const authHeader = req.headers['authorization'] || req.headers['Authorization'];
-        const cookieToken = req.cookies ? req.cookies.token : null;
+        // Yeni sistemde 'accessToken', eski sistemde 'token' kullanılıyor.
+        const cookieToken = req.cookies ? (req.cookies.accessToken || req.cookies.token) : null;
 
         if (userIdentity === 'Ziyaretçi (Anonymous)' && (authHeader || cookieToken)) {
             try {
@@ -99,7 +100,7 @@ const requestLogger = (req, res, next) => {
                 if (decoded) {
                     userId = decoded.sub || decoded.id;
                     userEmail = decoded.email;
-                    userRole = decoded.role || decoded.audience || 'USER';
+                    userRole = (decoded.role || decoded.audience || 'USER').toUpperCase();
                     userIdentity = (decoded.email || decoded.name || userId) + (cookieToken ? ' (Cookie)' : ' (AuthHeader)');
                 }
             } catch (e) {

@@ -38,6 +38,10 @@ app.use(cors({
 // ── Security: Body Size Limit ─────────────────────────────────────────────────
 app.use(express.json({ limit: '10kb' }));
 
+// ── Security: Data Sanitization (XSS Protection) ──────────────────────────────
+const sanitize = require('./src/middlewares/validation/sanitize.middleware');
+app.use(sanitize);
+
 // ── Security: Rate Limiting ───────────────────────────────────────────────────
 let rateLimit;
 try { rateLimit = require('express-rate-limit'); } catch { rateLimit = null; }
