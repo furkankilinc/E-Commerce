@@ -2,9 +2,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useWishlist } from '../store/wishlist.store';
 import { useCart } from '../../cart/cart.store';
+import { useAuth } from '../../auth/useAuth';
 import { toast } from 'react-toastify';
 
 const WishlistPage: React.FC = () => {
+    const { isAuthenticated } = useAuth();
     const { items, removeItem, clearWishlist } = useWishlist();
     const { addItem } = useCart();
 
@@ -48,7 +50,23 @@ const WishlistPage: React.FC = () => {
                     )}
                 </div>
 
-                {items.length === 0 ? (
+                {!isAuthenticated ? (
+                    <div className="flex flex-col items-center justify-center py-32 border-2 border-dashed border-gray-100 rounded-[4rem] bg-gray-50/30">
+                        <div className="w-28 h-28 bg-white rounded-full flex items-center justify-center shadow-xl mb-10 border border-gray-50 text-brand-pink">
+                            <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                        </div>
+                        <h2 className="text-3xl font-black text-gray-900 mb-4 uppercase tracking-tighter italic">Giriş Yapmalısınız</h2>
+                        <p className="text-gray-500 text-sm font-bold mb-12 italic tracking-wide">Favorilerinizi görmek ve yönetmek için lütfen oturum açın.</p>
+                        <Link
+                            to="/login"
+                            className="px-12 py-5 bg-brand-pink text-white rounded-[2rem] text-[11px] font-black uppercase tracking-[0.25em] shadow-2xl shadow-brand-pink/20 hover:scale-105 transition-all italic"
+                        >
+                            Giriş Yap
+                        </Link>
+                    </div>
+                ) : items.length === 0 ? (
                     /* Empty State */
                     <div className="flex flex-col items-center justify-center py-32 border-2 border-dashed border-gray-100 rounded-[4rem] bg-gray-50/30">
                         <div className="w-28 h-28 bg-white rounded-full flex items-center justify-center shadow-xl mb-10 border border-gray-50">

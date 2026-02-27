@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useCart } from '../cart/cart.store';
-import { apiFetch as fetch } from '../../shared/utils/api.util';
 import { useWishlist } from '../wishlist/store/wishlist.store';
+import { useAuth } from '../auth/useAuth';
 import AddToCollectionModal from '../collections/components/AddToCollectionModal';
 import { toast } from 'react-toastify';
 import { getSizedImageUrl } from '../../shared/utils/image.util';
@@ -38,6 +38,7 @@ interface Product {
 
 const ProductDetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
+    const { isAuthenticated } = useAuth();
     const { addItem } = useCart();
     const { toggleItem, isInWishlist } = useWishlist();
     const [showCollectionModal, setShowCollectionModal] = useState(false);
@@ -264,6 +265,13 @@ const ProductDetailPage: React.FC = () => {
                             <button
                                 onClick={() => {
                                     if (product) {
+                                        if (!isAuthenticated) {
+                                            toast.error('Favorilere eklemek için lütfen giriş yapın.', {
+                                                position: 'top-center',
+                                                autoClose: 3000
+                                            });
+                                            return;
+                                        }
                                         const wasInWishlist = isInWishlist(product.id);
                                         toggleItem(product);
                                         toast[wasInWishlist ? 'info' : 'success'](
@@ -286,7 +294,16 @@ const ProductDetailPage: React.FC = () => {
                             </button>
                             {/* Add to Collection Button */}
                             <button
-                                onClick={() => setShowCollectionModal(true)}
+                                onClick={() => {
+                                    if (!isAuthenticated) {
+                                        toast.error('Koleksiyon oluşturmak için lütfen giriş yapın.', {
+                                            position: 'top-center',
+                                            autoClose: 3000
+                                        });
+                                        return;
+                                    }
+                                    setShowCollectionModal(true);
+                                }}
                                 aria-label="Koleksiyona Ekle"
                                 className="w-20 h-20 bg-gray-50 text-gray-900 border border-gray-100 rounded-[2rem] flex items-center justify-center hover:bg-white hover:border-gray-900 transition-all shadow-sm"
                             >
