@@ -1,12 +1,13 @@
 const { Router } = require('express');
 const redis = require('../../config/redis');
+const { authenticate } = require('../../middlewares/auth.middleware');
 
 const router = Router();
 
-// GET /api/wishlist — Get wishlist items by wishlist ID (from header)
-router.get('/', async (req, res) => {
+// GET /api/wishlist — Get wishlist items
+router.get('/', authenticate('user'), async (req, res) => {
     try {
-        const wishlistId = req.headers['x-wishlist-id'] || 'guest';
+        const wishlistId = req.user.sub;
         const data = await redis.get(`wishlist:${wishlistId}`);
         res.json(data ? JSON.parse(data) : []);
     } catch (error) {
@@ -15,9 +16,9 @@ router.get('/', async (req, res) => {
 });
 
 // POST /api/wishlist — Save entire wishlist
-router.post('/', async (req, res) => {
+router.post('/', authenticate('user'), async (req, res) => {
     try {
-        const wishlistId = req.headers['x-wishlist-id'] || 'guest';
+        const wishlistId = req.user.sub;
         const { items } = req.body;
         await redis.set(`wishlist:${wishlistId}`, JSON.stringify(items), 'EX', 60 * 60 * 24 * 30); // 30 days
         res.json({ message: 'Wishlist saved successfully' });
@@ -27,9 +28,9 @@ router.post('/', async (req, res) => {
 });
 
 // DELETE /api/wishlist/:productId — Remove a specific product
-router.delete('/:productId', async (req, res) => {
+router.delete('/:productId', authenticate('user'), async (req, res) => {
     try {
-        const wishlistId = req.headers['x-wishlist-id'] || 'guest';
+        const wishlistId = req.user.sub;
         const { productId } = req.params;
         const data = await redis.get(`wishlist:${wishlistId}`);
         const items = data ? JSON.parse(data) : [];
