@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import { userRegister, userLogin, userRefresh, userLogout } from '../auth/user.auth.controller';
+import { userRegister, userLogin, userRefresh, userLogout, userGetMe } from '../auth/user.auth.controller';
+import { authenticate } from '../../middlewares/auth.middleware';
 
 const router = Router();
 
@@ -14,5 +15,8 @@ router.post('/refresh', userRefresh);
 
 // POST /api/auth/user/logout
 router.post('/logout', userLogout);
+
+// GET /api/auth/user/me (Profile)
+router.get('/me', authenticate('user'), userGetMe);
 
 export default router;

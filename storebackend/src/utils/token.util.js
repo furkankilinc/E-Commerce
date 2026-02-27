@@ -1,9 +1,6 @@
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
-// ── Startup Guard ─────────────────────────────────────────────────────────────
-// If any JWT secret is missing the application MUST NOT start.
-// This prevents accidental deployment with predictable fallback keys.
 const REQUIRED_SECRETS = ['JWT_USER_SECRET', 'JWT_MERCHANT_SECRET', 'JWT_ADMIN_SECRET'];
 for (const key of REQUIRED_SECRETS) {
     if (!process.env[key]) {
@@ -26,15 +23,31 @@ const generateRefreshToken = (payload) => {
     return jwt.sign(payload, SECRETS[payload.audience], { expiresIn: '7d' });
 };
 
-const verifyToken = (token, audience) => {
+const verifyAccessToken = (token, audience) => {
     return jwt.verify(token, SECRETS[audience]);
 };
 
-const refreshTokenExpiry = () => {
+const verifyRefreshToken = (token, audience) => {
+    return jwt.verify(token, SECRETS[audience]);
+};
+
+const refreshTokenExpiryDate = () => {
     const d = new Date();
     d.setDate(d.getDate() + 7);
     return d;
 };
 
-module.exports = { generateAccessToken, generateRefreshToken, verifyToken, refreshTokenExpiry };
+// Also keep old names for compatibility if any other JS file uses them
+const verifyToken = verifyAccessToken;
+const refreshTokenExpiry = refreshTokenExpiryDate;
+
+module.exports = {
+    generateAccessToken,
+    generateRefreshToken,
+    verifyAccessToken,
+    verifyRefreshToken,
+    refreshTokenExpiryDate,
+    verifyToken,
+    refreshTokenExpiry
+};
 

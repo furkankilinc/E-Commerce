@@ -1,23 +1,10 @@
-import { Request, Response, NextFunction } from 'express';
-import { verifyAccessToken, TokenAudience, AccessTokenPayload } from '../utils/token.util';
 const logger = require('../utils/logger');
-
-/**
- * Enhanced Express Request interface with type-safe user context.
- */
-declare global {
-    namespace Express {
-        interface Request {
-            user?: AccessTokenPayload;
-            isFullyAuthenticated?: boolean;
-        }
-    }
-}
+const { verifyAccessToken } = require('../utils/token.util');
 
 /**
  * Standard Auth Error Responses for consistency
  */
-const sendAuthError = (res: Response, status: number, code: string, message: string, detail?: any) => {
+const sendAuthError = (res, status, code, message, detail) => {
     return res.status(status).json({
         success: false,
         error: {
@@ -33,11 +20,11 @@ const sendAuthError = (res: Response, status: number, code: string, message: str
  * Handles multiple audiences, extracts tokens from dual sources (Cookies/Headers),
  * and performs strict validation.
  * 
- * @param allowedAudience - The target group (user, merchant, admin)
+ * @param {string} allowedAudience - The target group (user, merchant, admin)
  */
-export const authenticate = (allowedAudience: TokenAudience) => {
-    return (req: Request, res: Response, next: NextFunction) => {
-        let token: string | undefined;
+const authenticate = (allowedAudience) => {
+    return (req, res, next) => {
+        let token;
 
         // 1. Try Extracting Token from Authorization Header (Bearer)
         const authHeader = req.headers.authorization;
@@ -67,11 +54,8 @@ export const authenticate = (allowedAudience: TokenAudience) => {
             req.user = payload;
             req.isFullyAuthenticated = true;
 
-            // 5. Success Audit Log (Optional, logic can be simplified for performance)
-            // logger.info(`[AUTH] User authenticated: ${payload.sub} (${allowedAudience})`);
-
             next();
-        } catch (err: any) {
+        } catch (err) {
             const isExpired = err.name === 'TokenExpiredError';
 
             logger.error(`[AUTH] Token validation failed: ${err.message}`, {
@@ -93,12 +77,11 @@ export const authenticate = (allowedAudience: TokenAudience) => {
 /**
  * Granular Role Check Middleware
  * Should be used AFTER authenticate() middleware.
- * Supports multiple roles (OR condition).
  * 
- * @param allowedRoles - List of roles that can access the path
+ * @param {...string} allowedRoles - List of roles that can access the path
  */
-export const requireRoles = (...allowedRoles: string[]) => {
-    return (req: Request, res: Response, next: NextFunction) => {
+const requireRoles = (...allowedRoles) => {
+    return (req, res, next) => {
         if (!req.user) {
             return sendAuthError(res, 401, 'UNAUTHORIZED', 'Kimlik doğrulaması gerekli.');
         }
@@ -126,13 +109,12 @@ export const requireRoles = (...allowedRoles: string[]) => {
     };
 };
 
-/**
- * SuperAdmin Shortcut
- */
-export const requireSuperAdmin = requireRoles('SUPER_ADMIN');
+const requireSuperAdmin = requireRoles('SUPER_ADMIN');
+const requireMerchantOwner = requireRoles('MERCHANT_OWNER');
 
-/**
- * Merchant Owner Shortcut
- */
-export const requireMerchantOwner = requireRoles('MERCHANT_OWNER');
-
+module.exports = {
+    authenticate,
+    requireRoles,
+    requireSuperAdmin,
+    requireMerchantOwner
+};

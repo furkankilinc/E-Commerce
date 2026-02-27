@@ -7,7 +7,8 @@ export interface AccessTokenPayload {
     sub: string;       // entity id
     email: string;
     audience: TokenAudience;
-    role?: string;     // adminler için
+    role?: string;     // for admins or specific merchant roles
+    deviceId?: string; // used for device binding security
     iat?: number;
     exp?: number;
 }
