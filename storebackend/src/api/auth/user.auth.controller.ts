@@ -45,6 +45,17 @@ export const userRegister = async (req: Request, res: Response) => {
             },
         });
 
+        // Logger'ın tanıması için request'e ekle
+        (req as any).tokenPayload = tokenPayload;
+
+        // Token'ı HTTP-Only Cookie olarak ayarla
+        res.cookie('token', accessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            maxAge: 15 * 60 * 1000 // 15 dakika
+        });
+
         return res.status(201).json({
             message: 'Kayıt başarılı.',
             accessToken,
@@ -88,6 +99,17 @@ export const userLogin = async (req: Request, res: Response) => {
                 userAgent: req.headers['user-agent'],
                 ipAddress: req.ip,
             },
+        });
+
+        // Logger'ın tanıması için request'e ekle
+        (req as any).tokenPayload = tokenPayload;
+
+        // Token'ı HTTP-Only Cookie olarak ayarla
+        res.cookie('token', accessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            maxAge: 15 * 60 * 1000 // 15 dakika
         });
 
         return res.status(200).json({
@@ -148,6 +170,14 @@ export const userRefresh = async (req: Request, res: Response) => {
             },
         });
 
+        // Token'ı HTTP-Only Cookie olarak ayarla (Rotation)
+        res.cookie('token', newAccessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            maxAge: 15 * 60 * 1000 // 15 dakika
+        });
+
         return res.status(200).json({
             accessToken: newAccessToken,
             refreshToken: newRefreshToken,
@@ -171,6 +201,9 @@ export const userLogout = async (req: Request, res: Response) => {
             where: { token: refreshToken, revoked: false },
             data: { revoked: true },
         });
+
+        // Cookie'yi temizle
+        res.clearCookie('token');
 
         return res.status(200).json({ message: 'Çıkış başarılı.' });
     } catch (err) {

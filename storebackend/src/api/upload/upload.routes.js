@@ -9,13 +9,21 @@ const router = Router();
 // Only authenticated merchants may upload or delete images.
 const merchantAuth = (req, res, next) => {
     const authHeader = req.headers['authorization'];
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    let token = '';
+
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+        token = authHeader.split(' ')[1];
+    } else if (req.cookies && req.cookies.token) {
+        token = req.cookies.token;
+    }
+
+    if (!token) {
         return res.status(401).json({ message: 'Yetkilendirme token\'ı bulunamadı.' });
     }
-    const token = authHeader.split(' ')[1];
     try {
         const payload = verifyToken(token, 'merchant');
         req.merchantId = payload.sub;
+        req.tokenPayload = payload; // Logger için
         next();
     } catch {
         return res.status(401).json({ message: 'Token geçersiz veya süresi dolmuş.' });

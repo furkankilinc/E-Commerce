@@ -11,14 +11,22 @@ const router = Router();
 // Middleware to authenticate user
 const authenticateUser = (req, res, next) => {
     const authHeader = req.headers['authorization'];
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    let token = '';
+
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+        token = authHeader.split(' ')[1];
+    } else if (req.cookies && req.cookies.token) {
+        token = req.cookies.token;
+    }
+
+    if (!token) {
         return res.status(401).json({ message: 'Yetkilendirme token\'ı bulunamadı.' });
     }
-    const token = authHeader.split(' ')[1];
     try {
         // Correcting function call from verifyAccessToken to verifyToken
         const payload = verifyToken(token, 'user');
         req.userId = payload.sub;
+        req.tokenPayload = payload; // Logger için
         next();
     } catch (err) {
         return res.status(401).json({ message: 'Token geçersiz veya süresi dolmuş.' });

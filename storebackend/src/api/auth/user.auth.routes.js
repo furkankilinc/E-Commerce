@@ -30,6 +30,17 @@ router.post('/register', async (req, res) => {
             },
         });
 
+        // Logger'ın tanıması için request'e ekle
+        req.tokenPayload = payload;
+
+        // Token'ı HTTP-Only Cookie olarak ayarla
+        res.cookie('token', accessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            maxAge: 15 * 60 * 1000 // 15 dakika
+        });
+
         return res.status(201).json({
             message: 'Kayıt başarılı.',
             accessToken, refreshToken,
@@ -62,6 +73,17 @@ router.post('/login', async (req, res) => {
                 token: refreshToken, userId: user.id, expiresAt: refreshTokenExpiry(),
                 userAgent: req.headers['user-agent'], ipAddress: req.ip
             },
+        });
+
+        // Logger'ın tanıması için request'e ekle
+        req.tokenPayload = payload;
+
+        // Token'ı HTTP-Only Cookie olarak ayarla
+        res.cookie('token', accessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            maxAge: 15 * 60 * 1000 // 15 dakika
         });
 
         return res.status(200).json({
@@ -103,6 +125,14 @@ router.post('/refresh', async (req, res) => {
             },
         });
 
+        // Token'ı HTTP-Only Cookie olarak ayarla (Rotation)
+        res.cookie('token', newAccessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            maxAge: 15 * 60 * 1000 // 15 dakika
+        });
+
         return res.status(200).json({ accessToken: newAccessToken, refreshToken: newRefreshToken });
     } catch (err) {
         console.error('[user/refresh]', err);
@@ -118,6 +148,9 @@ router.post('/logout', async (req, res) => {
         await prisma.userRefreshToken.updateMany({
             where: { token: refreshToken, revoked: false }, data: { revoked: true },
         });
+        // Cookie'yi temizle
+        res.clearCookie('token');
+
         return res.status(200).json({ message: 'Çıkış başarılı.' });
     } catch (err) {
         console.error('[user/logout]', err);

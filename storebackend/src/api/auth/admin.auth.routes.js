@@ -11,13 +11,22 @@ const AUDIENCE = 'admin';
 /** Middleware: Bearer token'ı doğrula ve admin audience'ını kontrol et */
 const authenticateAdmin = (req, res, next) => {
     const authHeader = req.headers['authorization'];
-    if (!authHeader?.startsWith('Bearer '))
+    let token = '';
+
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+        token = authHeader.split(' ')[1];
+    } else if (req.cookies && req.cookies.token) {
+        token = req.cookies.token;
+    }
+
+    if (!token) {
         return res.status(401).json({ message: 'Yetkilendirme token\'ı bulunamadı.' });
+    }
 
     try {
-        const token = authHeader.split(' ')[1];
         const payload = verifyToken(token, AUDIENCE);
         req.adminPayload = payload;
+        req.tokenPayload = payload; // Logger için
         next();
     } catch {
         return res.status(401).json({ message: 'Token geçersiz veya süresi dolmuş.' });
@@ -48,6 +57,17 @@ router.post('/login', async (req, res) => {
                 token: refreshToken, adminId: admin.id, expiresAt: refreshTokenExpiry(),
                 userAgent: req.headers['user-agent'], ipAddress: req.ip
             },
+        });
+
+        // Logger'ın tanıması için request'e ekle
+        req.tokenPayload = payload;
+
+        // Token'ı HTTP-Only Cookie olarak ayarla
+        res.cookie('token', accessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            maxAge: 15 * 60 * 1000 // 15 dakika
         });
 
         return res.status(200).json({
@@ -88,6 +108,14 @@ router.post('/refresh', async (req, res) => {
             },
         });
 
+        // Token'ı HTTP-Only Cookie olarak ayarla (Rotation)
+        res.cookie('token', newAccessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            maxAge: 15 * 60 * 1000 // 15 dakika
+        });
+
         return res.status(200).json({ accessToken: newAccessToken, refreshToken: newRefreshToken });
     } catch (err) {
         console.error('[admin/refresh]', err);
@@ -103,6 +131,9 @@ router.post('/logout', async (req, res) => {
         await prisma.adminRefreshToken.updateMany({
             where: { token: refreshToken, revoked: false }, data: { revoked: true },
         });
+        // Cookie'yi temizle
+        res.clearCookie('token');
+
         return res.status(200).json({ message: 'Çıkış başarılı.' });
     } catch (err) {
         console.error('[admin/logout]', err);

@@ -21,12 +21,17 @@ export const authenticate =
     (audience: TokenAudience) =>
         (req: Request, res: Response, next: NextFunction) => {
             const authHeader = req.headers['authorization'];
+            let token = '';
 
-            if (!authHeader || !authHeader.startsWith('Bearer ')) {
-                return res.status(401).json({ message: 'Yetkilendirme token\'ı bulunamadı.' });
+            if (authHeader && authHeader.startsWith('Bearer ')) {
+                token = authHeader.split(' ')[1];
+            } else if (req.cookies && req.cookies.token) {
+                token = req.cookies.token;
             }
 
-            const token = authHeader.split(' ')[1];
+            if (!token) {
+                return res.status(401).json({ message: 'Yetkilendirme token\'ı bulunamadı.' });
+            }
 
             try {
                 const payload = verifyAccessToken(token, audience);
