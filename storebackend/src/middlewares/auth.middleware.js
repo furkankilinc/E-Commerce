@@ -109,11 +109,55 @@ const requireRoles = (...allowedRoles) => {
     };
 };
 
+/**
+ * Optional Authentication Middleware
+ * Does NOT throw error if token is missing.
+ * Simply populates req.user if a valid token exists.
+ * 
+ * @param {string} allowedAudience - The target group (user, merchant, admin)
+ */
+const optionalAuthenticate = (allowedAudience) => {
+    return (req, res, next) => {
+        let token;
+
+        // 1. Try Extracting Token from Authorization Header (Bearer)
+        const authHeader = req.headers.authorization;
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+            token = authHeader.split(' ')[1];
+        }
+
+        // 2. Fallback to HttpOnly Cookies if Header is missing
+        if (!token && req.cookies && req.cookies.accessToken) {
+            token = req.cookies.accessToken;
+        }
+
+        if (!token) {
+            req.user = null;
+            req.isFullyAuthenticated = false;
+            return next();
+        }
+
+        try {
+            const payload = verifyAccessToken(token, allowedAudience);
+            req.user = payload;
+            req.isFullyAuthenticated = true;
+            next();
+        } catch (err) {
+            // Token is present but invalid/expired - we still treat as guest but log it
+            logger.debug(`[AUTH] Optional token invalid: ${err.message}`);
+            req.user = null;
+            req.isFullyAuthenticated = false;
+            next();
+        }
+    };
+};
+
 const requireSuperAdmin = requireRoles('SUPER_ADMIN');
 const requireMerchantOwner = requireRoles('MERCHANT_OWNER');
 
 module.exports = {
     authenticate,
+    optionalAuthenticate,
     requireRoles,
     requireSuperAdmin,
     requireMerchantOwner
