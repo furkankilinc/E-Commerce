@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useCart } from '../cart/cart.store';
+import { apiFetch as fetch } from '../../shared/utils/api.util';
 import { useWishlist } from '../wishlist/store/wishlist.store';
 import AddToCollectionModal from '../collections/components/AddToCollectionModal';
 import { toast } from 'react-toastify';
 import { getSizedImageUrl } from '../../shared/utils/image.util';
 import { preload } from "react-dom";
+import { apiClient } from '../../shared/api/apiClient';
 
 interface Product {
     id: string;
@@ -73,7 +75,7 @@ const ProductDetailPage: React.FC = () => {
 
         const fetchProduct = async () => {
             try {
-                const res = await fetch(`/api/products/${id}`, { signal: controller.signal });
+                const res = await apiClient(`/api/products/${id}`, { signal: controller.signal });
                 if (res.ok) {
                     const data = await res.json();
                     setProduct(data);
@@ -82,7 +84,7 @@ const ProductDetailPage: React.FC = () => {
                 }
 
                 // Fetch cart stats
-                const statsRes = await fetch(`/api/cart/stats/${id}`, { signal: controller.signal });
+                const statsRes = await apiClient(`/api/cart/stats/${id}`, { signal: controller.signal });
                 if (statsRes.ok) {
                     const statsData = await statsRes.json();
                     setCartCount(statsData.count);

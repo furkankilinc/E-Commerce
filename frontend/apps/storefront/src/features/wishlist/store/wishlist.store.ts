@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { apiClient } from '../../../shared/api/apiClient';
 
 const WISHLIST_STORAGE_KEY = 'fuira_wishlist_items';
 const WISHLIST_ID_KEY = 'fuira_wishlist_id';
@@ -40,7 +41,7 @@ const notify = () => {
 
 const syncWithBackend = async (items: WishlistItem[]) => {
     try {
-        await fetch('/api/wishlist', {
+        await apiClient('/api/wishlist', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -105,7 +106,7 @@ export const wishlistStore = {
         if (isFetchTriggered) return;
         isFetchTriggered = true;
         try {
-            const res = await fetch('/api/wishlist', {
+            const res = await apiClient('/api/wishlist', {
                 headers: { 'x-wishlist-id': getWishlistId() },
             });
             if (res.ok) {

@@ -2,7 +2,9 @@ import React, { useEffect, useState, useCallback, useRef, Suspense, lazy } from 
 import { Link, useSearchParams } from 'react-router-dom';
 import { preload } from 'react-dom';
 import { useCart } from '../cart/cart.store';
+import { apiFetch as fetch } from '../../shared/utils/api.util';
 import { useWishlist } from '../wishlist/store/wishlist.store';
+import { apiClient } from '../../shared/api/apiClient';
 const AddToCollectionModal = lazy(() => import('../collections/components/AddToCollectionModal'));
 import { toast } from 'react-toastify';
 import { getSizedImageUrl } from '../../shared/utils/image.util';
@@ -224,7 +226,7 @@ const HomePage: React.FC = () => {
     const fetchMeta = async (catSlug: string, signal?: AbortSignal) => {
         setIsMetaLoading(true);
         try {
-            const res = await fetch(`/api/products-meta/filters?category=${catSlug}`, { signal });
+            const res = await apiClient(`/api/products-meta/filters?category=${catSlug}`, { signal });
             if (res.ok) {
                 const data = await res.json();
                 setMeta(data);
@@ -286,7 +288,7 @@ const HomePage: React.FC = () => {
                 ...(variantQuery && { variants: variantQuery })
             });
 
-            const res = await fetch(`/api/products?${queryParams.toString()}`, { signal });
+            const res = await apiClient(`/api/products?${queryParams.toString()}`, { signal });
             if (res.ok) {
                 const data = await res.json();
                 setProducts(data.products);

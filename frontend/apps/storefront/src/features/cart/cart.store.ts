@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { apiClient } from '../../shared/api/apiClient';
 
 const CART_STORAGE_KEY = 'fuira_cart_items';
 const CART_ID_KEY = 'fuira_cart_id';
@@ -27,7 +28,7 @@ let isFetchTriggered = false;
 
 const syncWithBackend = async (items: any[]) => {
     try {
-        await fetch('/api/cart', {
+        await apiClient('/api/cart', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -97,7 +98,7 @@ export const cartStore = {
         if (isFetchTriggered) return;
         isFetchTriggered = true;
         try {
-            const res = await fetch('/api/cart', {
+            const res = await apiClient('/api/cart', {
                 headers: { 'x-cart-id': getCartId() }
             });
             if (res.ok) {
