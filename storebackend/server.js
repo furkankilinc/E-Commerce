@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 const logger = require('./src/utils/logger');
+const requestLogger = require('./src/middlewares/monitoring/requestLogger.middleware');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -65,7 +66,7 @@ if (rateLimit) {
 }
 
 // ── Logging: HTTP İstek Kaydı ────────────────────────────────────────────────
-app.use(logger.httpMiddleware);
+app.use(requestLogger);
 
 // ─── Auth Routes ─────────────────────────────────────────────────────────────
 const userAuthRoutes = require('./src/api/auth/user.auth.routes');
