@@ -24,8 +24,8 @@ const ALLOWED_ORIGINS = (process.env.CORS_ORIGINS || 'http://localhost:5173,http
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow server-to-server (no origin) or whitelisted origins
-    if (!origin || ALLOWED_ORIGINS.includes(origin)) {
+    // Geliştirme aşamasında ve telefondan erişimde sorun çıkmaması için tüm yerel ağa izin veriyoruz
+    if (!origin || process.env.NODE_ENV !== 'production' || ALLOWED_ORIGINS.includes(origin)) {
       callback(null, true);
     } else {
       console.warn(`[CORS Blocked]: ${origin}`);

@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const redis = require('../../config/redis');
+const { authenticate } = require('../../middlewares/auth.middleware');
 
 const router = Router();
 
@@ -16,9 +17,9 @@ const saveCollections = async (collectionsId, collections) => {
 };
 
 // GET /api/collections — Get all collections
-router.get('/', async (req, res) => {
+router.get('/', authenticate('user'), async (req, res) => {
     try {
-        const collectionsId = req.headers['x-collections-id'] || 'guest';
+        const collectionsId = req.user.sub;
         const collections = await getCollections(collectionsId);
         res.json(collections);
     } catch (err) {
@@ -27,9 +28,9 @@ router.get('/', async (req, res) => {
 });
 
 // POST /api/collections — Create a new collection
-router.post('/', async (req, res) => {
+router.post('/', authenticate('user'), async (req, res) => {
     try {
-        const collectionsId = req.headers['x-collections-id'] || 'guest';
+        const collectionsId = req.user.sub;
         const { name, emoji } = req.body;
 
         if (!name?.trim()) {
@@ -54,9 +55,9 @@ router.post('/', async (req, res) => {
 });
 
 // PUT /api/collections/:collectionId — Rename / update a collection
-router.put('/:collectionId', async (req, res) => {
+router.put('/:collectionId', authenticate('user'), async (req, res) => {
     try {
-        const collectionsId = req.headers['x-collections-id'] || 'guest';
+        const collectionsId = req.user.sub;
         const { collectionId } = req.params;
         const { name, emoji } = req.body;
 
@@ -75,9 +76,9 @@ router.put('/:collectionId', async (req, res) => {
 });
 
 // DELETE /api/collections/:collectionId — Delete a collection
-router.delete('/:collectionId', async (req, res) => {
+router.delete('/:collectionId', authenticate('user'), async (req, res) => {
     try {
-        const collectionsId = req.headers['x-collections-id'] || 'guest';
+        const collectionsId = req.user.sub;
         const { collectionId } = req.params;
 
         const collections = await getCollections(collectionsId);
@@ -90,9 +91,9 @@ router.delete('/:collectionId', async (req, res) => {
 });
 
 // POST /api/collections/:collectionId/items — Add product to a collection
-router.post('/:collectionId/items', async (req, res) => {
+router.post('/:collectionId/items', authenticate('user'), async (req, res) => {
     try {
-        const collectionsId = req.headers['x-collections-id'] || 'guest';
+        const collectionsId = req.user.sub;
         const { collectionId } = req.params;
         const { product } = req.body; // { id, name, price, image, category, slug }
 
@@ -113,9 +114,9 @@ router.post('/:collectionId/items', async (req, res) => {
 });
 
 // DELETE /api/collections/:collectionId/items/:productId — Remove product from collection
-router.delete('/:collectionId/items/:productId', async (req, res) => {
+router.delete('/:collectionId/items/:productId', authenticate('user'), async (req, res) => {
     try {
-        const collectionsId = req.headers['x-collections-id'] || 'guest';
+        const collectionsId = req.user.sub;
         const { collectionId, productId } = req.params;
 
         const collections = await getCollections(collectionsId);

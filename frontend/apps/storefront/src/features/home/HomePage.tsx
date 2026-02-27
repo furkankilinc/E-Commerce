@@ -2,8 +2,8 @@ import React, { useEffect, useState, useCallback, useRef, Suspense, lazy } from 
 import { Link, useSearchParams } from 'react-router-dom';
 import { preload } from 'react-dom';
 import { useCart } from '../cart/cart.store';
-import { apiFetch as fetch } from '../../shared/utils/api.util';
 import { useWishlist } from '../wishlist/store/wishlist.store';
+import { useAuth } from '../auth/useAuth';
 import { apiClient } from '../../shared/api/apiClient';
 const AddToCollectionModal = lazy(() => import('../collections/components/AddToCollectionModal'));
 import { toast } from 'react-toastify';
@@ -95,6 +95,7 @@ const CategoryItem: React.FC<{
 };
 
 const HomePage: React.FC = () => {
+    const { isAuthenticated } = useAuth();
     const { addItem } = useCart();
     const { toggleItem, isInWishlist } = useWishlist();
     const [collectionModalProduct, setCollectionModalProduct] = useState<any | null>(null);
@@ -649,7 +650,16 @@ const HomePage: React.FC = () => {
                                         <button
                                             aria-label={isInWishlist(product.id) ? 'Favorilerden Çıkar' : 'Favorilere Ekle'}
                                             onClick={(e) => {
-                                                e.preventDefault(); e.stopPropagation(); toggleItem(product);
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                if (!isAuthenticated) {
+                                                    toast.error('Favorilere eklemek için lütfen giriş yapın.', {
+                                                        position: 'top-center',
+                                                        autoClose: 3000
+                                                    });
+                                                    return;
+                                                }
+                                                toggleItem(product);
                                                 toast[isInWishlist(product.id) ? 'info' : 'success'](isInWishlist(product.id) ? `${product.name} favorilerden çıkarıldı.` : `${product.name} favorilere eklendi!`, { autoClose: 1500 });
                                             }}
                                             className={`absolute top-6 right-6 w-10 h-10 rounded-2xl flex items-center justify-center shadow-lg border transition-all hover:scale-110 ${isInWishlist(product.id) ? 'bg-brand-pink border-brand-pink text-white' : 'bg-white border-gray-100 text-gray-300 opacity-0 group-hover:opacity-100'}`}
