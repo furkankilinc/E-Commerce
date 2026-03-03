@@ -87,11 +87,7 @@ const CategoryRow: React.FC<{
                             <button
                                 onClick={async () => {
                                     try {
-                                        const res = await fetch(`/api/categories/admin/${cat.id}`, {
-                                            method: 'PUT',
-                                            headers: { 'Content-Type': 'application/json' },
-                                            body: JSON.stringify({ isActive: true })
-                                        });
+                                        const res = await apiClient.put(`/api/categories/admin/${cat.id}`, { isActive: true });
                                         if (res.ok) window.location.reload();
                                     } catch (err) { }
                                 }}
@@ -128,15 +124,20 @@ const CategoryRow: React.FC<{
 // ─── Filter Spec Builder ─────────────────────────────────────────────────────
 const FilterSpecBuilder: React.FC<{
     specs: FilterSpec[];
+    availableAttributes: { name: string; values: string[] }[];
     onChange: (specs: FilterSpec[]) => void;
-}> = ({ specs, onChange }) => {
+}> = ({ specs, availableAttributes, onChange }) => {
     const [newName, setNewName] = useState('');
     const [newVal, setNewVal] = useState<Record<number, string>>({});
+    const [showSuggestions, setShowSuggestions] = useState(false);
 
-    const addSpec = () => {
-        if (!newName.trim()) return;
-        onChange([...specs, { name: newName.trim(), values: [] }]);
+    const addSpec = (name?: string, values?: string[]) => {
+        const finalName = (name || newName).trim();
+        if (!finalName) return;
+        if (specs.some(s => s.name === finalName)) return;
+        onChange([...specs, { name: finalName, values: values || [] }]);
         setNewName('');
+        setShowSuggestions(false);
     };
 
     const removeSpec = (idx: number) => {
@@ -164,60 +165,92 @@ const FilterSpecBuilder: React.FC<{
 
     return (
         <div className="space-y-4">
-            {/* Add new spec */}
-            <div className="flex gap-2">
-                <input
-                    value={newName}
-                    onChange={e => setNewName(e.target.value)}
-                    onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addSpec())}
-                    placeholder="Filtre adı (örn: RAM, CPU, Renk)"
-                    className="flex-1 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-brand-pink"
-                />
-                <button
-                    type="button"
-                    onClick={addSpec}
-                    className="px-4 py-2 bg-brand-pink text-white text-sm font-bold rounded-lg hover:opacity-90 transition-opacity"
-                >
-                    + Ekle
-                </button>
+            {/* Add new spec with suggestions */}
+            <div className="relative">
+                <div className="flex gap-2">
+                    <div className="relative flex-1">
+                        <input
+                            value={newName}
+                            onChange={e => { setNewName(e.target.value); setShowSuggestions(true); }}
+                            onFocus={() => setShowSuggestions(true)}
+                            placeholder="Örn: RAM, CPU, Ekran Kartı"
+                            className="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-brand-pink/5 transition-all"
+                        />
+                        {showSuggestions && (
+                            <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-100 shadow-2xl rounded-2xl z-20 max-h-60 overflow-y-auto py-2 animate-in fade-in slide-in-from-top-2">
+                                {availableAttributes
+                                    .filter(a => a.name.toLowerCase().includes(newName.toLowerCase()) && !specs.some(s => s.name === a.name))
+                                    .map(attr => (
+                                        <button
+                                            key={attr.name}
+                                            type="button"
+                                            onClick={() => addSpec(attr.name, attr.values)}
+                                            className="w-full text-left px-4 py-2.5 hover:bg-slate-50 text-xs font-bold text-slate-600 transition-colors flex items-center justify-between"
+                                        >
+                                            <span className="flex items-center gap-2">
+                                                <span className="w-1.5 h-1.5 bg-slate-200 rounded-full"></span>
+                                                {attr.name}
+                                            </span>
+                                            <span className="text-[9px] bg-slate-100 px-2 py-0.5 rounded-full text-slate-400 uppercase tracking-tighter">
+                                                {attr.values.length} seçenek
+                                            </span>
+                                        </button>
+                                    ))}
+                                <button onClick={() => setShowSuggestions(false)} className="w-full py-2 text-[10px] text-slate-300 font-bold hover:text-slate-500 uppercase tracking-widest border-t border-slate-50 mt-1">Kapat</button>
+                            </div>
+                        )}
+                    </div>
+                    <button
+                        type="button"
+                        onClick={() => addSpec()}
+                        className="px-6 py-3 bg-brand-pink text-white text-sm font-black rounded-2xl hover:opacity-90 transition-opacity shadow-lg shadow-brand-pink/20"
+                    >
+                        + EKLE
+                    </button>
+                </div>
             </div>
 
             {/* Spec list */}
-            {specs.map((spec, idx) => (
-                <div key={idx} className="border border-slate-200 rounded-xl p-4">
-                    <div className="flex items-center justify-between mb-3">
-                        <span className="font-bold text-sm text-admin-dark">{spec.name}</span>
-                        <button type="button" onClick={() => removeSpec(idx)} className="text-xs text-red-400 hover:text-red-600 font-semibold">Kaldır</button>
-                    </div>
-
-                    {/* Values */}
-                    <div className="flex flex-wrap gap-2 mb-3">
-                        {spec.values.map(val => (
-                            <span key={val} className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-700">
-                                {val}
-                                <button type="button" onClick={() => removeValue(idx, val)} className="text-slate-400 hover:text-red-500 transition-colors">×</button>
+            <div className="grid grid-cols-1 gap-4">
+                {specs.map((spec, idx) => (
+                    <div key={idx} className="bg-white border border-slate-200 rounded-2xl p-5 hover:border-brand-pink/30 hover:shadow-xl hover:shadow-slate-200/50 transition-all group">
+                        <div className="flex items-center justify-between mb-4 border-b border-slate-50 pb-3">
+                            <span className="font-black text-xs text-admin-dark uppercase tracking-widest flex items-center gap-2">
+                                <span className="w-1.5 h-4 bg-indigo-500 rounded-full"></span>
+                                {spec.name}
                             </span>
-                        ))}
-                    </div>
+                            <button type="button" onClick={() => removeSpec(idx)} className="text-[10px] text-red-400 hover:text-red-500 font-black uppercase tracking-tighter transition-colors">Kaldır</button>
+                        </div>
 
-                    <div className="flex gap-2">
-                        <input
-                            value={newVal[idx] || ''}
-                            onChange={e => setNewVal(prev => ({ ...prev, [idx]: e.target.value }))}
-                            onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addValue(idx, newVal[idx] || ''))}
-                            placeholder={`${spec.name} değeri ekle...`}
-                            className="flex-1 px-3 py-1.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-brand-pink"
-                        />
-                        <button
-                            type="button"
-                            onClick={() => addValue(idx, newVal[idx] || '')}
-                            className="px-3 py-1.5 bg-slate-100 text-slate-600 text-sm font-bold rounded-lg hover:bg-slate-200 transition-colors"
-                        >
-                            Ekle
-                        </button>
+                        {/* Values */}
+                        <div className="flex flex-wrap gap-2 mb-4">
+                            {spec.values.map(val => (
+                                <span key={val} className="inline-flex items-center gap-2 px-3 py-1 bg-slate-50 border border-slate-100 rounded-xl text-[10px] font-black text-slate-500 uppercase">
+                                    {val}
+                                    <button type="button" onClick={() => removeValue(idx, val)} className="text-slate-300 hover:text-red-500 transition-colors">×</button>
+                                </span>
+                            ))}
+                        </div>
+
+                        <div className="flex gap-2">
+                            <input
+                                value={newVal[idx] || ''}
+                                onChange={e => setNewVal(prev => ({ ...prev, [idx]: e.target.value }))}
+                                onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addValue(idx, newVal[idx] || ''))}
+                                placeholder="Yeni değer..."
+                                className="flex-1 px-4 py-2 text-xs border border-slate-100 rounded-xl focus:outline-none focus:border-brand-pink transition-all bg-slate-50/50 font-bold"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => addValue(idx, newVal[idx] || '')}
+                                className="px-4 py-2 bg-slate-100 text-slate-500 text-[10px] font-black rounded-xl hover:bg-slate-200 transition-colors uppercase tracking-widest"
+                            >
+                                EKLE
+                            </button>
+                        </div>
                     </div>
-                </div>
-            ))}
+                ))}
+            </div>
         </div>
     );
 };
@@ -241,6 +274,25 @@ const CategoryModal: React.FC<{
     });
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState('');
+
+    const [globalAttrs, setGlobalAttrs] = useState<{ name: string; values: string[] }[]>([]);
+
+    useEffect(() => {
+        // Fetch all attributes to provide suggestions
+        const fetchAttrs = async () => {
+            try {
+                const res = await apiClient.get('/api/attributes');
+                if (res.ok) {
+                    const data = await res.json();
+                    setGlobalAttrs(data.map((a: any) => ({
+                        name: a.name,
+                        values: a.values.map((v: any) => v.value)
+                    })));
+                }
+            } catch (err) { }
+        };
+        fetchAttrs();
+    }, []);
 
     const handleNameChange = (val: string) => {
         setName(val);
@@ -275,55 +327,98 @@ const CategoryModal: React.FC<{
 
     const eligible = categories.filter(c => c.id !== initial?.id);
 
+    // Merge global attributes with all existing category attributes for better suggestions
+    const allAvailableAttributes = useMemo(() => {
+        const merged: Record<string, Set<string>> = {};
+
+        // 1. From Global Attributes
+        globalAttrs.forEach(a => {
+            if (!a || !a.name) return;
+            if (!merged[a.name]) merged[a.name] = new Set<string>();
+            const targetSet = merged[a.name];
+            if (targetSet) {
+                (a.values || []).forEach(v => targetSet.add(v));
+            }
+        });
+
+        // 2. From all existing categories (The "bilgisayar" part the user mentioned)
+        categories.forEach(c => {
+            if (c && c.filterValues) {
+                Object.entries(c.filterValues).forEach(([name, values]) => {
+                    if (!name) return;
+                    if (!merged[name]) merged[name] = new Set<string>();
+                    const targetSet = merged[name];
+                    if (targetSet && Array.isArray(values)) {
+                        values.forEach(v => targetSet.add(v as string));
+                    }
+                });
+            }
+        });
+
+        return Object.entries(merged).map(([name, values]) => ({
+            name,
+            values: Array.from(values)
+        }));
+    }, [globalAttrs, categories]);
+
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+            <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col transform transition-all animate-in zoom-in-95">
                 {/* Header */}
-                <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
-                    <h2 className="text-lg font-extrabold text-admin-dark">
-                        {initial ? 'Kategoriyi Düzenle' : 'Yeni Kategori'}
-                    </h2>
-                    <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-400 transition-colors">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" strokeWidth="2.5" /></svg>
+                <div className="flex items-center justify-between px-8 py-5 border-b border-slate-50">
+                    <div>
+                        <h2 className="text-xl font-black text-admin-dark tracking-tight">
+                            {initial ? 'Kategoriyi Düzenle' : 'Yeni Kategori'}
+                        </h2>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Kategori Yapılandırması</p>
+                    </div>
+                    <button onClick={onClose} className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-50 text-slate-400 hover:text-red-500 transition-all">
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" strokeWidth="2.5" /></svg>
                     </button>
                 </div>
 
                 {/* Body */}
-                <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto custom-scrollbar">
-                    <div className="px-6 py-5 space-y-5">
+                <form id="cat-form" onSubmit={handleSubmit} className="flex-1 overflow-y-auto custom-scrollbar">
+                    <div className="px-8 py-6 space-y-6">
                         {error && (
-                            <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm font-semibold">{error}</div>
+                            <div className="p-4 bg-red-50 border border-red-100 rounded-2xl text-red-600 text-xs font-bold animate-pulse flex items-center gap-3">
+                                <span className="w-1.5 h-1.5 bg-red-500 rounded-full"></span>
+                                {error}
+                            </div>
                         )}
 
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Kategori Adı *</label>
+                        <div className="grid grid-cols-2 gap-6">
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                    <span className="w-1 h-3 bg-brand-pink rounded-full"></span>
+                                    Kategori Adı *
+                                </label>
                                 <input
                                     required
                                     value={name}
                                     onChange={e => handleNameChange(e.target.value)}
-                                    className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-brand-pink transition-colors"
-                                    placeholder="Dizüstü Bilgisayar"
+                                    className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-brand-pink/5 focus:bg-white focus:border-brand-pink/30 transition-all"
+                                    placeholder="Örn: Akıllı Telefonlar"
                                 />
                             </div>
-                            <div>
-                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Slug *</label>
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Slug *</label>
                                 <input
                                     required
                                     value={slug}
                                     onChange={e => setSlug(slugify(e.target.value))}
-                                    className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm font-mono focus:outline-none focus:border-brand-pink transition-colors"
-                                    placeholder="dizustu-bilgisayar"
+                                    className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-mono text-slate-500 focus:outline-none focus:ring-4 focus:ring-brand-pink/5 transition-all"
+                                    placeholder="akilli-telefonlar"
                                 />
                             </div>
                         </div>
 
-                        <div>
-                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Üst Kategori</label>
+                        <div className="space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Üst Kategori</label>
                             <select
                                 value={parentId}
                                 onChange={e => setParentId(e.target.value)}
-                                className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-brand-pink transition-colors"
+                                className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-brand-pink/5 transition-all appearance-none cursor-pointer"
                             >
                                 <option value="">— Ana Kategori (Üst yok) —</option>
                                 {eligible.map(c => (
@@ -332,43 +427,52 @@ const CategoryModal: React.FC<{
                             </select>
                         </div>
 
-                        <div>
-                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Açıklama</label>
+                        <div className="space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Açıklama</label>
                             <textarea
                                 value={description}
                                 onChange={e => setDescription(e.target.value)}
                                 rows={2}
-                                className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-brand-pink transition-colors resize-none"
-                                placeholder="Opsiyonel kategori açıklaması..."
+                                className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-medium focus:outline-none focus:ring-4 focus:ring-brand-pink/5 transition-all resize-none"
+                                placeholder="..."
                             />
                         </div>
 
-                        <div>
-                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Görsel URL</label>
-                            <input
-                                value={image}
-                                onChange={e => setImage(e.target.value)}
-                                className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-brand-pink transition-colors"
-                                placeholder="https://..."
-                            />
-                        </div>
-
-                        <div className="flex items-center gap-3">
-                            <label className="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" checked={isActive} onChange={e => setIsActive(e.target.checked)} className="sr-only peer" />
-                                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-pink"></div>
-                            </label>
-                            <span className="text-sm font-semibold text-slate-600">Aktif</span>
+                        <div className="grid grid-cols-2 gap-6">
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Görsel URL</label>
+                                <input
+                                    value={image}
+                                    onChange={e => setImage(e.target.value)}
+                                    className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl text-xs focus:outline-none focus:ring-4 focus:ring-brand-pink/5 transition-all"
+                                    placeholder="https://..."
+                                />
+                            </div>
+                            <div className="flex flex-col justify-end pb-1">
+                                <div className="flex items-center gap-3">
+                                    <label className="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" checked={isActive} onChange={e => setIsActive(e.target.checked)} className="sr-only peer" />
+                                        <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+                                    </label>
+                                    <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Aktif Kategori</span>
+                                </div>
+                            </div>
                         </div>
 
                         {/* ─── Özel Filtreler ─────────────────────────────────── */}
-                        <div>
-                            <div className="flex items-center justify-between mb-3">
-                                <h3 className="text-sm font-extrabold text-admin-dark">Özel Filtreler</h3>
-                                <span className="text-xs text-slate-400 font-medium">Bu kategoriye özel filtre seçenekleri</span>
+                        <div className="pt-4">
+                            <div className="flex items-center justify-between mb-4">
+                                <div className="flex items-center gap-2">
+                                    <span className="w-2 h-6 bg-emerald-500 rounded-full"></span>
+                                    <h3 className="text-sm font-black text-admin-dark uppercase tracking-wide">Ürün Özellikleri</h3>
+                                </div>
                             </div>
-                            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
-                                <FilterSpecBuilder specs={filterSpecs} onChange={setFilterSpecs} />
+                            <div className="bg-slate-50/50 border-2 border-dashed border-slate-100 rounded-[2rem] p-6">
+                                <FilterSpecBuilder
+                                    specs={filterSpecs}
+                                    availableAttributes={allAvailableAttributes}
+                                    onChange={setFilterSpecs}
+                                />
                             </div>
                         </div>
                     </div>
@@ -411,7 +515,7 @@ const CategoriesPage: React.FC = () => {
     const load = useCallback(async () => {
         setLoading(true);
         try {
-            const res = await fetch('/api/categories/admin');
+            const res = await apiClient.get('/api/categories/admin');
             if (res.ok) setCategories(await res.json());
         } finally {
             setLoading(false);
@@ -421,14 +525,11 @@ const CategoriesPage: React.FC = () => {
     useEffect(() => { load(); }, [load]);
 
     const handleSave = async (data: Partial<Category>) => {
-        const method = editTarget ? 'PUT' : 'POST';
         const url = editTarget ? `/api/categories/admin/${editTarget.id}` : '/api/categories/admin';
 
-        const res = await fetch(url, {
-            method,
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data),
-        });
+        const res = editTarget
+            ? await apiClient.put(url, data)
+            : await apiClient.post(url, data);
 
         const json = await res.json();
         if (!res.ok) throw new Error(json.message || 'Hata');
@@ -443,7 +544,7 @@ const CategoriesPage: React.FC = () => {
         if (!deleteTarget) return;
         setDeleting(true);
         try {
-            const res = await fetch(`/api/categories/admin/${deleteTarget.id}`, { method: 'DELETE' });
+            const res = await apiClient.delete(`/api/categories/admin/${deleteTarget.id}`);
             const json = await res.json();
             if (!res.ok) throw new Error(json.message);
             showToast(json.message);

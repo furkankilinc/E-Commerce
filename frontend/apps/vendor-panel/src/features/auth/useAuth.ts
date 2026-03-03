@@ -27,18 +27,13 @@ export const useAuth = () => {
             try {
                 const rfToken = authStore.getRefreshToken();
                 if (rfToken) {
-                    await fetch('/api/auth/merchant/refresh', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ refreshToken: rfToken })
-                    }).then(async res => {
-                        if (res.ok) {
-                            const data = await res.json();
-                            authStore.setAuth(data.accessToken, data.refreshToken, authStore.getMerchant()!);
-                        } else if (res.status === 401) {
-                            logout();
-                        }
-                    });
+                    const res = await apiClient.post('/api/auth/merchant/refresh', { refreshToken: rfToken });
+                    if (res.ok) {
+                        const data = await res.json();
+                        authStore.setAuth(data.accessToken, data.refreshToken, authStore.getMerchant()!);
+                    } else if (res.status === 401) {
+                        logout();
+                    }
                 }
             } catch (err) {
                 console.error('Background refresh failed:', err);
