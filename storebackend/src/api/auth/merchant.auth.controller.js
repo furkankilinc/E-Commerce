@@ -31,8 +31,8 @@ const sendMerchantAuthResponse = async (req, res, statusCode, merchant, message)
         },
     });
 
-    res.cookie('accessToken', accessToken, { ...COOKIE_OPTIONS, maxAge: 15 * 60 * 1000 });
-    res.cookie('refreshToken', refreshToken, { ...COOKIE_OPTIONS, maxAge: 7 * 24 * 60 * 60 * 1000 });
+    res.cookie('merchant_accessToken', accessToken, { ...COOKIE_OPTIONS });
+    res.cookie('merchant_refreshToken', refreshToken, { ...COOKIE_OPTIONS });
 
     return res.status(statusCode).json({
         success: true,
@@ -44,7 +44,8 @@ const sendMerchantAuthResponse = async (req, res, statusCode, merchant, message)
             isVerified: merchant.isVerified,
             role: 'MERCHANT'
         },
-        accessToken
+        accessToken,
+        refreshToken
     });
 };
 
