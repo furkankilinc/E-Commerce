@@ -29,6 +29,35 @@ router.get('/', async (req, res) => {
     }
 });
 
+// GET /api/categories/:id/effective-specs - Get all specs including inherited ones
+router.get('/:id/effective-specs', async (req, res) => {
+    try {
+        const specs = {};
+        const collectSpecs = async (catId) => {
+            const cat = await prisma.category.findUnique({
+                where: { id: catId },
+                select: { filterValues: true, parentId: true }
+            });
+            if (!cat) return;
+
+            if (cat.filterValues && typeof cat.filterValues === 'object') {
+                Object.entries(cat.filterValues).forEach(([name, values]) => {
+                    if (!specs[name]) specs[name] = [];
+                    specs[name] = [...new Set([...specs[name], ...values])];
+                });
+            }
+
+            if (cat.parentId) await collectSpecs(cat.parentId);
+        };
+
+        await collectSpecs(req.params.id);
+        return res.json(specs);
+    } catch (err) {
+        console.error('[categories/getEffectiveSpecs]', err);
+        return res.status(500).json({ message: 'Sunucu hatası.' });
+    }
+});
+
 // ─── ADMIN ─────────────────────────────────────────────────────────────────────
 
 // GET /api/categories/admin - All categories (including inactive)
