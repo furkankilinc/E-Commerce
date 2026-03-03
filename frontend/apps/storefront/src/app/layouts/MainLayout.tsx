@@ -4,6 +4,7 @@ import { useAuth } from '../../features/auth/useAuth';
 import { useCart } from '../../features/cart/cart.store';
 import { useWishlist } from '../../features/wishlist/store/wishlist.store';
 import { getSizedImageUrl } from '../../shared/utils/image.util';
+import UserGeolocationTracker from '../../shared/components/UserGeolocationTracker';
 
 const MainLayout: React.FC = () => {
     const { logout, user, isAuthenticated } = useAuth();
@@ -128,6 +129,7 @@ const MainLayout: React.FC = () => {
 
     return (
         <div className="min-h-screen flex flex-col bg-white">
+            <UserGeolocationTracker />
             {/* Header */}
             <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-50">
                 <div className="max-w-[1440px] mx-auto px-4 sm:px-10 lg:px-20">
