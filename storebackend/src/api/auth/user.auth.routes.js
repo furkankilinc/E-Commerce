@@ -4,7 +4,8 @@ const {
     userLogin,
     userRefresh,
     userGetMe,
-    userLogout
+    userLogout,
+    updateUserLocation
 } = require('./user.auth.controller');
 const { authenticate } = require('../../middlewares/auth.middleware');
 
@@ -24,5 +25,8 @@ router.post('/logout', userLogout);
 
 // GET /api/auth/user/me
 router.get('/me', authenticate('user'), userGetMe);
+
+// PATCH /api/auth/user/location
+router.patch('/location', authenticate('user'), updateUserLocation);
 
 module.exports = router;
