@@ -2,45 +2,57 @@ import React, { useEffect, useState } from 'react';
 import { apiClient } from '../../shared/api/apiClient';
 import DashboardMap from './components/DashboardMap';
 
-interface StatCard {
+interface StatCardProps {
     label: string;
-    value: string;
-    change: string;
-    positive: boolean;
+    value: string | number;
     icon: React.ReactNode;
     color: string;
+    subtext: string;
 }
 
 const DashboardPage: React.FC = () => {
     const [stats, setStats] = useState({
-        totalProducts: '—',
-        totalOrders: '—',
-        totalSellers: '—',
-        totalUsers: '—',
-        totalCategories: '—',
-        totalRevenue: '—',
+        totalMerchants: 0,
+        totalProducts: 0,
+        onlineUsers: 0,
+        totalUsers: 0
     });
 
     useEffect(() => {
-        // Fetch real stats from API
-        const fetchStats = async () => {
+        const fetchData = async () => {
+            setIsLoading(true);
             try {
-                const token = localStorage.getItem('admin_token');
-                const headers = { Authorization: `Bearer ${token}` };
-
-                const [catRes] = await Promise.allSettled([
-                    fetch('/api/categories/admin', { headers }),
+                const [statsRes, mapRes] = await Promise.all([
+                    apiClient.get('/api/admin/stats/dashboard'),
+                    apiClient.get('/api/admin/stats/map')
                 ]);
 
-                if (catRes.status === 'fulfilled' && catRes.value.ok) {
-                    const cats = await catRes.value.json();
-                    setStats(prev => ({ ...prev, totalCategories: String(cats.length) }));
+                if (statsRes.ok) {
+                    const data = await statsRes.json();
+                    setStats(data.stats);
+                }
+                if (mapRes.ok) {
+                    const data = await mapRes.json();
+                    setMapData(data.data.merchants.concat(data.data.users));
                 }
             } catch (e) {
-                // ignore
+                console.error('Dashboard data load failed', e);
+            } finally {
+                setIsLoading(false);
             }
         };
-        fetchStats();
+        fetchData();
+
+        // Refresh online users every minute
+        const poll = setInterval(async () => {
+            const statsRes = await apiClient.get('/api/admin/stats/dashboard');
+            if (statsRes.ok) {
+                const data = await statsRes.json();
+                setStats(data.stats);
+            }
+        }, 60000);
+
+        return () => clearInterval(poll);
     }, []);
 
     const cards: StatCard[] = [
