@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../features/auth/useAuth';
+import GeolocationTracker from '../../shared/components/GeolocationTracker';
 
 const VendorLayout: React.FC = () => {
     const location = useLocation();
@@ -47,6 +48,7 @@ const VendorLayout: React.FC = () => {
 
     return (
         <div className="flex h-screen bg-[#f1f5f9] overflow-hidden font-sans">
+            <GeolocationTracker />
             {/* Sidebar */}
             <aside className="w-72 bg-white border-r border-slate-200 flex flex-col">
                 <div className="p-8">
