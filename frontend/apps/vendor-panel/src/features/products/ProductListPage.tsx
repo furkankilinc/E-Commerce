@@ -13,6 +13,7 @@ interface Product {
     stock: number;
     status: string;
     images: { url: string; isMain: boolean }[];
+    variants: { id: string; name: string; value: string; price?: number }[];
 }
 
 const ProductListPage: React.FC = () => {
@@ -41,7 +42,6 @@ const ProductListPage: React.FC = () => {
             setIsLoading(false);
         }
     };
-
 
     useEffect(() => {
         fetchProducts(1);
@@ -130,6 +130,7 @@ const ProductListPage: React.FC = () => {
                                 <th className="px-12 py-10 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Ürün Detayları</th>
                                 <th className="px-6 py-10 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 text-center">Stok Durumu</th>
                                 <th className="px-6 py-10 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 text-center">Birim Fiyat</th>
+                                <th className="px-6 py-10 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 text-center">Seçenekler</th>
                                 <th className="px-6 py-10 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 text-center">Durum</th>
                                 <th className="px-12 py-10 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 text-right">İşlemler</th>
                             </tr>
@@ -142,12 +143,13 @@ const ProductListPage: React.FC = () => {
                                         <td className="px-6 py-10 text-center"><div className="h-10 bg-slate-50 rounded-xl w-20 mx-auto"></div></td>
                                         <td className="px-6 py-10 text-center"><div className="h-10 bg-slate-50 rounded-xl w-28 mx-auto"></div></td>
                                         <td className="px-6 py-10 text-center"><div className="h-10 bg-slate-50 rounded-xl w-24 mx-auto"></div></td>
+                                        <td className="px-6 py-10 text-center"><div className="h-10 bg-slate-50 rounded-xl w-24 mx-auto"></div></td>
                                         <td className="px-12 py-10 text-right"><div className="h-10 bg-slate-50 rounded-xl w-16 ml-auto"></div></td>
                                     </tr>
                                 ))
                             ) : products.length === 0 ? (
                                 <tr>
-                                    <td colSpan={5} className="px-10 py-40 text-center">
+                                    <td colSpan={6} className="px-10 py-40 text-center">
                                         <div className="flex flex-col items-center gap-8 opacity-20 group">
                                             <div className="w-32 h-32 bg-slate-50 rounded-[3rem] flex items-center justify-center border-4 border-dashed border-slate-100 group-hover:rotate-12 transition-transform">
                                                 <svg className="w-14 h-14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-14L4 7m8 4v10M4 7v10l8 4" /></svg>
@@ -182,6 +184,16 @@ const ProductListPage: React.FC = () => {
                                         </td>
                                         <td className="px-6 py-10 text-center">
                                             <span className="text-xl font-black text-slate-900 italic tracking-tighter">${product.price.toLocaleString()}</span>
+                                        </td>
+                                        <td className="px-6 py-10 text-center">
+                                            <div className="flex flex-col items-center gap-1">
+                                                <span className="text-[10px] font-black text-indigo-500 uppercase">{product.variants?.length || 0} SEÇENEK</span>
+                                                <div className="flex flex-wrap justify-center gap-1 max-w-[120px]">
+                                                    {Array.from(new Set(product.variants?.map(v => v.name))).slice(0, 2).map(name => (
+                                                        <span key={name} className="px-2 py-0.5 bg-indigo-50 text-indigo-400 rounded-md text-[8px] font-bold">{name}</span>
+                                                    ))}
+                                                </div>
+                                            </div>
                                         </td>
                                         <td className="px-6 py-10 text-center">
                                             {product.status === 'PUBLISHED' ? (
