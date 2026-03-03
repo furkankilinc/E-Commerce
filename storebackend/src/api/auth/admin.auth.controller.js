@@ -36,8 +36,8 @@ const sendAdminAuthResponse = async (req, res, statusCode, admin, message) => {
         },
     });
 
-    res.cookie('accessToken', accessToken, { ...COOKIE_OPTIONS, maxAge: 15 * 60 * 1000 });
-    res.cookie('refreshToken', refreshToken, { ...COOKIE_OPTIONS, maxAge: 7 * 24 * 60 * 60 * 1000 });
+    res.cookie('admin_accessToken', accessToken, { ...COOKIE_OPTIONS });
+    res.cookie('admin_refreshToken', refreshToken, { ...COOKIE_OPTIONS });
 
     return res.status(statusCode).json({
         success: true,
@@ -48,7 +48,8 @@ const sendAdminAuthResponse = async (req, res, statusCode, admin, message) => {
             name: admin.name,
             role: admin.role
         },
-        accessToken
+        accessToken,
+        refreshToken
     });
 };
 
@@ -101,7 +102,7 @@ const adminLogin = async (req, res) => {
 
 const adminRefresh = async (req, res) => {
     try {
-        const refreshToken = req.body.refreshToken || req.cookies.refreshToken;
+        const refreshToken = req.body.refreshToken || req.cookies.admin_refreshToken;
         if (!refreshToken) return res.status(400).json({ success: false, message: 'Refresh token gerekli.' });
         let payload;
         try {
@@ -142,15 +143,15 @@ const adminGetMe = async (req, res) => {
 
 const adminLogout = async (req, res) => {
     try {
-        const refreshToken = req.body.refreshToken || req.cookies.refreshToken;
+        const refreshToken = req.body.refreshToken || req.cookies.admin_refreshToken;
         if (refreshToken) {
             await prisma.adminRefreshToken.updateMany({
                 where: { token: refreshToken, revoked: false },
                 data: { revoked: true },
             });
         }
-        res.clearCookie('accessToken');
-        res.clearCookie('refreshToken');
+        res.clearCookie('admin_accessToken', COOKIE_OPTIONS);
+        res.clearCookie('admin_refreshToken', COOKIE_OPTIONS);
         return res.status(200).json({ success: true, message: 'Çıkış başarılı.' });
     } catch (err) {
         logger.error('[AUTH/ADMIN] Logout error:', err);
