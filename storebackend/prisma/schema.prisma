@@ -128,6 +128,7 @@ model Category {
   products     Product[]
   isActive     Boolean    @default(true)
   filterValues Json?      // e.g. {"RAM": ["8GB","16GB"], "CPU": ["i5","i7","i9"]}
+  attributes    Attribute[]
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
 
@@ -209,4 +210,29 @@ model Review {
   createdAt DateTime @default(now())
 
   @@map("reviews")
+}
+
+// ─────────────────────────────────────────────
+// ATTRIBUTE DATA
+// ─────────────────────────────────────────────
+
+model Attribute {
+  id        String           @id @default(cuid())
+  name      String           @unique
+  values    AttributeValue[]
+  categories Category[] 
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  @@map("attributes")
+}
+
+model AttributeValue {
+  id          String    @id @default(cuid())
+  attributeId String
+  attribute   Attribute @relation(fields: [attributeId], references: [id], onDelete: Cascade)
+  value       String
+  
+  @@unique([attributeId, value])
+  @@map("attribute_values")
 }

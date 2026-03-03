@@ -84,6 +84,8 @@ const productRoutes = require('./src/api/product/product.routes');
 const categoryRoutes = require('./src/api/product/category.routes');
 const uploadRoutes = require('./src/api/upload/upload.routes');
 
+const attributeRoutes = require('./src/api/product/attribute.routes');
+
 app.use('/api/auth/user', userAuthRoutes);
 app.use('/api/auth/merchant', merchantAuthRoutes);
 app.use('/api/auth/admin', adminAuthRoutes);
@@ -91,6 +93,7 @@ app.use('/api/user', require('./src/api/user/user.routes'));
 app.use('/api/products', productRoutes);
 app.use('/api/products-meta', require('./src/api/product/filter.routes'));
 app.use('/api/categories', categoryRoutes);
+app.use('/api/attributes', attributeRoutes);
 app.use('/api/cart', require('./src/api/cart/cart.routes'));
 app.use('/api/upload', uploadRoutes);
 app.use('/api/wishlist', require('./src/api/wishlist/wishlist.routes'));
