@@ -124,15 +124,20 @@ const CategoryRow: React.FC<{
 // ─── Filter Spec Builder ─────────────────────────────────────────────────────
 const FilterSpecBuilder: React.FC<{
     specs: FilterSpec[];
+    availableAttributes: { name: string; values: string[] }[];
     onChange: (specs: FilterSpec[]) => void;
-}> = ({ specs, onChange }) => {
+}> = ({ specs, availableAttributes, onChange }) => {
     const [newName, setNewName] = useState('');
     const [newVal, setNewVal] = useState<Record<number, string>>({});
+    const [showSuggestions, setShowSuggestions] = useState(false);
 
-    const addSpec = () => {
-        if (!newName.trim()) return;
-        onChange([...specs, { name: newName.trim(), values: [] }]);
+    const addSpec = (name?: string, values?: string[]) => {
+        const finalName = (name || newName).trim();
+        if (!finalName) return;
+        if (specs.some(s => s.name === finalName)) return;
+        onChange([...specs, { name: finalName, values: values || [] }]);
         setNewName('');
+        setShowSuggestions(false);
     };
 
     const removeSpec = (idx: number) => {
@@ -238,6 +243,25 @@ const CategoryModal: React.FC<{
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState('');
 
+    const [globalAttrs, setGlobalAttrs] = useState<{ name: string; values: string[] }[]>([]);
+
+    useEffect(() => {
+        // Fetch all attributes to provide suggestions
+        const fetchAttrs = async () => {
+            try {
+                const res = await apiClient.get('/api/attributes');
+                if (res.ok) {
+                    const data = await res.json();
+                    setGlobalAttrs(data.map((a: any) => ({
+                        name: a.name,
+                        values: a.values.map((v: any) => v.value)
+                    })));
+                }
+            } catch (err) { }
+        };
+        fetchAttrs();
+    }, []);
+
     const handleNameChange = (val: string) => {
         setName(val);
         if (!initial) setSlug(slugify(val));
@@ -270,6 +294,40 @@ const CategoryModal: React.FC<{
     };
 
     const eligible = categories.filter(c => c.id !== initial?.id);
+
+    // Merge global attributes with all existing category attributes for better suggestions
+    const allAvailableAttributes = useMemo(() => {
+        const merged: Record<string, Set<string>> = {};
+
+        // 1. From Global Attributes
+        globalAttrs.forEach(a => {
+            if (!a || !a.name) return;
+            if (!merged[a.name]) merged[a.name] = new Set<string>();
+            const targetSet = merged[a.name];
+            if (targetSet) {
+                (a.values || []).forEach(v => targetSet.add(v));
+            }
+        });
+
+        // 2. From all existing categories (The "bilgisayar" part the user mentioned)
+        categories.forEach(c => {
+            if (c && c.filterValues) {
+                Object.entries(c.filterValues).forEach(([name, values]) => {
+                    if (!name) return;
+                    if (!merged[name]) merged[name] = new Set<string>();
+                    const targetSet = merged[name];
+                    if (targetSet && Array.isArray(values)) {
+                        values.forEach(v => targetSet.add(v as string));
+                    }
+                });
+            }
+        });
+
+        return Object.entries(merged).map(([name, values]) => ({
+            name,
+            values: Array.from(values)
+        }));
+    }, [globalAttrs, categories]);
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
@@ -417,7 +475,6 @@ const CategoriesPage: React.FC = () => {
     useEffect(() => { load(); }, [load]);
 
     const handleSave = async (data: Partial<Category>) => {
-        const method = editTarget ? 'PUT' : 'POST';
         const url = editTarget ? `/api/categories/admin/${editTarget.id}` : '/api/categories/admin';
 
         const res = editTarget
