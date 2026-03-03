@@ -44,9 +44,15 @@ export const apiClient = {
                 headers['Authorization'] = `Bearer ${newToken}`;
                 response = await fetch(url, { ...options, headers });
             } catch (err) {
-                // Refresh failed, user redirected in refreshToken()
+                // Refresh failed, exit handled in refreshToken
                 return response;
             }
+        }
+
+        // Global kick out on 401/403 if not already handled or if refresh failed
+        if ((response.status === 401 || response.status === 403) && !window.location.pathname.includes('/login')) {
+            authStore.clearAuth();
+            window.location.href = '/login';
         }
 
         return response;
