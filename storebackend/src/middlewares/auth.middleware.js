@@ -33,8 +33,9 @@ const authenticate = (allowedAudience) => {
         }
 
         // 2. Fallback to HttpOnly Cookies if Header is missing
-        if (!token && req.cookies && req.cookies.accessToken) {
-            token = req.cookies.accessToken;
+        const cookieName = `${allowedAudience}_accessToken`;
+        if (!token && req.cookies && req.cookies[cookieName]) {
+            token = req.cookies[cookieName];
         }
 
         if (!token) {
