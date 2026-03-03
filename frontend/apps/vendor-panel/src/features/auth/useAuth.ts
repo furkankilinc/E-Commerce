@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { authStore } from './auth.store';
+import { apiClient } from '../../shared/api/apiClient';
 
 
 export const useAuth = () => {

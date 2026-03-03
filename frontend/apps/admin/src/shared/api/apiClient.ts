@@ -1,35 +1,34 @@
-import { authStore } from '../../features/auth/auth.store';
+import { adminAuthStore } from '../../features/auth/admin.store';
 
 async function refreshToken() {
-    const rfToken = authStore.getRefreshToken();
+    const rfToken = adminAuthStore.getRefreshToken();
     if (!rfToken) throw new Error('No refresh token');
 
-    const res = await fetch('/api/auth/merchant/refresh', {
+    const res = await fetch('/api/auth/admin/refresh', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ refreshToken: rfToken })
     });
 
     if (!res.ok) {
-        authStore.clearAuth();
+        adminAuthStore.clearAuth();
         window.location.href = '/login';
         throw new Error('Refresh failed');
     }
 
     const data = await res.json();
-    authStore.setAccessToken(data.accessToken);
-    if (data.refreshToken) {
-        // Optional: backend might rotate refresh tokens
-        // Check if backend returns new rfToken in merchantRefresh
-        // Based on merchant.auth.controller.ts, it DOES return new refreshToken
-        authStore.setAuth(data.accessToken, data.refreshToken, authStore.getMerchant()!);
+    if (data.accessToken && data.refreshToken) {
+        adminAuthStore.setAuth(data.accessToken, data.refreshToken, data.admin || adminAuthStore.getAdmin()!);
+    } else if (data.accessToken) {
+        adminAuthStore.setAccessToken(data.accessToken);
     }
+
     return data.accessToken;
 }
 
 export const apiClient = {
     async fetch(url: string, options: RequestInit = {}) {
-        let token = authStore.getToken();
+        let token = adminAuthStore.getToken();
 
         const headers = {
             ...options.headers,
@@ -42,16 +41,17 @@ export const apiClient = {
             try {
                 const newToken = await refreshToken();
                 headers['Authorization'] = `Bearer ${newToken}`;
+                // Retry original request
                 response = await fetch(url, { ...options, headers });
             } catch (err) {
-                // Refresh failed, exit handled in refreshToken
+                // Refresh failed, redirect handled in refreshToken
                 return response;
             }
         }
 
-        // Global kick out on 401/403 if not already handled or if refresh failed
+        // If it's still 401 or 403, and we are not on login page, redirect
         if ((response.status === 401 || response.status === 403) && !window.location.pathname.includes('/login')) {
-            authStore.clearAuth();
+            adminAuthStore.clearAuth();
             window.location.href = '/login';
         }
 
