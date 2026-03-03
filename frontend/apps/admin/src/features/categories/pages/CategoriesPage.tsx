@@ -87,11 +87,7 @@ const CategoryRow: React.FC<{
                             <button
                                 onClick={async () => {
                                     try {
-                                        const res = await fetch(`/api/categories/admin/${cat.id}`, {
-                                            method: 'PUT',
-                                            headers: { 'Content-Type': 'application/json' },
-                                            body: JSON.stringify({ isActive: true })
-                                        });
+                                        const res = await apiClient.put(`/api/categories/admin/${cat.id}`, { isActive: true });
                                         if (res.ok) window.location.reload();
                                     } catch (err) { }
                                 }}
@@ -411,7 +407,7 @@ const CategoriesPage: React.FC = () => {
     const load = useCallback(async () => {
         setLoading(true);
         try {
-            const res = await fetch('/api/categories/admin');
+            const res = await apiClient.get('/api/categories/admin');
             if (res.ok) setCategories(await res.json());
         } finally {
             setLoading(false);
@@ -424,11 +420,9 @@ const CategoriesPage: React.FC = () => {
         const method = editTarget ? 'PUT' : 'POST';
         const url = editTarget ? `/api/categories/admin/${editTarget.id}` : '/api/categories/admin';
 
-        const res = await fetch(url, {
-            method,
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data),
-        });
+        const res = editTarget
+            ? await apiClient.put(url, data)
+            : await apiClient.post(url, data);
 
         const json = await res.json();
         if (!res.ok) throw new Error(json.message || 'Hata');
@@ -443,7 +437,7 @@ const CategoriesPage: React.FC = () => {
         if (!deleteTarget) return;
         setDeleting(true);
         try {
-            const res = await fetch(`/api/categories/admin/${deleteTarget.id}`, { method: 'DELETE' });
+            const res = await apiClient.delete(`/api/categories/admin/${deleteTarget.id}`);
             const json = await res.json();
             if (!res.ok) throw new Error(json.message);
             showToast(json.message);
