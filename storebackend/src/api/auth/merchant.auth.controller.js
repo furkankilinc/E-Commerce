@@ -158,10 +158,32 @@ const merchantLogout = async (req, res) => {
     }
 };
 
+const updateMerchantLocation = async (req, res) => {
+    try {
+        const { latitude, longitude } = req.body;
+        if (!req.user) return res.status(401).json({ success: false, message: 'Giriş gerekli.' });
+
+        await prisma.merchant.update({
+            where: { id: req.user.sub },
+            data: {
+                latitude: parseFloat(latitude),
+                longitude: parseFloat(longitude),
+                lastActiveAt: new Date()
+            }
+        });
+
+        return res.status(200).json({ success: true, message: 'Satıcı konumu güncellendi.' });
+    } catch (err) {
+        logger.error('[AUTH/MERCHANT] Update location error:', err);
+        return res.status(500).json({ success: false, message: 'Konum güncellenemedi.' });
+    }
+};
+
 module.exports = {
     merchantRegister,
     merchantLogin,
     merchantRefresh,
     merchantGetMe,
-    merchantLogout
+    merchantLogout,
+    updateMerchantLocation
 };
