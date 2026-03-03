@@ -95,7 +95,7 @@ const merchantLogin = async (req, res) => {
 
 const merchantRefresh = async (req, res) => {
     try {
-        const refreshToken = req.body.refreshToken || req.cookies.refreshToken;
+        const refreshToken = req.body.refreshToken || req.cookies.merchant_refreshToken;
         if (!refreshToken) {
             return res.status(400).json({ success: false, message: 'Refresh token gerekli.' });
         }
@@ -142,15 +142,15 @@ const merchantGetMe = async (req, res) => {
 
 const merchantLogout = async (req, res) => {
     try {
-        const refreshToken = req.body.refreshToken || req.cookies.refreshToken;
+        const refreshToken = req.body.refreshToken || req.cookies.merchant_refreshToken;
         if (refreshToken) {
             await prisma.merchantRefreshToken.updateMany({
                 where: { token: refreshToken, revoked: false },
                 data: { revoked: true },
             });
         }
-        res.clearCookie('accessToken');
-        res.clearCookie('refreshToken');
+        res.clearCookie('merchant_accessToken', COOKIE_OPTIONS);
+        res.clearCookie('merchant_refreshToken', COOKIE_OPTIONS);
         return res.status(200).json({ success: true, message: 'Çıkış başarılı.' });
     } catch (err) {
         logger.error('[AUTH/MERCHANT] Logout error:', err);
