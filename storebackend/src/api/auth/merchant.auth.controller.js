@@ -31,8 +31,8 @@ const sendMerchantAuthResponse = async (req, res, statusCode, merchant, message)
         },
     });
 
-    res.cookie('accessToken', accessToken, { ...COOKIE_OPTIONS, maxAge: 15 * 60 * 1000 });
-    res.cookie('refreshToken', refreshToken, { ...COOKIE_OPTIONS, maxAge: 7 * 24 * 60 * 60 * 1000 });
+    res.cookie('merchant_accessToken', accessToken, { ...COOKIE_OPTIONS });
+    res.cookie('merchant_refreshToken', refreshToken, { ...COOKIE_OPTIONS });
 
     return res.status(statusCode).json({
         success: true,
@@ -44,7 +44,8 @@ const sendMerchantAuthResponse = async (req, res, statusCode, merchant, message)
             isVerified: merchant.isVerified,
             role: 'MERCHANT'
         },
-        accessToken
+        accessToken,
+        refreshToken
     });
 };
 
@@ -94,7 +95,7 @@ const merchantLogin = async (req, res) => {
 
 const merchantRefresh = async (req, res) => {
     try {
-        const refreshToken = req.body.refreshToken || req.cookies.refreshToken;
+        const refreshToken = req.body.refreshToken || req.cookies.merchant_refreshToken;
         if (!refreshToken) {
             return res.status(400).json({ success: false, message: 'Refresh token gerekli.' });
         }
@@ -141,19 +142,40 @@ const merchantGetMe = async (req, res) => {
 
 const merchantLogout = async (req, res) => {
     try {
-        const refreshToken = req.body.refreshToken || req.cookies.refreshToken;
+        const refreshToken = req.body.refreshToken || req.cookies.merchant_refreshToken;
         if (refreshToken) {
             await prisma.merchantRefreshToken.updateMany({
                 where: { token: refreshToken, revoked: false },
                 data: { revoked: true },
             });
         }
-        res.clearCookie('accessToken');
-        res.clearCookie('refreshToken');
+        res.clearCookie('merchant_accessToken', COOKIE_OPTIONS);
+        res.clearCookie('merchant_refreshToken', COOKIE_OPTIONS);
         return res.status(200).json({ success: true, message: 'Çıkış başarılı.' });
     } catch (err) {
         logger.error('[AUTH/MERCHANT] Logout error:', err);
         return res.status(500).json({ success: false, message: 'Çıkış işlemi başarısız.' });
+    }
+};
+
+const updateMerchantLocation = async (req, res) => {
+    try {
+        const { latitude, longitude } = req.body;
+        if (!req.user) return res.status(401).json({ success: false, message: 'Giriş gerekli.' });
+
+        await prisma.merchant.update({
+            where: { id: req.user.sub },
+            data: {
+                latitude: parseFloat(latitude),
+                longitude: parseFloat(longitude),
+                lastActiveAt: new Date()
+            }
+        });
+
+        return res.status(200).json({ success: true, message: 'Satıcı konumu güncellendi.' });
+    } catch (err) {
+        logger.error('[AUTH/MERCHANT] Update location error:', err);
+        return res.status(500).json({ success: false, message: 'Konum güncellenemedi.' });
     }
 };
 
@@ -162,5 +184,6 @@ module.exports = {
     merchantLogin,
     merchantRefresh,
     merchantGetMe,
-    merchantLogout
+    merchantLogout,
+    updateMerchantLocation
 };

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { adminAuthStore } from './admin.store';
 
 const AdminLoginPage = () => {
     const navigate = useNavigate();
@@ -30,10 +31,8 @@ const AdminLoginPage = () => {
             if (!res.ok) {
                 setApiError(data.message || 'Giriş başarısız.');
             } else {
-                // Persist tokens
-                localStorage.setItem('admin_token', data.accessToken);
-                localStorage.setItem('admin_refresh_token', data.refreshToken);
-                localStorage.setItem('admin_user', JSON.stringify(data.admin));
+                // Bulk persist via store
+                adminAuthStore.setAuth(data.accessToken, data.refreshToken, data.admin);
 
                 setApiSuccess('Giriş başarılı! Yönlendiriliyorsunuz...');
                 setTimeout(() => navigate('/dashboard'), 800);
@@ -173,14 +172,7 @@ const AdminLoginPage = () => {
                             </div>
                         </div>
 
-                        <div className="flex items-center pt-2">
-                            <input
-                                id="remember"
-                                type="checkbox"
-                                className="w-5 h-5 text-brand-pink border-slate-300 rounded-lg focus:ring-brand-pink/20 cursor-pointer"
-                            />
-                            <label htmlFor="remember" className="ml-3 text-sm text-slate-600 font-bold cursor-pointer">Remember this device for 30 days</label>
-                        </div>
+                        {/* Removed Remember Me checkbox as per security requirement */}
 
                         <button
                             type="submit"

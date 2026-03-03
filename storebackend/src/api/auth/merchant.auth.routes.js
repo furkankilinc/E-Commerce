@@ -4,7 +4,8 @@ const {
     merchantLogin,
     merchantRefresh,
     merchantGetMe,
-    merchantLogout
+    merchantLogout,
+    updateMerchantLocation
 } = require('./merchant.auth.controller');
 const { authenticate } = require('../../middlewares/auth.middleware');
 
@@ -24,5 +25,8 @@ router.post('/logout', merchantLogout);
 
 // GET /api/auth/merchant/me
 router.get('/me', authenticate('merchant'), merchantGetMe);
+
+// PATCH /api/auth/merchant/location
+router.patch('/location', authenticate('merchant'), updateMerchantLocation);
 
 module.exports = router;

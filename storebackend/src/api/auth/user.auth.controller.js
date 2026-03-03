@@ -31,8 +31,8 @@ const sendUserAuthResponse = async (req, res, statusCode, user, message) => {
         },
     });
 
-    res.cookie('accessToken', accessToken, { ...COOKIE_OPTIONS, maxAge: 15 * 60 * 1000 });
-    res.cookie('refreshToken', refreshToken, { ...COOKIE_OPTIONS, maxAge: 7 * 24 * 60 * 60 * 1000 });
+    res.cookie('user_accessToken', accessToken, { ...COOKIE_OPTIONS, maxAge: 15 * 60 * 1000 });
+    res.cookie('user_refreshToken', refreshToken, { ...COOKIE_OPTIONS, maxAge: 7 * 24 * 60 * 60 * 1000 });
 
     return res.status(statusCode).json({
         success: true,
@@ -159,10 +159,32 @@ const userLogout = async (req, res) => {
     }
 };
 
+const updateUserLocation = async (req, res) => {
+    try {
+        const { latitude, longitude } = req.body;
+        if (!req.user) return res.status(401).json({ success: false, message: 'Giriş gerekli.' });
+
+        await prisma.user.update({
+            where: { id: req.user.sub },
+            data: {
+                latitude: parseFloat(latitude),
+                longitude: parseFloat(longitude),
+                lastActiveAt: new Date()
+            }
+        });
+
+        return res.status(200).json({ success: true, message: 'Konum güncellendi.' });
+    } catch (err) {
+        logger.error('[AUTH/USER] Update location error:', err);
+        return res.status(500).json({ success: false, message: 'Konum güncellenemedi.' });
+    }
+};
+
 module.exports = {
     userRegister,
     userLogin,
     userRefresh,
     userGetMe,
-    userLogout
+    userLogout,
+    updateUserLocation
 };

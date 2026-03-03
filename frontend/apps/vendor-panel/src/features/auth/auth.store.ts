@@ -6,31 +6,31 @@ type Merchant = {
 };
 
 class AuthStore {
-    private accessToken: string | null = localStorage.getItem('v_token');
-    private refreshToken: string | null = localStorage.getItem('v_ref');
-    private merchant: Merchant | null = JSON.parse(localStorage.getItem('v_user') || 'null');
+    private accessToken: string | null = sessionStorage.getItem('v_token');
+    private refreshToken: string | null = sessionStorage.getItem('v_ref');
+    private merchant: Merchant | null = JSON.parse(sessionStorage.getItem('v_user') || 'null');
 
     setAuth(accessToken: string, refreshToken: string, merchant: Merchant) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.merchant = merchant;
-        localStorage.setItem('v_token', accessToken);
-        localStorage.setItem('v_ref', refreshToken);
-        localStorage.setItem('v_user', JSON.stringify(merchant));
+        sessionStorage.setItem('v_token', accessToken);
+        sessionStorage.setItem('v_ref', refreshToken);
+        sessionStorage.setItem('v_user', JSON.stringify(merchant));
     }
 
     setAccessToken(accessToken: string) {
         this.accessToken = accessToken;
-        localStorage.setItem('v_token', accessToken);
+        sessionStorage.setItem('v_token', accessToken);
     }
 
     clearAuth() {
         this.accessToken = null;
         this.refreshToken = null;
         this.merchant = null;
-        localStorage.removeItem('v_token');
-        localStorage.removeItem('v_ref');
-        localStorage.removeItem('v_user');
+        sessionStorage.removeItem('v_token');
+        sessionStorage.removeItem('v_ref');
+        sessionStorage.removeItem('v_user');
     }
 
     getToken() {
