@@ -165,14 +165,7 @@ const VendorLoginPage: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="flex items-center">
-                            <input
-                                id="remember"
-                                type="checkbox"
-                                className="w-4 h-4 text-brand-pink border-slate-300 rounded focus:ring-brand-pink cursor-pointer"
-                            />
-                            <label htmlFor="remember" className="ml-2 text-sm text-slate-600 cursor-pointer select-none">Remember this device for 30 days</label>
-                        </div>
+                        {/* Removed Remember Me checkbox as per security requirement */}
 
                         <button
                             type="submit"

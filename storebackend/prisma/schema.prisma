@@ -18,6 +18,9 @@ model User {
   phone        String?
   isVerified   Boolean        @default(false)
   isActive     Boolean        @default(true)
+  lastActiveAt DateTime?      @default(now())
+  latitude     Float?
+  longitude    Float?
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
   refreshTokens UserRefreshToken[]
@@ -53,6 +56,9 @@ model Merchant {
   phone           String?
   isVerified      Boolean            @default(false)
   isActive        Boolean            @default(true)
+  lastActiveAt    DateTime?          @default(now())
+  latitude        Float?
+  longitude       Float?
   createdAt       DateTime           @default(now())
   updatedAt       DateTime           @updatedAt
   refreshTokens   MerchantRefreshToken[]
@@ -68,6 +74,7 @@ model MerchantRefreshToken {
   merchant   Merchant  @relation(fields: [merchantId], references: [id], onDelete: Cascade)
   expiresAt  DateTime
   createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
   revoked    Boolean   @default(false)
   userAgent  String?
   ipAddress  String?
@@ -235,4 +242,23 @@ model AttributeValue {
   
   @@unique([attributeId, value])
   @@map("attribute_values")
+}
+
+// ─────────────────────────────────────────────
+// SYSTEM LOGS
+// ─────────────────────────────────────────────
+
+model SystemLog {
+  id          String   @id @default(cuid())
+  level       String   @default("info") // info, warn, error
+  action      String   // e.g., "MERCHANT_LOGIN", "PRODUCT_CREATED"
+  message     String
+  meta        Json?    // Detaylı bilgiler (IP, UserAgent, vb.)
+  userId      String?  // İlgili kullanıcı/merchant/admin ID
+  userRole    String?  // USER, MERCHANT, ADMIN
+  targetId    String?  // İlgili ürün/sipariş vb. ID
+  targetType  String?  // PRODUCT, ORDER, MERCHANT, vb.
+  createdAt   DateTime @default(now())
+
+  @@map("system_logs")
 }
