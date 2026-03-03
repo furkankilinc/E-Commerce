@@ -97,7 +97,11 @@ app.use('/api/wishlist', require('./src/api/wishlist/wishlist.routes'));
 app.use('/api/collections', require('./src/api/collections/collections.routes'));
 
 const merchantProductRoutes = require('./src/api/merchant/merchant.product.routes');
+const merchantAdminRoutes = require('./src/api/admin/merchant.admin.routes');
+const statsAdminRoutes = require('./src/api/admin/stats.admin.routes');
 app.use('/api/merchant/products', merchantProductRoutes);
+app.use('/api/admin/merchants', merchantAdminRoutes);
+app.use('/api/admin/stats', statsAdminRoutes);
 
 // ─── Health ──────────────────────────────────────────────────────────────────
 app.get('/', (req, res) => {
