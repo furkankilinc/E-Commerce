@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import { apiClient } from '../../../shared/api/apiClient';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface Category {

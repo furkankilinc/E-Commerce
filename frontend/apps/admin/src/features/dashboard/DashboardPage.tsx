@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { apiClient } from '../../shared/api/apiClient';
+import DashboardMap from './components/DashboardMap';
 
 interface StatCard {
     label: string;
