@@ -11,15 +11,18 @@ interface Category {
     _count?: { children: number };
 }
 
-interface Attribute {
-    key: string;
-    value: string;
-}
-
 interface ContentBlock {
     id: string;
     type: 'HEADING' | 'TEXT' | 'IMAGE' | 'FEATURES' | 'SPLIT';
     content: any;
+}
+
+interface ProductVariant {
+    name: string;
+    value: string;
+    price: number;
+    stock: number;
+    sku: string;
 }
 
 const ProductCreatePage: React.FC = () => {
@@ -41,8 +44,7 @@ const ProductCreatePage: React.FC = () => {
     const [selectedLevel2, setSelectedLevel2] = useState('');
     const [selectedLevel3, setSelectedLevel3] = useState('');
 
-    const [selectedCategoryAttrs, setSelectedCategoryAttrs] = useState<Record<string, string[]>>({});
-    const [attributes, setAttributes] = useState<Attribute[]>([]);
+    const [productVariants, setProductVariants] = useState<ProductVariant[]>([]);
 
     const [formData, setFormData] = useState({
         name: '',
@@ -135,9 +137,15 @@ const ProductCreatePage: React.FC = () => {
                             setBlocks([{ id: 'init', type: 'TEXT', content: prod.description || '' }]);
                         }
 
-                        // Set Attributes
+                        // Set Product Variants
                         if (prod.variants) {
-                            setAttributes(prod.variants.map((v: any) => ({ key: v.name, value: v.value })));
+                            setProductVariants(prod.variants.map((v: any) => ({
+                                name: v.name,
+                                value: v.value,
+                                price: v.price || 0,
+                                stock: v.stock || 0,
+                                sku: v.sku || `VAR-${Date.now()}` // Ensure SKU exists or generate a temporary one
+                            })));
                         }
                     }
                 }
@@ -172,7 +180,7 @@ const ProductCreatePage: React.FC = () => {
             // If we are locked or transitioning, just proceed without auto-saving as draft
             blocker.proceed();
         }
-    }, [blocker, isDirty]);
+    }, [blocker, isDirty, formData.name, uploadedImages.length]); // Added dependencies for useEffect
 
     const handleLevel1Change = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const catId = e.target.value;
@@ -200,43 +208,26 @@ const ProductCreatePage: React.FC = () => {
         }
     };
 
-    useEffect(() => {
-        if (allCategories.length === 0) return;
-
-        const selectedId = selectedLevel3 || selectedLevel2 || selectedLevel1;
-        const cat = allCategories.find(c => c.id === selectedId);
-
-        if (cat?.filterValues && Object.keys(cat.filterValues).length > 0) {
-            setSelectedCategoryAttrs(cat.filterValues);
-            setAttributes(prev => {
-                const newAttrs: Attribute[] = [];
-                Object.entries(cat.filterValues!).forEach(([k, v]) => {
-                    const exist = prev.find(a => a.key === k);
-                    newAttrs.push({
-                        key: k,
-                        value: (exist && v.includes(exist.value)) ? exist.value : ''
-                    });
-                });
-                return JSON.stringify(newAttrs) !== JSON.stringify(prev) ? newAttrs : prev;
-            });
-        } else {
-            setSelectedCategoryAttrs({});
-            setAttributes([]);
-        }
-    }, [selectedLevel1, selectedLevel2, selectedLevel3, allCategories]);
+    // This useEffect was previously setting 'attributes' based on category filterValues.
+    // Since 'attributes' state is removed and 'productVariants' is used for actual product variants,
+    // this useEffect now only sets 'selectedCategoryAttrs' if needed for display or other logic,
+    // but does not directly modify 'productVariants' based on category filterValues.
+    /*
+        useEffect(() => {
+            if (allCategories.length === 0) return;
+    
+            const catId = selectedLevel3 || selectedLevel2 || selectedLevel1;
+            const cat = allCategories.find(c => c.id === catId);
+    
+            if (cat?.filterValues && Object.keys(cat.filterValues).length > 0) {
+                // Deprecated global category attributes
+            }
+        }, [selectedLevel1, selectedLevel2, selectedLevel3, allCategories]);
+    */
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
         setIsDirty(true);
-    };
-
-    const handleAttributeChange = (index: number, field: 'key' | 'value', val: string) => {
-        const newAttrs = [...attributes];
-        if (newAttrs[index]) {
-            newAttrs[index][field] = val;
-            setAttributes(newAttrs);
-            setIsDirty(true);
-        }
     };
 
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -256,6 +247,7 @@ const ProductCreatePage: React.FC = () => {
                 const data = await res.json();
                 setUploadedImages(prev => [...prev, ...data.urls]);
                 toast.success('Görseller yüklendi.');
+                setIsDirty(true);
             } else {
                 toast.error('Görsel yükleme başarısız.');
             }
@@ -277,6 +269,7 @@ const ProductCreatePage: React.FC = () => {
             if (res.ok) {
                 setUploadedImages(prev => prev.filter(img => img !== url));
                 toast.success('Görsel silindi.');
+                setIsDirty(true);
             } else {
                 toast.error('Görsel silinemedi.');
             }
@@ -346,6 +339,7 @@ const ProductCreatePage: React.FC = () => {
                     }
                 }
                 toast.success('Görsel yüklendi.');
+                setIsDirty(true);
             }
         } catch (err) {
             toast.error('Görsel yüklenemedi.');
@@ -370,13 +364,8 @@ const ProductCreatePage: React.FC = () => {
                 taxRate: formData.taxRate,
                 discountPrice: formData.discountPrice
             };
-            const variants: { name: string, value: string }[] = [];
-            attributes.forEach(attr => {
-                if (attr.key && attr.value) {
-                    metadata[attr.key] = attr.value;
-                    variants.push({ name: attr.key, value: attr.value });
-                }
-            });
+            // No longer iterating over 'attributes' for metadata or variants.
+            // 'productVariants' directly holds the variant data.
 
             const method = id ? 'PUT' : 'POST';
             const url = id ? `/api/merchant/products/${id}` : '/api/merchant/products';
@@ -390,12 +379,12 @@ const ProductCreatePage: React.FC = () => {
                     ...formData,
                     description: JSON.stringify(blocks),
                     price: parseFloat(formData.price) || 0,
-                    categoryId: categoryId || (id ? undefined : 'ckv1234567890'),
+                    categoryId: categoryId || (id ? undefined : 'ckv1234567890'), // Placeholder if no category selected on edit
                     status: finalStatus,
                     metadata,
                     stock: parseInt(formData.stock) || 0,
                     images: uploadedImages.length > 0 ? uploadedImages : ["https://images.unsplash.com/photo-1523275335684-37898b6baf30"],
-                    variants
+                    variants: productVariants, // Use the productVariants state directly
                 }),
             });
 
@@ -501,59 +490,145 @@ const ProductCreatePage: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Detailed Attributes */}
+                    {/* Variant Management */}
                     <div className="bg-white rounded-[3.5rem] p-12 shadow-sm border border-slate-50 relative group">
                         <div className="flex items-center justify-between mb-12">
                             <div className="flex items-center gap-6">
                                 <div className="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-500 shadow-inner">
                                     <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
                                 </div>
-                                <h3 className="text-2xl font-[900] text-slate-900 uppercase tracking-tighter italic">ÜRÜN ÖZELLİKLERİ</h3>
+                                <h3 className="text-2xl font-[900] text-slate-900 uppercase tracking-tighter italic">ÜRÜN VARYANTLARI</h3>
                             </div>
                         </div>
 
-                        <div className="space-y-6">
-                            {Object.keys(selectedCategoryAttrs).length === 0 ? (
-                                <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100 text-slate-400 italic font-bold text-sm leading-relaxed">
-                                    Bu kategori için henüz özel bir ürün özelliği tanımlanmamış. Özellik eklemek isterseniz Admin paneli üzerinden kategoriye özellik tanımlayabilirsiniz.
+                        {/* Variant Add Form */}
+                        <div className="bg-slate-50 p-8 rounded-3xl border border-slate-100 mb-10 space-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Özellik (Tip)</label>
+                                    <input
+                                        id="newAttrKey"
+                                        type="text"
+                                        placeholder="Örn: Renk, Beden..."
+                                        className="w-full h-12 px-4 rounded-xl bg-white border border-slate-200 text-sm font-bold outline-none focus:border-indigo-500"
+                                    />
                                 </div>
-                            ) : (
-                                attributes.map((attr, index) => {
-                                    const options = selectedCategoryAttrs[attr.key] || [];
-                                    return (
-                                        <div key={index} className="flex gap-6 animate-fadeIn transition-all group/row">
-                                            <div className="flex-1">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Değer (Seçenek)</label>
+                                    <input
+                                        id="newAttrVal"
+                                        type="text"
+                                        placeholder="Örn: Mavi, XL..."
+                                        className="w-full h-12 px-4 rounded-xl bg-white border border-slate-200 text-sm font-bold outline-none focus:border-indigo-500"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Fiyat Farkı (+/-)</label>
+                                    <input id="newAttrPrice" type="number" placeholder="0.00" className="w-full h-12 px-4 rounded-xl bg-white border border-slate-200 text-sm font-bold outline-none focus:border-indigo-500" />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Stok</label>
+                                    <input id="newAttrStock" type="number" placeholder="0" className="w-full h-12 px-4 rounded-xl bg-white border border-slate-200 text-sm font-bold outline-none focus:border-indigo-500" />
+                                </div>
+                                <div className="flex items-end">
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            const keyInput = document.getElementById('newAttrKey') as HTMLInputElement;
+                                            const valInput = document.getElementById('newAttrVal') as HTMLInputElement;
+                                            const priceInput = document.getElementById('newAttrPrice') as HTMLInputElement;
+                                            const stockInput = document.getElementById('newAttrStock') as HTMLInputElement;
+
+                                            const key = keyInput.value.trim();
+                                            const val = valInput.value.trim();
+                                            const price = parseFloat(priceInput.value) || 0;
+                                            const stock = parseInt(stockInput.value) || 0;
+                                            const sku = `VAR-${Date.now()}`;
+
+                                            if (!key || !val) return toast.warning('Lütfen özellik adı ve değer girin.');
+
+                                            setProductVariants(prev => [...prev, { name: key, value: val, price, stock, sku }]);
+                                            setIsDirty(true);
+
+                                            // Clear inputs for next variant
+                                            valInput.value = '';
+                                            priceInput.value = '';
+                                            stockInput.value = '';
+                                        }}
+                                        className="w-full h-12 bg-indigo-600 text-white rounded-xl text-xs font-black uppercase shadow-lg shadow-indigo-100 hover:scale-105 transition-all active:scale-95"
+                                    >
+                                        Seçenek Ekle
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Variant List Table */}
+                        <div className="overflow-x-auto rounded-3xl border border-slate-100">
+                            <table className="w-full text-left">
+                                <thead className="bg-slate-50 border-b border-slate-100">
+                                    <tr>
+                                        <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Özellik</th>
+                                        <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Değer</th>
+                                        <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Fiyat</th>
+                                        <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Stok</th>
+                                        <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Sil</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-50">
+                                    {productVariants.length === 0 && (
+                                        <tr>
+                                            <td colSpan={5} className="px-6 py-12 text-center text-slate-400 italic text-sm font-bold">Henüz varyant eklenmedi. Ürün standart tek tip olarak kaydedilecek.</td>
+                                        </tr>
+                                    )}
+                                    {productVariants.map((v, i) => (
+                                        <tr key={i} className="hover:bg-slate-50/50 transition-colors">
+                                            <td className="px-6 py-4 text-sm font-black text-slate-800 uppercase italic">{v.name}</td>
+                                            <td className="px-6 py-4">
+                                                <span className="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-lg text-xs font-black uppercase">{v.value}</span>
+                                            </td>
+                                            <td className="px-6 py-4">
                                                 <input
-                                                    type="text"
-                                                    value={attr.key}
-                                                    disabled
-                                                    className="w-full h-14 px-8 rounded-2xl bg-slate-100 border border-slate-200 outline-none font-bold text-slate-500 italic shadow-sm cursor-not-allowed"
+                                                    type="number"
+                                                    value={v.price || 0}
+                                                    onChange={(e) => {
+                                                        const newVar = [...productVariants];
+                                                        if (newVar[i]) {
+                                                            newVar[i].price = parseFloat(e.target.value) || 0;
+                                                            setProductVariants(newVar);
+                                                            setIsDirty(true);
+                                                        }
+                                                    }}
+                                                    className="w-24 h-9 px-3 rounded-lg bg-white border border-slate-200 text-xs font-bold outline-none focus:border-indigo-500"
                                                 />
-                                            </div>
-                                            <div className="flex-1">
-                                                {options.length > 0 ? (
-                                                    <select
-                                                        value={attr.value}
-                                                        onChange={(e) => handleAttributeChange(index, 'value', e.target.value)}
-                                                        className="w-full h-14 px-8 rounded-2xl bg-slate-50 border border-slate-100 focus:border-indigo-500 focus:bg-white outline-none font-bold text-slate-700 italic shadow-sm cursor-pointer"
-                                                    >
-                                                        <option value="">— Seçiniz —</option>
-                                                        {options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                                                    </select>
-                                                ) : (
-                                                    <input
-                                                        type="text"
-                                                        value={attr.value}
-                                                        onChange={(e) => handleAttributeChange(index, 'value', e.target.value)}
-                                                        placeholder="Değer girin"
-                                                        className="w-full h-14 px-8 rounded-2xl bg-slate-50 border border-slate-100 focus:border-indigo-500 focus:bg-white outline-none font-bold text-slate-700 italic shadow-sm"
-                                                    />
-                                                )}
-                                            </div>
-                                        </div>
-                                    );
-                                })
-                            )}
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <input
+                                                    type="number"
+                                                    value={v.stock || 0}
+                                                    onChange={(e) => {
+                                                        const newVar = [...productVariants];
+                                                        if (newVar[i]) {
+                                                            newVar[i].stock = parseInt(e.target.value) || 0;
+                                                            setProductVariants(newVar);
+                                                            setIsDirty(true);
+                                                        }
+                                                    }}
+                                                    className="w-24 h-9 px-3 rounded-lg bg-white border border-slate-200 text-xs font-bold outline-none focus:border-indigo-500"
+                                                />
+                                            </td>
+                                            <td className="px-6 py-4 text-right">
+                                                <button
+                                                    onClick={() => setProductVariants(productVariants.filter((_, idx) => idx !== i))}
+                                                    className="p-2 text-slate-300 hover:text-red-500 transition-colors"
+                                                >
+                                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" strokeWidth="2" /></svg>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
 
@@ -740,7 +815,7 @@ const ProductCreatePage: React.FC = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 

@@ -3,6 +3,7 @@ import AdminLoginPage from './features/auth/AdminLoginPage';
 import AdminLayout from './layout/AdminLayout';
 import DashboardPage from './features/dashboard/DashboardPage';
 import CategoriesPage from './features/categories/pages/CategoriesPage';
+import AttributesPage from './features/attributes/AttributesPage';
 import './styles/global.css';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -20,6 +21,7 @@ function App() {
           <Route element={<AdminLayout />}>
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/categories" element={<CategoriesPage />} />
+            <Route path="/attributes" element={<AttributesPage />} />
             {/* Placeholder pages — expand as needed */}
             <Route path="/products" element={<ComingSoon title="Ürünler" />} />
             <Route path="/orders" element={<ComingSoon title="Siparişler" />} />

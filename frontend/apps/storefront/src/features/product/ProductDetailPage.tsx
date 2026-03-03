@@ -33,6 +33,8 @@ interface Product {
     rating: number;
     reviewCount: number;
     stock: number;
+    discountPrice?: number;
+    shortDescription?: string;
     metadata?: any;
 }
 
@@ -44,7 +46,7 @@ const ProductDetailPage: React.FC = () => {
     const [showCollectionModal, setShowCollectionModal] = useState(false);
     const [product, setProduct] = useState<Product | null>(null);
     const [isLoading, setIsLoading] = useState(true);
-    const [selectedSize, setSelectedSize] = useState('M');
+    const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({});
     const [activeTab, setActiveTab] = useState('description');
     const [mainImage, setMainImage] = useState('');
     const [isAdding, setIsAdding] = useState(false);
@@ -59,10 +61,22 @@ const ProductDetailPage: React.FC = () => {
     const handleAddToCart = () => {
         if (product) {
             setIsAdding(true);
-            addItem(product, selectedSize);
+            // Combine selected variants into a string and calculate total price
+            const selectionString = Object.entries(selectedVariants)
+                .map(([_, v]) => v)
+                .join(' / ');
+
+            const extraPrice = Object.keys(selectedVariants).reduce((acc, key) => {
+                const val = selectedVariants[key];
+                const variant = product.variants.find(v => v.name === key && v.value === val);
+                return acc + (variant?.price || 0);
+            }, 0);
+
+            const finalPrice = product.price + extraPrice;
+
+            addItem({ ...product, price: finalPrice }, selectionString || 'Standard');
             toast.success(`${product.name} isimli ürün sepete eklendi.`, {
                 autoClose: 2000
-
             });
             setTimeout(() => setIsAdding(false), 2000);
         }
@@ -221,36 +235,81 @@ const ProductDetailPage: React.FC = () => {
                                 </p>
                             </div>
                         )}
-
-                        <div className="mb-12 p-8 bg-gray-50/50 border border-gray-100 rounded-[2.5rem] shadow-inner">
-                            <div className="flex flex-col gap-1 mb-6">
-                                <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">PERAKENDE SATIŞ FİYATI</span>
-                                <span className="text-5xl font-black text-gray-900 tracking-tighter italic">
-                                    {product.price.toLocaleString()}&nbsp;{(product.metadata as any)?.currency || '  TL'}
+                        {/* Price & Badge */}
+                        <div className="flex items-center gap-6 mb-10">
+                            <div className="flex flex-col">
+                                <span className="text-4xl font-[1000] text-slate-900 tracking-tighter italic">
+                                    {(product.price + Object.keys(selectedVariants).reduce((acc, key) => {
+                                        const val = selectedVariants[key];
+                                        const variant = product.variants.find(v => v.name === key && v.value === val);
+                                        return acc + (variant?.price || 0);
+                                    }, 0)).toLocaleString()}&nbsp;TL
                                 </span>
+                                {product.discountPrice && (
+                                    <span className="text-sm font-bold text-slate-400 line-through opacity-50">
+                                        {product.discountPrice.toLocaleString()}&nbsp;TL
+                                    </span>
+                                )}
                             </div>
-
+                            <div className={`px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest italic shadow-xl ${product.stock > 0 ? 'bg-emerald-50 text-emerald-600 shadow-emerald-500/10 border border-emerald-100' : 'bg-rose-50 text-rose-600 shadow-rose-500/10 border border-rose-100'}`}>
+                                {product.stock > 0 ? 'STOKTA VAR' : 'TÜKENDİ'}
+                            </div>
                         </div>
 
-                        {/* Variants Placeholder Section */}
+                        {/* Summary */}
+                        <p className="text-slate-500 font-bold leading-loose mb-10 text-sm whitespace-pre-wrap italic">
+                            {product.shortDescription || 'Bu ürün için henüz kısa açıklama girilmemiş.'}
+                        </p>
+
+                        {/* Dynamic Variants Section */}
                         <div className="mb-10 space-y-10">
-                            <div>
-                                <div className="flex justify-between items-center mb-6">
-                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 italic">BEDEN SEÇİN</span>
-                                    <button className="text-[10px] font-black text-brand-pink uppercase tracking-widest underline underline-offset-4 decoration-2">Beden Rehberi</button>
-                                </div>
-                                <div className="grid grid-cols-4 gap-4">
-                                    {['S', 'M', 'L', 'XL'].map(size => (
-                                        <button
-                                            key={size}
-                                            onClick={() => setSelectedSize(size)}
-                                            className={`h-14 rounded-2xl text-xs font-black transition-all border-2 ${selectedSize === size ? 'bg-gray-900 text-white border-gray-900 shadow-xl shadow-gray-900/20 scale-105' : 'bg-white text-gray-400 border-gray-100 hover:border-gray-900 hover:text-gray-900'}`}
-                                        >
-                                            {size}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
+                            {(() => {
+                                // Group variants by name (e.g., "Color", "Size")
+                                const uniqueGroups = Array.from(new Set(product.variants.map(v => v.name)));
+
+                                return uniqueGroups.map(groupName => {
+                                    const groupValues = Array.from(new Set(
+                                        product.variants
+                                            .filter(v => v.name === groupName)
+                                            .map(v => v.value)
+                                    ));
+
+                                    return (
+                                        <div key={groupName}>
+                                            <div className="flex justify-between items-center mb-6">
+                                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 italic">
+                                                    {groupName.toUpperCase()} SEÇİN
+                                                </span>
+                                                {groupName.toUpperCase() === 'BEDEN' && (
+                                                    <button className="text-[10px] font-black text-brand-pink uppercase tracking-widest underline underline-offset-4 decoration-2">Beden Rehberi</button>
+                                                )}
+                                            </div>
+                                            <div className="grid grid-cols-3 gap-4">
+                                                {groupValues.map(val => {
+                                                    const varInfo = product.variants.find(v => v.name === groupName && v.value === val);
+                                                    const isSelected = selectedVariants[groupName] === val;
+                                                    const priceDiff = varInfo?.price || 0;
+
+                                                    return (
+                                                        <button
+                                                            key={val}
+                                                            onClick={() => setSelectedVariants(prev => ({ ...prev, [groupName]: val }))}
+                                                            className={`h-16 rounded-2xl text-xs font-black transition-all border-2 flex flex-col items-center justify-center gap-1 ${isSelected ? 'bg-slate-900 text-white border-slate-900 shadow-xl shadow-slate-900/20 scale-105' : 'bg-white text-slate-400 border-slate-100 hover:border-slate-900 hover:text-slate-900'}`}
+                                                        >
+                                                            <span>{val}</span>
+                                                            {priceDiff !== 0 && (
+                                                                <span className={`text-[9px] ${isSelected ? 'text-indigo-400' : 'text-indigo-500'} font-bold`}>
+                                                                    {priceDiff > 0 ? `+${priceDiff}` : priceDiff} TL
+                                                                </span>
+                                                            )}
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+                                    );
+                                });
+                            })()}
                         </div>
 
                         <div className="flex gap-4 mt-4">
