@@ -22,14 +22,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-
-# Secrets
 .env
-.env.*
-!.env.example
+*.env
+local.docker.sh
+prod.docker.sh
 
-check_data.js
-check_map_db.js
-prisma/seed_merchant.js
-prisma/seed_admin.js
+_metadata.json
+
 
