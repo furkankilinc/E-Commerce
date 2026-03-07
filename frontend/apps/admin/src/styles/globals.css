@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+@theme {
+    --color-brand-pink: #ff3366;
+    --color-brand-pink-hover: #e02e5a;
+    --color-admin-navy: #0f172a;
+}
+
+:root {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: #ffffff;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+}
