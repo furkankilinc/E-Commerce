@@ -23,6 +23,20 @@ const getDashboardStats = async (req, res) => {
                         gte: fifteenMinutesAgo
                     }
                 }
+            }),
+            prisma.product.findMany({
+                where: {
+                    stock: { gt: 0, lte: 10 },
+                    status: 'PUBLISHED'
+                },
+                orderBy: { stock: 'asc' },
+                take: 10,
+                select: {
+                    id: true,
+                    name: true,
+                    stock: true,
+                    merchant: { select: { companyName: true } }
+                }
             })
         ]);
 
@@ -32,7 +46,8 @@ const getDashboardStats = async (req, res) => {
                 totalMerchants,
                 totalProducts,
                 totalUsers,
-                onlineUsers: onlineUsersCount
+                onlineUsers: onlineUsersCount,
+                lowStock
             }
         });
     } catch (err) {
@@ -100,7 +115,52 @@ const getMapData = async (req, res) => {
     }
 };
 
+/**
+ * Get analytics data (orders & revenue over time)
+ */
+const getAnalyticsData = async (req, res) => {
+    try {
+        const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+
+        // This is a simplified aggregate for demonstration
+        const orders = await prisma.order.findMany({
+            where: {
+                createdAt: { gte: thirtyDaysAgo }
+            },
+            select: {
+                createdAt: true,
+                totalAmount: true,
+                status: true
+            }
+        });
+
+        // Group by day (naive approach for JS)
+        const dailyData = {};
+        for (let i = 0; i < 30; i++) {
+            const date = new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+            dailyData[date] = { date, orders: 0, revenue: 0 };
+        }
+
+        orders.forEach(o => {
+            const date = o.createdAt.toISOString().split('T')[0];
+            if (dailyData[date]) {
+                dailyData[date].orders++;
+                dailyData[date].revenue += o.totalAmount;
+            }
+        });
+
+        return res.status(200).json({
+            success: true,
+            data: Object.values(dailyData).sort((a, b) => a.date.localeCompare(b.date))
+        });
+    } catch (err) {
+        logger.error('[ADMIN/STATS] Get analytics error:', err);
+        return res.status(500).json({ success: false, message: 'Analitik verileri alınamadı.' });
+    }
+};
+
 module.exports = {
     getDashboardStats,
-    getMapData
+    getMapData,
+    getAnalyticsData
 };

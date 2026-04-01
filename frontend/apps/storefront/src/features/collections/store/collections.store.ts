@@ -7,6 +7,7 @@ export interface CollectionItem {
     id: string;
     name: string;
     price: number;
+    originalPrice?: number;
     image: string;
     category?: string;
     slug?: string;
@@ -131,6 +132,7 @@ export const collectionsStore = {
             id: product.id,
             name: product.name,
             price: product.discountPrice ?? product.price,
+            originalPrice: product.discountPrice ? product.price : undefined,
             image: (product.images?.find((img: any) => img.isMain) || product.images?.[0])?.url || '',
             category: product.category?.name,
             slug: product.slug,

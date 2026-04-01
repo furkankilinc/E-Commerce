@@ -14,6 +14,9 @@ export default defineConfig({
     server: {
         port: 5175,
         host: true,
+        watch: {
+            usePolling: true
+        },
         allowedHosts: ['merchant.fuira.com'],
         proxy: {
             '/api': {

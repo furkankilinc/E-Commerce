@@ -94,6 +94,16 @@ export const apiClient = {
         });
     },
 
+    async patch(url: string, body: any, options: RequestInit = {}) {
+        const headers: any = { ...options.headers, 'Content-Type': 'application/json' };
+        return this.fetch(url, {
+            ...options,
+            method: 'PATCH',
+            headers,
+            body: JSON.stringify(body)
+        });
+    },
+
     async delete(url: string, options: RequestInit = {}) {
         return this.fetch(url, { ...options, method: 'DELETE' });
     }

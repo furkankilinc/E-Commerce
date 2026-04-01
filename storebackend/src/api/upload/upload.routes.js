@@ -7,27 +7,14 @@ const router = Router();
 
 // ── Auth Middleware ──────────────────────────────────────────────────────────
 // Only authenticated merchants may upload or delete images.
-const merchantAuth = (req, res, next) => {
-    const authHeader = req.headers['authorization'];
-    let token = '';
+const { authenticate } = require('../../middlewares/auth.middleware');
 
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-        token = authHeader.split(' ')[1];
-    } else if (req.cookies && req.cookies.token) {
-        token = req.cookies.token;
-    }
-
-    if (!token) {
-        return res.status(401).json({ message: 'Yetkilendirme token\'ı bulunamadı.' });
-    }
-    try {
-        const payload = verifyToken(token, 'merchant');
-        req.merchantId = payload.sub;
-        req.tokenPayload = payload; // Logger için
-        next();
-    } catch {
-        return res.status(401).json({ message: 'Token geçersiz veya süresi dolmuş.' });
-    }
+const uploadAuth = (req, res, next) => {
+    // Try user auth first, then merchant
+    authenticate('user')(req, res, (err) => {
+        if (!err) return next();
+        authenticate('merchant')(req, res, next);
+    });
 };
 
 // Multer config - memory storage
@@ -44,7 +31,7 @@ const upload = multer({
     }
 });
 
-router.post('/', merchantAuth, upload.single('image'), async (req, res) => {
+router.post('/', uploadAuth, upload.single('image'), async (req, res) => {
     try {
         if (!req.file) throw new Error('Resim dosyası seçilmedi.');
         const url = await uploadImage(req.file.buffer, req.file.originalname);
@@ -54,7 +41,7 @@ router.post('/', merchantAuth, upload.single('image'), async (req, res) => {
     }
 });
 
-router.post('/bulk', merchantAuth, upload.array('images', 10), async (req, res) => {
+router.post('/bulk', uploadAuth, upload.array('images', 10), async (req, res) => {
     try {
         if (!req.files || req.files.length === 0) throw new Error('Resim seçilmedi.');
         const urls = await Promise.all(req.files.map(f => uploadImage(f.buffer, f.originalname)));
@@ -64,7 +51,7 @@ router.post('/bulk', merchantAuth, upload.array('images', 10), async (req, res) 
     }
 });
 
-router.delete('/', merchantAuth, async (req, res) => {
+router.delete('/', uploadAuth, async (req, res) => {
     try {
         const { url } = req.body;
         if (!url) throw new Error('Silinecek resim URL\'i belirtilmedi.');

@@ -14,6 +14,7 @@ const COOKIE_OPTIONS = {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
+    path: '/',
 };
 
 const sendUserAuthResponse = async (req, res, statusCode, user, message) => {
@@ -150,8 +151,8 @@ const userLogout = async (req, res) => {
                 data: { revoked: true },
             });
         }
-        res.clearCookie('accessToken');
-        res.clearCookie('refreshToken');
+        res.clearCookie('user_accessToken', COOKIE_OPTIONS);
+        res.clearCookie('user_refreshToken', COOKIE_OPTIONS);
         return res.status(200).json({ success: true, message: 'Çıkış başarılı.' });
     } catch (err) {
         logger.error('[AUTH/USER] Logout error:', err);

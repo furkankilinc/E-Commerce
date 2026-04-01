@@ -10,6 +10,7 @@ interface Product {
     name: string;
     sku: string;
     price: number;
+    discountPrice?: number;
     stock: number;
     status: string;
     images: { url: string; isMain: boolean }[];
@@ -19,6 +20,8 @@ interface Product {
 const ProductListPage: React.FC = () => {
     const [products, setProducts] = useState<Product[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [search, setSearch] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
     const [pagination, setPagination] = useState({
         page: 1,
         totalPages: 1,
@@ -27,10 +30,10 @@ const ProductListPage: React.FC = () => {
     });
     const navigate = useNavigate();
 
-    const fetchProducts = async (page: number) => {
+    const fetchProducts = async (page: number, searchQuery: string = debouncedSearch) => {
         setIsLoading(true);
         try {
-            const res = await apiClient.get(`/api/merchant/products?page=${page}&limit=10`);
+            const res = await apiClient.get(`/api/merchant/products?page=${page}&limit=10&search=${encodeURIComponent(searchQuery)}`);
             if (res.ok) {
                 const data = await res.json();
                 setProducts(data.products);
@@ -44,8 +47,16 @@ const ProductListPage: React.FC = () => {
     };
 
     useEffect(() => {
-        fetchProducts(1);
-    }, []);
+        const handler = setTimeout(() => {
+            setDebouncedSearch(search);
+        }, 500);
+
+        return () => clearTimeout(handler);
+    }, [search]);
+
+    useEffect(() => {
+        fetchProducts(1, debouncedSearch);
+    }, [debouncedSearch]);
 
     const handlePageChange = (newPage: number) => {
         if (newPage >= 1 && newPage <= pagination.totalPages) {
@@ -94,16 +105,9 @@ const ProductListPage: React.FC = () => {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
-                    <h1 className="text-6xl font-[1000] text-slate-900 tracking-tighter mb-2 italic">Ürün <span className="text-brand-pink">Envanteri</span></h1>
+                    <h1 className="text-[40px] font-[1000] text-slate-900 tracking-tighter mb-2 italic leading-none">Ürün <span className="text-brand-pink">Envanteri</span></h1>
                     <p className="text-slate-400 font-bold text-lg italic opacity-70">Vitrinini yönet ve stok seviyelerini gerçek zamanlı takip et.</p>
                 </div>
-                <Link
-                    to="/products/create"
-                    className="px-10 py-5 bg-brand-pink text-white rounded-[2rem] text-[11px] font-black uppercase tracking-[0.2em] shadow-2xl shadow-brand-pink/30 hover:bg-brand-pink-hover transition-all active:scale-95 flex items-center gap-4 italic"
-                >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M12 4v16m8-8H4" /></svg>
-                    YENİ ÜRÜN EKLE
-                </Link>
             </div>
 
             {/* Filters Bar */}
@@ -112,6 +116,8 @@ const ProductListPage: React.FC = () => {
                     <input
                         type="text"
                         placeholder="Ürün adı veya SKU ile ara..."
+                        value={search}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
                         className="w-full h-16 pl-16 pr-6 bg-slate-50 border-2 border-transparent rounded-[2rem] text-sm font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all italic shadow-inner"
                     />
                     <svg className="absolute left-6 top-1/2 -translate-y-1/2 w-6 h-6 text-slate-300 group-focus-within:text-brand-pink transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
@@ -183,7 +189,22 @@ const ProductListPage: React.FC = () => {
                                             </div>
                                         </td>
                                         <td className="px-6 py-10 text-center">
-                                            <span className="text-xl font-black text-slate-900 italic tracking-tighter">${product.price.toLocaleString()}</span>
+                                            <div className="flex flex-col items-center">
+                                                {product.discountPrice ? (
+                                                    <>
+                                                        <span className="text-[10px] font-bold text-slate-400 line-through opacity-60 italic mb-1">
+                                                            {product.price.toLocaleString()} ₺
+                                                        </span>
+                                                        <span className="text-lg font-black text-slate-900 italic tracking-tighter leading-none">
+                                                            {product.discountPrice.toLocaleString()} ₺
+                                                        </span>
+                                                    </>
+                                                ) : (
+                                                    <span className="text-lg font-black text-slate-900 italic tracking-tighter leading-none">
+                                                        {product.price.toLocaleString()} ₺
+                                                    </span>
+                                                )}
+                                            </div>
                                         </td>
                                         <td className="px-6 py-10 text-center">
                                             <div className="flex flex-col items-center gap-1">

@@ -14,6 +14,9 @@ export default defineConfig({
   server: {
     port: 5174,
     host: true,
+    watch: {
+        usePolling: true
+    },
     allowedHosts: ['admin.fuira.com'],
     proxy: {
       '/api': {

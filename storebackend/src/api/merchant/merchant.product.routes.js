@@ -20,7 +20,9 @@ router.post('/', authenticate('merchant'), async (req, res) => {
                 name,
                 slug: name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-') + '-' + Date.now(),
                 description,
-                price: parseFloat(price),
+                    price: parseFloat(price),
+                discountPrice: req.body.discountPrice ? parseFloat(req.body.discountPrice) : null,
+                isOnSale: req.body.isOnSale === true || !!req.body.discountPrice,
                 sku: sku || `SKU-${Date.now()}`,
                 stock: parseInt(stock) || 0,
                 merchantId: req.user.sub,
@@ -59,15 +61,28 @@ router.get('/', authenticate('merchant'), async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
-        const status = req.query.status; // Get status from query
+        const status = req.query.status;
+        const stockStatus = req.query.stockStatus;
+        const search = req.query.search;
         const skip = (page - 1) * limit;
 
         const where = { merchantId: req.user.sub };
         if (status) {
             where.status = status;
         }
+        if (stockStatus === 'low') {
+            where.stock = { gt: 0, lte: 10 };
+        } else if (stockStatus === 'out') {
+            where.stock = { lte: 0 };
+        }
+        if (search) {
+            where.OR = [
+                { name: { contains: search, mode: 'insensitive' } },
+                { sku: { contains: search, mode: 'insensitive' } }
+            ];
+        }
 
-        const [products, total] = await prisma.$transaction([
+        const [products, total, stockSum] = await prisma.$transaction([
             prisma.product.findMany({
                 where,
                 include: {
@@ -79,14 +94,21 @@ router.get('/', authenticate('merchant'), async (req, res) => {
                 take: limit
             }),
             prisma.product.count({
-                where: { merchantId: req.user.sub }
+                where
+            }),
+            prisma.product.aggregate({
+                where: { merchantId: req.user.sub }, // Global merchant total
+                _sum: { stock: true }
             })
         ]);
+
+        console.log(`[STOCKS_DEBUG] Merchant: ${req.user.sub}, Sum:`, stockSum._sum.stock);
 
         return res.json({
             products,
             pagination: {
                 total,
+                totalStock: stockSum._sum.stock || 0,
                 page,
                 limit,
                 totalPages: Math.ceil(total / limit)
@@ -147,6 +169,8 @@ router.put('/:id', authenticate('merchant'), async (req, res) => {
                 name,
                 description,
                 price: price !== undefined ? parseFloat(price) : undefined,
+                discountPrice: req.body.discountPrice !== undefined ? (req.body.discountPrice ? parseFloat(req.body.discountPrice) : null) : undefined,
+                isOnSale: req.body.isOnSale !== undefined ? !!req.body.isOnSale : (req.body.discountPrice ? true : undefined),
                 sku,
                 stock: stock !== undefined ? parseInt(stock) : undefined,
                 categoryId,
@@ -198,6 +222,37 @@ router.delete('/:id', authenticate('merchant'), async (req, res) => {
     } catch (err) {
         logger.error('[merchant/deleteProduct]', err, { productId: req.params.id });
         return res.status(500).json({ message: 'Ürün silinemedi.' });
+    }
+});
+
+// PATCH /api/merchant/products/bulk-stock
+router.patch('/bulk-stock', authenticate('merchant'), async (req, res) => {
+    try {
+        const { updates } = req.body;
+        // updates = [{ productId, stock }]
+
+        if (!updates || !Array.isArray(updates) || updates.length === 0) {
+            return res.status(400).json({ message: 'Güncellenecek stok verisi bulunamadı.' });
+        }
+
+        const results = await prisma.$transaction(
+            updates.map(u =>
+                prisma.product.updateMany({
+                    where: {
+                        id: u.productId,
+                        merchantId: req.user.sub
+                    },
+                    data: {
+                        stock: parseInt(u.stock)
+                    }
+                })
+            )
+        );
+
+        return res.json({ success: true, message: `${results.length} ürün stoğu güncellendi.` });
+    } catch (err) {
+        logger.error('[merchant/bulkStock]', err);
+        return res.status(500).json({ message: 'Stok güncellemesi başarısız.' });
     }
 });
 

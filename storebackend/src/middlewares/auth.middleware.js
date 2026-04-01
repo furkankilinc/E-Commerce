@@ -128,8 +128,9 @@ const optionalAuthenticate = (allowedAudience) => {
         }
 
         // 2. Fallback to HttpOnly Cookies if Header is missing
-        if (!token && req.cookies && req.cookies.accessToken) {
-            token = req.cookies.accessToken;
+        const cookieName = `${allowedAudience}_accessToken`;
+        if (!token && req.cookies && req.cookies[cookieName]) {
+            token = req.cookies[cookieName];
         }
 
         if (!token) {
@@ -156,8 +157,13 @@ const optionalAuthenticate = (allowedAudience) => {
 const requireSuperAdmin = requireRoles('SUPER_ADMIN');
 const requireMerchantOwner = requireRoles('MERCHANT_OWNER');
 
+const verifyToken = (req, res, next, allowedAudience) => {
+    return authenticate(allowedAudience)(req, res, next);
+};
+
 module.exports = {
     authenticate,
+    verifyToken,
     optionalAuthenticate,
     requireRoles,
     requireSuperAdmin,
