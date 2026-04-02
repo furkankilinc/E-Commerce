@@ -48,7 +48,7 @@ const AddToCollectionModal: React.FC<AddToCollectionModalProps> = ({ product, on
             <div className="absolute inset-0 bg-gray-900/60 backdrop-blur-sm" onClick={onClose} />
 
             {/* Modal */}
-            <div className="relative w-full sm:max-w-md bg-white rounded-t-[3rem] sm:rounded-[3rem] shadow-2xl z-10 overflow-hidden">
+            <div className="relative w-full sm:max-w-md bg-white rounded-md shadow-2xl z-10 overflow-hidden">
 
                 {/* Header */}
                 <div className="flex items-center justify-between px-8 pt-8 pb-6 border-b border-gray-50">
@@ -59,7 +59,7 @@ const AddToCollectionModal: React.FC<AddToCollectionModalProps> = ({ product, on
                     <button
                         onClick={onClose}
                         aria-label="Kapat"
-                        className="w-10 h-10 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-gray-100 transition-all"
+                        className="w-10 h-10 rounded-md bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-gray-100 transition-all"
                     >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" strokeWidth="3" /></svg>
                     </button>
@@ -68,11 +68,11 @@ const AddToCollectionModal: React.FC<AddToCollectionModalProps> = ({ product, on
                 {/* Product preview */}
                 <div className="px-8 py-4 bg-gray-50/50 border-b border-gray-50 flex items-center gap-4">
                     {product.images?.[0]?.url && (
-                        <img src={product.images[0].url} alt={product.name} className="w-12 h-12 rounded-2xl object-contain bg-white border border-gray-100 p-1" />
+                        <img src={product.images[0].url} alt={product.name} className="w-12 h-12 rounded-md object-contain bg-white border border-gray-100 p-1" />
                     )}
                     <div className="flex-1 min-w-0">
                         <p className="text-[10px] font-black text-gray-900 italic uppercase truncate">{product.name}</p>
-                        <p className="text-[11px] font-black text-brand-pink">{(product.discountPrice ?? product.price)?.toLocaleString('tr-TR')} TL</p>
+                        <p className="text-[11px] font-black text-brand-pink">{(product.discountPrice ?? product.price)?.toLocaleString('tr-TR')} ₺</p>
                     </div>
                 </div>
 
@@ -87,7 +87,7 @@ const AddToCollectionModal: React.FC<AddToCollectionModalProps> = ({ product, on
                             <button
                                 key={col.id}
                                 onClick={() => handleToggle(col)}
-                                className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl border-2 transition-all text-left ${inCol
+                                className={`w-full flex items-center gap-4 px-5 py-4 rounded-md border-2 transition-all text-left ${inCol
                                         ? 'border-brand-pink bg-brand-pink/5 text-brand-pink'
                                         : 'border-gray-100 bg-white hover:border-gray-200 text-gray-900'
                                     }`}
@@ -117,7 +117,7 @@ const AddToCollectionModal: React.FC<AddToCollectionModalProps> = ({ product, on
                                     <button
                                         key={e}
                                         onClick={() => setSelectedEmoji(e)}
-                                        className={`w-10 h-10 rounded-xl text-xl flex items-center justify-center transition-all ${selectedEmoji === e ? 'bg-brand-pink/10 ring-2 ring-brand-pink scale-110' : 'bg-gray-50 hover:bg-gray-100'}`}
+                                        className={`w-10 h-10 rounded-md text-xl flex items-center justify-center transition-all ${selectedEmoji === e ? 'bg-brand-pink/10 ring-2 ring-brand-pink scale-110' : 'bg-gray-50 hover:bg-gray-100'}`}
                                     >{e}</button>
                                 ))}
                             </div>
@@ -129,24 +129,24 @@ const AddToCollectionModal: React.FC<AddToCollectionModalProps> = ({ product, on
                                 placeholder="Koleksiyon adı... (örn: Laptoplar)"
                                 autoFocus
                                 aria-label="Koleksiyon adı"
-                                className="w-full h-14 px-5 bg-gray-50 border-2 border-transparent focus:border-brand-pink rounded-2xl text-[12px] font-black italic outline-none transition-all placeholder:text-gray-300"
+                                className="w-full h-14 px-5 bg-gray-50 border-2 border-transparent focus:border-brand-pink rounded-md text-[12px] font-black italic outline-none transition-all placeholder:text-gray-300"
                             />
                             <div className="flex gap-3">
                                 <button
                                     onClick={() => { setIsCreating(false); setNewName(''); }}
-                                    className="flex-1 h-12 rounded-2xl bg-gray-50 text-gray-500 text-[10px] font-black uppercase tracking-widest"
+                                    className="flex-1 h-12 rounded-md bg-gray-50 text-gray-500 text-[10px] font-black uppercase tracking-widest"
                                 >İptal</button>
                                 <button
                                     onClick={handleCreate}
                                     disabled={!newName.trim() || isSubmitting}
-                                    className="flex-1 h-12 rounded-2xl bg-brand-pink text-white text-[10px] font-black uppercase tracking-widest disabled:opacity-50 shadow-xl shadow-brand-pink/20 hover:scale-[1.02] transition-all"
+                                    className="flex-1 h-12 rounded-md bg-brand-pink text-white text-[10px] font-black uppercase tracking-widest disabled:opacity-50 shadow-xl shadow-brand-pink/20 hover:scale-[1.02] transition-all"
                                 >{isSubmitting ? '...' : 'Oluştur & Ekle'}</button>
                             </div>
                         </div>
                     ) : (
                         <button
                             onClick={() => setIsCreating(true)}
-                            className="w-full mt-4 h-14 border-2 border-dashed border-gray-200 rounded-2xl text-[11px] font-black text-gray-400 uppercase tracking-widest italic hover:border-brand-pink hover:text-brand-pink transition-all flex items-center justify-center gap-2"
+                            className="w-full mt-4 h-14 border-2 border-dashed border-gray-200 rounded-md text-[11px] font-black text-gray-400 uppercase tracking-widest italic hover:border-brand-pink hover:text-brand-pink transition-all flex items-center justify-center gap-2"
                         >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4" strokeWidth="3" /></svg>
                             Yeni Koleksiyon

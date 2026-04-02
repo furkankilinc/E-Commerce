@@ -37,6 +37,8 @@ router.get('/', async (req, res) => {
             merchants,
             sort,
             variants,
+            isNewArrival,
+            isOnSale,
             page = 1,
             limit = 20
         } = req.query;
@@ -51,6 +53,15 @@ router.get('/', async (req, res) => {
         if (category) {
             const categoryIds = await getDescendantIds(category);
             where.categoryId = { in: categoryIds };
+        }
+        
+        if (isNewArrival === 'true') {
+            const last24h = new Date(Date.now() - 24 * 60 * 60 * 1000);
+            where.createdAt = { gte: last24h };
+        }
+        
+        if (isOnSale === 'true') {
+            where.discountPrice = { gt: 0 };
         }
 
         if (search) {

@@ -58,6 +58,18 @@ export const apiClient = {
         return response;
     },
 
+    async handleResponse(response: Response) {
+        if (!response.ok) {
+            const error = await response.text();
+            throw new Error(error || `Request failed with status ${response.status}`);
+        }
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            return response.json();
+        }
+        return response.text();
+    },
+
     async get(url: string, options: RequestInit = {}) {
         return this.fetch(url, { ...options, method: 'GET' });
     },
@@ -89,6 +101,22 @@ export const apiClient = {
         return this.fetch(url, {
             ...options,
             method: 'PUT',
+            headers,
+            body: isFormData ? body : JSON.stringify(body)
+        });
+    },
+
+    async patch(url: string, body: any, options: RequestInit = {}) {
+        const isFormData = body instanceof FormData;
+        const headers: any = { ...options.headers };
+
+        if (!isFormData) {
+            headers['Content-Type'] = 'application/json';
+        }
+
+        return this.fetch(url, {
+            ...options,
+            method: 'PATCH',
             headers,
             body: isFormData ? body : JSON.stringify(body)
         });

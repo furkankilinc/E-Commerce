@@ -7,7 +7,8 @@ const { logToDb } = require('../../utils/systemLogger');
  */
 const getAllMerchants = async (req, res) => {
     try {
-        const { search, isActive, isVerified } = req.query;
+        const { search, isActive, isVerified, page = 1, limit = 10 } = req.query;
+        const skip = (parseInt(page) - 1) * parseInt(limit);
 
         const where = {};
         if (search) {
@@ -20,17 +21,31 @@ const getAllMerchants = async (req, res) => {
         if (isActive !== undefined) where.isActive = isActive === 'true';
         if (isVerified !== undefined) where.isVerified = isVerified === 'true';
 
-        const merchants = await prisma.merchant.findMany({
-            where,
-            include: {
-                _count: {
-                    select: { products: true }
-                }
-            },
-            orderBy: { createdAt: 'desc' }
-        });
+        const [merchants, total] = await prisma.$transaction([
+            prisma.merchant.findMany({
+                where,
+                include: {
+                    _count: {
+                        select: { products: true }
+                    }
+                },
+                orderBy: { createdAt: 'desc' },
+                skip,
+                take: parseInt(limit)
+            }),
+            prisma.merchant.count({ where })
+        ]);
 
-        return res.status(200).json({ success: true, merchants });
+        return res.status(200).json({ 
+            success: true, 
+            merchants,
+            pagination: {
+                total,
+                page: parseInt(page),
+                limit: parseInt(limit),
+                totalPages: Math.ceil(total / parseInt(limit))
+            }
+        });
     } catch (err) {
         logger.error('[ADMIN/MERCHANT] GetAll error:', err);
         return res.status(500).json({ success: false, message: 'Merchantlar alınamadı.' });

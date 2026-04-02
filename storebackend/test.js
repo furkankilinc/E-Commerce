@@ -1,0 +1,20 @@
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+async function main() {
+    try {
+        const res = await prisma.product.findMany({
+            where: {
+                OR: [
+                    { name: { contains: 'test', mode: 'insensitive' } },
+                    { sku: { contains: 'test', mode: 'insensitive' } }
+                ]
+            }
+        });
+        console.log('success', res.length);
+    } catch (e) {
+        console.error('ERROR', e.message);
+    } finally {
+        await prisma.$disconnect();
+    }
+}
+main();

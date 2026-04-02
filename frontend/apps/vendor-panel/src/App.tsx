@@ -6,12 +6,15 @@ import DashboardPage from './features/dashboard/DashboardPage';
 import ProductListPage from './features/products/ProductListPage';
 import ProductCreatePage from './features/products/ProductCreatePage';
 import DraftsPage from './features/products/DraftsPage';
+import StocksPage from './features/inventory/StocksPage';
 import SettingsPage from './features/settings/SettingsPage';
 import ProtectedRoute from './app/ProtectedRoute';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './styles/global.css';
 import OfflineDetector from './shared/components/OfflineDetector';
+import OrdersPage from './features/orders/OrdersPage';
+import OrderDetailPage from './features/orders/OrderDetailPage';
 
 const router = createBrowserRouter(
   [
@@ -56,7 +59,15 @@ const router = createBrowserRouter(
             },
             {
               path: 'orders',
-              element: <div className="font-black text-4xl italic uppercase">Orders Coming Soon</div>,
+              element: <OrdersPage />,
+            },
+            {
+              path: 'stocks',
+              element: <StocksPage />,
+            },
+            {
+              path: 'orders/:id',
+              element: <OrderDetailPage />,
             },
             {
               path: 'settings',

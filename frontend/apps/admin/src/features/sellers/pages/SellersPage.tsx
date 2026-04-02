@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { apiClient } from '../../../shared/api/apiClient';
+import Pagination from '../../../shared/components/Pagination';
 
 interface Merchant {
     id: string;
@@ -19,11 +20,14 @@ const SellersPage: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
     const [filter, setFilter] = useState<'all' | 'active' | 'inactive' | 'verified' | 'unverified'>('all');
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [total, setTotal] = useState(0);
 
-    const load = useCallback(async () => {
+    const load = useCallback(async (targetPage: number = page) => {
         setLoading(true);
         try {
-            let url = '/api/admin/merchants';
+            let url = `/api/admin/merchants?page=${targetPage}&limit=10`;
             const params = new URLSearchParams();
             if (search) params.append('search', search);
             if (filter === 'active') params.append('isActive', 'true');
@@ -32,24 +36,31 @@ const SellersPage: React.FC = () => {
             if (filter === 'unverified') params.append('isVerified', 'false');
 
             const queryString = params.toString();
-            if (queryString) url += '?' + queryString;
+            if (queryString) url += '&' + queryString;
 
             const res = await apiClient.get(url);
             const data = await res.json();
             if (data.success) {
                 setMerchants(data.merchants);
+                setTotalPages(data.pagination.totalPages);
+                setTotal(data.pagination.total);
             }
         } catch (err) {
             console.error('Failed to load merchants', err);
         } finally {
             setLoading(false);
         }
-    }, [search, filter]);
+    }, [search, filter, page]);
 
     useEffect(() => {
-        const timer = setTimeout(() => load(), 300);
+        const timer = setTimeout(() => load(page), 300);
         return () => clearTimeout(timer);
-    }, [load]);
+    }, [load, page]);
+
+    const handlePageChange = (newPage: number) => {
+        setPage(newPage);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
     return (
         <div className="p-8 font-['Inter']">
@@ -207,19 +218,15 @@ const SellersPage: React.FC = () => {
                 </div>
 
                 {/* Footer / Pagination Placeholder */}
-                <div className="p-6 bg-slate-50/30 border-t border-slate-50 flex items-center justify-between">
-                    <div className="text-slate-400 text-xs font-bold uppercase tracking-widest">
-                        Görüntülenen: {merchants.length} Satıcı
+                <div className="p-6 bg-slate-50/30 border-t border-slate-50 flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div className="text-slate-400 text-xs font-black uppercase tracking-[0.2em] italic">
+                        Toplam <span className="text-admin-dark">{total}</span> satıcı bulundu
                     </div>
-                    <div className="flex gap-2">
-                        <button className="p-2 bg-white border border-slate-200 rounded-lg text-slate-400 hover:text-slate-600 disabled:opacity-30" disabled>
-                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-                        </button>
-                        <button className="px-4 py-2 bg-indigo-500 text-white border border-indigo-500 rounded-lg text-sm font-bold shadow-md shadow-indigo-500/20">1</button>
-                        <button className="p-2 bg-white border border-slate-200 rounded-lg text-slate-400 hover:text-slate-600 disabled:opacity-30" disabled>
-                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-                        </button>
-                    </div>
+                    <Pagination 
+                        currentPage={page} 
+                        totalPages={totalPages} 
+                        onPageChange={handlePageChange} 
+                    />
                 </div>
             </div>
         </div>

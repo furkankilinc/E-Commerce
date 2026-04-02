@@ -8,6 +8,7 @@ interface Product {
     id: string;
     name: string;
     price: number;
+    discountPrice?: number;
     status: string;
     createdAt: string;
     images: { url: string }[];
@@ -88,7 +89,7 @@ const DraftsPage: React.FC = () => {
         <div className="space-y-12">
             <div className="flex justify-between items-end">
                 <div>
-                    <h1 className="text-6xl font-[1000] text-slate-900 tracking-tighter mb-4 italic leading-none">
+                    <h1 className="text-[40px] font-[1000] text-slate-900 tracking-tighter mb-4 italic leading-none uppercase">
                         Taslak <span className="text-brand-pink">Ürünler</span>
                     </h1>
                     <p className="text-slate-400 font-bold text-lg italic opacity-70">Henüz yayınlamadığınız ürünleri buradan yönetebilirsiniz.</p>
@@ -118,7 +119,22 @@ const DraftsPage: React.FC = () => {
 
                             <h3 className="text-lg font-black text-slate-900 mb-2 truncate italic">{draft.name || 'İsimsiz Ürün'}</h3>
                             <div className="flex justify-between items-center mb-6">
-                                <span className="text-brand-pink font-black text-xl italic">{draft.price} TL</span>
+                                <div className="flex items-baseline gap-2">
+                                    {draft.discountPrice ? (
+                                        <>
+                                            <span className="text-sm font-bold text-slate-400 line-through opacity-60 italic">
+                                                {draft.price.toLocaleString()} ₺
+                                            </span>
+                                            <span className="text-brand-pink font-black text-xl italic">
+                                                {draft.discountPrice.toLocaleString()} ₺
+                                            </span>
+                                        </>
+                                    ) : (
+                                        <span className="text-brand-pink font-black text-xl italic">
+                                            {draft.price.toLocaleString()} ₺
+                                        </span>
+                                    )}
+                                </div>
                                 <span className="text-[9px] font-bold text-slate-300 uppercase italic">{new Date(draft.createdAt).toLocaleDateString('tr-TR')}</span>
                             </div>
 

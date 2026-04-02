@@ -25,6 +25,7 @@ model User {
   updatedAt    DateTime       @updatedAt
   refreshTokens UserRefreshToken[]
   reviews      Review[]
+  orders       Order[]
 
   @@map("users")
 }
@@ -173,6 +174,7 @@ model Product {
   images          ProductImage[]
   variants        ProductVariant[]
   reviews         Review[]
+  orderItems      OrderItem[]
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
 
@@ -214,9 +216,20 @@ model Review {
   title     String?
   comment   String
   isVerified Boolean  @default(false)
+  images    ProductReviewImage[]
   createdAt DateTime @default(now())
 
   @@map("reviews")
+}
+
+model ProductReviewImage {
+  id        String   @id @default(cuid())
+  reviewId  String
+  review    Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  url       String
+  createdAt DateTime @default(now())
+
+  @@map("product_review_images")
 }
 
 // ─────────────────────────────────────────────
@@ -242,6 +255,54 @@ model AttributeValue {
   
   @@unique([attributeId, value])
   @@map("attribute_values")
+}
+
+// ─────────────────────────────────────────────
+// ORDERS & TRANSACTIONS
+// ─────────────────────────────────────────────
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  REFUNDED
+}
+
+model Order {
+  id              String        @id @default(cuid())
+  orderNumber     String        @unique // e.g., ORD-123456
+  userId          String
+  user            User          @relation(fields: [userId], references: [id])
+  status          OrderStatus   @default(PENDING)
+  totalAmount     Float
+  shippingAddress Json          // For static address snapshot
+  billingAddress  Json?
+  paymentStatus   String        @default("PENDING") // PENDING, PAID, FAILED, REFUNDED
+  paymentMethod   String?
+  items           OrderItem[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id              String   @id @default(cuid())
+  orderId         String
+  order           Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId       String
+  product         Product  @relation(fields: [productId], references: [id])
+  merchantId      String   // Added for easier merchant filtering
+  quantity        Int
+  price           Float    // price at time of purchase
+  variantName     String?  // e.g. "Size"
+  variantValue    String?  // e.g. "XL"
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("order_items")
 }
 
 // ─────────────────────────────────────────────
