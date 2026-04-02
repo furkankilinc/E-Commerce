@@ -96,17 +96,17 @@ services:
       - "5672:5672"
       - "15672:15672"
 
-  seq:
-    image: datalust/seq:latest
-    container_name: log-server
-    restart: always
-    environment:
-      - ACCEPT_EULA=Y
-      - SEQ_API_AUTH_ENABLED=false
-    ports:
-      - "5341:80"
-    volumes:
-      - seq_data_yeni:/data
+#  seq:
+#    image: datalust/seq:latest
+#    container_name: log-server
+#    restart: always
+#    environment:
+#      - ACCEPT_EULA=Y
+#      - SEQ_API_AUTH_ENABLED=false
+#    ports:
+#      - "5341:80"
+#    volumes:
+#      - seq_data_yeni:/data
 
 
   minio:
@@ -261,5 +261,5 @@ volumes:
   product_db_data:
   order_db_data:
   portainer_data:
-  seq_data_yeni:
+#  seq_data_yeni:
   minio_data:
