@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef, Suspense, lazy } from 'react';
-import { Link, useSearchParams, useNavigate } from 'react-router-dom';
+import { Link, useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import { preload } from 'react-dom';
 import { useCart } from '../cart/cart.store';
 import { useWishlist } from '../wishlist/store/wishlist.store';
@@ -99,9 +99,11 @@ const CategoryItem: React.FC<{
 
 const HomePage: React.FC = () => {
     const { isAuthenticated } = useAuth();
-    const pathname = window.location.pathname;
+    const { pathname } = useLocation();
     const isNewPage = pathname === '/new';
     const isSalePage = pathname === '/sale';
+    
+    console.log('[HOME_DEBUG] Pathname:', pathname, 'isNew:', isNewPage, 'isSale:', isSalePage);
     const { addItem } = useCart();
     const { toggleItem, isInWishlist } = useWishlist();
     const [collectionModalProduct, setCollectionModalProduct] = useState<any | null>(null);
@@ -239,20 +241,22 @@ const HomePage: React.FC = () => {
                 const data = await res.json();
                 setMeta(data);
 
-                setFilters(prev => {
-                    const newMin = data.priceRange.min;
-                    const newMax = data.priceRange.max;
-                    let currentMin = parseFloat(prev.minPrice);
-                    let currentMax = parseFloat(prev.maxPrice);
-                    const updatedMin = isNaN(currentMin) ? newMin : Math.max(newMin, Math.min(newMax, currentMin));
-                    const updatedMax = isNaN(currentMax) ? newMax : Math.min(newMax, Math.max(newMin, currentMax));
+                if (data.priceRange) {
+                    setFilters(prev => {
+                        const newMin = data.priceRange.min;
+                        const newMax = data.priceRange.max;
+                        let currentMin = parseFloat(prev.minPrice);
+                        let currentMax = parseFloat(prev.maxPrice);
+                        const updatedMin = isNaN(currentMin) ? newMin : Math.max(newMin, Math.min(newMax, currentMin));
+                        const updatedMax = isNaN(currentMax) ? newMax : Math.min(newMax, Math.max(newMin, currentMax));
 
-                    return {
-                        ...prev,
-                        minPrice: updatedMin.toString(),
-                        maxPrice: updatedMax.toString()
-                    };
-                });
+                        return {
+                            ...prev,
+                            minPrice: updatedMin.toString(),
+                            maxPrice: updatedMax.toString()
+                        };
+                    });
+                }
                 isFirstLoad.current = false;
             }
         } catch (err: any) {
@@ -279,6 +283,7 @@ const HomePage: React.FC = () => {
 
     const fetchProducts = useCallback(async (signal?: AbortSignal) => {
         setIsLoading(true);
+        console.log('[HOME_DEBUG] Fetching products with filters:', filters);
         try {
             const variantQuery = Object.entries(filters.selectedVariants)
                 .filter(([_, values]) => values.length > 0)
@@ -538,33 +543,6 @@ const HomePage: React.FC = () => {
                             <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" strokeWidth="3" /></svg>
                         </div>
 
-                        <div className="space-y-4 pt-4 border-t border-gray-50">
-                            <label className="flex items-center group cursor-pointer">
-                                <div className="relative">
-                                    <input 
-                                        type="checkbox" 
-                                        checked={isSalePage} 
-                                        onChange={() => navigate(isSalePage ? '/shop' : '/sale')}
-                                        className="w-5 h-5 border-2 border-gray-200 rounded-md appearance-none checked:bg-brand-pink checked:border-brand-pink cursor-pointer transition-all" 
-                                    />
-                                    {isSalePage && <svg className="absolute w-3.5 h-3.5 text-white left-0.5 top-0.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" /></svg>}
-                                </div>
-                                <span className="ml-3 text-[11px] font-[1000] text-gray-500 group-hover:text-brand-pink transition-colors uppercase italic tracking-widest">Sadece İndirimliler %</span>
-                            </label>
-                            <label className="flex items-center group cursor-pointer">
-                                <div className="relative">
-                                    <input 
-                                        type="checkbox" 
-                                        checked={isNewPage} 
-                                        onChange={() => navigate(isNewPage ? '/shop' : '/new')}
-                                        className="w-5 h-5 border-2 border-gray-200 rounded-md appearance-none checked:bg-indigo-600 checked:border-indigo-600 cursor-pointer transition-all" 
-                                    />
-                                    {isNewPage && <svg className="absolute w-3.5 h-3.5 text-white left-0.5 top-0.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" /></svg>}
-                                </div>
-                                <span className="ml-3 text-[11px] font-[1000] text-gray-500 group-hover:text-indigo-600 transition-colors uppercase italic tracking-widest">Yeni Gelenler ✨</span>
-                            </label>
-                        </div>
-
                         <div>
                             <button onClick={() => toggleSection('category')} className="w-full flex items-center justify-between text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-6 italic hover:text-gray-900 transition-colors">
                                 KATEGORİ
@@ -580,7 +558,7 @@ const HomePage: React.FC = () => {
                                             >
                                                 Hepsi
                                             </button>
-                                            {meta.categories.filter(c => c.parentId === null).map(cat => (
+                                            {meta?.categories?.filter(c => c.parentId === null).map(cat => (
                                                 <CategoryItem key={cat.id} category={cat} allCategories={meta.categories} selectedSlug={filters.category} onSelect={updateCategory} />
                                             ))}
                                         </>
@@ -605,7 +583,7 @@ const HomePage: React.FC = () => {
 
                         <div className={`relative transition-opacity duration-300 ${isMetaLoading ? 'opacity-40' : 'opacity-100'}`}>
                             {isMetaLoading && <div className="absolute top-0 right-0 w-4 h-4 border-2 border-brand-pink border-t-transparent rounded-full animate-spin" />}
-                            {meta && Object.entries(meta.variants).map(([name, values]) => {
+                            {meta && meta.variants && Object.entries(meta.variants).map(([name, values]) => {
                                 const label = name === 'Color' ? 'RENK' : name === 'Size' ? 'BEDEN' : name.toUpperCase();
                                 const isColorFilter = name === 'Color' || name.toLowerCase() === 'renk' || name.toLowerCase() === 'color';
                                 return (
@@ -648,7 +626,7 @@ const HomePage: React.FC = () => {
                                 </button>
                                 {!collapsedSections['merchants'] && (
                                     <div className="space-y-3 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
-                                        {meta?.merchants.filter((m: any) => m.companyName.toLowerCase().includes(localSearch.toLowerCase())).map(m => (
+                                        {meta?.merchants?.filter((m: any) => m.companyName.toLowerCase().includes(localSearch.toLowerCase())).map(m => (
                                             <label key={m.id} className="flex items-center group cursor-pointer">
                                                 <div className="relative">
                                                     <input type="checkbox" checked={filters.merchants.includes(m.id)} onChange={() => toggleMerchant(m.id)} className="w-5 h-5 border-2 border-gray-200 rounded-md appearance-none checked:bg-brand-pink checked:border-brand-pink cursor-pointer transition-all" />

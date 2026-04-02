@@ -1,0 +1,48 @@
+title: "E-Commerce Microservices Dashboard"
+subtitle: "Fuira Micro-Architecture Management"
+
+header: true
+footer: '<p>Created with ❤️ for Thesis Project</p>'
+
+services:
+  - name: "Applications"
+    items:
+      - name: "Storefront"
+        subtitle: "Customer Web App"
+        tag: "User"
+        url: "http://localhost:5173"
+      - name: "Admin Panel"
+        subtitle: "Global Management"
+        tag: "Staff"
+        url: "http://localhost:5174"
+      - name: "Vendor Panel"
+        subtitle: "Merchant Portal"
+        tag: "Merchant"
+        url: "http://localhost:5175"
+
+  - name: "Database Management"
+    items:
+      - name: "Auth Database"
+        subtitle: "Users & Tokens"
+        url: "http://localhost:5551"
+      - name: "Product Catalog"
+        subtitle: "Inventory & Categories"
+        url: "http://localhost:5552"
+      - name: "Order Tracking"
+        subtitle: "Orders & Cart Details"
+        url: "http://localhost:5553"
+
+  - name: "Infrastructure"
+    items:
+      - name: "Seq Logs"
+        subtitle: "Centralized Logging"
+        url: "http://localhost:5341"
+      - name: "RabbitMQ"
+        subtitle: "Message Broker"
+        url: "http://localhost:15672"
+      - name: "MinIO"
+        subtitle: "Object Storage (Images)"
+        url: "http://localhost:9001"
+      - name: "Portainer"
+        subtitle: "Container Manager"
+        url: "http://localhost:9443"

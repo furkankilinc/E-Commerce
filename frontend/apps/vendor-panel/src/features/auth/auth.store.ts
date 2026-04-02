@@ -8,7 +8,11 @@ type Merchant = {
 class AuthStore {
     private accessToken: string | null = sessionStorage.getItem('v_token');
     private refreshToken: string | null = sessionStorage.getItem('v_ref');
-    private merchant: Merchant | null = JSON.parse(sessionStorage.getItem('v_user') || 'null');
+    private merchant: Merchant | null = (() => {
+        const data = sessionStorage.getItem('v_user');
+        if (!data || data === 'undefined' || data === 'null') return null;
+        try { return JSON.parse(data); } catch { return null; }
+    })();
 
     setAuth(accessToken: string, refreshToken: string, merchant: Merchant) {
         this.accessToken = accessToken;

@@ -109,9 +109,16 @@ const ProductDetailPage: React.FC = () => {
                 const res = await apiClient(`/api/products/${id}`, { signal: controller.signal });
                 if (res.ok) {
                     const data = await res.json();
-                    setProduct(data);
-                    const mainImg = data.images.find((img: any) => img.isMain) || data.images[0];
-                    if (mainImg) setMainImage(mainImg.url);
+                    if (data.success && data.product) {
+                        setProduct(data.product);
+                        const mainImg = data.product.images?.find((img: any) => img.isMain) || data.product.images?.[0];
+                        if (mainImg) setMainImage(mainImg.url);
+                    } else {
+                        setProduct(data); // Fallback for old/other format
+                        const images = data.images || [];
+                        const mainImg = images.find((img: any) => img.isMain) || images[0];
+                        if (mainImg) setMainImage(mainImg.url);
+                    }
                 }
 
                 // Fetch cart stats
