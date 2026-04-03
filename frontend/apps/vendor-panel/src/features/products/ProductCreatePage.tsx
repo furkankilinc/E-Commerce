@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useBlocker, useParams } from 'react-router-dom';
-import { apiClient } from '../../shared/api/apiClient';
 import { toast } from 'react-toastify';
+import {apiClient} from '../../shared/api/apiClient'
 
 interface Category {
     id: string;
@@ -352,56 +352,54 @@ const ProductCreatePage: React.FC = () => {
         const finalStatus = submitStatus || formData.status;
         const categoryId = selectedLevel3 || selectedLevel2 || selectedLevel1;
 
-        if (!fromBlocker && !categoryId) {
+        // Kategori kontrolü (Yeni ürün eklerken zorunlu, taslak değilse)
+        if (!fromBlocker && !id && !categoryId) {
             toast.error('Lütfen bir kategori seçiniz.');
             return;
         }
 
         setIsLoading(true);
         submitLock.current = true;
+
         try {
-            const metadata: Record<string, string> = {
-                taxRate: formData.taxRate
+            const metadata = {
+                taxRate: formData.taxRate,
+                currency: formData.currency
             };
-            // No longer iterating over 'attributes' for metadata or variants.
-            // 'productVariants' directly holds the variant data.
 
-            const method = id ? 'PUT' : 'POST';
-            const url = id ? `/api/merchant/products/${id}` : '/api/merchant/products';
+            // Backend'in beklediği temiz veri objesi
+            const payload = {
+                ...formData,
+                description: JSON.stringify(blocks), // Blokları string olarak gönderiyoruz
+                price: parseFloat(formData.price) || 0,
+                discountPrice: formData.discountPrice ? parseFloat(formData.discountPrice) : null,
+                stock: parseInt(formData.stock) || 0,
+                categoryId: categoryId || (id ? undefined : null), // O uydurma 'ckv...' ID'sini sildim, patlatır!
+                status: finalStatus,
+                metadata,
+                images: uploadedImages.length > 0 ? uploadedImages : [],
+                variants: productVariants,
+            };
 
-            const response = await apiClient.fetch(url, {
-                method,
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    ...formData,
-                    description: JSON.stringify(blocks),
-                    price: parseFloat(formData.price) || 0,
-                    discountPrice: formData.discountPrice ? parseFloat(formData.discountPrice) : null,
-                    categoryId: categoryId || (id ? undefined : 'ckv1234567890'), // Placeholder if no category selected on edit
-                    status: finalStatus,
-                    metadata,
-                    stock: parseInt(formData.stock) || 0,
-                    images: uploadedImages.length > 0 ? uploadedImages : ["https://images.unsplash.com/photo-1523275335684-37898b6baf30"],
-                    variants: productVariants, // Use the productVariants state directly
-                }),
-            });
+            // ARTIK apiClient.post VEYA apiClient.put KULLANIYORUZ
+            const response = id
+                ? await apiClient.put(`/api/merchant/products/${id}`, payload)
+                : await apiClient.post('/api/merchant/products', payload);
 
             if (response.ok) {
                 setIsDirty(false);
                 if (!fromBlocker) {
                     isTransitioning.current = true;
-                    toast.success(finalStatus === 'PUBLISHED' ? 'Ürün yayına alındı!' : 'Taslak başarıyla kaydedildi.');
+                    toast.success(finalStatus === 'PUBLISHED' ? 'Ürün yayına alındı!' : 'Taslak kaydedildi.');
                     setTimeout(() => navigate('/products'), 500);
                 }
             } else {
                 const err = await response.json();
-                if (!fromBlocker) toast.error('Hata: ' + err.message);
+                if (!fromBlocker) toast.error('Hata: ' + (err.message || 'Sunucu hatası'));
             }
         } catch (error) {
             console.error('Gönderim hatası:', error);
-            if (!fromBlocker) toast.error('Sunucuya bağlanılamadı.');
+            if (!fromBlocker) toast.error('Bağlantı hatası oluştu.');
         } finally {
             setIsLoading(false);
             submitLock.current = false;

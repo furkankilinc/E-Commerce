@@ -17,7 +17,7 @@ const reviewRoutes = require('./src/api/catalog/review.routes');
 const uploadRoutes = require('./src/api/catalog/upload.routes');
 
 app.use('/api/products', productRoutes);
-app.use('/api/products-meta', productRoutes); 
+app.use('/api/products-meta', productRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/attributes', attributeRoutes);
 app.use('/api/reviews', reviewRoutes);

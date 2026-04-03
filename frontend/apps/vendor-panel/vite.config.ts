@@ -17,7 +17,7 @@ export default defineConfig({
         watch: {
             usePolling: true
         },
-        allowedHosts: ['merchant.fuira.com'],
+        allowedHosts: ['merchant.fuira.com', 'localhost'],
         proxy: {
             '/api': {
                 target: 'http://api-gateway:80',
