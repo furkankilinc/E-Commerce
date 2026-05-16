@@ -17,14 +17,12 @@ const cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
 // ── Security: CORS ─────────────────────────────────────────────────────────────
-// Only allow requests from known frontend origins.
 const ALLOWED_ORIGINS = (process.env.CORS_ORIGINS || 'http://localhost:5173,http://localhost:5174')
   .split(',')
   .map(o => o.trim());
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Geliştirme aşamasında ve telefondan erişimde sorun çıkmaması için tüm yerel ağa izin veriyoruz
     if (!origin || process.env.NODE_ENV !== 'production' || ALLOWED_ORIGINS.includes(origin)) {
       callback(null, true);
     } else {
@@ -47,7 +45,6 @@ let rateLimit;
 try { rateLimit = require('express-rate-limit'); } catch { rateLimit = null; }
 
 if (rateLimit) {
-  // General API: 1000 requests per 15 minutes per IP (Increased for development)
   const generalLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 1000,
@@ -55,22 +52,7 @@ if (rateLimit) {
     legacyHeaders: false,
     message: { message: 'Çok fazla istek gönderildi. Lütfen 15 dakika sonra tekrar deneyin.' },
   });
-
-  // Auth endpoints: max 10 attempts per 15 minutes per IP (brute force protection)
-  const authLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 10,
-    standardHeaders: true,
-    legacyHeaders: false,
-    message: { message: 'Çok fazla giriş denemesi. Lütfen 15 dakika sonra tekrar deneyin.' },
-    skipSuccessfulRequests: true, // Only count failed attempts
-  });
-
   app.use('/api', generalLimiter);
-  app.use('/api/auth/user/login', authLimiter);
-  app.use('/api/auth/user/register', authLimiter);
-  app.use('/api/auth/merchant/login', authLimiter);
-  app.use('/api/auth/admin/login', authLimiter);
 }
 
 // ── Logging: HTTP İstek Kaydı ────────────────────────────────────────────────
@@ -83,7 +65,6 @@ const adminAuthRoutes = require('./src/api/auth/admin.auth.routes');
 const productRoutes = require('./src/api/product/product.routes');
 const categoryRoutes = require('./src/api/product/category.routes');
 const uploadRoutes = require('./src/api/upload/upload.routes');
-
 const attributeRoutes = require('./src/api/product/attribute.routes');
 
 app.use('/api/auth/user', userAuthRoutes);
@@ -98,13 +79,26 @@ app.use('/api/cart', require('./src/api/cart/cart.routes'));
 app.use('/api/upload', uploadRoutes);
 app.use('/api/wishlist', require('./src/api/wishlist/wishlist.routes'));
 app.use('/api/collections', require('./src/api/collections/collections.routes'));
+app.use('/api/orders', require('./src/api/order/order.routes'));
+app.use('/api/reviews', require('./src/api/review/review.routes'));
 
 const merchantProductRoutes = require('./src/api/merchant/merchant.product.routes');
+const merchantOrderRoutes = require('./src/api/merchant/merchant.order.routes');
 const merchantAdminRoutes = require('./src/api/admin/merchant.admin.routes');
 const statsAdminRoutes = require('./src/api/admin/stats.admin.routes');
+const orderAdminRoutes = require('./src/api/admin/order.admin.routes');
+
+const productAdminRoutes = require('./src/api/admin/product.admin.routes');
+const userAdminRoutes = require('./src/api/admin/user.admin.routes');
+
 app.use('/api/merchant/products', merchantProductRoutes);
+app.use('/api/merchant/orders', merchantOrderRoutes);
+app.use('/api/merchant/stats', require('./src/api/merchant/merchant.stats.routes'));
 app.use('/api/admin/merchants', merchantAdminRoutes);
 app.use('/api/admin/stats', statsAdminRoutes);
+app.use('/api/admin/orders', orderAdminRoutes);
+app.use('/api/admin/products', productAdminRoutes);
+app.use('/api/admin/users', userAdminRoutes);
 
 // ─── Health ──────────────────────────────────────────────────────────────────
 app.get('/', (req, res) => {
@@ -117,14 +111,14 @@ app.get('/api/health', (req, res) => {
 
 // ─── Global Error Handler ─────────────────────────────────────────────────────
 app.use((err, req, res, next) => {
+  console.error('[GLOBAL_ERROR_HANDLER]', err);
   if (err.message && err.message.startsWith('CORS:')) {
     return res.status(403).json({ message: 'Bu kaynaktan erişim izni yok.' });
   }
   logger.error('Yakalanmamış hata', { error: err.message, stack: err.stack, path: req.path });
-  res.status(500).json({ message: 'Sunucu hatası.' });
+  res.status(500).json({ success: false, message: err.message || 'Sunucu hatası.' });
 });
 
 app.listen(PORT, '0.0.0.0', () => {
-  logger.info(`✅ Fuira Backend ${PORT} portunda çalışıyor`);
+  logger.info(`✅ Fuira Backend ${PORT} portunda çalışıyor [v1.0.1]`);
 });
-

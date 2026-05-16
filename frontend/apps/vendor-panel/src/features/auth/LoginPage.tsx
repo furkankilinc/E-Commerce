@@ -64,13 +64,13 @@ const VendorLoginPage: React.FC = () => {
                     </div>
 
                     <div className="mt-20 max-w-lg">
-                        <h1 className="text-5xl font-bold leading-tight mb-6">
-                            Enterprise-grade<br />
-                            commerce<br />
-                            infrastructure.
+                        <h1 className="text-[40px] font-bold leading-tight mb-6 uppercase italic tracking-tighter">
+                            Kurumsal Seviye<br />
+                            Ticaret<br />
+                            Altyapısı.
                         </h1>
                         <p className="text-lg text-slate-400 font-light leading-relaxed">
-                            Manage global transactions, analyze customer insights, and scale your business operations with our professional merchant suite.
+                            Küresel işlemleri yönetin, müşteri içgörülerini analiz edin ve profesyonel satıcı panelimizle iş operasyonlarınızı ölçeklendirin.
                         </p>
                     </div>
                 </div>
@@ -80,13 +80,13 @@ const VendorLoginPage: React.FC = () => {
                         <svg className="w-4 h-4 text-brand-pink" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                         </svg>
-                        <span>SOC2 Compliant</span>
+                        <span>SOC2 Uyumlu</span>
                     </div>
                     <div className="flex items-center gap-2">
                         <svg className="w-4 h-4 text-brand-pink" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
                         </svg>
-                        <span>End-to-end Encryption</span>
+                        <span>Uçtan Uca Şifreleme</span>
                     </div>
                 </div>
             </div>
@@ -95,8 +95,8 @@ const VendorLoginPage: React.FC = () => {
             <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-8 lg:p-16">
                 <div className="w-full max-w-md space-y-8">
                     <div className="text-left">
-                        <h2 className="text-3xl font-bold text-slate-900 mb-2">Welcome back</h2>
-                        <p className="text-slate-500">Please enter your details to access your merchant dashboard.</p>
+                        <h2 className="text-[40px] font-bold text-slate-900 mb-2">Tekrar Hoş Geldiniz</h2>
+                        <p className="text-slate-500">Satıcı panelinize erişmek için lütfen bilgilerinizi girin.</p>
                     </div>
 
                     <form className="space-y-6" onSubmit={handleSubmit}>
@@ -111,7 +111,7 @@ const VendorLoginPage: React.FC = () => {
                             </div>
                         )}
                         <div className="space-y-1">
-                            <label className="text-sm font-medium text-slate-700">Email Address</label>
+                            <label className="text-sm font-medium text-slate-700">E-Posta Adresi</label>
                             <div className="relative group">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 group-focus-within:text-brand-pink transition-colors">
                                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -122,7 +122,7 @@ const VendorLoginPage: React.FC = () => {
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="name@company.com"
+                                    placeholder="isim@sirket.com"
                                     className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-pink/20 focus:border-brand-pink transition-all placeholder:text-slate-400"
                                 />
                             </div>
@@ -130,8 +130,8 @@ const VendorLoginPage: React.FC = () => {
 
                         <div className="space-y-1">
                             <div className="flex justify-between items-center">
-                                <label className="text-sm font-medium text-slate-700">Password</label>
-                                <a href="#" className="text-sm font-semibold text-brand-pink hover:text-brand-pink-hover transition-colors">Forgot password?</a>
+                                <label className="text-sm font-medium text-slate-700">Şifre</label>
+                                <a href="#" className="text-sm font-semibold text-brand-pink hover:text-brand-pink-hover transition-colors">Şifremi Unuttum?</a>
                             </div>
                             <div className="relative group">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 group-focus-within:text-brand-pink transition-colors">
@@ -165,42 +165,24 @@ const VendorLoginPage: React.FC = () => {
                             </div>
                         </div>
 
-                        {/* Removed Remember Me checkbox as per security requirement */}
-
                         <button
                             type="submit"
                             disabled={isLoading}
                             className="w-full bg-brand-pink text-white py-3 px-4 rounded-xl font-bold text-lg hover:bg-brand-pink-hover transform active:scale-[0.98] transition-all shadow-lg shadow-brand-pink/20 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            {isLoading ? 'Signing In...' : 'Sign In to Dashboard'}
+                            {isLoading ? 'Giriş Yapılıyor...' : 'Panele Giriş Yap'}
                         </button>
                     </form>
 
-                    <div className="relative">
-                        <div className="absolute inset-0 flex items-center">
-                            <div className="w-full border-t border-slate-200"></div>
-                        </div>
-                        <div className="relative flex justify-center text-sm">
-                            <span className="px-4 bg-white text-slate-500 uppercase tracking-widest text-xs font-semibold">Or continue with SSO</span>
-                        </div>
-                    </div>
-
-                    <button className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-slate-200 rounded-xl bg-white text-slate-700 font-semibold hover:bg-slate-50 transition-all">
-                        <svg className="w-5 h-5 text-slate-600" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z" />
-                        </svg>
-                        Sign in with Okta / Azure AD
-                    </button>
-
                     <p className="text-center text-slate-600">
-                        New to the platform? <Link to="/register" className="font-bold text-brand-pink hover:text-brand-pink-hover transition-colors underline underline-offset-4">Register your business</Link>
+                        Platformda yeni misiniz? <Link to="/register" className="font-bold text-brand-pink hover:text-brand-pink-hover transition-colors underline underline-offset-4">İşletmenizi kaydedin</Link>
                     </p>
                 </div>
 
                 <div className="mt-auto pt-8 flex gap-8 text-xs font-medium text-slate-400">
-                    <a href="#" className="hover:text-slate-600 transition-colors">Privacy Policy</a>
-                    <a href="#" className="hover:text-slate-600 transition-colors">Terms of Service</a>
-                    <a href="#" className="hover:text-slate-600 transition-colors">System Status</a>
+                    <a href="#" className="hover:text-slate-600 transition-colors">Gizlilik Politikası</a>
+                    <a href="#" className="hover:text-slate-600 transition-colors">Hizmet Şartları</a>
+                    <a href="#" className="hover:text-slate-600 transition-colors">Sistem Durumu</a>
                 </div>
             </div>
         </div>

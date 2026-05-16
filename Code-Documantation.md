@@ -300,67 +300,9 @@ Bu doküman, **E-Ticaret Yönetim ve Satış Platformu**’nun yazılım ekibi t
 
 ---
 
-## 11. Proje Klasör Yapısı (Monorepo Önerisi)
+## 11. Kullanılan Ana Paketler ve Amaçları
 
-```text
-.
-├─ apps
-│  ├─ backend/               # Node.js + Express API
-│  │  ├─ src
-│  │  │  ├─ api/             # Route/controller tanımları
-│  │  │  │  ├─ auth/
-│  │  │  │  ├─ products/
-│  │  │  │  ├─ orders/
-│  │  │  │  ├─ stock/
-│  │  │  │  ├─ notifications/
-│  │  │  │  ├─ reports/
-│  │  │  │  ├─ campaigns/
-│  │  │  │  └─ profile/
-│  │  │  ├─ services/        # İş mantığı (business logic)
-│  │  │  ├─ repositories/    # Prisma repository katmanı
-│  │  │  ├─ integrations/    # MinIO, SMTP, Redis, OAuth, Payment simulation
-│  │  │  ├─ queues/          # Bull queue job tanımları
-│  │  │  ├─ middlewares/     # Auth, error, validation, rate-limit
-│  │  │  ├─ config/          # Ortam değişkenleri, ayarlar
-│  │  │  ├─ utils/           # Ortak yardımcı fonksiyonlar
-│  │  │  └─ index.ts         # Express bootstrap
-│  │  ├─ prisma/             # Prisma schema ve migrationlar
-│  │  └─ tests/              # Backend testleri (unit + integration)
-│  │
-│  ├─ storefront/            # React Storefront SPA
-│  │  ├─ src
-│  │  │  ├─ pages/
-│  │  │  ├─ components/
-│  │  │  ├─ features/        # RTK slice'lar, hooks
-│  │  │  ├─ api/             # API client, query hooks
-│  │  │  ├─ store/           # Redux store
-│  │  │  └─ utils/
-│  │  └─ tests/              # UI ve component testleri
-│  │
-│  └─ admin/                 # React Admin Panel SPA
-│     ├─ src
-│     │  ├─ pages/
-│     │  ├─ components/
-│     │  ├─ features/
-│     │  ├─ api/
-│     │  ├─ store/
-│     │  └─ utils/
-│
-├─ packages
-│  ├─ ui/                    # Paylaşılan UI componentleri (opsiyonel)
-│  ├─ config/                # Ortak eslint, tsconfig vb.
-│  └─ shared/                # Domain modelleri, tipler (TypeScript interface vs.)
-│
-├─ docker-compose.yml
-├─ package.json              # Root scriptler
-└─ README.md
-```
-
----
-
-## 12. Kullanılan Ana Paketler ve Amaçları
-
-### 12.1 Backend
+### 11.1 Backend
 
 - **express**: HTTP sunucusu, REST endpoint yönetimi.
 - **jsonwebtoken**: JWT üretimi ve doğrulaması (Access / Refresh token).
@@ -380,7 +322,7 @@ Bu doküman, **E-Ticaret Yönetim ve Satış Platformu**’nun yazılım ekibi t
 - **cors**: CORS politika yönetimi.
 - **morgan** veya **pino**: HTTP loglama ve uygulama logları için.
 
-### 12.2 Frontend (Storefront & Admin)
+### 11.2 Frontend (Storefront & Admin)
 
 - **react / react-dom**: SPA katmanı.
 - **vite**: Hızlı development server ve build tool.
@@ -391,16 +333,16 @@ Bu doküman, **E-Ticaret Yönetim ve Satış Platformu**’nun yazılım ekibi t
 - **socket.io-client**: Frontend’den Socket.IO sunucusuna bağlanmak için.
 - **recharts**: Admin dashboard’ta grafik ve chart bileşenleri.
 - **@mui/material** veya **antd** (örnek): Formlar, tablolar, modal’lar için UI componentleri.
-- **react-hook-form** / **formik**: Form yönetimi ve validasyon.
+- **react-hook-form**: Form yönetimi ve validasyon.
 
 ---
 
-## 13. API Endpoint Tasarımı (Basic)
+## 12. API Endpoint Tasarımı (Basic)
 
 > Not: Aşağıdaki path’ler örnek **basic** halidir. Detaylı DTO ve response şemaları Swagger/OpenAPI ile ayrıca dokümante edilecektir.  
 > Tüm endpointler `api/v1` prefix’i ile versiyonlanır: `/api/v1/...`
 
-### 13.1 Auth ve Kullanıcı
+### 12.1 Auth ve Kullanıcı
 
 | HTTP | Path                                   | Açıklama                                      |
 |------|----------------------------------------|-----------------------------------------------|
@@ -421,7 +363,7 @@ Bu doküman, **E-Ticaret Yönetim ve Satış Platformu**’nun yazılım ekibi t
 | GET  | `/api/v1/admin/users`                  | Kullanıcı listesi (Admin)                     |
 | PATCH| `/api/v1/admin/users/:id/role`         | Rol atama/değiştirme (US-AUTH-005)            |
 
-### 13.2 Ürün ve Katalog
+### 12.2 Ürün ve Katalog
 
 | HTTP | Path                                   | Açıklama                                              |
 |------|----------------------------------------|-------------------------------------------------------|
@@ -434,7 +376,7 @@ Bu doküman, **E-Ticaret Yönetim ve Satış Platformu**’nun yazılım ekibi t
 | DELETE | `/api/v1/admin/products/:id`         | Ürün silme                                           |
 | POST | `/api/v1/admin/products/bulk-import`   | Toplu ürün güncelleme (CSV/XLSX) (US-PROD-005)       |
 
-### 13.3 Sepet ve Sipariş
+### 12.3 Sepet ve Sipariş
 
 | HTTP | Path                                   | Açıklama                                             |
 |------|----------------------------------------|------------------------------------------------------|
@@ -454,7 +396,7 @@ Bu doküman, **E-Ticaret Yönetim ve Satış Platformu**’nun yazılım ekibi t
 | PATCH| `/api/v1/admin/orders/:id/status`      | Sipariş durum güncelleme (state machine)            |
 | GET  | `/api/v1/admin/orders/export`          | Sipariş CSV/XLSX export (US-REPORT-002)             |
 
-### 13.4 Stok Yönetimi
+### 12.4 Stok Yönetimi
 
 | HTTP | Path                                             | Açıklama                                   |
 |------|--------------------------------------------------|--------------------------------------------|
@@ -462,7 +404,7 @@ Bu doküman, **E-Ticaret Yönetim ve Satış Platformu**’nun yazılım ekibi t
 | POST | `/api/v1/admin/stock/:variantId/manual`          | Manuel stok güncelleme (US-STOCK-003)     |
 | GET  | `/api/v1/admin/stock/low`                        | Düşük stoklu ürün listesi (US-STOCK-002)  |
 
-### 13.5 Bildirim ve E‑posta
+### 12.5 Bildirim ve E‑posta
 
 | HTTP | Path                                             | Açıklama                                               |
 |------|--------------------------------------------------|--------------------------------------------------------|
@@ -470,7 +412,7 @@ Bu doküman, **E-Ticaret Yönetim ve Satış Platformu**’nun yazılım ekibi t
 | PATCH| `/api/v1/notifications/:id`                      | Bildirimi okundu işaretleme                           |
 | POST | `/api/v1/products/:id/notify-when-in-stock`      | Stok gelince haber ver (US-NOTIF-003)                 |
 
-### 13.6 Raporlama
+### 12.6 Raporlama
 
 | HTTP | Path                                   | Açıklama                                             |
 |------|----------------------------------------|------------------------------------------------------|
@@ -478,7 +420,7 @@ Bu doküman, **E-Ticaret Yönetim ve Satış Platformu**’nun yazılım ekibi t
 | GET  | `/api/v1/admin/reports/xlsx`           | XLSX rapor üretimi (tip param ile) (US-REPORT-002)  |
 | GET  | `/api/v1/admin/reports/pdf`            | PDF rapor üretimi (US-REPORT-003)                   |
 
-### 13.7 Kampanya ve Kupon
+### 12.7 Kampanya ve Kupon
 
 | HTTP | Path                                   | Açıklama                                     |
 |------|----------------------------------------|----------------------------------------------|
@@ -486,7 +428,7 @@ Bu doküman, **E-Ticaret Yönetim ve Satış Platformu**’nun yazılım ekibi t
 | GET  | `/api/v1/admin/coupons`               | Kupon listesi                               |
 | POST | `/api/v1/orders/apply-coupon`         | Kupon uygulama (checkout sırasında)         |
 
-### 13.8 Kullanıcı Profili
+### 12.8 Kullanıcı Profili
 
 | HTTP | Path                                   | Açıklama                                     |
 |------|----------------------------------------|----------------------------------------------|

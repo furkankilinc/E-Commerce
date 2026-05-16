@@ -13,6 +13,9 @@ const WishlistPage = lazy(() => import('./features/wishlist/pages/WishlistPage')
 const RegisterPage = lazy(() => import('./features/auth/RegisterPage'));
 const LoginPage = lazy(() => import('./features/auth/LoginPage'));
 const CollectionsPage = lazy(() => import('./features/collections/pages/CollectionsPage'));
+const CartPage = lazy(() => import('./features/cart/CartPage'));
+const CheckoutPage = lazy(() => import('./features/checkout/CheckoutPage'));
+const OrderDetailPage = lazy(() => import('./features/profile/OrderDetailPage'));
 
 // Loading Fallback Component
 const PageSuspenseFallback = () => (
@@ -33,9 +36,13 @@ function App() {
             <Route path="/sale" element={<HomePage />} />
             <Route path="/product/:id" element={<ProductDetailPage />} />
             <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/profile/orders/:id" element={<OrderDetailPage />} />
+            <Route path="/profile/:tabName" element={<ProfilePage />} />
             <Route path="/wishlist" element={<WishlistPage />} />
             <Route path="/collections" element={<CollectionsPage />} />
             <Route path="/collections/:collectionId" element={<CollectionsPage />} />
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
           </Route>
 
           <Route path="/register" element={<RegisterPage />} />

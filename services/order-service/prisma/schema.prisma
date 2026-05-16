@@ -1,0 +1,55 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────
+// ORDERS & TRANSACTIONS
+// ─────────────────────────────────────────────
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  REFUNDED
+}
+
+model Order {
+  id              String        @id @default(cuid())
+  orderNumber     String        @unique 
+  userId          String        // DİKKAT: Bağıntı Koptu (Müşteri bilgisi Auth/User Service'te tutulur)
+  status          OrderStatus   @default(PENDING)
+  totalAmount     Float
+  shippingAddress Json          
+  billingAddress  Json?
+  paymentStatus   String        @default("PENDING") 
+  paymentMethod   String?
+  items           OrderItem[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id              String   @id @default(cuid())
+  orderId         String
+  order           Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId       String   // DİKKAT: Bağıntı Koptu (Ürün detayları Product Service'ten istenir)
+  merchantId      String   // DİKKAT: Bağıntı Koptu (Satıcı detayı Auth Service'ten istenir)
+  quantity        Int
+  price           Float    
+  variantName     String?  
+  variantValue    String?  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("order_items")
+}

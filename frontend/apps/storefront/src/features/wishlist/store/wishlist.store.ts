@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { apiClient } from '../../../shared/api/apiClient';
+import { authStore } from '../../auth/auth.store';
 
 const WISHLIST_STORAGE_KEY = 'fuira_wishlist_items';
 const WISHLIST_ID_KEY = 'fuira_wishlist_id';
@@ -8,6 +9,7 @@ export interface WishlistItem {
     id: string;
     name: string;
     price: number;
+    originalPrice?: number;
     image: string;
     category?: string;
     slug?: string;
@@ -40,6 +42,7 @@ const notify = () => {
 };
 
 const syncWithBackend = async (items: WishlistItem[]) => {
+    if (!authStore.isAuthenticated()) return;
     try {
         await apiClient('/api/wishlist', {
             method: 'POST',
@@ -64,6 +67,7 @@ export const wishlistStore = {
                     id: product.id,
                     name: product.name,
                     price: product.discountPrice ?? product.price,
+                    originalPrice: product.discountPrice ? product.price : undefined,
                     image: (product.images?.find((img: any) => img.isMain) || product.images?.[0])?.url || '',
                     category: product.category?.name,
                     slug: product.slug,
@@ -80,12 +84,14 @@ export const wishlistStore = {
         syncWithBackend(wishlistItems);
     },
 
-    toggleItem: (product: any) => {
+    toggleItem: (product: any): boolean => {
         const exists = wishlistItems.find(item => item.id === product.id);
         if (exists) {
             wishlistStore.removeItem(product.id);
+            return false;
         } else {
             wishlistStore.addItem(product);
+            return true;
         }
     },
 
@@ -103,7 +109,7 @@ export const wishlistStore = {
     getCount: (): number => wishlistItems.length,
 
     fetchFromBackend: async () => {
-        if (isFetchTriggered) return;
+        if (isFetchTriggered || !authStore.isAuthenticated()) return;
         isFetchTriggered = true;
         try {
             const res = await apiClient('/api/wishlist', {
@@ -142,7 +148,7 @@ export const useWishlist = () => {
         addItem: wishlistStore.addItem,
         removeItem: wishlistStore.removeItem,
         toggleItem: wishlistStore.toggleItem,
-        isInWishlist: wishlistStore.isInWishlist,
+        isInWishlist: (id: string) => items.some(item => item.id === id),
         clearWishlist: wishlistStore.clearWishlist,
         itemCount: items.length,
     };

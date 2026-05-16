@@ -20,9 +20,9 @@ const OfflineDetector: React.FC = () => {
 
     return (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-gray-900/60 backdrop-blur-md animate-fadeIn">
-            <div className="bg-white rounded-[3rem] p-12 max-w-md w-full mx-4 shadow-2xl border border-gray-100 text-center transform scale-110">
-                <div className="w-24 h-24 bg-red-50 rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 relative">
-                    <div className="absolute inset-0 bg-red-500/10 rounded-[1.5rem] animate-ping"></div>
+            <div className="bg-white rounded-md p-12 max-w-md w-full mx-4 shadow-2xl border border-gray-100 text-center transform scale-110">
+                <div className="w-24 h-24 bg-red-50 rounded-md flex items-center justify-center mx-auto mb-8 relative">
+                    <div className="absolute inset-0 bg-red-500/10 rounded-md animate-ping"></div>
                     <svg className="w-12 h-12 text-red-500 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                         <line x1="12" y1="20" x2="12.01" y2="20" strokeWidth="4" className="animate-[wifi_1.5s_infinite_0ms]" />
                         <path d="M8.5 16.5a5 5 0 0 1 7 0" className="animate-[wifi_1.5s_infinite_200ms]" />
@@ -44,7 +44,7 @@ const OfflineDetector: React.FC = () => {
                     İnternet bağlantınız şu an aktif değil. Bağlantı geri geldiğinde uygulama otomatik olarak yenilenecektir.
                 </p>
 
-                <div className="flex items-center justify-center gap-3 py-4 px-6 bg-gray-50 rounded-2xl border border-gray-100">
+                <div className="flex items-center justify-center gap-3 py-4 px-6 bg-gray-50 rounded-md border border-gray-100">
                     <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
                     <span className="text-[11px] font-black text-gray-400 uppercase tracking-[0.2em] italic">Bağlantı Bekleniyor...</span>
                 </div>

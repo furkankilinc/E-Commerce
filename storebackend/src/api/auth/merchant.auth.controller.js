@@ -14,6 +14,7 @@ const COOKIE_OPTIONS = {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
+    path: '/',
 };
 
 const sendMerchantAuthResponse = async (req, res, statusCode, merchant, message) => {

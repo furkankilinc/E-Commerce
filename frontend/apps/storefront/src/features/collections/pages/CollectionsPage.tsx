@@ -48,7 +48,7 @@ const CollectionDetailView: React.FC<{ collectionId: string }> = ({ collectionId
                         <div className="flex flex-wrap gap-2">
                             {EMOJIS.map(e => (
                                 <button key={e} onClick={() => setEditEmoji(e)}
-                                    className={`w-10 h-10 rounded-xl text-xl flex items-center justify-center transition-all ${editEmoji === e ? 'bg-brand-pink/10 ring-2 ring-brand-pink scale-110' : 'bg-gray-50 hover:bg-gray-100'}`}
+                                    className={`w-10 h-10 rounded-md text-xl flex items-center justify-center transition-all ${editEmoji === e ? 'bg-brand-pink/10 ring-2 ring-brand-pink scale-110' : 'bg-gray-50 hover:bg-gray-100'}`}
                                 >{e}</button>
                             ))}
                         </div>
@@ -57,18 +57,18 @@ const CollectionDetailView: React.FC<{ collectionId: string }> = ({ collectionId
                             value={editName}
                             onChange={e => setEditName(e.target.value)}
                             aria-label="Koleksiyon adını düzenle"
-                            className="w-full max-w-md h-16 px-6 bg-gray-50 border-2 border-brand-pink rounded-2xl text-2xl font-black italic outline-none"
+                            className="w-full max-w-md h-16 px-6 bg-gray-50 border-2 border-brand-pink rounded-md text-2xl font-black italic outline-none"
                             autoFocus
                         />
                         <div className="flex gap-3">
-                            <button onClick={() => setIsEditing(false)} className="px-6 py-3 bg-gray-50 text-gray-500 rounded-2xl text-[10px] font-black uppercase tracking-widest">İptal</button>
-                            <button onClick={handleSaveRename} className="px-10 py-3 bg-brand-pink text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-brand-pink/20">Kaydet</button>
+                            <button onClick={() => setIsEditing(false)} className="px-6 py-3 bg-gray-50 text-gray-500 rounded-md text-[10px] font-black uppercase tracking-widest">İptal</button>
+                            <button onClick={handleSaveRename} className="px-10 py-3 bg-brand-pink text-white rounded-md text-[10px] font-black uppercase tracking-widest shadow-xl shadow-brand-pink/20">Kaydet</button>
                         </div>
                     </div>
                 ) : (
                     <div>
                         <p className="text-[10px] font-black text-brand-pink tracking-[0.4em] uppercase italic mb-3">Koleksiyon</p>
-                        <h1 className="text-5xl sm:text-7xl font-[1000] text-gray-900 leading-none tracking-tighter italic uppercase flex items-center gap-4">
+                        <h1 className="text-3xl sm:text-4xl lg:text-[40px] font-[1000] text-gray-900 leading-none tracking-tighter italic uppercase flex items-center gap-4">
                             <span>{col.emoji}</span>
                             <span>{col.name}</span>
                         </h1>
@@ -80,7 +80,7 @@ const CollectionDetailView: React.FC<{ collectionId: string }> = ({ collectionId
                     <div className="flex items-center gap-3">
                         <button
                             onClick={() => { setEditName(col.name); setEditEmoji(col.emoji); setIsEditing(true); }}
-                            className="px-6 py-3 bg-gray-50 text-gray-500 rounded-2xl text-[10px] font-black uppercase tracking-widest italic hover:bg-gray-100 transition-all"
+                            className="px-6 py-3 bg-gray-50 text-gray-500 rounded-md text-[10px] font-black uppercase tracking-widest italic hover:bg-gray-100 transition-all"
                         >Düzenle</button>
                         <button
                             onClick={async () => {
@@ -90,7 +90,7 @@ const CollectionDetailView: React.FC<{ collectionId: string }> = ({ collectionId
                                     window.location.href = '/collections';
                                 }
                             }}
-                            className="px-6 py-3 bg-gray-50 text-red-400 rounded-2xl text-[10px] font-black uppercase tracking-widest italic hover:bg-red-50 hover:text-red-500 transition-all"
+                            className="px-6 py-3 bg-gray-50 text-red-400 rounded-md text-[10px] font-black uppercase tracking-widest italic hover:bg-red-50 hover:text-red-500 transition-all"
                         >Sil</button>
                     </div>
                 )}
@@ -98,28 +98,28 @@ const CollectionDetailView: React.FC<{ collectionId: string }> = ({ collectionId
 
             {/* Items Grid */}
             {col.items.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-32 border-2 border-dashed border-gray-100 rounded-[4rem] bg-gray-50/30">
-                    <span className="text-6xl mb-8">{col.emoji}</span>
+                <div className="flex flex-col items-center justify-center py-32 border-2 border-dashed border-gray-100 rounded-md bg-gray-50/30">
+                    <span className="text-[40px] mb-8">{col.emoji}</span>
                     <h2 className="text-2xl font-black text-gray-900 italic uppercase mb-4">Bu koleksiyon boş</h2>
                     <p className="text-gray-500 text-sm font-bold mb-12 italic">Ürünleri ürün sayfasından koleksiyona ekleyebilirsiniz.</p>
-                    <Link to="/shop" className="px-12 py-5 bg-brand-pink text-white rounded-[2rem] text-[11px] font-black uppercase tracking-[0.25em] shadow-2xl shadow-brand-pink/20 hover:scale-105 transition-all italic">
+                    <Link to="/shop" className="px-12 py-5 bg-brand-pink text-white rounded-md text-[11px] font-black uppercase tracking-[0.25em] shadow-2xl shadow-brand-pink/20 hover:scale-105 transition-all italic">
                         Ürünleri Keşfet
                     </Link>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-x-8 gap-y-12">
                     {col.items.map(item => (
-                        <div key={item.id} className="group relative flex flex-col bg-white rounded-[3.5rem] p-6 border-2 border-transparent hover:border-gray-50 hover:shadow-2xl hover:shadow-gray-200/50 transition-all">
+                        <div key={item.id} className="group relative flex flex-col bg-white rounded-md p-6 border-2 border-transparent hover:border-gray-50 hover:shadow-2xl hover:shadow-gray-200/50 transition-all">
                             <button
                                 onClick={async () => { await removeItem(col.id, item.id); toast.info(`${item.name} koleksiyondan çıkarıldı.`, { autoClose: 1500 }); }}
                                 aria-label="Koleksiyondan Çıkar"
-                                className="absolute top-6 right-6 z-10 w-10 h-10 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-gray-300 shadow-sm opacity-0 group-hover:opacity-100 transition-all hover:bg-red-50 hover:text-red-500 hover:scale-110"
+                                className="absolute top-6 right-6 z-10 w-10 h-10 rounded-md bg-white border border-gray-100 flex items-center justify-center text-gray-300 shadow-sm opacity-0 group-hover:opacity-100 transition-all hover:bg-red-50 hover:text-red-500 hover:scale-110"
                             >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" strokeWidth="3" /></svg>
                             </button>
 
                             <Link to={`/product/${item.id}`}>
-                                <div className="aspect-square rounded-[3rem] overflow-hidden mb-8 bg-[#fdfaf5] border border-gray-50 flex items-center justify-center p-8">
+                                <div className="aspect-square rounded-md overflow-hidden mb-8 bg-[#fdfaf5] border border-gray-50 flex items-center justify-center p-8">
                                     {item.image && <img src={item.image} alt={item.name} width="400" height="400" className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700" loading="lazy" />}
                                 </div>
                             </Link>
@@ -131,13 +131,24 @@ const CollectionDetailView: React.FC<{ collectionId: string }> = ({ collectionId
                                 </Link>
                                 <div className="mt-auto flex justify-between items-center pt-6 border-t border-gray-50">
                                     <div>
-                                        <span className="text-[8px] font-black text-gray-500 uppercase tracking-widest italic leading-none block mb-1">FUIRA FİYAT</span>
-                                        <span className="text-2xl font-[1000] text-gray-900 tracking-tighter italic leading-none">{item.price.toLocaleString('tr-TR')} TL</span>
+                                        <span className="text-[8px] font-black text-gray-500 uppercase tracking-widest italic leading-none block mb-1">
+                                            {item.originalPrice ? 'İNDİRİMLİ FİYAT' : 'FUIRA FİYAT'}
+                                        </span>
+                                        <div className="flex items-baseline gap-2">
+                                            {item.originalPrice && (
+                                                <span className="text-xs font-bold text-gray-400 line-through opacity-60 italic">
+                                                    {item.originalPrice.toLocaleString('tr-TR')} ₺
+                                                </span>
+                                            )}
+                                            <span className="text-2xl font-[1000] text-gray-900 tracking-tighter italic leading-none">
+                                                {item.price.toLocaleString('tr-TR')} ₺
+                                            </span>
+                                        </div>
                                     </div>
                                     <button
                                         onClick={() => { addItem(item as any); toast.success(`${item.name} sepete eklendi!`, { autoClose: 2000 }); }}
                                         aria-label={`${item.name} sepete ekle`}
-                                        className="w-14 h-14 rounded-[1.5rem] bg-gray-900 text-white flex items-center justify-center hover:bg-brand-pink transition-all transform hover:scale-110 shadow-2xl shadow-gray-200"
+                                        className="w-14 h-14 rounded-md bg-gray-900 text-white flex items-center justify-center hover:bg-brand-pink transition-all transform hover:scale-110 shadow-2xl shadow-gray-200"
                                     >
                                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3.5"><path d="M12 4v16m8-8H4" /></svg>
                                     </button>
@@ -183,7 +194,7 @@ const CollectionsPage: React.FC = () => {
         <div className="bg-white min-h-screen">
             <div className="max-w-[1440px] mx-auto px-4 sm:px-10 lg:px-20 py-20">
                 {!isAuthenticated ? (
-                    <div className="flex flex-col items-center justify-center py-32 border-2 border-dashed border-gray-100 rounded-[4rem] bg-gray-50/30">
+                    <div className="flex flex-col items-center justify-center py-32 border-2 border-dashed border-gray-100 rounded-md bg-gray-50/30">
                         <div className="w-28 h-28 bg-white rounded-full flex items-center justify-center shadow-xl mb-10 border border-gray-50 text-brand-pink">
                             <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
@@ -193,7 +204,7 @@ const CollectionsPage: React.FC = () => {
                         <p className="text-gray-500 text-sm font-bold mb-12 italic tracking-wide">Koleksiyonlarınızı görmek ve yönetmek için lütfen oturum açın.</p>
                         <Link
                             to="/login"
-                            className="px-12 py-5 bg-brand-pink text-white rounded-[2rem] text-[11px] font-black uppercase tracking-[0.25em] shadow-2xl shadow-brand-pink/20 hover:scale-105 transition-all italic"
+                            className="px-12 py-5 bg-brand-pink text-white rounded-md text-[11px] font-black uppercase tracking-[0.25em] shadow-2xl shadow-brand-pink/20 hover:scale-105 transition-all italic"
                         >
                             Giriş Yap
                         </Link>
@@ -204,13 +215,13 @@ const CollectionsPage: React.FC = () => {
                         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-8 mb-20">
                             <div>
                                 <p className="text-[10px] font-black text-brand-pink tracking-[0.4em] uppercase italic mb-3">Listelerim</p>
-                                <h1 className="text-5xl sm:text-7xl font-[1000] text-gray-900 leading-none tracking-tighter italic uppercase">
+                                <h1 className="text-3xl sm:text-4xl lg:text-[40px] font-[1000] text-gray-900 leading-none tracking-tighter italic uppercase">
                                     KOLEKSİ<span className="text-brand-pink">YONLARIM</span>
                                 </h1>
                             </div>
                             <button
                                 onClick={() => setIsCreating(true)}
-                                className="flex items-center gap-3 px-8 py-4 bg-gray-900 text-white rounded-[2rem] text-[11px] font-black uppercase tracking-widest italic shadow-xl hover:bg-brand-pink transition-all hover:scale-105"
+                                className="flex items-center gap-3 px-8 py-4 bg-gray-900 text-white rounded-md text-[11px] font-black uppercase tracking-widest italic shadow-xl hover:bg-brand-pink transition-all hover:scale-105"
                             >
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4" strokeWidth="3" /></svg>
                                 Yeni Koleksiyon
@@ -221,12 +232,12 @@ const CollectionsPage: React.FC = () => {
                         {isCreating && (
                             <div className="fixed inset-0 z-[9999] flex items-center justify-center p-6" onClick={(e) => { if (e.target === e.currentTarget) setIsCreating(false); }}>
                                 <div className="absolute inset-0 bg-gray-900/60 backdrop-blur-sm" onClick={() => setIsCreating(false)} />
-                                <div className="relative w-full max-w-md bg-white rounded-[3rem] shadow-2xl z-10 p-10">
+                                <div className="relative w-full max-w-md bg-white rounded-md shadow-2xl z-10 p-10">
                                     <h2 className="text-2xl font-[1000] text-gray-900 italic uppercase tracking-tight mb-8">Yeni Koleksiyon</h2>
                                     <div className="flex flex-wrap gap-2 mb-6">
                                         {EMOJIS.map(e => (
                                             <button key={e} onClick={() => setSelectedEmoji(e)}
-                                                className={`w-11 h-11 rounded-xl text-2xl flex items-center justify-center transition-all ${selectedEmoji === e ? 'bg-brand-pink/10 ring-2 ring-brand-pink scale-110' : 'bg-gray-50 hover:bg-gray-100'}`}
+                                                className={`w-11 h-11 rounded-md text-2xl flex items-center justify-center transition-all ${selectedEmoji === e ? 'bg-brand-pink/10 ring-2 ring-brand-pink scale-110' : 'bg-gray-50 hover:bg-gray-100'}`}
                                             >{e}</button>
                                         ))}
                                     </div>
@@ -238,14 +249,14 @@ const CollectionsPage: React.FC = () => {
                                         placeholder="Koleksiyon adı... (örn: Gaming Setup)"
                                         autoFocus
                                         aria-label="Koleksiyon adı"
-                                        className="w-full h-16 px-6 bg-gray-50 border-2 border-transparent focus:border-brand-pink rounded-2xl text-sm font-black italic outline-none transition-all placeholder:text-gray-300 mb-6"
+                                        className="w-full h-16 px-6 bg-gray-50 border-2 border-transparent focus:border-brand-pink rounded-md text-sm font-black italic outline-none transition-all placeholder:text-gray-300 mb-6"
                                     />
                                     <div className="flex gap-4">
-                                        <button onClick={() => setIsCreating(false)} className="flex-1 h-14 rounded-2xl bg-gray-50 text-gray-500 text-[10px] font-black uppercase tracking-widest">İptal</button>
+                                        <button onClick={() => setIsCreating(false)} className="flex-1 h-14 rounded-md bg-gray-50 text-gray-500 text-[10px] font-black uppercase tracking-widest">İptal</button>
                                         <button
                                             onClick={handleCreate}
                                             disabled={!newName.trim() || isSubmitting}
-                                            className="flex-1 h-14 rounded-2xl bg-brand-pink text-white text-[10px] font-black uppercase tracking-widest shadow-xl shadow-brand-pink/20 hover:scale-[1.02] transition-all disabled:opacity-50"
+                                            className="flex-1 h-14 rounded-md bg-brand-pink text-white text-[10px] font-black uppercase tracking-widest shadow-xl shadow-brand-pink/20 hover:scale-[1.02] transition-all disabled:opacity-50"
                                         >{isSubmitting ? '...' : 'Oluştur'}</button>
                                     </div>
                                 </div>
@@ -254,13 +265,13 @@ const CollectionsPage: React.FC = () => {
 
                         {/* Empty State */}
                         {collections.length === 0 ? (
-                            <div className="flex flex-col items-center justify-center py-32 border-2 border-dashed border-gray-100 rounded-[4rem] bg-gray-50/30">
-                                <span className="text-7xl mb-8">📚</span>
+                            <div className="flex flex-col items-center justify-center py-32 border-2 border-dashed border-gray-100 rounded-md bg-gray-50/30">
+                                <span className="text-[40px] mb-8">📚</span>
                                 <h2 className="text-3xl font-black text-gray-900 italic uppercase mb-4 tracking-tighter">Henüz koleksiyon yok</h2>
                                 <p className="text-gray-500 text-sm font-bold mb-12 italic">Ürünleri kategorilere göre organize et.</p>
                                 <button
                                     onClick={() => setIsCreating(true)}
-                                    className="px-12 py-5 bg-brand-pink text-white rounded-[2rem] text-[11px] font-black uppercase tracking-[0.25em] shadow-2xl shadow-brand-pink/20 hover:scale-105 transition-all italic"
+                                    className="px-12 py-5 bg-brand-pink text-white rounded-md text-[11px] font-black uppercase tracking-[0.25em] shadow-2xl shadow-brand-pink/20 hover:scale-105 transition-all italic"
                                 >İlk Koleksiyonu Oluştur</button>
                             </div>
                         ) : (
@@ -270,23 +281,23 @@ const CollectionsPage: React.FC = () => {
                                     <Link
                                         key={col.id}
                                         to={`/collections/${col.id}`}
-                                        className="group flex flex-col bg-white rounded-[3.5rem] p-8 border-2 border-transparent hover:border-gray-100 hover:shadow-2xl hover:shadow-gray-200/50 transition-all"
+                                        className="group flex flex-col bg-white rounded-md p-8 border-2 border-transparent hover:border-gray-100 hover:shadow-2xl hover:shadow-gray-200/50 transition-all"
                                     >
                                         {/* Cover images */}
-                                        <div className="aspect-square rounded-[3rem] overflow-hidden mb-8 bg-gray-50 border border-gray-50 relative">
+                                        <div className="aspect-square rounded-md overflow-hidden mb-8 bg-gray-50 border border-gray-50 relative">
                                             {col.items.length > 0 ? (
                                                 <div className="grid grid-cols-2 gap-1 w-full h-full p-3">
                                                     {col.items.slice(0, 4).map((item, i) => (
-                                                        <div key={i} className="bg-[#fdfaf5] rounded-2xl flex items-center justify-center p-2 overflow-hidden">
+                                                        <div key={i} className="bg-[#fdfaf5] rounded-md flex items-center justify-center p-2 overflow-hidden">
                                                             {item.image && <img src={item.image} alt="" className="w-full h-full object-contain" loading="lazy" />}
                                                         </div>
                                                     ))}
                                                     {Array.from({ length: Math.max(0, 4 - col.items.length) }).map((_, i) => (
-                                                        <div key={`empty-${i}`} className="rounded-2xl bg-gray-100/50" />
+                                                        <div key={`empty-${i}`} className="rounded-md bg-gray-100/50" />
                                                     ))}
                                                 </div>
                                             ) : (
-                                                <div className="w-full h-full flex items-center justify-center text-6xl">{col.emoji}</div>
+                                                <div className="w-full h-full flex items-center justify-center text-[40px]">{col.emoji}</div>
                                             )}
                                         </div>
 
@@ -305,7 +316,7 @@ const CollectionsPage: React.FC = () => {
                                 {/* Add new card */}
                                 <button
                                     onClick={() => setIsCreating(true)}
-                                    className="flex flex-col items-center justify-center aspect-[3/2] sm:aspect-auto rounded-[3.5rem] p-8 border-2 border-dashed border-gray-200 hover:border-brand-pink hover:text-brand-pink text-gray-300 transition-all group"
+                                    className="flex flex-col items-center justify-center aspect-[3/2] sm:aspect-auto rounded-md p-8 border-2 border-dashed border-gray-200 hover:border-brand-pink hover:text-brand-pink text-gray-300 transition-all group"
                                 >
                                     <svg className="w-10 h-10 mb-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4" strokeWidth="2" /></svg>
                                     <p className="text-[11px] font-black uppercase tracking-widest italic">Yeni Koleksiyon</p>

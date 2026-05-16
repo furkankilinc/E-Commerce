@@ -65,18 +65,18 @@ const AdminLoginPage = () => {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                             </svg>
                         </div>
-                        <span className="text-xl font-bold text-white tracking-tight">Fuira Admin Portal</span>
+                        <span className="text-xl font-bold text-white tracking-tight">Fuira Yönetim Paneli</span>
                     </div>
 
                     {/* Hero Content */}
                     <div className="max-w-xl">
                         <h1 className="text-6xl font-extrabold text-white leading-tight mb-8">
-                            Mastering System <br />
-                            <span className="text-brand-pink">Governance</span>
+                            Sistem <br />
+                            <span className="text-brand-pink">Yönetimi</span>
                         </h1>
                         <p className="text-slate-300 text-lg leading-relaxed font-medium">
-                            Centralized control, security, and real-time monitoring for the entire platform.
-                            Empower your administrative team with professional-grade tools.
+                            Tüm platform için merkezi kontrol, güvenlik ve gerçek zamanlı izleme. 
+                            Yönetici ekibinizi profesyonel seviyede araçlarla güçlendirin.
                         </p>
                     </div>
 
@@ -86,13 +86,13 @@ const AdminLoginPage = () => {
                             <svg className="w-5 h-5 text-brand-pink" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                             </svg>
-                            SOC2 Compliant
+                            SOC2 Uyumlu
                         </div>
                         <div className="flex items-center gap-2 text-slate-400 text-sm font-medium transition-colors hover:text-white">
                             <svg className="w-5 h-5 text-brand-pink" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                             </svg>
-                            End-to-end Encryption
+                            Uçtan Uca Şifreleme
                         </div>
                     </div>
                 </div>
@@ -102,8 +102,8 @@ const AdminLoginPage = () => {
             <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white">
                 <div className="w-full max-w-md space-y-10">
                     <div className="text-left space-y-3">
-                        <h2 className="text-4xl font-extrabold text-slate-900 tracking-tight">Welcome Administrator</h2>
-                        <p className="text-slate-500 font-medium">Enter your credentials to access the management suite.</p>
+                        <h2 className="text-4xl font-extrabold text-slate-900 tracking-tight">Hoş Geldiniz</h2>
+                        <p className="text-slate-500 font-medium">Yönetim paneline erişmek için kimlik bilgilerinizi girin.</p>
                     </div>
 
                     <form className="space-y-6" onSubmit={handleSubmit}>
@@ -118,7 +118,7 @@ const AdminLoginPage = () => {
                             </div>
                         )}
                         <div className="space-y-2">
-                            <label className="text-sm font-bold text-slate-700 ml-1">Admin Email</label>
+                            <label className="text-sm font-bold text-slate-700 ml-1">Yönetici E-Posta</label>
                             <div className="relative group">
                                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-brand-pink transition-colors">
                                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -137,8 +137,8 @@ const AdminLoginPage = () => {
 
                         <div className="space-y-2">
                             <div className="flex justify-between items-center px-1">
-                                <label className="text-sm font-bold text-slate-700">Password</label>
-                                <a href="#" className="text-sm font-bold text-brand-pink hover:text-brand-pink-hover transition-colors">Forgot password?</a>
+                                <label className="text-sm font-bold text-slate-700">Şifre</label>
+                                <a href="#" className="text-sm font-bold text-brand-pink hover:text-brand-pink-hover transition-colors">Şifremi Unuttum?</a>
                             </div>
                             <div className="relative group">
                                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-brand-pink transition-colors">
@@ -172,39 +172,23 @@ const AdminLoginPage = () => {
                             </div>
                         </div>
 
-                        {/* Removed Remember Me checkbox as per security requirement */}
-
                         <button
                             type="submit"
                             disabled={isLoading}
                             className="w-full bg-brand-pink text-white py-5 rounded-2xl font-black text-lg hover:bg-brand-pink-hover shadow-xl shadow-brand-pink/20 transform active:scale-[0.98] transition-all tracking-wide disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            {isLoading ? 'Authenticating...' : 'Sign In to Portal'}
+                            {isLoading ? 'Doğrulanıyor...' : 'Sisteme Giriş Yap'}
                         </button>
                     </form>
-
-                    <div className="relative">
-                        <div className="absolute inset-0 flex items-center"><div className="w-full border-t-2 border-slate-100"></div></div>
-                        <div className="relative flex justify-center text-xs uppercase font-black tracking-widest text-slate-400">
-                            <span className="px-5 bg-white">Or continue with SSO</span>
-                        </div>
-                    </div>
-
-                    <button className="w-full flex items-center justify-center gap-3 px-4 py-4 border-2 border-slate-100 rounded-2xl bg-white text-slate-700 font-bold hover:bg-slate-50 transition-all">
-                        <svg className="w-6 h-6 text-slate-400" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z" />
-                        </svg>
-                        Sign in with Okta / Azure AD
-                    </button>
 
                     {/* Omitted the registration link as per user's "no register" requirement */}
                 </div>
 
                 {/* Floating Footer */}
                 <div className="absolute bottom-10 flex gap-8 text-[11px] font-black uppercase tracking-widest text-slate-400">
-                    <a href="#" className="hover:text-brand-pink transition-colors">System Status</a>
-                    <a href="#" className="hover:text-brand-pink transition-colors">Security Policy</a>
-                    <a href="#" className="hover:text-brand-pink transition-colors">Audit Logs</a>
+                    <a href="#" className="hover:text-brand-pink transition-colors">Sistem Durumu</a>
+                    <a href="#" className="hover:text-brand-pink transition-colors">Güvenlik Politikası</a>
+                    <a href="#" className="hover:text-brand-pink transition-colors">Denetim Kayıtları</a>
                 </div>
             </div>
         </div>

@@ -14,10 +14,13 @@ export default defineConfig({
   server: {
     port: 5174,
     host: true,
+    watch: {
+        usePolling: true
+    },
     allowedHosts: ['admin.fuira.com'],
     proxy: {
       '/api': {
-        target: 'http://node_storebackend:5000',
+        target: 'http://api-gateway:80',
         changeOrigin: true,
       },
     },

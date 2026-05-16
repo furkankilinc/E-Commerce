@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { apiClient } from '../../shared/api/apiClient';
+import { toast } from 'react-toastify';
 
 const CART_STORAGE_KEY = 'fuira_cart_items';
 const CART_ID_KEY = 'fuira_cart_id';
@@ -49,11 +50,23 @@ const notify = () => {
 
 export const cartStore = {
     addItem: (product: any, variant?: string) => {
+        const hasDiscount = product.discountPrice && product.discountPrice > 0;
+        const finalPrice = hasDiscount ? product.discountPrice : product.price;
+        const originalPrice = hasDiscount ? product.price : undefined;
+
         const existingItem = cartItems.find((item) => item.id === product.id && item.variant === variant);
+        
+        // Stock check
+        const currentQty = existingItem ? existingItem.quantity : 0;
+        if (product.stock !== undefined && currentQty >= product.stock) {
+            toast.error(`Üzgünüz, bu üründen stokta sadece ${product.stock} adet var.`);
+            return false;
+        }
+
         if (existingItem) {
             cartItems = cartItems.map((item) =>
                 item.id === product.id && item.variant === variant
-                    ? { ...item, quantity: item.quantity + 1 }
+                    ? { ...item, quantity: item.quantity + 1, price: finalPrice, originalPrice: originalPrice }
                     : item
             );
         } else {
@@ -62,18 +75,36 @@ export const cartStore = {
                 {
                     id: product.id,
                     name: product.name,
-                    price: product.price,
+                    price: finalPrice,
+                    originalPrice: originalPrice,
                     image: (product.images?.find((img: any) => img.isMain) || product.images?.[0])?.url || '',
                     quantity: 1,
                     variant: variant,
+                    stock: product.stock // Keep stock info for further checks
                 },
             ];
         }
         notify();
+        return true;
     },
     removeItem: (id: string, variant?: string) => {
         cartItems = cartItems.filter((item) => !(item.id === id && item.variant === variant));
         notify();
+    },
+    incrementItem: (id: string, variant?: string) => {
+        const item = cartItems.find((i) => i.id === id && i.variant === variant);
+        if (item) {
+            if (item.stock !== undefined && item.quantity >= item.stock) {
+                toast.error(`Üzgünüz, bu üründen stokta sadece ${item.stock} adet var.`);
+                return;
+            }
+            cartItems = cartItems.map((i) =>
+                i.id === id && i.variant === variant
+                    ? { ...i, quantity: i.quantity + 1 }
+                    : i
+            );
+            notify();
+        }
     },
     decrementItem: (id: string, variant?: string) => {
         const existingItem = cartItems.find((item) => item.id === id && item.variant === variant);
@@ -134,6 +165,7 @@ export const useCart = () => {
     return {
         items,
         addItem: cartStore.addItem,
+        incrementItem: cartStore.incrementItem,
         removeItem: cartStore.removeItem,
         decrementItem: cartStore.decrementItem,
         clearCart: cartStore.clearCart,
