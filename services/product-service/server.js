@@ -23,6 +23,9 @@ app.use('/api/attributes', attributeRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/admin/stats', statsRoutes);
+app.use('/api/admin/products', require('./src/api/catalog/admin.product.routes'));
+app.use('/api/merchant/products', require('./src/api/catalog/merchant.product.routes'));
+app.use('/api/merchant/stats', require('./src/api/catalog/merchant.stats.routes'));
 
 app.get('/health', (req, res) => {
     res.json({ status: 'OK', service: 'Product Service', timestamp: new Date() });

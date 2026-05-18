@@ -41,9 +41,9 @@ const SellersPage: React.FC = () => {
             const res = await apiClient.get(url);
             const data = await res.json();
             if (data.success) {
-                setMerchants(data.merchants);
-                setTotalPages(data.pagination.totalPages);
-                setTotal(data.pagination.total);
+                setMerchants(data.merchants || []);
+                setTotalPages(data.pagination?.totalPages || 1);
+                setTotal(data.pagination?.total || data.merchants?.length || 0);
             }
         } catch (err) {
             console.error('Failed to load merchants', err);
@@ -65,15 +65,15 @@ const SellersPage: React.FC = () => {
     return (
         <div className="p-8 font-['Inter']">
             {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
+            <div className="flex flex-col md:flex-row md:items-end justify-between mb-5 gap-6">
                 <div className="space-y-2">
                     <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 bg-indigo-500 rounded-2xl flex items-center justify-center shadow-xl shadow-indigo-500/20">
+                        <div className="w-12 h-12 bg-indigo-500 rounded-2xl flex items-center justify-center  shadow-indigo-500/20">
                             <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                             </svg>
                         </div>
-                        <h1 className="text-4xl font-black text-admin-dark tracking-tight">Satıcı Yönetimi</h1>
+                        <h1 className="text-4xl font-semibold text-admin-dark tracking-tight">Satıcı Yönetimi</h1>
                     </div>
                     <p className="text-slate-500 font-medium text-lg ml-1">Platformdaki tüm mağazaları denetleyin ve logları izleyin.</p>
                 </div>
@@ -101,15 +101,15 @@ const SellersPage: React.FC = () => {
             </div>
 
             {/* Stats Summary */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-5">
                 <StatCard label="Toplam Satıcı" value={merchants.length} color="indigo" icon="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 <StatCard label="Aktif Mağaza" value={merchants.filter(m => m.isActive).length} color="emerald" icon="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 <StatCard label="Onay Bekleyen" value={merchants.filter(m => !m.isVerified).length} color="amber" icon="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                <StatCard label="Toplam Ürün" value={merchants.reduce((acc, m) => acc + m._count.products, 0)} color="rose" icon="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 10V7" />
+                <StatCard label="Toplam Ürün" value={merchants.reduce((acc, m) => acc + (m._count?.products || 0), 0)} color="rose" icon="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 10V7" />
             </div>
 
             {/* Content Area */}
-            <div className="bg-white border-2 border-slate-50 rounded-[2.5rem] shadow-xl shadow-slate-200/50 overflow-hidden">
+            <div className="bg-white border-2 border-slate-50 rounded-[2.5rem]  shadow-slate-200/50 overflow-hidden">
                 {/* Search & Bulk Actions */}
                 <div className="p-8 border-b border-slate-50 flex flex-col md:flex-row gap-6">
                     <div className="flex-1 relative group">
@@ -139,11 +139,11 @@ const SellersPage: React.FC = () => {
                     <table className="w-full">
                         <thead>
                             <tr className="bg-slate-50/50">
-                                <th className="text-left py-5 px-8 text-xs font-black text-slate-400 uppercase tracking-[0.15em]">Mağaza Bilgisi</th>
-                                <th className="text-left py-5 px-8 text-xs font-black text-slate-400 uppercase tracking-[0.15em]">İletişim</th>
-                                <th className="text-left py-5 px-8 text-xs font-black text-slate-400 uppercase tracking-[0.15em]">Ürün Sayısı</th>
-                                <th className="text-left py-5 px-8 text-xs font-black text-slate-400 uppercase tracking-[0.15em]">Durum</th>
-                                <th className="text-right py-5 px-8 text-xs font-black text-slate-400 uppercase tracking-[0.15em]">Aksiyon</th>
+                                <th className="text-left py-5 px-8 text-xs font-semibold text-slate-400  tracking-[0.15em]">Mağaza Bilgisi</th>
+                                <th className="text-left py-5 px-8 text-xs font-semibold text-slate-400  tracking-[0.15em]">İletişim</th>
+                                <th className="text-left py-5 px-8 text-xs font-semibold text-slate-400  tracking-[0.15em]">Ürün Sayısı</th>
+                                <th className="text-left py-5 px-8 text-xs font-semibold text-slate-400  tracking-[0.15em]">Durum</th>
+                                <th className="text-right py-5 px-8 text-xs font-semibold text-slate-400  tracking-[0.15em]">Aksiyon</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-50">
@@ -152,7 +152,7 @@ const SellersPage: React.FC = () => {
                                     <td colSpan={5} className="py-20 text-center">
                                         <div className="inline-flex items-center gap-4 bg-slate-50 px-6 py-3 rounded-2xl">
                                             <div className="w-5 h-5 border-3 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-                                            <span className="text-slate-500 font-bold uppercase tracking-widest text-xs">Veriler Getiriliyor...</span>
+                                            <span className="text-slate-500 font-bold  tracking-widest text-xs">Veriler Getiriliyor...</span>
                                         </div>
                                     </td>
                                 </tr>
@@ -170,7 +170,7 @@ const SellersPage: React.FC = () => {
                                     <tr key={merchant.id} className="group hover:bg-slate-50/30 transition-colors">
                                         <td className="py-6 px-8">
                                             <div className="flex items-center gap-4">
-                                                <div className="w-14 h-14 bg-gradient-to-br from-slate-100 to-slate-200 rounded-[1.25rem] flex items-center justify-center text-slate-500 font-black text-xl shadow-inner uppercase">
+                                                <div className="w-14 h-14 bg-gradient-to-br from-slate-100 to-slate-200 rounded-[1.25rem] flex items-center justify-center text-slate-500 font-semibold text-xl shadow-inner ">
                                                     {merchant.companyName.substring(0, 2)}
                                                 </div>
                                                 <div>
@@ -185,16 +185,16 @@ const SellersPage: React.FC = () => {
                                         </td>
                                         <td className="py-6 px-8">
                                             <div className="inline-flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-100">
-                                                <span className="font-black text-slate-700">{merchant._count.products}</span>
-                                                <span className="text-xs font-bold text-slate-400 uppercase">Ürün</span>
+                                                <span className="font-semibold text-slate-700">{merchant._count?.products || 0}</span>
+                                                <span className="text-xs font-bold text-slate-400 ">Ürün</span>
                                             </div>
                                         </td>
                                         <td className="py-6 px-8">
                                             <div className="flex flex-col gap-2">
-                                                <span className={`inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest w-fit ${merchant.isActive ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-red-50 text-red-600 border border-red-100'}`}>
+                                                <span className={`inline-flex items-center px-3 py-1 rounded-lg text-10px font-semibold  tracking-widest w-fit ${merchant.isActive ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-red-50 text-red-600 border border-red-100'}`}>
                                                     {merchant.isActive ? 'AKTİF' : 'PASİF'}
                                                 </span>
-                                                <span className={`inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest w-fit ${merchant.isVerified ? 'bg-blue-50 text-blue-600 border border-blue-100' : 'bg-amber-50 text-amber-600 border border-amber-100'}`}>
+                                                <span className={`inline-flex items-center px-3 py-1 rounded-lg text-10px font-semibold  tracking-widest w-fit ${merchant.isVerified ? 'bg-blue-50 text-blue-600 border border-blue-100' : 'bg-amber-50 text-amber-600 border border-amber-100'}`}>
                                                     {merchant.isVerified ? 'ONAYLI' : 'ONAY BEKLİYOR'}
                                                 </span>
                                             </div>
@@ -219,13 +219,13 @@ const SellersPage: React.FC = () => {
 
                 {/* Footer / Pagination Placeholder */}
                 <div className="p-6 bg-slate-50/30 border-t border-slate-50 flex flex-col md:flex-row items-center justify-between gap-6">
-                    <div className="text-slate-400 text-xs font-black uppercase tracking-[0.2em] italic">
+                    <div className="text-slate-400 text-xs font-semibold  tracking-[0.2em] italic">
                         Toplam <span className="text-admin-dark">{total}</span> satıcı bulundu
                     </div>
-                    <Pagination 
-                        currentPage={page} 
-                        totalPages={totalPages} 
-                        onPageChange={handlePageChange} 
+                    <Pagination
+                        currentPage={page}
+                        totalPages={totalPages}
+                        onPageChange={handlePageChange}
                     />
                 </div>
             </div>
@@ -242,15 +242,15 @@ const StatCard: React.FC<{ label: string; value: number | string; color: string;
     };
 
     return (
-        <div className="bg-white p-6 rounded-[2rem] border-2 border-slate-50 shadow-xl shadow-slate-100 flex items-center gap-5 transition-transform hover:scale-[1.02] cursor-default">
+        <div className="bg-white p-6 rounded-2xl border-2 border-slate-50  shadow-slate-100 flex items-center gap-5 transition-transform hover:scale-[1.02] cursor-default">
             <div className={`w-14 h-14 ${colors[color].split(' ')[0]} rounded-2xl flex items-center justify-center text-white shadow-lg ${colors[color].split(' ').pop()}`}>
                 <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={icon} />
                 </svg>
             </div>
             <div>
-                <div className="text-slate-400 text-xs font-black uppercase tracking-widest mb-1">{label}</div>
-                <div className="text-3xl font-black text-admin-dark tracking-tighter">{value}</div>
+                <div className="text-slate-400 text-xs font-semibold  tracking-widest mb-1">{label}</div>
+                <div className="text-3xl font-semibold text-admin-dark tracking-tighter">{value}</div>
             </div>
         </div>
     );

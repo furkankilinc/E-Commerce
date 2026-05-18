@@ -74,7 +74,7 @@ const AttributeModal: React.FC<{
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl flex flex-col my-8">
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl flex flex-col my-8">
                 <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
                     <h2 className="text-lg font-extrabold text-slate-800">
                         {initial ? 'Özelliği Düzenle' : 'Yeni Özellik Ekle'}
@@ -93,7 +93,7 @@ const AttributeModal: React.FC<{
                         {/* Left Side: General Info */}
                         <div className="space-y-6">
                             <div>
-                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Özellik Adı</label>
+                                <label className="block text-xs font-bold text-slate-500  tracking-wide mb-1.5">Özellik Adı</label>
                                 <input
                                     required
                                     value={name}
@@ -104,7 +104,7 @@ const AttributeModal: React.FC<{
                             </div>
 
                             <div>
-                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Seçenek Değerleri</label>
+                                <label className="block text-xs font-bold text-slate-500  tracking-wide mb-1.5">Seçenek Değerleri</label>
                                 <div className="flex gap-2 mb-4">
                                     <input
                                         value={newValue}
@@ -116,7 +116,7 @@ const AttributeModal: React.FC<{
                                     <button
                                         type="button"
                                         onClick={addValue}
-                                        className="px-4 py-3 bg-slate-800 text-white text-xs font-black rounded-xl hover:bg-slate-900 transition-colors uppercase"
+                                        className="px-4 py-3 bg-slate-800 text-white text-xs font-semibold rounded-xl hover:bg-slate-900 transition-colors "
                                     >
                                         Ekle
                                     </button>
@@ -140,7 +140,7 @@ const AttributeModal: React.FC<{
 
                         {/* Right Side: Category Selection */}
                         <div>
-                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-3">Geçerli Kategoriler</label>
+                            <label className="block text-xs font-bold text-slate-500  tracking-wide mb-3">Geçerli Kategoriler</label>
                             <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 h-[320px] overflow-y-auto space-y-2 custom-scrollbar">
                                 {allCategories.length === 0 && <p className="text-slate-400 text-xs p-4 italic">Kategori bulunamadı.</p>}
                                 {allCategories.map(cat => (
@@ -155,21 +155,21 @@ const AttributeModal: React.FC<{
                                             <span className={`text-sm font-bold transition-colors ${selectedCatIds.includes(cat.id) ? 'text-pink-600' : 'text-slate-700'}`}>
                                                 {cat.name}
                                             </span>
-                                            {cat.parentId && <span className="text-[10px] text-slate-400 font-medium">Alt Kategori</span>}
+                                            {cat.parentId && <span className="text-10px text-slate-400 font-medium">Alt Kategori</span>}
                                         </div>
                                     </label>
                                 ))}
                             </div>
-                            <p className="mt-2 text-[10px] text-slate-400 font-medium italic">* Kategori seçilmezse "Global" olarak kabul edilir.</p>
+                            <p className="mt-2 text-10px text-slate-400 font-medium italic">* Kategori seçilmezse "Global" olarak kabul edilir.</p>
                         </div>
                     </div>
 
                     <div className="flex gap-3 pt-6 border-t border-slate-100">
-                        <button type="button" onClick={onClose} className="flex-1 py-4 text-xs font-black uppercase bg-slate-100 text-slate-600 rounded-xl hover:bg-slate-200 transition-colors tracking-widest">İptal</button>
+                        <button type="button" onClick={onClose} className="flex-1 py-4 text-xs font-semibold  bg-slate-100 text-slate-600 rounded-xl hover:bg-slate-200 transition-colors tracking-widest">İptal</button>
                         <button
                             type="submit"
                             disabled={saving}
-                            className="flex-1 py-4 text-xs font-black uppercase bg-pink-500 text-white rounded-xl hover:bg-pink-600 shadow-lg shadow-pink-500/20 transition-all disabled:opacity-50 tracking-widest"
+                            className="flex-1 py-4 text-xs font-semibold  bg-pink-500 text-white rounded-xl hover:bg-pink-600 shadow-lg shadow-pink-500/20 transition-all disabled:opacity-50 tracking-widest"
                         >
                             {saving ? 'KAYDEDİLİYOR...' : 'KAYDET'}
                         </button>
@@ -251,19 +251,19 @@ const AttributesPage: React.FC = () => {
     return (
         <div className="p-8 max-w-6xl mx-auto">
             {toast && (
-                <div className={`fixed top-6 right-6 z-50 px-6 py-3 rounded-2xl text-sm font-bold shadow-2xl animate-slideIn ${toast.ok ? 'bg-emerald-500 text-white' : 'bg-red-500 text-white'}`}>
+                <div className={`fixed top-6 right-6 z-50 px-6 py-3 rounded-2xl text-sm font-bold shadow-xl animate-slideIn ${toast.ok ? 'bg-emerald-500 text-white' : 'bg-red-500 text-white'}`}>
                     {toast.msg}
                 </div>
             )}
 
-            <div className="flex items-center justify-between mb-10">
+            <div className="flex items-center justify-between mb-5">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-800 tracking-tight">Ürün Seçenekleri</h1>
+                    <h1 className="text-3xl font-semibold text-slate-800 tracking-tight">Ürün Seçenekleri</h1>
                     <p className="text-slate-500 font-medium mt-1">Varyantlar için kullanılabilecek global özellikleri yönetin.</p>
                 </div>
                 <button
                     onClick={() => { setEditTarget(null); setModalOpen(true); }}
-                    className="flex items-center gap-2 px-6 py-3 bg-pink-500 text-white text-sm font-black rounded-2xl shadow-lg shadow-pink-500/20 hover:scale-105 transition-transform"
+                    className="flex items-center gap-2 px-6 py-3 bg-pink-500 text-white text-sm font-semibold rounded-2xl shadow-lg shadow-pink-500/20 hover:scale-105 transition-transform"
                 >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4" strokeWidth="3" /></svg>
                     Yeni Ekle
@@ -286,10 +286,10 @@ const AttributesPage: React.FC = () => {
                         <table className="w-full text-left border-collapse">
                             <thead>
                                 <tr className="bg-slate-50/50 border-b border-slate-100">
-                                    <th className="px-6 py-4 text-xs font-black text-slate-400 uppercase tracking-widest">Özellik</th>
-                                    <th className="px-6 py-4 text-xs font-black text-slate-400 uppercase tracking-widest">Değerler</th>
-                                    <th className="px-6 py-4 text-xs font-black text-slate-400 uppercase tracking-widest">Kategoriler</th>
-                                    <th className="px-6 py-4 text-xs font-black text-slate-400 uppercase tracking-widest text-right">İşlemler</th>
+                                    <th className="px-6 py-4 text-xs font-semibold text-slate-400  tracking-widest">Özellik</th>
+                                    <th className="px-6 py-4 text-xs font-semibold text-slate-400  tracking-widest">Değerler</th>
+                                    <th className="px-6 py-4 text-xs font-semibold text-slate-400  tracking-widest">Kategoriler</th>
+                                    <th className="px-6 py-4 text-xs font-semibold text-slate-400  tracking-widest text-right">İşlemler</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-50">
@@ -301,7 +301,7 @@ const AttributesPage: React.FC = () => {
                                         <td className="px-6 py-5">
                                             <div className="flex flex-wrap gap-1.5">
                                                 {attr.values.map(v => (
-                                                    <span key={v.id} className="px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md text-[11px] font-bold uppercase tracking-tight">
+                                                    <span key={v.id} className="px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md text-[11px] font-bold  tracking-tight">
                                                         {v.value}
                                                     </span>
                                                 ))}
@@ -310,10 +310,10 @@ const AttributesPage: React.FC = () => {
                                         <td className="px-6 py-5">
                                             <div className="flex flex-wrap gap-1.5">
                                                 {attr.categories.length === 0 ? (
-                                                    <span className="px-2 py-0.5 bg-indigo-50 text-indigo-500 rounded-md text-[10px] font-black uppercase tracking-widest">Global</span>
+                                                    <span className="px-2 py-0.5 bg-indigo-50 text-indigo-500 rounded-md text-10px font-semibold  tracking-widest">Global</span>
                                                 ) : (
                                                     attr.categories.map(c => (
-                                                        <span key={c.id} className="px-2 py-0.5 bg-pink-50 text-pink-500 rounded-md text-[10px] font-black uppercase tracking-widest">
+                                                        <span key={c.id} className="px-2 py-0.5 bg-pink-50 text-pink-500 rounded-md text-10px font-semibold  tracking-widest">
                                                             {c.name}
                                                         </span>
                                                     ))
@@ -355,12 +355,12 @@ const AttributesPage: React.FC = () => {
 
             {deleteTarget && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-                    <div className="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl animate-popIn">
+                    <div className="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-xl animate-popIn">
                         <div className="w-16 h-16 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
                             <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" strokeWidth="2" /></svg>
                         </div>
-                        <h3 className="text-xl font-black text-slate-800 mb-2">Emin misiniz?</h3>
-                        <p className="text-slate-500 text-sm mb-8">
+                        <h3 className="text-xl font-semibold text-slate-800 mb-2">Emin misiniz?</h3>
+                        <p className="text-slate-500 text-sm mb-4">
                             <span className="font-bold text-slate-800">"{deleteTarget.name}"</span> özelliği ve tüm değerleri kalıcı olarak silinecek.
                         </p>
                         <div className="flex gap-3">

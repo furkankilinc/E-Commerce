@@ -45,7 +45,12 @@ const OrderDetailPage: React.FC = () => {
                 const res = await apiClient.get(`/api/admin/orders/${id}`);
                 if (res.ok) {
                     const data = await res.json();
-                    setOrder(data);
+                    if (data.success) {
+                        setOrder(data.order);
+                    } else {
+                        toast.error(data.message || 'Sipariş bulunamadı.');
+                        navigate('/orders');
+                    }
                 } else {
                     toast.error('Sipariş bulunamadı.');
                     navigate('/orders');
@@ -61,8 +66,22 @@ const OrderDetailPage: React.FC = () => {
         if (id) fetchOrder();
     }, [id, navigate]);
 
+    const updateStatus = async (status: string) => {
+        if (!order) return;
+        try {
+            const res = await apiClient.patch(`/api/admin/orders/${order.id}/status`, { status });
+            const data = await res.json();
+            if (data?.success) {
+                toast.success('Sipariş durumu güncellendi.');
+                setOrder({ ...order, status });
+            }
+        } catch (err) {
+            toast.error('Güncelleme başarısız oldu.');
+        }
+    };
+
     const getStatusColor = (status: string) => {
-        switch (status.toUpperCase()) {
+        switch (status.toLowerCase()) {
             case 'PENDING': return 'bg-amber-100 text-amber-600';
             case 'PROCESSING': return 'bg-blue-100 text-blue-600';
             case 'SHIPPED': return 'bg-indigo-100 text-indigo-600';
@@ -76,7 +95,7 @@ const OrderDetailPage: React.FC = () => {
         return (
             <div className="p-20 text-center">
                 <div className="w-12 h-12 border-4 border-brand-pink border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
-                <p className="text-slate-400 font-black uppercase tracking-widest text-[10px] italic">SİPARİŞ DETAYLARI YÜKLENİYOR...</p>
+                <p className="text-slate-400 font-semibold  tracking-widest text-10px italic">SİPARİŞ DETAYLARI YÜKLENİYOR...</p>
             </div>
         );
     }
@@ -88,13 +107,13 @@ const OrderDetailPage: React.FC = () => {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
-                    <button onClick={() => navigate('/orders')} className="flex items-center gap-3 text-slate-400 font-bold text-[11px] uppercase tracking-widest mb-6 hover:text-brand-pink transition-all italic group">
+                    <button onClick={() => navigate('/orders')} className="flex items-center gap-3 text-slate-400 font-bold text-[11px]  tracking-widest mb-6 hover:text-brand-pink transition-all italic group">
                         <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-brand-pink/10 transition-colors">
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
                         </div>
                         LİSTEYE GERİ DÖN
                     </button>
-                    <h1 className="text-[44px] font-[1000] text-slate-900 tracking-[-0.05em] italic mb-2 uppercase leading-none">SİPARİŞ <span className="text-brand-pink">#{order.orderNumber || order.id.slice(-6).toUpperCase()}</span></h1>
+                    <h1 className="text-[22px] font-[1000] text-slate-900 tracking-[-0.05em] italic mb-2  leading-none">SİPARİŞ <span className="text-brand-pink">#{order.orderNumber || order.id.slice(-6).toLowerCase()}</span></h1>
                     <p className="text-slate-400 font-bold text-lg opacity-70 italic">Admin paneli üzerinden siparişin tüm detaylarını görüntüleyin.</p>
                 </div>
             </div>
@@ -102,30 +121,30 @@ const OrderDetailPage: React.FC = () => {
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-10">
                 <div className="xl:col-span-2 space-y-10">
                     {/* Items */}
-                    <div className="bg-white rounded-[3rem] shadow-sm border border-slate-50 overflow-hidden p-10">
-                        <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] italic mb-10">Sipariş İçeriği</h3>
+                    <div className="bg-white rounded-xl shadow-sm border border-slate-50 overflow-hidden p-10">
+                        <h3 className="text-10px font-semibold text-slate-400  tracking-widest italic mb-5">Sipariş İçeriği</h3>
                         <div className="space-y-8">
                             {order.items.map((item, idx) => (
                                 <div key={idx} className="flex items-center gap-8 group">
-                                    <div className="w-24 h-24 rounded-[2rem] bg-slate-50 border border-slate-100 flex-shrink-0 p-3 overflow-hidden shadow-sm group-hover:scale-105 transition-transform duration-500">
+                                    <div className="w-24 h-24 rounded-2xl bg-slate-50 border border-slate-100 flex-shrink-0 p-3 overflow-hidden shadow-sm group-hover:scale-105 transition-transform duration-500">
                                         <img
-                                            src={item.product.images?.find(img => img.isMain)?.url || 'https://via.placeholder.com/100'}
-                                            alt={item.product.name}
+                                            src={item.product?.images?.find((img: any) => img.isMain)?.url || 'https://via.placeholder.com/100'}
+                                            alt={item.product?.name || 'Ürün Görseli'}
                                             className="w-full h-full object-contain"
                                         />
                                     </div>
                                     <div className="flex-1">
-                                        <span className="text-xl font-black text-slate-900 block leading-tight mb-2 group-hover:text-brand-pink transition-colors italic uppercase">{item.product.name}</span>
+                                        <span className="text-xl font-semibold text-slate-900 block leading-tight mb-2 group-hover:text-brand-pink transition-colors italic ">{item.product?.name || 'Silinmiş Ürün'}</span>
                                         <div className="flex flex-wrap gap-4 items-center">
-                                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 px-3 py-1 rounded-lg italic">ADET: {item.quantity}</span>
+                                            <span className="text-10px font-semibold text-slate-400  tracking-widest bg-slate-50 px-3 py-1 rounded-lg italic">ADET: {item.quantity}</span>
                                             {item.variantName && (
-                                                <span className="text-[10px] font-black text-indigo-500 uppercase tracking-widest bg-indigo-50 px-3 py-1 rounded-lg italic">{item.variantName}: {item.variantValue}</span>
+                                                <span className="text-10px font-semibold text-indigo-500  tracking-widest bg-indigo-50 px-3 py-1 rounded-lg italic">{item.variantName}: {item.variantValue}</span>
                                             )}
                                         </div>
                                     </div>
                                     <div className="text-right">
-                                        <span className="text-2xl font-black text-slate-900 block italic tracking-tighter mb-1">{(item.price * item.quantity).toLocaleString()} ₺</span>
-                                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">BİRİM: {item.price.toLocaleString()} ₺</span>
+                                        <span className="text-2xl font-semibold text-slate-900 block italic tracking-tighter mb-1">{(item.price * item.quantity).toLocaleString()} ₺</span>
+                                        <span className="text-10px font-bold text-slate-400  tracking-widest">BİRİM: {item.price.toLocaleString()} ₺</span>
                                     </div>
                                 </div>
                             ))}
@@ -134,30 +153,30 @@ const OrderDetailPage: React.FC = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-stretch">
                         {/* Merchant Details */}
-                        <div className="bg-white rounded-[3rem] p-10 shadow-sm border border-slate-50 flex flex-col">
-                            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] italic mb-8">Satıcı Bilgileri</h3>
+                        <div className="bg-white rounded-xl p-10 shadow-sm border border-slate-50 flex flex-col">
+                            <h3 className="text-10px font-semibold text-slate-400  tracking-widest italic mb-4">Satıcı Bilgileri</h3>
                             <div className="space-y-6 flex-1 flex flex-col justify-center">
                                 <div>
-                                    <span className="text-[9px] font-black text-slate-300 uppercase block mb-1">ŞİRKET ADI</span>
-                                    <span className="text-lg font-black text-slate-900 italic tracking-tight">{order.merchant.companyName}</span>
+                                    <span className="text-9px font-semibold text-slate-300  block mb-1">ŞİRKET ADI</span>
+                                    <span className="text-lg font-semibold text-slate-900 italic tracking-tight">{order.merchant?.companyName || 'Bilinmiyor'}</span>
                                 </div>
                                 <div>
-                                    <span className="text-[9px] font-black text-slate-300 uppercase block mb-1">SATICI E-POSTA</span>
-                                    <span className="text-lg font-black text-slate-900 italic tracking-tight">{order.merchant.email}</span>
+                                    <span className="text-9px font-semibold text-slate-300  block mb-1">SATICI E-POSTA</span>
+                                    <span className="text-lg font-semibold text-slate-900 italic tracking-tight">{order.merchant?.email || 'Bilinmiyor'}</span>
                                 </div>
                             </div>
                         </div>
                         {/* Customer Details */}
-                        <div className="bg-white rounded-[3rem] p-10 shadow-sm border border-slate-50 flex flex-col">
-                            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] italic mb-8">Müşteri Bilgileri</h3>
+                        <div className="bg-white rounded-xl p-10 shadow-sm border border-slate-50 flex flex-col">
+                            <h3 className="text-10px font-semibold text-slate-400  tracking-widest italic mb-4">Müşteri Bilgileri</h3>
                             <div className="space-y-6 flex-1 flex flex-col justify-center">
                                 <div>
-                                    <span className="text-[9px] font-black text-slate-300 uppercase block mb-1">İSİM SOYİSİM</span>
-                                    <span className="text-lg font-black text-slate-900 italic tracking-tight">{order.user.name}</span>
+                                    <span className="text-9px font-semibold text-slate-300  block mb-1">İSİM SOYİSİM</span>
+                                    <span className="text-lg font-semibold text-slate-900 italic tracking-tight">{order.user?.name || 'Bilinmiyor'}</span>
                                 </div>
                                 <div>
-                                    <span className="text-[9px] font-black text-slate-300 uppercase block mb-1">MÜŞTERİ E-POSTA</span>
-                                    <span className="text-lg font-black text-slate-900 italic tracking-tight">{order.user.email}</span>
+                                    <span className="text-9px font-semibold text-slate-300  block mb-1">MÜŞTERİ E-POSTA</span>
+                                    <span className="text-lg font-semibold text-slate-900 italic tracking-tight">{order.user?.email || 'Bilinmiyor'}</span>
                                 </div>
                             </div>
                         </div>
@@ -166,31 +185,45 @@ const OrderDetailPage: React.FC = () => {
 
                 {/* Sidebar Summary */}
                 <div className="space-y-10">
-                    <div className="bg-white rounded-[3.5rem] p-12 shadow-sm border border-slate-50 relative overflow-hidden group">
+                    <div className="bg-white rounded-xl p-12 shadow-sm border border-slate-50 relative overflow-hidden group">
                         <div className="absolute top-[-20%] right-[-10%] w-64 h-64 bg-brand-pink/5 rounded-full blur-3xl pointer-events-none"></div>
-                        <span className="text-slate-400 text-[10px] font-black uppercase tracking-[0.4em] mb-10 block italic relative z-10">Sipariş Özeti</span>
+                        <span className="text-slate-400 text-10px font-semibold  tracking-widest mb-5 block italic relative z-10">Sipariş Özeti</span>
                         <div className="space-y-6 relative z-10">
-                            <div className="flex justify-between items-center text-slate-400 font-black italic uppercase tracking-widest text-[10px]">
+                            <div className="flex justify-between items-center text-slate-400 font-semibold italic  tracking-widest text-10px">
                                 <span>ARA TOPLAM</span>
                                 <span className="text-sm">{order.totalAmount.toLocaleString()} ₺</span>
                             </div>
-                            <div className="flex justify-between items-center text-slate-400 font-black italic uppercase tracking-widest text-[10px]">
+                            <div className="flex justify-between items-center text-slate-400 font-semibold italic  tracking-widest text-10px">
                                 <span>KARGO</span>
                                 <span className="text-indigo-500">ÜCRETSİZ</span>
                             </div>
                             <div className="pt-8 border-t border-slate-50 flex justify-between items-end">
-                                <span className="text-[11px] font-black uppercase italic tracking-widest text-brand-pink mb-2">TOPLAM ÖDENEN</span>
-                                <span className="text-[44px] font-black italic tracking-tighter text-slate-900 leading-none">{order.totalAmount.toLocaleString()} ₺</span>
+                                <span className="text-[11px] font-semibold  italic tracking-widest text-brand-pink mb-2">TOPLAM ÖDENEN</span>
+                                <span className="text-[22px] font-semibold italic tracking-tighter text-slate-900 leading-none">{order.totalAmount.toLocaleString()} ₺</span>
                             </div>
                         </div>
                     </div>
 
-                    <div className="bg-white rounded-[3.5rem] p-10 shadow-sm border border-slate-50">
-                        <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] italic mb-8">Durum</h3>
-                        <div className={`px-8 py-4 rounded-2xl text-[12px] font-black italic text-center uppercase tracking-[0.2em] ${getStatusColor(order.status)}`}>
-                            {order.status}
+                    <div className="bg-white rounded-xl p-10 shadow-sm border border-slate-50">
+                        <h3 className="text-10px font-semibold text-slate-400  tracking-widest italic mb-4">Durum Yönetimi</h3>
+                        <div className="space-y-4">
+                            <div className={`px-8 py-4 rounded-2xl text-12px font-semibold italic text-center  tracking-[0.2em] mb-4 ${getStatusColor(order.status)}`}>
+                                {order.status}
+                            </div>
+
+                            <select
+                                onChange={(e) => updateStatus(e.target.value)}
+                                value={order.status}
+                                className="w-full bg-slate-50 border border-slate-100 rounded-xl px-6 py-4 text-[11px] font-semibold  tracking-widest italic focus:outline-none focus:border-brand-pink transition-all appearance-none cursor-pointer text-center"
+                            >
+                                <option value="PENDING">BEKLEMEDE</option>
+                                <option value="PROCESSING">HAZIRLANALIM</option>
+                                <option value="SHIPPED">KARGOLANDI</option>
+                                <option value="DELIVERED">TESLİM EDİLDİ</option>
+                                <option value="CANCELLED">İPTAL EDİLDİ</option>
+                            </select>
                         </div>
-                        <p className="text-[9px] font-bold text-slate-400 mt-6 text-center italic uppercase">OLUŞTURULMA TARİHİ: {new Date(order.createdAt).toLocaleString('tr-TR')}</p>
+                        <p className="text-9px font-bold text-slate-400 mt-6 text-center italic ">SON GÜNCELLEME: {new Date(order.createdAt).toLocaleString('tr-TR')}</p>
                     </div>
                 </div>
             </div>

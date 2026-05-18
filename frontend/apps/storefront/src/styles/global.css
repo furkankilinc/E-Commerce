@@ -1,4 +1,4 @@
-@import "@frontend/ui/theme";
+@import "../../../../packages/ui/src/styles/theme.css";
 
 :root {
     background-color: #ffffff;

@@ -35,7 +35,7 @@ const StocksPage: React.FC = () => {
             let url = `/api/merchant/products?page=${page}&limit=20&search=${encodeURIComponent(search)}`;
             if (filter === 'low') url += '&stockStatus=low';
             if (filter === 'out') url += '&stockStatus=out';
-            
+
             const res = await apiClient.get(url);
             if (res.ok) {
                 const data = await res.json();
@@ -117,9 +117,9 @@ const StocksPage: React.FC = () => {
     return (
         <div className="max-w-[1400px] mx-auto min-h-screen pb-20">
             {/* Page Header */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+            <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 gap-6">
                 <div>
-                    <h1 className="text-[36px] font-black text-slate-800 tracking-tight mb-2">
+                    <h1 className="text-[36px] font-semibold text-slate-800 tracking-tight mb-2">
                         Stok <span className="text-indigo-600">Yönetimi</span>
                     </h1>
                     <p className="text-slate-500 font-medium text-sm max-w-lg">
@@ -131,14 +131,14 @@ const StocksPage: React.FC = () => {
                         <>
                             <button
                                 onClick={handleResetChanges}
-                                className="px-6 py-3 bg-white border border-slate-200 rounded-md text-xs font-bold uppercase tracking-wider text-slate-400 hover:bg-slate-50 transition-all"
+                                className="px-6 py-3 bg-white border border-slate-200 rounded-md text-xs font-bold  tracking-wider text-slate-400 hover:bg-slate-50 transition-all"
                             >
                                 SIFIRLA
                             </button>
                             <button
                                 onClick={handleSaveAll}
                                 disabled={isSaving}
-                                className="px-8 py-3 bg-indigo-600 text-white rounded-md text-xs font-bold uppercase tracking-widest shadow-lg shadow-indigo-100 transition-all active:scale-95 flex items-center gap-2"
+                                className="px-8 py-3 bg-indigo-600 text-white rounded-md text-xs font-bold  tracking-widest shadow-lg shadow-indigo-100 transition-all active:scale-95 flex items-center gap-2"
                             >
                                 {isSaving && <div className="w-4 h-4 border-2 border-white/50 border-t-white rounded-full animate-spin"></div>}
                                 {changedCount} ÜRÜN KAYDET
@@ -149,15 +149,15 @@ const StocksPage: React.FC = () => {
             </div>
 
             {/* Stats Bar */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <div className="bg-white rounded-md p-6 border border-slate-100 shadow-sm col-span-1">
                     <div className="flex items-center gap-3 mb-3">
                         <div className="w-10 h-10 bg-indigo-50 rounded-md flex items-center justify-center">
                             <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-14L4 7m8 4v10M4 7v10l8 4" /></svg>
                         </div>
-                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">TOPLAM STOK ADEDİ</span>
+                        <span className="text-10px font-semibold text-slate-400  tracking-widest">TOPLAM STOK ADEDİ</span>
                     </div>
-                    <span className="text-3xl font-black text-indigo-600">{(totalStockVolume || 0).toLocaleString()}</span>
+                    <span className="text-3xl font-semibold text-indigo-600">{(totalStockVolume || 0).toLocaleString()}</span>
                 </div>
                 {/* Product count card removed as requested */}
                 <div className="bg-white rounded-md p-6 border border-slate-100 shadow-sm">
@@ -165,18 +165,18 @@ const StocksPage: React.FC = () => {
                         <div className="w-10 h-10 bg-amber-50 rounded-md flex items-center justify-center">
                             <svg className="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.072 16.5c-.77.833.192 2.5 1.732 2.5z" /></svg>
                         </div>
-                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">DÜŞÜK STOK (SAYFA)</span>
+                        <span className="text-10px font-semibold text-slate-400  tracking-widest">DÜŞÜK STOK (SAYFA)</span>
                     </div>
-                    <span className="text-3xl font-black text-amber-600">{lowStockCount}</span>
+                    <span className="text-3xl font-semibold text-amber-600">{lowStockCount}</span>
                 </div>
                 <div className="bg-white rounded-md p-6 border border-slate-100 shadow-sm">
                     <div className="flex items-center gap-3 mb-3">
                         <div className="w-10 h-10 bg-rose-50 rounded-md flex items-center justify-center">
                             <svg className="w-5 h-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
                         </div>
-                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">TÜKENMİŞ (SAYFA)</span>
+                        <span className="text-10px font-semibold text-slate-400  tracking-widest">TÜKENMİŞ (SAYFA)</span>
                     </div>
-                    <span className="text-3xl font-black text-rose-600">{outOfStockCount}</span>
+                    <span className="text-3xl font-semibold text-rose-600">{outOfStockCount}</span>
                 </div>
             </div>
 
@@ -187,7 +187,7 @@ const StocksPage: React.FC = () => {
                         <button
                             key={f}
                             onClick={() => setStockFilter(f)}
-                            className={`px-5 py-3 rounded-md text-[10px] font-black uppercase tracking-wider transition-all ${stockFilter === f
+                            className={`px-5 py-3 rounded-md text-10px font-semibold  tracking-wider transition-all ${stockFilter === f
                                 ? 'bg-indigo-600 text-white shadow-md'
                                 : 'bg-slate-50 text-slate-500 hover:bg-slate-100 border border-slate-200'
                                 }`}
@@ -203,7 +203,7 @@ const StocksPage: React.FC = () => {
                 {isLoading ? (
                     <div className="p-20 text-center">
                         <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                        <p className="text-slate-400 font-bold text-xs uppercase tracking-widest">Yükleniyor...</p>
+                        <p className="text-slate-400 font-bold text-xs  tracking-widest">Yükleniyor...</p>
                     </div>
                 ) : filteredProducts.length === 0 ? (
                     <div className="p-20 text-center">
@@ -213,13 +213,13 @@ const StocksPage: React.FC = () => {
                     <table className="w-full text-left">
                         <thead className="bg-slate-50 border-b border-slate-100">
                             <tr>
-                                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">ÜRÜN</th>
-                                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">SKU</th>
-                                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">KATEGORİ</th>
-                                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">FİYAT</th>
-                                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">MEVCUT STOK</th>
-                                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">YENİ STOK</th>
-                                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">DURUM</th>
+                                <th className="px-6 py-4 text-10px font-semibold text-slate-400  tracking-widest">ÜRÜN</th>
+                                <th className="px-6 py-4 text-10px font-semibold text-slate-400  tracking-widest">SKU</th>
+                                <th className="px-6 py-4 text-10px font-semibold text-slate-400  tracking-widest">KATEGORİ</th>
+                                <th className="px-6 py-4 text-10px font-semibold text-slate-400  tracking-widest">FİYAT</th>
+                                <th className="px-6 py-4 text-10px font-semibold text-slate-400  tracking-widest">MEVCUT STOK</th>
+                                <th className="px-6 py-4 text-10px font-semibold text-slate-400  tracking-widest">YENİ STOK</th>
+                                <th className="px-6 py-4 text-10px font-semibold text-slate-400  tracking-widest">DURUM</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-50">
@@ -234,7 +234,7 @@ const StocksPage: React.FC = () => {
                                             <div className="flex items-center gap-4">
                                                 <div className="w-12 h-12 rounded-md bg-slate-50 border border-slate-100 overflow-hidden flex-shrink-0">
                                                     {mainImage ? (
-                                                        <img src={mainImage.url} alt="" className="w-full h-full object-cover" />
+                                                        <img src={mainImage.url} alt="" className="w-full h-full object-contain" />
                                                     ) : (
                                                         <div className="w-full h-full flex items-center justify-center text-slate-300">
                                                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
@@ -251,10 +251,10 @@ const StocksPage: React.FC = () => {
                                             <span className="text-xs font-bold text-slate-500">{product.category?.name || '-'}</span>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <span className="text-sm font-black text-slate-800">{product.price.toLocaleString()} ₺</span>
+                                            <span className="text-sm font-semibold text-slate-800">{product.price.toLocaleString()} ₺</span>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <span className={`text-lg font-black ${stockLevel === 'out' ? 'text-rose-600' : stockLevel === 'low' ? 'text-amber-600' : 'text-emerald-600'}`}>
+                                            <span className={`text-lg font-semibold ${stockLevel === 'out' ? 'text-rose-600' : stockLevel === 'low' ? 'text-amber-600' : 'text-emerald-600'}`}>
                                                 {product.stock}
                                             </span>
                                         </td>
@@ -283,7 +283,7 @@ const StocksPage: React.FC = () => {
                                             />
                                         </td>
                                         <td className="px-6 py-4">
-                                            <span className={`px-3 py-1.5 rounded-md text-[9px] font-black uppercase tracking-wider ${stockLevel === 'out'
+                                            <span className={`px-3 py-1.5 rounded-md text-9px font-semibold  tracking-wider ${stockLevel === 'out'
                                                 ? 'bg-rose-50 text-rose-600'
                                                 : stockLevel === 'low'
                                                     ? 'bg-amber-50 text-amber-600'
@@ -311,7 +311,7 @@ const StocksPage: React.FC = () => {
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
                     </button>
 
-                    <div className="flex items-center gap-2 bg-white px-6 py-2 rounded-[2rem] border border-slate-50 shadow-sm">
+                    <div className="flex items-center gap-2 bg-white px-6 py-2 rounded-2xl border border-slate-50 shadow-sm">
                         {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
                             let pageNum = pagination.page;
                             if (pagination.page <= 3) pageNum = i + 1;
@@ -324,7 +324,7 @@ const StocksPage: React.FC = () => {
                                 <button
                                     key={pageNum}
                                     onClick={() => handlePageChange(pageNum)}
-                                    className={`w-10 h-10 rounded-xl text-[10px] font-black transition-all ${pagination.page === pageNum ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-600/30 scale-110' : 'text-slate-400 hover:text-slate-900'}`}
+                                    className={`w-10 h-10 rounded-xl text-10px font-semibold transition-all ${pagination.page === pageNum ? 'bg-indigo-600 text-white  shadow-indigo-600/30 scale-110' : 'text-slate-400 hover:text-slate-900'}`}
                                 >
                                     {pageNum}
                                 </button>
@@ -344,22 +344,22 @@ const StocksPage: React.FC = () => {
 
             {/* Floating Save Bar */}
             {changedCount > 0 && (
-                <div className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-slate-900 text-white rounded-md px-8 py-4 shadow-2xl shadow-slate-900/40 flex items-center gap-6 z-50 animate-in slide-in-from-bottom duration-300">
+                <div className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-slate-900 text-white rounded-md px-8 py-2 shadow-xl shadow-slate-900/40 flex items-center gap-6 z-50 animate-in slide-in-from-bottom duration-300">
                     <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-indigo-500 rounded-md flex items-center justify-center text-white font-black text-sm">{changedCount}</div>
+                        <div className="w-8 h-8 bg-indigo-500 rounded-md flex items-center justify-center text-white font-semibold text-sm">{changedCount}</div>
                         <span className="text-sm font-bold">ürün değiştirildi</span>
                     </div>
-                    <div className="w-px h-8 bg-slate-700"></div>
+                    <div className="w-px h-16 bg-slate-700"></div>
                     <button
                         onClick={handleResetChanges}
-                        className="text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-white transition-colors"
+                        className="text-xs font-bold  tracking-wider text-slate-400 hover:text-white transition-colors"
                     >
                         İptal
                     </button>
                     <button
                         onClick={handleSaveAll}
                         disabled={isSaving}
-                        className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 rounded-md text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2"
+                        className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 rounded-md text-xs font-bold  tracking-wider transition-all flex items-center gap-2"
                     >
                         {isSaving && <div className="w-3 h-3 border-2 border-white/50 border-t-white rounded-full animate-spin"></div>}
                         KAYDET

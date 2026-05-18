@@ -23,16 +23,15 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
             >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" /></svg>
             </button>
-            
+
             {pages.map(page => (
                 <button
                     key={page}
                     onClick={() => onPageChange(page)}
-                    className={`w-10 h-10 rounded-xl text-xs font-black transition-all ${
-                        currentPage === page 
-                        ? 'bg-admin-navy text-white shadow-lg' 
-                        : 'bg-white border border-slate-100 text-slate-400 hover:text-brand-pink hover:border-brand-pink'
-                    }`}
+                    className={`w-10 h-10 rounded-xl text-xs font-semibold transition-all ${currentPage === page
+                            ? 'bg-admin-navy text-white shadow-lg'
+                            : 'bg-white border border-slate-100 text-slate-400 hover:text-brand-pink hover:border-brand-pink'
+                        }`}
                 >
                     {page}
                 </button>

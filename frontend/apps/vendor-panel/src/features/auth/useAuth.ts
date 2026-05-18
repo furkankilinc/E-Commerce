@@ -30,7 +30,7 @@ export const useAuth = () => {
                     const res = await apiClient.post('/api/auth/merchant/refresh', { refreshToken: rfToken });
                     if (res.ok) {
                         const data = await res.json();
-                        authStore.setAuth(data.accessToken, data.refreshToken, authStore.getMerchant()!);
+                        authStore.setAuth(data.accessToken, data.refreshToken, data.merchant || authStore.getMerchant()!);
                     } else if (res.status === 401) {
                         logout();
                     }

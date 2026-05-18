@@ -13,11 +13,10 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
         <button
             key={p}
             onClick={() => onPageChange(p)}
-            className={`w-14 h-14 rounded-md text-xs font-black transition-all ${
-                currentPage === p
-                    ? 'bg-brand-pink text-white shadow-xl shadow-brand-pink/20 scale-110'
-                    : 'bg-white border-2 border-gray-50 text-gray-300 hover:text-gray-900 group-hover:border-gray-100 hover:scale-105'
-            }`}
+            className={`w-14 h-14 rounded-md text-xs font-semibold transition-all ${currentPage === p
+                ? 'bg-brand-pink text-white  shadow-brand-pink/20 scale-110'
+                : 'bg-white border-2 border-gray-50 text-gray-300 hover:text-gray-900 group-hover:border-gray-100 hover:scale-105'
+                }`}
         >
             {p}
         </button>
@@ -30,14 +29,14 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
         for (let i = 1; i <= totalPages; i++) pages.push(renderPageNumber(i));
     } else {
         pages.push(renderPageNumber(1));
-        if (currentPage > 3) pages.push(<span key="dots-start" className="text-gray-200 font-black">...</span>);
-        
+        if (currentPage > 3) pages.push(<span key="dots-start" className="text-gray-200 font-semibold">...</span>);
+
         const start = Math.max(2, currentPage - 1);
         const end = Math.min(totalPages - 1, currentPage + 1);
-        
+
         for (let i = start; i <= end; i++) pages.push(renderPageNumber(i));
-        
-        if (currentPage < totalPages - 2) pages.push(<span key="dots-end" className="text-gray-200 font-black">...</span>);
+
+        if (currentPage < totalPages - 2) pages.push(<span key="dots-end" className="text-gray-200 font-semibold">...</span>);
         pages.push(renderPageNumber(totalPages));
     }
 

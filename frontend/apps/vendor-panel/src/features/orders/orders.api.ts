@@ -27,9 +27,11 @@ export interface Order {
 }
 
 export const ordersApi = {
-    getOrders: async (page = 1, limit = 10, status?: string) => {
+    getOrders: async (page = 1, limit = 10, status?: string, search?: string, sort?: string) => {
         let url = `/api/merchant/orders?page=${page}&limit=${limit}`;
         if (status) url += `&status=${status}`;
+        if (search) url += `&search=${encodeURIComponent(search)}`;
+        if (sort) url += `&sort=${sort}`;
         const res = await apiClient.get(url);
         return res.json();
     },

@@ -80,7 +80,8 @@ export const cartStore = {
                     image: (product.images?.find((img: any) => img.isMain) || product.images?.[0])?.url || '',
                     quantity: 1,
                     variant: variant,
-                    stock: product.stock // Keep stock info for further checks
+                    stock: product.stock, // Keep stock info for further checks
+                    merchantId: product.merchantId || product.merchant?.id || ''
                 },
             ];
         }
@@ -144,6 +145,45 @@ export const cartStore = {
             console.error('Failed to fetch cart from Redis:', err);
         }
     },
+    refreshCart: async () => {
+        if (cartItems.length === 0) return;
+        let hasChanges = false;
+        const validItems = [];
+        
+        for (const item of cartItems) {
+            try {
+                const res = await apiClient(`/api/products/${item.id}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    const product = data.product || data;
+                    if (product && product.status === 'PUBLISHED') {
+                        const hasDiscount = product.discountPrice && product.discountPrice > 0;
+                        const newPrice = hasDiscount ? product.discountPrice : product.price;
+                        const newOriginalPrice = hasDiscount ? product.price : undefined;
+                        
+                        if (item.price !== newPrice || item.originalPrice !== newOriginalPrice || item.stock !== product.stock) {
+                            hasChanges = true;
+                            validItems.push({ ...item, price: newPrice, originalPrice: newOriginalPrice, stock: product.stock });
+                        } else {
+                            validItems.push(item);
+                        }
+                    } else {
+                        hasChanges = true; // Ürün yayından kalkmış
+                    }
+                } else {
+                    hasChanges = true; // Ürün bulunamadı
+                }
+            } catch (err) {
+                validItems.push(item); // Ağ hatasında sepetten silme
+            }
+        }
+        
+        if (hasChanges) {
+            cartItems = validItems;
+            notify();
+            toast.info('Sepetinizdeki bazı ürünlerin fiyatı veya stok durumu güncellendi.', { autoClose: 4000 });
+        }
+    },
     getItems: () => [...cartItems],
     getItemCount: () => cartItems.reduce((count, item) => count + item.quantity, 0),
     getTotal: () => cartItems.reduce((total, item) => total + item.price * item.quantity, 0),
@@ -169,6 +209,7 @@ export const useCart = () => {
         removeItem: cartStore.removeItem,
         decrementItem: cartStore.decrementItem,
         clearCart: cartStore.clearCart,
+        refreshCart: cartStore.refreshCart,
         itemCount: cartStore.getItemCount(),
         total: cartStore.getTotal(),
     };

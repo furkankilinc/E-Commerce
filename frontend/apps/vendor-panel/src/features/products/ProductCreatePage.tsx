@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useBlocker, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import {apiClient} from '../../shared/api/apiClient'
+import { apiClient } from '../../shared/api/apiClient'
 
 interface Category {
     id: string;
@@ -45,6 +45,8 @@ const ProductCreatePage: React.FC = () => {
     const [selectedLevel3, setSelectedLevel3] = useState('');
 
     const [productVariants, setProductVariants] = useState<ProductVariant[]>([]);
+    const [shippingCompanies, setShippingCompanies] = useState<{ id: string; name: string; logo: string }[]>([]);
+    const [selectedShippingCompanies, setSelectedShippingCompanies] = useState<{ companyId: string; extraFee: string }[]>([]);
 
     const [formData, setFormData] = useState({
         name: '',
@@ -82,7 +84,16 @@ const ProductCreatePage: React.FC = () => {
                     setLevel1Categories(catData.filter((c: Category) => !c.parentId));
                 }
 
-                // 2. Fetch Product if ID exists
+                // 2. Fetch Shipping Companies
+                const shipRes = await apiClient.get('/api/products/shipping-companies');
+                if (shipRes.ok) {
+                    const shipData = await shipRes.json();
+                    if (shipData.success) {
+                        setShippingCompanies(shipData.data);
+                    }
+                }
+
+                // 3. Fetch Product if ID exists
                 if (id) {
                     const prodRes = await apiClient.get(`/api/merchant/products/${id}`);
                     if (prodRes.ok) {
@@ -99,6 +110,7 @@ const ProductCreatePage: React.FC = () => {
                             status: prod.status || 'DRAFT'
                         });
                         setUploadedImages(prod.images?.map((img: any) => img.url) || []);
+                        setSelectedShippingCompanies(prod.metadata?.shippingCompanies || []);
 
                         // Set Category Levels
                         if (prod.categoryId && catData.length > 0) {
@@ -364,7 +376,11 @@ const ProductCreatePage: React.FC = () => {
         try {
             const metadata = {
                 taxRate: formData.taxRate,
-                currency: formData.currency
+                currency: formData.currency,
+                shippingCompanies: selectedShippingCompanies.map(sc => ({
+                    companyId: sc.companyId,
+                    extraFee: sc.extraFee === '' ? 0 : parseFloat(sc.extraFee.toString())
+                }))
             };
 
             // Backend'in beklediği temiz veri objesi
@@ -411,7 +427,7 @@ const ProductCreatePage: React.FC = () => {
             {/* Page Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-10">
                 <div className="relative group">
-                    <h1 className="text-[40px] font-black text-slate-800 tracking-tight mb-2">
+                    <h1 className="text-[40px] font-semibold text-slate-800 tracking-tight mb-2">
                         {id ? 'Ürünü' : 'Yeni Ürün'} <span className="text-indigo-600">{id ? 'Güncelle' : 'Tanımla'}</span>
                     </h1>
                     <p className="text-slate-500 font-medium text-base max-w-lg">
@@ -421,21 +437,21 @@ const ProductCreatePage: React.FC = () => {
                 <div className="flex gap-6">
                     <button
                         onClick={() => navigate('/products')}
-                        className="px-8 py-4 bg-white border border-slate-200 rounded-md text-xs font-bold uppercase tracking-wider text-slate-400 hover:bg-slate-50 transition-all"
+                        className="px-8 py-4 bg-white border border-slate-200 rounded-md text-xs font-bold  tracking-wider text-slate-400 hover:bg-slate-50 transition-all"
                     >
                         İPTAL
                     </button>
                     <button
                         onClick={() => handleSubmit('DRAFT')}
                         disabled={isLoading}
-                        className="px-8 py-4 bg-white border border-indigo-100 rounded-md text-xs font-bold uppercase tracking-widest text-indigo-600 hover:bg-indigo-50 transition-all shadow-sm"
+                        className="px-8 py-4 bg-white border border-indigo-100 rounded-md text-xs font-bold  tracking-widest text-indigo-600 hover:bg-indigo-50 transition-all shadow-sm"
                     >
                         TASLAK KAYDET
                     </button>
                     <button
                         onClick={() => handleSubmit('PUBLISHED')}
                         disabled={isLoading}
-                        className="px-10 py-4 bg-indigo-600 text-white rounded-md text-xs font-bold uppercase tracking-widest shadow-lg shadow-indigo-100 transition-all active:scale-95 flex items-center gap-3"
+                        className="px-10 py-4 bg-indigo-600 text-white rounded-md text-xs font-bold  tracking-widest shadow-lg shadow-indigo-100 transition-all active:scale-95 flex items-center gap-3"
                     >
                         {isLoading && <div className="w-4 h-4 border-2 border-white/50 border-t-white rounded-full animate-spin"></div>}
                         ÜRÜNÜ YAYINLA
@@ -448,38 +464,38 @@ const ProductCreatePage: React.FC = () => {
                     {/* Basic Info */}
                     <div className="bg-white rounded-md p-12 shadow-sm border border-slate-50 relative overflow-hidden group">
                         <div className="absolute top-0 right-0 w-64 h-64 bg-slate-50 rounded-bl-[5rem] -translate-x-12 -translate-y-12 opacity-50 pointer-events-none group-hover:scale-110 transition-transform duration-1000"></div>
-                        <div className="flex items-center gap-4 mb-10 relative z-10">
+                        <div className="flex items-center gap-4 mb-5 relative z-10">
                             <div className="w-12 h-12 bg-indigo-50 rounded-md flex items-center justify-center text-indigo-600">
                                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                             </div>
-                            <h3 className="text-xl font-bold text-slate-800 uppercase tracking-tight">Genel Bilgiler</h3>
+                            <h3 className="text-xl font-bold text-slate-800  tracking-tight">Genel Bilgiler</h3>
                         </div>
 
                         <div className="space-y-10 relative z-10">
                             <div className="space-y-3">
-                                <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 ml-1">ÜRÜN ADI</label>
+                                <label className="text-10px font-bold  tracking-wider text-slate-400 ml-1">ÜRÜN ADI</label>
                                 <input
                                     type="text"
                                     name="name"
                                     value={formData.name}
                                     onChange={handleChange}
                                     placeholder="Ürün başlığını buraya yazın..."
-                                    className="w-full h-16 px-8 rounded-md bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:bg-white outline-none transition-all font-semibold text-slate-700"
+                                    className="w-full h-12 px-8 rounded-md bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:bg-white outline-none transition-all font-semibold text-slate-700"
                                 />
                             </div>
 
                             <div className="space-y-4">
-                                <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 italic ml-2">KATEGORİ SEÇİMİ</label>
+                                <label className="text-[11px] font-semibold  tracking-[0.2em] text-slate-400 italic ml-2">KATEGORİ SEÇİMİ</label>
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                    <select value={selectedLevel1} onChange={handleLevel1Change} className="h-16 px-6 rounded-md bg-slate-50 border-2 border-transparent focus:border-brand-pink outline-none font-bold italic">
+                                    <select value={selectedLevel1} onChange={handleLevel1Change} className="h-12 px-6 rounded-md bg-slate-50 border-2 border-transparent focus:border-brand-pink outline-none font-bold italic">
                                         <option value="">Ana Kategori</option>
                                         {level1Categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
                                     </select>
-                                    <select value={selectedLevel2} onChange={handleLevel2Change} disabled={!selectedLevel1 || level2Categories.length === 0} className="h-16 px-6 rounded-md bg-slate-50 border-2 border-transparent focus:border-brand-pink outline-none font-bold italic disabled:opacity-30">
+                                    <select value={selectedLevel2} onChange={handleLevel2Change} disabled={!selectedLevel1 || level2Categories.length === 0} className="h-12 px-6 rounded-md bg-slate-50 border-2 border-transparent focus:border-brand-pink outline-none font-bold italic disabled:opacity-30">
                                         <option value="">Alt Kategori</option>
                                         {level2Categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
                                     </select>
-                                    <select value={selectedLevel3} onChange={(e) => { setSelectedLevel3(e.target.value); setIsDirty(true); }} disabled={!selectedLevel2 || level3Categories.length === 0} className="h-16 px-6 rounded-md bg-slate-50 border-2 border-transparent focus:border-brand-pink outline-none font-bold italic disabled:opacity-30">
+                                    <select value={selectedLevel3} onChange={(e) => { setSelectedLevel3(e.target.value); setIsDirty(true); }} disabled={!selectedLevel2 || level3Categories.length === 0} className="h-12 px-6 rounded-md bg-slate-50 border-2 border-transparent focus:border-brand-pink outline-none font-bold italic disabled:opacity-30">
                                         <option value="">Detay Kategori</option>
                                         {level3Categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
                                     </select>
@@ -490,20 +506,20 @@ const ProductCreatePage: React.FC = () => {
 
                     {/* Variant Management */}
                     <div className="bg-white rounded-md p-12 shadow-sm border border-slate-50 relative group">
-                        <div className="flex items-center justify-between mb-12">
+                        <div className="flex items-center justify-between mb-6">
                             <div className="flex items-center gap-6">
                                 <div className="w-14 h-14 bg-indigo-50 rounded-md flex items-center justify-center text-indigo-500 shadow-inner">
                                     <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
                                 </div>
-                                <h3 className="text-2xl font-[900] text-slate-900 uppercase tracking-tighter italic">ÜRÜN VARYANTLARI</h3>
+                                <h3 className="text-2xl font-[900] text-slate-900  tracking-tighter italic">ÜRÜN VARYANTLARI</h3>
                             </div>
                         </div>
 
                         {/* Variant Add Form */}
-                        <div className="bg-slate-50 p-8 rounded-md border border-slate-100 mb-10 space-y-6">
+                        <div className="bg-slate-50 p-8 rounded-md border border-slate-100 mb-5 space-y-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Özellik (Tip)</label>
+                                    <label className="text-10px font-semibold text-slate-400  ml-1">Özellik (Tip)</label>
                                     <input
                                         id="newAttrKey"
                                         type="text"
@@ -512,7 +528,7 @@ const ProductCreatePage: React.FC = () => {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Değer (Seçenek)</label>
+                                    <label className="text-10px font-semibold text-slate-400  ml-1">Değer (Seçenek)</label>
                                     <input
                                         id="newAttrVal"
                                         type="text"
@@ -521,11 +537,11 @@ const ProductCreatePage: React.FC = () => {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Fiyat Farkı (+/-)</label>
+                                    <label className="text-10px font-semibold text-slate-400  ml-1">Fiyat Farkı (+/-)</label>
                                     <input id="newAttrPrice" type="number" placeholder="0.00" className="w-full h-12 px-4 rounded-md bg-white border border-slate-200 text-sm font-bold outline-none focus:border-indigo-500" />
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Stok</label>
+                                    <label className="text-10px font-semibold text-slate-400  ml-1">Stok</label>
                                     <input id="newAttrStock" type="number" placeholder="0" className="w-full h-12 px-4 rounded-md bg-white border border-slate-200 text-sm font-bold outline-none focus:border-indigo-500" />
                                 </div>
                                 <div className="flex items-end">
@@ -553,7 +569,7 @@ const ProductCreatePage: React.FC = () => {
                                             priceInput.value = '';
                                             stockInput.value = '';
                                         }}
-                                        className="w-full h-12 bg-indigo-600 text-white rounded-md text-xs font-black uppercase shadow-lg shadow-indigo-100 hover:scale-105 transition-all active:scale-95"
+                                        className="w-full h-12 bg-indigo-600 text-white rounded-md text-xs font-semibold  shadow-lg shadow-indigo-100 hover:scale-105 transition-all active:scale-95"
                                     >
                                         Seçenek Ekle
                                     </button>
@@ -566,11 +582,11 @@ const ProductCreatePage: React.FC = () => {
                             <table className="w-full text-left">
                                 <thead className="bg-slate-50 border-b border-slate-100">
                                     <tr>
-                                        <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Özellik</th>
-                                        <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Değer</th>
-                                        <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Fiyat</th>
-                                        <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Stok</th>
-                                        <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Sil</th>
+                                        <th className="px-6 py-4 text-10px font-semibold text-slate-400  tracking-widest">Özellik</th>
+                                        <th className="px-6 py-4 text-10px font-semibold text-slate-400  tracking-widest">Değer</th>
+                                        <th className="px-6 py-4 text-10px font-semibold text-slate-400  tracking-widest">Fiyat</th>
+                                        <th className="px-6 py-4 text-10px font-semibold text-slate-400  tracking-widest">Stok</th>
+                                        <th className="px-6 py-4 text-10px font-semibold text-slate-400  tracking-widest text-right">Sil</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-50">
@@ -581,9 +597,9 @@ const ProductCreatePage: React.FC = () => {
                                     )}
                                     {productVariants.map((v, i) => (
                                         <tr key={i} className="hover:bg-slate-50/50 transition-colors">
-                                            <td className="px-6 py-4 text-sm font-black text-slate-800 uppercase italic">{v.name}</td>
+                                            <td className="px-6 py-4 text-sm font-semibold text-slate-800  italic">{v.name}</td>
                                             <td className="px-6 py-4">
-                                                <span className="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-lg text-xs font-black uppercase">{v.value}</span>
+                                                <span className="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-lg text-xs font-semibold ">{v.value}</span>
                                             </td>
                                             <td className="px-6 py-4">
                                                 <input
@@ -631,42 +647,42 @@ const ProductCreatePage: React.FC = () => {
                     </div>
 
                     <div className="bg-white rounded-md p-12 shadow-sm border border-slate-50 relative group">
-                        <div className="flex items-center justify-between mb-10">
+                        <div className="flex items-center justify-between mb-5">
                             <div className="flex items-center gap-4">
                                 <div className="w-12 h-12 bg-amber-50 rounded-md flex items-center justify-center text-amber-600">
                                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
                                 </div>
-                                <h3 className="text-xl font-bold text-slate-800 uppercase tracking-tight">Ürün İçerik Editörü</h3>
+                                <h3 className="text-xl font-bold text-slate-800  tracking-tight">Ürün İçerik Editörü</h3>
                             </div>
                         </div>
 
-                        <div className="space-y-6 mb-10">
+                        <div className="space-y-6 mb-5">
                             {blocks.length === 0 && (
                                 <div className="py-16 text-center bg-slate-50 rounded-md border-2 border-dashed border-slate-200">
-                                    <p className="text-slate-400 font-bold text-xs uppercase tracking-widest">Henüz içerik bloğu eklenmedi.</p>
+                                    <p className="text-slate-400 font-bold text-xs  tracking-widest">Henüz içerik bloğu eklenmedi.</p>
                                 </div>
                             )}
 
                             {blocks.map((block, index) => (
                                 <div key={block.id} className="group/block relative bg-white rounded-md p-6 border border-slate-200 hover:border-indigo-300 hover:shadow-md transition-all">
                                     <div className="absolute -left-3 top-1/2 -translate-y-1/2 flex flex-col gap-1 opacity-0 group-hover/block:opacity-100 transition-all z-10">
-                                        <button onClick={() => moveBlock(index, 'up')} className="w-8 h-8 bg-white border border-slate-200 shadow-sm rounded-lg flex items-center justify-center text-slate-400 hover:text-indigo-600"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 15l7-7 7 7" /></svg></button>
-                                        <button onClick={() => moveBlock(index, 'down')} className="w-8 h-8 bg-white border border-slate-200 shadow-sm rounded-lg flex items-center justify-center text-slate-400 hover:text-indigo-600"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7" /></svg></button>
+                                        <button onClick={() => moveBlock(index, 'up')} className="w-8 h-12 bg-white border border-slate-200 shadow-sm rounded-lg flex items-center justify-center text-slate-400 hover:text-indigo-600"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 15l7-7 7 7" /></svg></button>
+                                        <button onClick={() => moveBlock(index, 'down')} className="w-8 h-12 bg-white border border-slate-200 shadow-sm rounded-lg flex items-center justify-center text-slate-400 hover:text-indigo-600"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7" /></svg></button>
                                     </div>
                                     <div className="absolute -right-3 top-1/2 -translate-y-1/2 opacity-0 group-hover/block:opacity-100 transition-all z-10">
-                                        <button onClick={() => removeBlock(block.id)} className="w-8 h-8 bg-white border border-red-100 shadow-sm rounded-lg flex items-center justify-center text-red-400 hover:bg-red-500 hover:text-white transition-colors"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12" /></svg></button>
+                                        <button onClick={() => removeBlock(block.id)} className="w-8 h-12 bg-white border border-red-100 shadow-sm rounded-lg flex items-center justify-center text-red-400 hover:bg-red-500 hover:text-white transition-colors"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12" /></svg></button>
                                     </div>
 
                                     {block.type === 'HEADING' && (
                                         <div className="space-y-2">
-                                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">BÖLÜM BAŞLIĞI</span>
+                                            <span className="text-9px font-bold text-slate-400  tracking-widest">BÖLÜM BAŞLIĞI</span>
                                             <input type="text" value={block.content} onChange={(e) => updateBlock(block.id, e.target.value)} placeholder="Başlık..." className="w-full bg-transparent text-2xl font-bold text-slate-800 outline-none" />
                                         </div>
                                     )}
 
                                     {block.type === 'TEXT' && (
                                         <div className="space-y-2">
-                                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">PARAGRAF METNİ</span>
+                                            <span className="text-9px font-bold text-slate-400  tracking-widest">PARAGRAF METNİ</span>
                                             <textarea value={block.content} onChange={(e) => updateBlock(block.id, e.target.value)} placeholder="Açıklama metni..." className="w-full min-h-[100px] bg-transparent text-sm font-medium text-slate-600 outline-none leading-relaxed resize-none" />
                                         </div>
                                     )}
@@ -674,17 +690,17 @@ const ProductCreatePage: React.FC = () => {
                                     {block.type === 'IMAGE' && (
                                         <div className="space-y-4">
                                             <div className="flex items-center justify-between">
-                                                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">GÖRSEL BLOĞU</span>
+                                                <span className="text-9px font-bold text-slate-400  tracking-widest">GÖRSEL BLOĞU</span>
                                                 {block.content && typeof block.content !== 'string' && block.content.url && (
                                                     <div className="flex bg-slate-100 p-1 rounded-xl gap-1">
                                                         <div className="flex border-r border-slate-200 pr-1 gap-1">
                                                             {['33', '50', '75', '100'].map(w => (
-                                                                <button key={w} onClick={() => updateBlock(block.id, { ...block.content, width: w })} className={`px-2 py-1 text-[9px] font-black rounded-lg transition-all ${block.content.width === w ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}>{w}%</button>
+                                                                <button key={w} onClick={() => updateBlock(block.id, { ...block.content, width: w })} className={`px-2 py-1 text-9px font-semibold rounded-lg transition-all ${block.content.width === w ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}>{w}%</button>
                                                             ))}
                                                         </div>
                                                         <div className="flex pl-1 gap-1">
                                                             {['left', 'center', 'right'].map(a => (
-                                                                <button key={a} onClick={() => updateBlock(block.id, { ...block.content, align: a })} className={`px-2 py-1 text-[9px] font-black rounded-lg transition-all uppercase ${block.content.align === a ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}>{a[0]}</button>
+                                                                <button key={a} onClick={() => updateBlock(block.id, { ...block.content, align: a })} className={`px-2 py-1 text-9px font-semibold rounded-lg transition-all  ${block.content.align === a ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}>{a[0]}</button>
                                                             ))}
                                                         </div>
                                                     </div>
@@ -696,14 +712,14 @@ const ProductCreatePage: React.FC = () => {
                                                         <img src={typeof block.content === 'string' ? block.content : block.content.url} className="w-full h-auto max-h-[400px] object-contain p-4 transition-all" alt="" />
                                                         <label className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover/img:opacity-100 transition-all flex items-center justify-center cursor-pointer">
                                                             <input type="file" className="hidden" onChange={(e) => handleBlockImageUpload(e, block.id)} />
-                                                            <span className="text-white font-black text-[10px] uppercase tracking-widest backdrop-blur-sm px-4 py-2 rounded-xl bg-white/10 border border-white/20">DEĞİŞTİR</span>
+                                                            <span className="text-white font-semibold text-10px  tracking-widest backdrop-blur-sm px-4 py-2 rounded-xl bg-white/10 border border-white/20">DEĞİŞTİR</span>
                                                         </label>
                                                     </div>
                                                 ) : (
                                                     <label className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer bg-slate-50 hover:bg-slate-100 transition-colors">
                                                         <input type="file" className="hidden" onChange={(e) => handleBlockImageUpload(e, block.id)} />
                                                         <svg className="w-6 h-6 text-slate-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                                                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">GÖRSEL EKLE</span>
+                                                        <span className="text-10px font-bold text-slate-400  tracking-wider">GÖRSEL EKLE</span>
                                                     </label>
                                                 )}
                                             </div>
@@ -712,7 +728,7 @@ const ProductCreatePage: React.FC = () => {
 
                                     {block.type === 'FEATURES' && (
                                         <div className="space-y-3">
-                                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">TEKNİK DETAY LİSTESİ</span>
+                                            <span className="text-9px font-bold text-slate-400  tracking-widest">TEKNİK DETAY LİSTESİ</span>
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                                 {block.content.map((feature: string, fIdx: number) => (
                                                     <input key={fIdx} value={feature} onChange={(e) => {
@@ -728,12 +744,12 @@ const ProductCreatePage: React.FC = () => {
 
                                     {block.type === 'SPLIT' && (
                                         <div className="space-y-3">
-                                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">METİN & GÖRSEL (IKILI)</span>
+                                            <span className="text-9px font-bold text-slate-400  tracking-widest">METİN & GÖRSEL (IKILI)</span>
                                             <div className={`flex flex-col md:flex-row gap-6 ${block.content.reverse ? 'md:flex-row-reverse' : ''}`}>
                                                 <textarea value={block.content.text} onChange={(e) => updateBlock(block.id, { ...block.content, text: e.target.value })} placeholder="Metin..." className="flex-1 min-h-[120px] bg-slate-50 rounded-xl p-4 border border-slate-200 text-xs font-medium text-slate-600 outline-none focus:bg-white focus:border-indigo-500" />
                                                 <div className="flex-1 aspect-video rounded-xl bg-slate-50 border border-slate-200 overflow-hidden relative">
                                                     {block.content.image ? <img src={block.content.image} className="w-full h-full object-contain p-2" alt="" /> : (
-                                                        <label className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer"><input type="file" className="hidden" onChange={(e) => handleBlockImageUpload(e, block.id, 'image')} /><span className="text-[10px] font-bold text-slate-400 uppercase">+ GÖRSEL</span></label>
+                                                        <label className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer"><input type="file" className="hidden" onChange={(e) => handleBlockImageUpload(e, block.id, 'image')} /><span className="text-10px font-bold text-slate-400 ">+ GÖRSEL</span></label>
                                                     )}
                                                 </div>
                                             </div>
@@ -755,27 +771,27 @@ const ProductCreatePage: React.FC = () => {
 
                     {/* Image Upload Area */}
                     <div className="bg-white rounded-md p-12 shadow-sm border border-slate-50">
-                        <div className="flex items-center gap-6 mb-12">
+                        <div className="flex items-center gap-6 mb-6">
                             <div className="w-14 h-14 bg-pink-50 rounded-md flex items-center justify-center text-brand-pink">
                                 <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                             </div>
-                            <h3 className="text-2xl font-[900] text-slate-900 uppercase tracking-tighter italic">ÜRÜN GÖRSELLERİ</h3>
+                            <h3 className="text-2xl font-[900] text-slate-900  tracking-tighter italic">ÜRÜN GÖRSELLERİ</h3>
                         </div>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                             {uploadedImages.map((url, i) => (
                                 <div key={i} className="relative aspect-square rounded-md overflow-hidden border-2 border-slate-100 group bg-slate-50">
-                                    <img src={url} alt="" className="w-full h-full object-cover" />
-                                    <button onClick={() => removeImage(url)} className="absolute top-3 right-3 w-8 h-8 bg-white/90 rounded-md flex items-center justify-center text-red-500 opacity-0 group-hover:opacity-100 transition-all">X</button>
+                                    <img src={url} alt="" className="w-full h-full object-contain" />
+                                    <button onClick={() => removeImage(url)} className="absolute top-3 right-3 w-8 h-12 bg-white/90 rounded-md flex items-center justify-center text-red-500 opacity-0 group-hover:opacity-100 transition-all">X</button>
                                 </div>
                             ))}
                             {isUploading && (
                                 <div className="aspect-square rounded-md border-2 border-slate-100 bg-slate-50 flex items-center justify-center">
-                                    <div className="w-8 h-8 border-4 border-brand-pink border-t-white rounded-full animate-spin"></div>
+                                    <div className="w-8 h-12 border-4 border-brand-pink border-t-white rounded-full animate-spin"></div>
                                 </div>
                             )}
                             <label className="relative aspect-square rounded-md border-4 border-dashed border-slate-100 flex items-center justify-center cursor-pointer hover:bg-slate-50">
                                 <input type="file" multiple accept="image/*" onChange={handleImageUpload} className="hidden" />
-                                <span className="text-[10px] font-black text-slate-400 italic">+ EKLE</span>
+                                <span className="text-10px font-semibold text-slate-400 italic">+ EKLE</span>
                             </label>
                         </div>
                     </div>
@@ -784,35 +800,100 @@ const ProductCreatePage: React.FC = () => {
                 <div className="space-y-12">
                     {/* Pricing & Stock */}
                     <div className="bg-white rounded-md p-12 shadow-sm border border-slate-50">
-                        <div className="flex items-center gap-6 mb-12">
+                        <div className="flex items-center gap-6 mb-6">
                             <div className="w-14 h-14 bg-green-50 rounded-md flex items-center justify-center text-green-500">
                                 <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2" strokeWidth="3" /></svg>
                             </div>
-                            <h3 className="text-2xl font-[900] text-slate-900 uppercase tracking-tighter italic">FİYAT & STOK</h3>
+                            <h3 className="text-2xl font-[900] text-slate-900  tracking-tighter italic">FİYAT & STOK</h3>
                         </div>
                         <div className="space-y-10">
-                            <div className="grid grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                 <div className="space-y-4">
-                                    <label className="text-[11px] font-black uppercase text-slate-400 italic">PARA CİNSİ</label>
-                                    <select name="currency" value={formData.currency} onChange={handleChange} className="w-full h-16 px-8 rounded-md bg-slate-50 border-2 border-transparent outline-none font-black italic">
+                                    <label className="text-[11px] font-semibold  text-slate-400 italic">PARA CİNSİ</label>
+                                    <select name="currency" value={formData.currency} onChange={handleChange} className="w-full h-12 px-2 rounded-md bg-slate-50 border-2 border-transparent outline-none font-semibold italic">
                                         <option value="TL">TL</option>
                                         <option value="$">USD</option>
                                         <option value="€">EUR</option>
                                     </select>
                                 </div>
                                 <div className="space-y-4">
-                                    <label className="text-[11px] font-black uppercase text-slate-400 italic">FİYAT</label>
-                                    <input type="number" name="price" value={formData.price} onChange={handleChange} placeholder="9999.99" className="w-full h-16 px-8 rounded-md bg-slate-50 border-2 border-transparent outline-none font-black italic text-lg" />
+                                    <label className="text-[11px] font-semibold  text-slate-400 italic">FİYAT</label>
+                                    <input type="number" name="price" value={formData.price} onChange={handleChange} className="w-full h-12 px-2 rounded-md bg-slate-50 border-2 border-transparent outline-none font-semibold italic text-lg" />
                                 </div>
                             </div>
-                            <div className="grid grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                 <div className="space-y-4">
-                                    <label className="text-[11px] font-black uppercase text-slate-400 italic">İNDİRİMLİ FİYAT (OPSİYONEL)</label>
-                                    <input type="number" name="discountPrice" value={formData.discountPrice} onChange={handleChange} placeholder={formData.price ? (parseFloat(formData.price) * 0.9).toFixed(2) : "9999.99"} className="w-full h-16 px-8 rounded-md bg-indigo-50/30 border-2 border-indigo-100/50 focus:border-indigo-500 outline-none font-black italic text-indigo-600 text-lg" />
+                                    <label className="text-[11px] font-semibold  text-slate-400 italic">İNDİRİMLİ FİYAT</label>
+                                    <input type="number" name="discountPrice" value={formData.discountPrice} onChange={handleChange} placeholder={formData.price ? (parseInt(formData.price) * 0.8).toFixed(0) : "99"} className="w-full h-12 px-2 rounded-md bg-indigo-50/30 border-2 border-indigo-100/50 focus:border-indigo-500 outline-none font-semibold italic text-indigo-600 text-lg" />
                                 </div>
                                 <div className="space-y-4">
-                                    <label className="text-[11px] font-black uppercase text-slate-400 italic">STOK</label>
-                                    <input type="number" name="stock" value={formData.stock} onChange={handleChange} placeholder="9999" className="w-full h-16 px-8 rounded-md bg-slate-50 border-2 border-transparent outline-none font-black italic text-lg" />
+                                    <label className="text-[11px] font-semibold  text-slate-400 italic">STOK</label>
+                                    <input type="number" name="stock" value={formData.stock} onChange={handleChange} className="w-full h-12 px-2 rounded-md bg-slate-50 border-2 border-transparent outline-none font-semibold italic text-lg" />
+                                </div>
+                            </div>
+                            <div className="space-y-4 pt-6 border-t border-slate-100">
+                                <label className="text-[11px] font-semibold text-slate-400 italic">DESTEKLENEN KARGO FİRMALARI</label>
+                                <div className="space-y-4 bg-slate-50 rounded-md border border-slate-100 max-h-[300px] overflow-y-auto">
+                                    {shippingCompanies.map(comp => {
+                                        const isChecked = selectedShippingCompanies.some(sc => sc.companyId === comp.id);
+                                        const matchedCompany = selectedShippingCompanies.find(sc => sc.companyId === comp.id);
+                                        const extraFeeValue = (matchedCompany && matchedCompany.extraFee !== undefined && matchedCompany.extraFee !== null) ? matchedCompany.extraFee : '';
+
+                                        const handleCheckboxChange = (checked: boolean) => {
+                                            if (checked) {
+                                                setSelectedShippingCompanies(prev => [...prev, { companyId: comp.id, extraFee: '' }]);
+                                            } else {
+                                                setSelectedShippingCompanies(prev => prev.filter(sc => sc.companyId !== comp.id));
+                                            }
+                                            setIsDirty(true);
+                                        };
+
+                                        const handleExtraFeeChange = (val: string) => {
+                                            setSelectedShippingCompanies(prev => prev.map(sc =>
+                                                sc.companyId === comp.id ? { ...sc, extraFee: val } : sc
+                                            ));
+                                            setIsDirty(true);
+                                        };
+
+                                        return (
+                                            <div key={comp.id} className="p-4 bg-white rounded-md border border-slate-100 hover:border-slate-200 transition-all space-y-4">
+                                                <div className="flex items-center gap-4">
+                                                    <input
+                                                        type="checkbox"
+                                                        id={`comp-${comp.id}`}
+                                                        checked={isChecked}
+                                                        onChange={(e) => handleCheckboxChange(e.target.checked)}
+                                                        className="w-5 h-5 accent-indigo-600 cursor-pointer shrink-0"
+                                                    />
+                                                    <label htmlFor={`comp-${comp.id}`} className="text-xs font-bold text-slate-700 cursor-pointer flex items-center gap-2 select-none flex-1">
+                                                        <span className="text-xl shrink-0">{comp.logo}</span>
+                                                        <span className="truncate">{comp.name}</span>
+                                                    </label>
+                                                </div>
+
+                                                {isChecked && (
+                                                    <div className="flex items-center justify-between gap-3 pt-3 border-t border-slate-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                                                        <span className="text-10px font-semibold text-slate-400 tracking-wider">EKSTRA ÜCRET</span>
+                                                        <div className="relative flex-1 max-w-[120px]">
+                                                            <input
+                                                                type="number"
+                                                                step="0.01"
+                                                                value={extraFeeValue}
+                                                                onChange={(e) => handleExtraFeeChange(e.target.value)}
+                                                                placeholder="0.00"
+                                                                className="w-full h-10 pl-0 pr-4 rounded-md bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:bg-white outline-none font-bold text-xs transition-all text-center"
+                                                            />
+                                                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-9px font-semibold text-slate-400 pointer-events-none">₺</span>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        );
+                                    })}
+
+                                    {shippingCompanies.length === 0 && (
+                                        <p className="text-10px font-bold text-slate-400 italic text-center py-4">Kayıtlı aktif kargo firması bulunamadı.</p>
+                                    )}
                                 </div>
                             </div>
                         </div>

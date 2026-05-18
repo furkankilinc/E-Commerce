@@ -70,12 +70,12 @@ const AdminLoginPage = () => {
 
                     {/* Hero Content */}
                     <div className="max-w-xl">
-                        <h1 className="text-6xl font-extrabold text-white leading-tight mb-8">
+                        <h1 className="text-6xl font-extrabold text-white leading-tight mb-4">
                             Sistem <br />
                             <span className="text-brand-pink">Yönetimi</span>
                         </h1>
                         <p className="text-slate-300 text-lg leading-relaxed font-medium">
-                            Tüm platform için merkezi kontrol, güvenlik ve gerçek zamanlı izleme. 
+                            Tüm platform için merkezi kontrol, güvenlik ve gerçek zamanlı izleme.
                             Yönetici ekibinizi profesyonel seviyede araçlarla güçlendirin.
                         </p>
                     </div>
@@ -175,7 +175,7 @@ const AdminLoginPage = () => {
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full bg-brand-pink text-white py-5 rounded-2xl font-black text-lg hover:bg-brand-pink-hover shadow-xl shadow-brand-pink/20 transform active:scale-[0.98] transition-all tracking-wide disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full bg-brand-pink text-white py-5 rounded-2xl font-semibold text-lg hover:bg-brand-pink-hover  shadow-brand-pink/20 transform active:scale-[0.98] transition-all tracking-wide disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {isLoading ? 'Doğrulanıyor...' : 'Sisteme Giriş Yap'}
                         </button>
@@ -185,7 +185,7 @@ const AdminLoginPage = () => {
                 </div>
 
                 {/* Floating Footer */}
-                <div className="absolute bottom-10 flex gap-8 text-[11px] font-black uppercase tracking-widest text-slate-400">
+                <div className="absolute bottom-10 flex gap-8 text-[11px] font-semibold  tracking-widest text-slate-400">
                     <a href="#" className="hover:text-brand-pink transition-colors">Sistem Durumu</a>
                     <a href="#" className="hover:text-brand-pink transition-colors">Güvenlik Politikası</a>
                     <a href="#" className="hover:text-brand-pink transition-colors">Denetim Kayıtları</a>

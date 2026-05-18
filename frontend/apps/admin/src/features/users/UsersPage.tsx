@@ -65,13 +65,13 @@ const UsersPage: React.FC = () => {
         <div className="p-10 space-y-10">
             <div className="flex justify-between items-end">
                 <div>
-                   <h1 className="text-4xl font-[1000] text-admin-navy tracking-tighter italic uppercase leading-none mb-4">KULLANICI <span className="text-brand-pink">YÖNETİMİ</span></h1>
-                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic opacity-70">Sistemdeki tüm kayıtlı kullanıcıları yönet</p>
+                    <h1 className="text-4xl font-[1000] text-admin-navy tracking-tighter italic  leading-none mb-4">KULLANICI <span className="text-brand-pink">YÖNETİMİ</span></h1>
+                    <p className="text-10px font-semibold text-slate-400  tracking-widest italic opacity-70">Sistemdeki tüm kayıtlı kullanıcıları yönet</p>
                 </div>
-                
+
                 <div className="w-80 relative group">
-                    <input 
-                        type="text" 
+                    <input
+                        type="text"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         placeholder="İsim veya e-posta ara..."
@@ -81,57 +81,56 @@ const UsersPage: React.FC = () => {
                 </div>
             </div>
 
-            <div className="bg-white rounded-[3rem] border border-slate-100 shadow-sm overflow-hidden">
+            <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
                 <table className="w-full">
                     <thead>
                         <tr className="border-b border-slate-50 bg-slate-50/50">
-                            <th className="px-10 py-8 text-[10px] font-black text-slate-400 uppercase tracking-widest italic">Kullanıcı</th>
-                            <th className="px-10 py-8 text-[10px] font-black text-slate-400 uppercase tracking-widest italic">İletişim</th>
-                            <th className="px-10 py-8 text-[10px] font-black text-slate-400 uppercase tracking-widest italic text-center">Durum</th>
-                            <th className="px-10 py-8 text-[10px] font-black text-slate-400 uppercase tracking-widest italic text-center">Kayıt Tarihi</th>
-                            <th className="px-10 py-8 text-[10px] font-black text-slate-400 uppercase tracking-widest italic text-right">İşlemler</th>
+                            <th className="px-10 py-8 text-10px font-semibold text-slate-400  tracking-widest italic">Kullanıcı</th>
+                            <th className="px-10 py-8 text-10px font-semibold text-slate-400  tracking-widest italic">İletişim</th>
+                            <th className="px-10 py-8 text-10px font-semibold text-slate-400  tracking-widest italic text-center">Durum</th>
+                            <th className="px-10 py-8 text-10px font-semibold text-slate-400  tracking-widest italic text-center">Kayıt Tarihi</th>
+                            <th className="px-10 py-8 text-10px font-semibold text-slate-400  tracking-widest italic text-right">İşlemler</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-50">
                         {loading ? (
-                            <tr><td colSpan={5} className="py-20 text-center text-slate-400 font-bold italic uppercase tracking-widest">Yükleniyor...</td></tr>
+                            <tr><td colSpan={5} className="py-20 text-center text-slate-400 font-bold italic  tracking-widest">Yükleniyor...</td></tr>
                         ) : users.length === 0 ? (
-                            <tr><td colSpan={5} className="py-20 text-center text-slate-400 font-bold italic uppercase tracking-widest">Kullanıcı bulunamadı.</td></tr>
+                            <tr><td colSpan={5} className="py-20 text-center text-slate-400 font-bold italic  tracking-widest">Kullanıcı bulunamadı.</td></tr>
                         ) : (
                             users.map(user => (
                                 <tr key={user.id} className="hover:bg-slate-50/50 transition-colors">
                                     <td className="px-10 py-8">
                                         <div className="flex items-center gap-4">
-                                            <div className="w-12 h-12 rounded-[1.25rem] bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-500 font-black text-xl uppercase">
+                                            <div className="w-12 h-12 rounded-[1.25rem] bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-500 font-semibold text-xl ">
                                                 {user.name?.substring(0, 1) || 'U'}
                                             </div>
                                             <div className="flex flex-col">
-                                                <span className="text-xs font-black text-slate-900 italic uppercase">{user.name || 'İsimsiz'}</span>
-                                                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest italic">{user.id}</span>
+                                                <span className="text-xs font-semibold text-slate-900 italic ">{user.name || 'İsimsiz'}</span>
+                                                <span className="text-9px font-bold text-slate-400  tracking-widest italic">{user.id}</span>
                                             </div>
                                         </div>
                                     </td>
                                     <td className="px-10 py-8">
                                         <div className="flex flex-col">
-                                            <span className="text-xs font-black text-slate-900 italic uppercase">{user.email}</span>
-                                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest italic">{user.phone || '-'}</span>
+                                            <span className="text-xs font-semibold text-slate-900 italic ">{user.email}</span>
+                                            <span className="text-9px font-bold text-slate-400  tracking-widest italic">{user.phone || '-'}</span>
                                         </div>
                                     </td>
                                     <td className="px-10 py-8 text-center">
-                                        <button 
+                                        <button
                                             onClick={() => toggleStatus(user.id, user.isActive)}
-                                            className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest italic transition-all ${
-                                                user.isActive ? 'bg-emerald-100 text-emerald-600 hover:bg-emerald-200' : 'bg-rose-100 text-rose-600 hover:bg-rose-200'
-                                            }`}
+                                            className={`px-4 py-1.5 rounded-full text-9px font-semibold  tracking-widest italic transition-all ${user.isActive ? 'bg-emerald-100 text-emerald-600 hover:bg-emerald-200' : 'bg-rose-100 text-rose-600 hover:bg-rose-200'
+                                                }`}
                                         >
                                             {user.isActive ? 'AKTİF' : 'PASİF'}
                                         </button>
                                     </td>
                                     <td className="px-10 py-8 text-center">
-                                         <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">{new Date(user.createdAt).toLocaleDateString('tr-TR')}</span>
+                                        <span className="text-10px font-semibold text-slate-400  tracking-widest italic">{new Date(user.createdAt).toLocaleDateString('tr-TR')}</span>
                                     </td>
                                     <td className="px-10 py-8 text-right">
-                                        <button 
+                                        <button
                                             onClick={() => handleDelete(user.id)}
                                             className="w-10 h-10 rounded-xl bg-rose-50 text-rose-500 flex items-center justify-center hover:bg-rose-500 hover:text-white transition-all shadow-sm"
                                         >
@@ -145,10 +144,10 @@ const UsersPage: React.FC = () => {
                 </table>
             </div>
 
-            <Pagination 
-                currentPage={page} 
-                totalPages={totalPages} 
-                onPageChange={setPage} 
+            <Pagination
+                currentPage={page}
+                totalPages={totalPages}
+                onPageChange={setPage}
             />
         </div>
     );
