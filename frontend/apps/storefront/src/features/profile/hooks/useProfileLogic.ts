@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../auth/useAuth';
-import { toast } from 'react-toastify';
+import { useToast } from '../../../shared/components/Toast';
 
 export const useProfileLogic = (tabName?: string) => {
     const { user, logout, isAuthenticated, token } = useAuth();
+    const toast = useToast();
     const [activeTab, setActiveTab] = useState(tabName || 'settings');
     const [isVerifying, setIsVerifying] = useState(false);
     const [verificationCode, setVerificationCode] = useState('');

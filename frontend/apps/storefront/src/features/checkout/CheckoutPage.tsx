@@ -22,7 +22,7 @@ const renderBrandLogo = (brand: CardInfo['brand']) => {
     switch (brand) {
         case 'Visa':
             return (
-                <span className="text-[#1434CB] font-[1000] italic text-[14px] tracking-tighter leading-none flex items-center select-none">
+                <span className="text-[#1434CB] font-[1000] italic text-[14px]  leading-none flex items-center select-none">
                     VISA
                 </span>
             );
@@ -35,19 +35,19 @@ const renderBrandLogo = (brand: CardInfo['brand']) => {
             );
         case 'Amex':
             return (
-                <div className="px-2 py-0.5 bg-[#007BC1] rounded text-9px font-semibold text-white tracking-widest leading-none flex items-center justify-center h-5">
+                <div className="px-2 py-0.5 bg-[#007BC1] rounded text-nano font-semibold text-white  leading-none flex items-center justify-center h-5">
                     AMEX
                 </div>
             );
         case 'Troy':
             return (
-                <div className="px-2 py-0.5 bg-[#002C6C] rounded text-9px font-semibold text-white italic tracking-tighter leading-none flex items-center justify-center gap-0.5 h-5">
+                <div className="px-2 py-0.5 bg-[#002C6C] rounded text-nano font-semibold text-white italic  leading-none flex items-center justify-center gap-0.5 h-5">
                     <span className="text-[#FF5C39]">tr</span><span>oy</span>
                 </div>
             );
         default:
             return brand ? (
-                <span className="text-slate-800 font-[1000] italic text-[11px] uppercase tracking-wider select-none">
+                <span className="text-slate-800 font-[1000] italic text-caption uppercase r select-none">
                     {brand}
                 </span>
             ) : null;
@@ -313,44 +313,44 @@ const CheckoutPage: React.FC = () => {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
                     </svg>
                 </div>
-                <h1 className="text-4xl font-[1000] text-gray-900  italic tracking-tighter mb-4 leading-none">SİPARİŞ <span className="text-emerald-500">TAMAMLANDI!</span></h1>
-                <p className="text-gray-400 font-bold  tracking-widest text-10px mb-6 italic text-center leading-relaxed">Sipariş numaranız: <span className="text-gray-900">{checkout.orderSuccess?.orderNumber}</span><br />Onay e-postası tarafınıza gönderilmiştir.</p>
+                <h1 className="text-4xl font-[1000] text-gray-900  italic  mb-4 leading-none">SİPARİŞ <span className="text-emerald-500">TAMAMLANDI!</span></h1>
+                <p className="text-gray-400 font-bold   text-10px mb-6 italic text-center leading-relaxed">Sipariş numaranız: <span className="text-gray-900">{checkout.orderSuccess?.orderNumber}</span><br />Onay e-postası tarafınıza gönderilmiştir.</p>
                 <div className="flex gap-4">
-                    <Link to="/" className="px-10 py-5 bg-gray-900 text-white rounded-md text-10px font-semibold  tracking-widest hover:bg-brand-pink transition-all  shadow-gray-200 italic">ANA SAYFAYA DÖN</Link>
-                    <Link to="/profile/orders" className="px-10 py-5 bg-white text-gray-900 border border-gray-100 rounded-md text-10px font-semibold  tracking-widest hover:bg-gray-50 transition-all italic">SİPARİŞLERİM</Link>
+                    <Link to="/" className="px-10 py-5 bg-gray-900 text-white rounded-md text-10px font-semibold   hover:bg-brand-pink transition-all  shadow-gray-200 italic">ANA SAYFAYA DÖN</Link>
+                    <Link to="/profile/orders" className="px-10 py-5 bg-white text-gray-900 border border-gray-100 rounded-md text-10px font-semibold   hover:bg-gray-50 transition-all italic">SİPARİŞLERİM</Link>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-20 py-10 pb-40">
+        <div className="max-w-[1650px] mx-auto px-4 sm:px-10 lg:px-20 py-6 sm:py-10 pb-40">
             <div className="mb-8">
-                <span className="text-brand-pink text-10px font-semibold  tracking-widest mb-4 block">GÜVENLİ ÖDEME</span>
-                <h1 className="text-[40px] font-[1000] text-gray-900  italic tracking-tighter leading-none mb-4">ÖDEME <span className="text-brand-pink">SAYFASI</span></h1>
-                <div className="flex items-center gap-6 mt-8">
+                <span className="text-brand-pink text-10px font-semibold   mb-4 block">GÜVENLİ ÖDEME</span>
+                <h1 className="text-4xl font-[1000] text-gray-900  italic  leading-none mb-4">ÖDEME <span className="text-brand-pink">SAYFASI</span></h1>
+                <div className="flex items-center gap-2 sm:gap-6 mt-8 overflow-x-auto whitespace-nowrap scrollbar-hide pb-2">
                     {['address', 'shipping', 'payment', 'review'].map((s, i) => (
                         <React.Fragment key={s}>
-                            <div className={`flex items-center gap-3 ${checkout.step === s ? 'text-brand-pink' : i < ['address', 'shipping', 'payment', 'review'].indexOf(checkout.step) ? 'text-emerald-500' : 'text-gray-300'}`}>
-                                <span className="text-xs font-semibold italic  tracking-widest">{s === 'address' ? 'ADRES' : s === 'shipping' ? 'KARGO' : s === 'payment' ? 'ÖDEME' : 'KONTROL'}</span>
+                            <div className={`flex items-center gap-3 shrink-0 ${checkout.step === s ? 'text-brand-pink' : i < ['address', 'shipping', 'payment', 'review'].indexOf(checkout.step) ? 'text-emerald-500' : 'text-gray-300'}`}>
+                                <span className="text-xs font-semibold italic  ">{s === 'address' ? 'ADRES' : s === 'shipping' ? 'KARGO' : s === 'payment' ? 'ÖDEME' : 'KONTROL'}</span>
                             </div>
-                            {i < 3 && <div className="h-[2px] w-12 bg-gray-100 rounded-full" />}
+                            {i < 3 && <div className="h-[2px] w-8 sm:w-12 bg-gray-100 rounded-full shrink-0" />}
                         </React.Fragment>
                     ))}
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 xl:grid-cols-3 gap-20">
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 lg:gap-16 xl:gap-20">
                 {/* Main Content Area */}
                 <div className="xl:col-span-2">
                     {checkout.step === 'address' && (
                         <div className="space-y-12 animate-in slide-in-from-left-4 duration-500">
                             <div>
                                 <div className="flex justify-between items-center mb-4">
-                                    <h3 className="text-2xl font-[1000] text-gray-900  italic tracking-tighter leading-none">TESLİMAT <span className="text-brand-pink">ADRESİ</span></h3>
+                                    <h3 className="text-2xl font-[1000] text-gray-900  italic  leading-none">TESLİMAT <span className="text-brand-pink">ADRESİ</span></h3>
                                     <button
                                         onClick={() => setShowAddressModal(true)}
-                                        className="px-6 py-3 border border-brand-pink text-brand-pink hover:bg-brand-pink hover:text-white rounded-md text-10px font-semibold tracking-widest transition-all italic flex items-center gap-2 cursor-pointer"
+                                        className="px-6 py-3 border border-brand-pink text-brand-pink hover:bg-brand-pink hover:text-white rounded-md text-10px font-semibold  transition-all italic flex items-center gap-2 cursor-pointer"
                                     >
                                         📖 ADRES DEFTERİM
                                     </button>
@@ -380,52 +380,52 @@ const CheckoutPage: React.FC = () => {
                                                     className={`p-6 rounded-md border text-left cursor-pointer transition-all ${isSelected ? 'border-brand-pink bg-rose-500/5 shadow-xs' : 'border-gray-100 bg-gray-50 hover:bg-gray-100/50'}`}
                                                 >
                                                     <div className="flex justify-between items-center mb-3">
-                                                        <span className={`text-10px font-semibold tracking-widest italic ${isSelected ? 'text-brand-pink' : 'text-gray-400'}`}>{addr.title.toUpperCase()}</span>
-                                                        {isSelected && <span className="text-brand-pink text-10px font-semibold italic tracking-widest">✓ SEÇİLDİ</span>}
+                                                        <span className={`text-10px font-semibold  italic ${isSelected ? 'text-brand-pink' : 'text-gray-400'}`}>{addr.title.toUpperCase()}</span>
+                                                        {isSelected && <span className="text-brand-pink text-10px font-semibold italic ">✓ SEÇİLDİ</span>}
                                                     </div>
                                                     <h4 className="text-xs font-semibold text-gray-900 mb-1 italic truncate">{addr.fullName}</h4>
                                                     <p className="text-10px font-bold text-gray-400 leading-relaxed italic truncate">{addr.neighborhood} {addr.district ? `${addr.district}` : ''}</p>
-                                                    <p className="text-9px font-extrabold text-gray-400 tracking-wider mt-1.5">{addr.city}, {addr.zipCode}</p>
+                                                    <p className="text-nano font-extrabold text-gray-400 r mt-1.5">{addr.city}, {addr.zipCode}</p>
                                                 </div>
                                             );
                                         })}
                                     </div>
                                 )}
 
-                                <div className="grid grid-cols-2 gap-6">
-                                    <div className="col-span-2 space-y-2">
-                                        <label className="text-9px font-semibold text-gray-400  tracking-widest ml-4 italic">AD SOYAD <span className="text-brand-pink">*</span></label>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                                    <div className="col-span-1 sm:col-span-2 space-y-2">
+                                        <label className="text-nano font-semibold text-gray-400   ml-4 italic">AD SOYAD <span className="text-brand-pink">*</span></label>
                                         <input type="text" value={checkout.shippingAddress.fullName} onChange={(e) => checkout.updateShippingAddress({ fullName: e.target.value })} className="w-full h-16 bg-gray-50 border border-gray-100 rounded-md px-8 text-sm font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all italic" placeholder="FURKAN" />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-9px font-semibold text-gray-400  tracking-widest ml-4 italic">E-POSTA <span className="text-brand-pink">*</span></label>
+                                        <label className="text-nano font-semibold text-gray-400   ml-4 italic">E-POSTA <span className="text-brand-pink">*</span></label>
                                         <input type="email" value={checkout.shippingAddress.email} onChange={(e) => checkout.updateShippingAddress({ email: e.target.value })} className="w-full h-16 bg-gray-50 border border-gray-100 rounded-md px-8 text-sm font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all italic" placeholder="furkan@example.com" />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-9px font-semibold text-gray-400  tracking-widest ml-4 italic">TELEFON <span className="text-brand-pink">*</span></label>
+                                        <label className="text-nano font-semibold text-gray-400   ml-4 italic">TELEFON <span className="text-brand-pink">*</span></label>
                                         <input type="text" value={checkout.shippingAddress.phone} onChange={(e) => checkout.updateShippingAddress({ phone: e.target.value })} className="w-full h-16 bg-gray-50 border border-gray-100 rounded-md px-8 text-sm font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all italic" placeholder="+90 5XX XXX XX XX" />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-9px font-semibold text-gray-400  tracking-widest ml-4 italic">ŞEHİR (İL) <span className="text-brand-pink">*</span></label>
+                                        <label className="text-nano font-semibold text-gray-400   ml-4 italic">ŞEHİR (İL) <span className="text-brand-pink">*</span></label>
                                         <input type="text" value={checkout.shippingAddress.city} onChange={(e) => checkout.updateShippingAddress({ city: e.target.value.toUpperCase() })} className="w-full h-16 bg-gray-50 border border-gray-100 rounded-md px-8 text-sm font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all italic" placeholder="İSTANBUL" />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-9px font-semibold text-gray-400  tracking-widest ml-4 italic">İLÇE <span className="text-brand-pink">*</span></label>
+                                        <label className="text-nano font-semibold text-gray-400   ml-4 italic">İLÇE <span className="text-brand-pink">*</span></label>
                                         <input type="text" value={checkout.shippingAddress.district} onChange={(e) => checkout.updateShippingAddress({ district: e.target.value })} className="w-full h-16 bg-gray-50 border border-gray-100 rounded-md px-8 text-sm font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all italic" placeholder="Beşiktaş" />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-9px font-semibold text-gray-400  tracking-widest ml-4 italic">MAHALLE <span className="text-brand-pink">*</span></label>
+                                        <label className="text-nano font-semibold text-gray-400   ml-4 italic">MAHALLE <span className="text-brand-pink">*</span></label>
                                         <input type="text" value={checkout.shippingAddress.neighborhood} onChange={(e) => checkout.updateShippingAddress({ neighborhood: e.target.value })} className="w-full h-16 bg-gray-50 border border-gray-100 rounded-md px-8 text-sm font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all italic" placeholder="Sinanpaşa Mh." />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-9px font-semibold text-gray-400  tracking-widest ml-4 italic">POSTA KODU <span className="text-brand-pink">*</span></label>
+                                        <label className="text-nano font-semibold text-gray-400   ml-4 italic">POSTA KODU <span className="text-brand-pink">*</span></label>
                                         <input type="text" value={checkout.shippingAddress.zipCode} onChange={(e) => checkout.updateShippingAddress({ zipCode: e.target.value })} className="w-full h-16 bg-gray-50 border border-gray-100 rounded-md px-8 text-sm font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all italic" placeholder="34XXX" />
                                     </div>
-                                    <div className="col-span-2 space-y-2">
-                                        <label className="text-9px font-semibold text-gray-400  tracking-widest ml-4 italic">AÇIK ADRES (Sokak, Bina No, Daire No) <span className="text-brand-pink">*</span></label>
+                                    <div className="col-span-1 sm:col-span-2 space-y-2">
+                                        <label className="text-nano font-semibold text-gray-400   ml-4 italic">AÇIK ADRES (Sokak, Bina No, Daire No) <span className="text-brand-pink">*</span></label>
                                         <textarea value={checkout.shippingAddress.address} onChange={(e) => checkout.updateShippingAddress({ address: e.target.value })} className="w-full h-24 bg-gray-50 border border-gray-100 rounded-md p-8 text-sm font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all italic resize-none" placeholder="Şehit Asım Cad. No: 12 D: 4" />
                                     </div>
-                                    <div className="col-span-2 flex items-center gap-3 mt-4 ml-2">
+                                    <div className="col-span-1 sm:col-span-2 flex items-center gap-3 mt-4 ml-2">
                                         <input
                                             type="checkbox"
                                             id="billingSame"
@@ -433,7 +433,7 @@ const CheckoutPage: React.FC = () => {
                                             onChange={checkout.toggleBillingSame}
                                             className="w-5 h-5 accent-brand-pink"
                                         />
-                                        <label htmlFor="billingSame" className="text-10px font-semibold text-gray-900  tracking-widest italic cursor-pointer">Fatura adresim teslimat adresiyle aynı olsun</label>
+                                        <label htmlFor="billingSame" className="text-10px font-semibold text-gray-900   italic cursor-pointer">Fatura adresim teslimat adresiyle aynı olsun</label>
                                     </div>
                                 </div>
                             </div>
@@ -442,10 +442,10 @@ const CheckoutPage: React.FC = () => {
 
                     {checkout.step === 'shipping' && (
                         <div className="space-y-12 animate-in slide-in-from-left-4 duration-500">
-                            <h3 className="text-2xl font-[1000] text-gray-900  italic tracking-tighter mb-4 leading-none">KARGO <span className="text-brand-pink">SEÇENEĞİ</span></h3>
+                            <h3 className="text-2xl font-[1000] text-gray-900  italic  mb-4 leading-none">KARGO <span className="text-brand-pink">SEÇENEĞİ</span></h3>
                             <div className="space-y-6">
                                 {shippingCompanies.length === 0 ? (
-                                    <div className="p-8 text-center text-slate-400 font-bold italic tracking-widest bg-gray-50 rounded-md border border-gray-100">
+                                    <div className="p-8 text-center text-slate-400 font-bold italic  bg-gray-50 rounded-md border border-gray-100">
                                         Aktif kargo firması bulunamadı.
                                     </div>
                                 ) : (
@@ -460,8 +460,8 @@ const CheckoutPage: React.FC = () => {
                                                 <div className="flex items-center gap-8">
                                                     <div className="text-3xl">{company.logo}</div>
                                                     <div>
-                                                        <h4 className="text-[14px] font-[1000] text-gray-900  italic mb-1">{company.name}</h4>
-                                                        <p className="text-10px font-semibold text-gray-400  tracking-widest italic">{company.deliveryTime}</p>
+                                                        <h4 className="text-sm font-[1000] text-gray-900  italic mb-1">{company.name}</h4>
+                                                        <p className="text-10px font-semibold text-gray-400   italic">{company.deliveryTime}</p>
                                                     </div>
                                                 </div>
                                                 <span className="text-sm font-semibold text-gray-900 italic">
@@ -478,10 +478,10 @@ const CheckoutPage: React.FC = () => {
                     {checkout.step === 'payment' && (
                         <div className="space-y-12 animate-in slide-in-from-left-4 duration-500 max-w-[400px]">
                             <div className="flex justify-between items-center mb-4">
-                                <h3 className="text-2xl font-[1000] text-gray-900 italic tracking-tighter leading-none mb-0">ÖDEME <span className="text-brand-pink">BİLGİLERİ</span></h3>
+                                <h3 className="text-2xl font-[1000] text-gray-900 italic  leading-none mb-0">ÖDEME <span className="text-brand-pink">BİLGİLERİ</span></h3>
                                 <button
                                     onClick={() => setShowCardModal(true)}
-                                    className="px-4 py-2 border border-gray-100 hover:border-brand-pink bg-gray-50 hover:bg-rose-500/5 text-gray-700 hover:text-brand-pink rounded-md text-9px font-semibold tracking-widest transition-all italic flex items-center gap-2 cursor-pointer"
+                                    className="px-4 py-2 border border-gray-100 hover:border-brand-pink bg-gray-50 hover:bg-rose-500/5 text-gray-700 hover:text-brand-pink rounded-md text-nano font-semibold  transition-all italic flex items-center gap-2 cursor-pointer"
                                 >
                                     💳 KARTLARIM
                                 </button>
@@ -500,8 +500,8 @@ const CheckoutPage: React.FC = () => {
                                             </div>
                                             {cardInfo.bank && (
                                                 <div className="flex flex-col animate-in fade-in duration-300 leading-none">
-                                                    <span className="text-10px font-semibold tracking-[0.05em] uppercase italic leading-none text-brand-pink">{cardInfo.bank}</span>
-                                                    <span className="text-[7px] font-extrabold text-slate-400/80 tracking-widest uppercase mt-1">{cardInfo.country} {cardInfo.flag}</span>
+                                                    <span className="text-10px font-semibold uppercase italic leading-none text-brand-pink">{cardInfo.bank}</span>
+                                                    <span className="text-atomic font-extrabold text-slate-400/80  uppercase mt-1">{cardInfo.country} {cardInfo.flag}</span>
                                                 </div>
                                             )}
                                         </div>
@@ -510,16 +510,16 @@ const CheckoutPage: React.FC = () => {
                                                 <div className="px-2.5 py-1 bg-white/95 rounded border border-gray-100 shadow-xs flex items-center justify-center min-h-[26px] min-w-[42px]">
                                                     {renderBrandLogo(activeBrand)}
                                                 </div>
-                                                <span className="text-[7px] font-semibold tracking-[0.2em] text-slate-400/80 uppercase leading-none">{cardInfo.type} CARD</span>
+                                                <span className="text-atomic font-semibold  text-slate-400/80 uppercase leading-none">{cardInfo.type} CARD</span>
                                             </div>
                                         ) : (
-                                            <div className="text-8px font-semibold tracking-widest text-gray-400">CREDIT CARD</div>
+                                            <div className="text-micro font-semibold  text-gray-400">CREDIT CARD</div>
                                         )}
                                     </div>
                                     <div className="space-y-6">
                                         <input
                                             type="text"
-                                            className="w-full bg-transparent border-none text-xl font-[1000] tracking-[0.2em] focus:outline-none placeholder:text-slate-400/40 italic text-current"
+                                            className="w-full bg-transparent border-none text-xl font-[1000]  focus:outline-none placeholder:text-slate-400/40 italic text-current"
                                             placeholder="XXXX XXXX XXXX XXXX"
                                             maxLength={19}
                                             value={checkout.cardDetails.number}
@@ -527,7 +527,7 @@ const CheckoutPage: React.FC = () => {
                                         />
                                         <div className="flex justify-between items-end">
                                             <div className="flex-1 mr-6">
-                                                <label className="text-[7px] font-semibold text-slate-400/80  tracking-widest mb-2 block">CARD HOLDER <span className="text-brand-pink">*</span></label>
+                                                <label className="text-atomic font-semibold text-slate-400/80   mb-2 block">CARD HOLDER <span className="text-brand-pink">*</span></label>
                                                 <input
                                                     type="text"
                                                     className="w-full bg-transparent border-none text-xs font-semibold focus:outline-none placeholder:text-slate-400/40 italic text-current"
@@ -537,7 +537,7 @@ const CheckoutPage: React.FC = () => {
                                                 />
                                             </div>
                                             <div className="w-16 shrink-0">
-                                                <label className="text-[7px] font-semibold text-slate-400/80  tracking-widest mb-2 block">EXPIRES <span className="text-brand-pink">*</span></label>
+                                                <label className="text-atomic font-semibold text-slate-400/80   mb-2 block">EXPIRES <span className="text-brand-pink">*</span></label>
                                                 <input
                                                     type="text"
                                                     className="w-full bg-transparent border-none text-xs font-semibold focus:outline-none placeholder:text-slate-400/40 italic text-center text-current"
@@ -548,7 +548,7 @@ const CheckoutPage: React.FC = () => {
                                                 />
                                             </div>
                                             <div className="w-14 ml-4 shrink-0">
-                                                <label className="text-[7px] font-semibold text-slate-400/80  tracking-widest mb-2 block">CVV <span className="text-brand-pink">*</span></label>
+                                                <label className="text-atomic font-semibold text-slate-400/80   mb-2 block">CVV <span className="text-brand-pink">*</span></label>
                                                 <input
                                                     type="password"
                                                     className="w-full bg-transparent border-none text-xs font-semibold focus:outline-none placeholder:text-slate-400/40 italic text-center text-current"
@@ -571,7 +571,7 @@ const CheckoutPage: React.FC = () => {
                                     onChange={(e) => setSaveCardOnSubmit(e.target.checked)}
                                     className="w-4 h-4 accent-indigo-600 cursor-pointer"
                                 />
-                                <label htmlFor="saveCardCheckbox" className="text-10px font-bold text-slate-400 cursor-pointer select-none italic tracking-wider">
+                                <label htmlFor="saveCardCheckbox" className="text-10px font-bold text-slate-400 cursor-pointer select-none italic r">
                                     Bu kartı sonraki alışverişlerim için güvenle kaydet.
                                 </label>
                             </div>
@@ -580,17 +580,17 @@ const CheckoutPage: React.FC = () => {
                                 <div className="w-12 h-12 bg-emerald-500/10 rounded-md flex items-center justify-center text-emerald-500">
                                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
                                 </div>
-                                <p className="text-10px font-semibold text-gray-400  tracking-widest leading-relaxed italic">Ödemeleriniz <span className="text-gray-900 leading-none">256-Bit SSL</span> şifreleme alt yapısıyla güvence altındadır.</p>
+                                <p className="text-10px font-semibold text-gray-400   leading-relaxed italic">Ödemeleriniz <span className="text-gray-900 leading-none">256-Bit SSL</span> şifreleme alt yapısıyla güvence altındadır.</p>
                             </div>
                         </div>
                     )}
 
                     {checkout.step === 'review' && (
                         <div className="space-y-12 animate-in slide-in-from-left-4 duration-500">
-                            <h3 className="text-2xl font-[1000] text-gray-900  italic tracking-tighter mb-4 leading-none">SON <span className="text-brand-pink">KONTROLLER</span></h3>
-                            <div className="grid grid-cols-2 gap-8">
+                            <h3 className="text-2xl font-[1000] text-gray-900  italic  mb-4 leading-none">SON <span className="text-brand-pink">KONTROLLER</span></h3>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
                                 <div className="p-10 rounded-md bg-gray-50 border border-gray-100">
-                                    <span className="text-9px font-semibold text-gray-300  tracking-widest mb-4 block italic">TESLİMAT ADRESİ</span>
+                                    <span className="text-nano font-semibold text-gray-300   mb-4 block italic">TESLİMAT ADRESİ</span>
                                     <h4 className="text-sm font-semibold text-gray-900 mb-2 italic ">{checkout.shippingAddress.fullName}</h4>
                                     <p className="text-xs font-bold text-gray-400 leading-relaxed italic ">
                                         {checkout.shippingAddress.neighborhood} {checkout.shippingAddress.district ? `${checkout.shippingAddress.district}` : ''}<br />
@@ -599,7 +599,7 @@ const CheckoutPage: React.FC = () => {
                                     </p>
                                 </div>
                                 <div className="p-10 rounded-md bg-gray-50 border border-gray-100">
-                                    <span className="text-9px font-semibold text-gray-300  tracking-widest mb-4 block italic">ÖDEME YÖNTEMİ</span>
+                                    <span className="text-nano font-semibold text-gray-300   mb-4 block italic">ÖDEME YÖNTEMİ</span>
                                     <h4 className="text-sm font-semibold text-gray-900 mb-2 italic ">{checkout.cardDetails.holder || 'Kredi Kartı'}</h4>
                                     <p className="text-xs font-bold text-gray-400 leading-relaxed italic ">
                                         {checkout.cardDetails.number ? `**** **** **** ${checkout.cardDetails.number.slice(-4)}` : '**** **** **** 4242'}
@@ -607,7 +607,7 @@ const CheckoutPage: React.FC = () => {
                                 </div>
                             </div>
                             <div className="p-10 rounded-md bg-gray-50 border border-gray-100">
-                                <span className="text-9px font-semibold text-gray-300  tracking-widest mb-6 block italic">SEPET ÖZETİ</span>
+                                <span className="text-nano font-semibold text-gray-300   mb-6 block italic">SEPET ÖZETİ</span>
                                 <div className="space-y-6">
                                     {items.map((item, idx) => (
                                         <div key={`${item.id}-${item.variant ?? idx}`} className="flex justify-between items-center">
@@ -627,7 +627,7 @@ const CheckoutPage: React.FC = () => {
                         {checkout.step !== 'address' && (
                             <button
                                 onClick={checkout.prevStep}
-                                className="px-10 py-5 text-10px font-semibold text-gray-400  tracking-widest hover:text-gray-900 transition-all italic flex items-center gap-4"
+                                className="px-10 py-5 text-10px font-semibold text-gray-400   hover:text-gray-900 transition-all italic flex items-center gap-4"
                             >
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M7 16l-4-4m0 0l4-4m-4 4h18" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
                                 GERİ DÖN
@@ -636,7 +636,7 @@ const CheckoutPage: React.FC = () => {
                         <button
                             onClick={handleNextClick}
                             disabled={checkout.isProcessing}
-                            className={`ml-auto p-3 bg-brand-pink text-white rounded-md text-[11px] font-semibold  tracking-widest shadow-xs cursor-pointer flex items-center justify-center gap-4 disabled:opacity-50`}
+                            className={`ml-auto p-3 bg-brand-pink text-white rounded-md text-caption font-semibold   shadow-xs cursor-pointer flex items-center justify-center gap-4 disabled:opacity-50`}
                         >
                             {checkout.isProcessing ? 'SİPARİŞ VERİLİYOR...' : checkout.step === 'review' ? 'SİPARİŞİ TAMAMLA' : 'SONRAKİ ADIM'}
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 8l4 4-4 4M3 12h18" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -647,30 +647,30 @@ const CheckoutPage: React.FC = () => {
                 {/* Right Summary Column */}
                 <div className="col-span-1">
                     <div className="bg-gray-50/50 p-12 rounded-md border border-gray-100 sticky top-32">
-                        <h2 className="text-2xl font-[1000] text-gray-900  italic tracking-tighter mb-5 leading-none">ÖDEME <span className="text-brand-pink">ÖZETİ</span></h2>
+                        <h2 className="text-2xl font-[1000] text-gray-900  italic  mb-5 leading-none">ÖDEME <span className="text-brand-pink">ÖZETİ</span></h2>
                         <div className="space-y-6 pb-10 border-b border-gray-100">
                             <div className="flex justify-between items-center">
-                                <span className="text-10px font-semibold text-gray-400  tracking-widest">ARA TOPLAM</span>
+                                <span className="text-10px font-semibold text-gray-400  ">ARA TOPLAM</span>
                                 <span className="text-sm font-semibold text-gray-900 italic">{total.toLocaleString()} ₺</span>
                             </div>
                             <div className="flex justify-between items-center">
-                                <span className="text-10px font-semibold text-gray-400  tracking-widest">KARGO ({selectedCompany?.name || 'Seçilmedi'})</span>
-                                <span className="text-10px font-semibold text-brand-pink tracking-widest italic">
+                                <span className="text-10px font-semibold text-gray-400  ">KARGO ({selectedCompany?.name || 'Seçilmedi'})</span>
+                                <span className="text-10px font-semibold text-brand-pink  italic">
                                     {shippingCost > 0 ? `${shippingCost.toFixed(2)} ₺` : 'ÜCRETSİZ'}
                                 </span>
                             </div>
                             <div className="flex justify-between items-center">
-                                <span className="text-10px font-semibold text-gray-400  tracking-widest">KDV (%20)</span>
+                                <span className="text-10px font-semibold text-gray-400  ">KDV (%20)</span>
                                 <span className="text-sm font-semibold text-gray-900 italic">{(total * 0.2).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₺</span>
                             </div>
                         </div>
                         <div className="pt-10 mb-4">
-                            <span className="text-10px font-[1000] text-gray-400  tracking-widest mb-1 block italic">TOPLAM ÖDENECEK</span>
-                            <span className="text-4xl font-[1000] text-gray-900 leading-none tracking-tighter italic whitespace-nowrap">
+                            <span className="text-10px font-[1000] text-gray-400   mb-1 block italic">TOPLAM ÖDENECEK</span>
+                            <span className="text-4xl font-[1000] text-gray-900 leading-none  italic whitespace-nowrap">
                                 {(total + shippingCost + (total * 0.2)).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₺
                             </span>
                         </div>
-                        <p className="text-9px font-bold text-gray-300  tracking-widest leading-relaxed italic">Siparişi tamamlayarak Kullanım Koşulları ve İptal/İade Politikalarını kabul etmiş sayılırsınız.</p>
+                        <p className="text-nano font-bold text-gray-300   leading-relaxed italic">Siparişi tamamlayarak Kullanım Koşulları ve İptal/İade Politikalarını kabul etmiş sayılırsınız.</p>
                     </div>
                 </div>
             </div>

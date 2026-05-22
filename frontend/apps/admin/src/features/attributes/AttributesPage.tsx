@@ -93,7 +93,7 @@ const AttributeModal: React.FC<{
                         {/* Left Side: General Info */}
                         <div className="space-y-6">
                             <div>
-                                <label className="block text-xs font-bold text-slate-500  tracking-wide mb-1.5">Özellik Adı</label>
+                                <label className="block text-xs font-bold text-slate-500   mb-1.5">Özellik Adı</label>
                                 <input
                                     required
                                     value={name}
@@ -104,7 +104,7 @@ const AttributeModal: React.FC<{
                             </div>
 
                             <div>
-                                <label className="block text-xs font-bold text-slate-500  tracking-wide mb-1.5">Seçenek Değerleri</label>
+                                <label className="block text-xs font-bold text-slate-500   mb-1.5">Seçenek Değerleri</label>
                                 <div className="flex gap-2 mb-4">
                                     <input
                                         value={newValue}
@@ -127,7 +127,7 @@ const AttributeModal: React.FC<{
                                         <span className="text-slate-400 text-xs italic">Henüz değer eklenmedi...</span>
                                     )}
                                     {values.map(val => (
-                                        <span key={val} className="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-slate-700 shadow-sm transition-all hover:scale-105">
+                                        <span key={val} className="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-slate-700 shadow-sm transition-all ">
                                             {val}
                                             <button type="button" onClick={() => removeValue(val)} className="text-slate-400 hover:text-red-500 transition-colors">
                                                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" strokeWidth="2.5" /></svg>
@@ -140,7 +140,7 @@ const AttributeModal: React.FC<{
 
                         {/* Right Side: Category Selection */}
                         <div>
-                            <label className="block text-xs font-bold text-slate-500  tracking-wide mb-3">Geçerli Kategoriler</label>
+                            <label className="block text-xs font-bold text-slate-500   mb-3">Geçerli Kategoriler</label>
                             <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 h-[320px] overflow-y-auto space-y-2 custom-scrollbar">
                                 {allCategories.length === 0 && <p className="text-slate-400 text-xs p-4 italic">Kategori bulunamadı.</p>}
                                 {allCategories.map(cat => (
@@ -165,11 +165,11 @@ const AttributeModal: React.FC<{
                     </div>
 
                     <div className="flex gap-3 pt-6 border-t border-slate-100">
-                        <button type="button" onClick={onClose} className="flex-1 py-4 text-xs font-semibold  bg-slate-100 text-slate-600 rounded-xl hover:bg-slate-200 transition-colors tracking-widest">İptal</button>
+                        <button type="button" onClick={onClose} className="flex-1 py-4 text-xs font-semibold  bg-slate-100 text-slate-600 rounded-xl hover:bg-slate-200 transition-colors ">İptal</button>
                         <button
                             type="submit"
                             disabled={saving}
-                            className="flex-1 py-4 text-xs font-semibold  bg-pink-500 text-white rounded-xl hover:bg-pink-600 shadow-lg shadow-pink-500/20 transition-all disabled:opacity-50 tracking-widest"
+                            className="flex-1 py-4 text-xs font-semibold  bg-pink-500 text-white rounded-xl hover:bg-pink-600 shadow-lg shadow-pink-500/20 transition-all disabled:opacity-50 "
                         >
                             {saving ? 'KAYDEDİLİYOR...' : 'KAYDET'}
                         </button>
@@ -258,12 +258,12 @@ const AttributesPage: React.FC = () => {
 
             <div className="flex items-center justify-between mb-5">
                 <div>
-                    <h1 className="text-3xl font-semibold text-slate-800 tracking-tight">Ürün Seçenekleri</h1>
+                    <h1 className="text-3xl font-semibold text-slate-800 ">Ürün Seçenekleri</h1>
                     <p className="text-slate-500 font-medium mt-1">Varyantlar için kullanılabilecek global özellikleri yönetin.</p>
                 </div>
                 <button
                     onClick={() => { setEditTarget(null); setModalOpen(true); }}
-                    className="flex items-center gap-2 px-6 py-3 bg-pink-500 text-white text-sm font-semibold rounded-2xl shadow-lg shadow-pink-500/20 hover:scale-105 transition-transform"
+                    className="flex items-center gap-2 px-6 py-3 bg-pink-500 text-white text-sm font-semibold rounded-2xl shadow-lg shadow-pink-500/20  transition-transform"
                 >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4" strokeWidth="3" /></svg>
                     Yeni Ekle
@@ -286,10 +286,10 @@ const AttributesPage: React.FC = () => {
                         <table className="w-full text-left border-collapse">
                             <thead>
                                 <tr className="bg-slate-50/50 border-b border-slate-100">
-                                    <th className="px-6 py-4 text-xs font-semibold text-slate-400  tracking-widest">Özellik</th>
-                                    <th className="px-6 py-4 text-xs font-semibold text-slate-400  tracking-widest">Değerler</th>
-                                    <th className="px-6 py-4 text-xs font-semibold text-slate-400  tracking-widest">Kategoriler</th>
-                                    <th className="px-6 py-4 text-xs font-semibold text-slate-400  tracking-widest text-right">İşlemler</th>
+                                    <th className="px-6 py-4 text-xs font-semibold text-slate-400  ">Özellik</th>
+                                    <th className="px-6 py-4 text-xs font-semibold text-slate-400  ">Değerler</th>
+                                    <th className="px-6 py-4 text-xs font-semibold text-slate-400  ">Kategoriler</th>
+                                    <th className="px-6 py-4 text-xs font-semibold text-slate-400   text-right">İşlemler</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-50">
@@ -301,7 +301,7 @@ const AttributesPage: React.FC = () => {
                                         <td className="px-6 py-5">
                                             <div className="flex flex-wrap gap-1.5">
                                                 {attr.values.map(v => (
-                                                    <span key={v.id} className="px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md text-[11px] font-bold  tracking-tight">
+                                                    <span key={v.id} className="px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md text-caption font-bold  ">
                                                         {v.value}
                                                     </span>
                                                 ))}
@@ -310,10 +310,10 @@ const AttributesPage: React.FC = () => {
                                         <td className="px-6 py-5">
                                             <div className="flex flex-wrap gap-1.5">
                                                 {attr.categories.length === 0 ? (
-                                                    <span className="px-2 py-0.5 bg-indigo-50 text-indigo-500 rounded-md text-10px font-semibold  tracking-widest">Global</span>
+                                                    <span className="px-2 py-0.5 bg-indigo-50 text-indigo-500 rounded-md text-10px font-semibold  ">Global</span>
                                                 ) : (
                                                     attr.categories.map(c => (
-                                                        <span key={c.id} className="px-2 py-0.5 bg-pink-50 text-pink-500 rounded-md text-10px font-semibold  tracking-widest">
+                                                        <span key={c.id} className="px-2 py-0.5 bg-pink-50 text-pink-500 rounded-md text-10px font-semibold  ">
                                                             {c.name}
                                                         </span>
                                                     ))

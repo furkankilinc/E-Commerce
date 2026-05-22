@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { apiClient } from '../../../shared/api/apiClient';
 import { authStore } from '../../auth/auth.store';
 
-const WISHLIST_STORAGE_KEY = 'fuira_wishlist_items';
-const WISHLIST_ID_KEY = 'fuira_wishlist_id';
+let WISHLIST_STORAGE_KEY = 'fuira_wishlist_items_guest';
+let WISHLIST_ID_KEY = 'fuira_wishlist_id_guest';
 
 export interface WishlistItem {
     id: string;
@@ -58,6 +58,22 @@ const syncWithBackend = async (items: WishlistItem[]) => {
 };
 
 export const wishlistStore = {
+    setUserId: (userId: string | null) => {
+        WISHLIST_STORAGE_KEY = userId ? `fuira_wishlist_items_${userId}` : 'fuira_wishlist_items_guest';
+        WISHLIST_ID_KEY = userId ? `fuira_wishlist_id_${userId}` : 'fuira_wishlist_id_guest';
+        
+        try {
+            const saved = localStorage.getItem(WISHLIST_STORAGE_KEY);
+            wishlistItems = saved ? JSON.parse(saved) : [];
+        } catch {
+            wishlistItems = [];
+        }
+        isFetchTriggered = false; // Allow fresh fetch from backend
+        notify();
+        if (userId) {
+            wishlistStore.fetchFromBackend();
+        }
+    },
     addItem: (product: any) => {
         const exists = wishlistItems.find(item => item.id === product.id);
         if (!exists) {

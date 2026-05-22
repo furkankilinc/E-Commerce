@@ -2,11 +2,12 @@ import { useEffect } from 'react';
 import { useCheckout } from '../checkout.store';
 import { useCart } from '../../cart/cart.store';
 import { authStore } from '../../auth/auth.store';
-import { toast } from 'react-toastify';
+import { useToast } from '../../../shared/components/Toast';
 
 export const useCheckoutFlow = () => {
     const checkout = useCheckout();
     const { items, total, clearCart, refreshCart } = useCart();
+    const toast = useToast();
 
     useEffect(() => {
         refreshCart();

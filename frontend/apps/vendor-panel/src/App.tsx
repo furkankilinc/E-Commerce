@@ -15,6 +15,7 @@ import './styles/global.css';
 import OfflineDetector from './shared/components/OfflineDetector';
 import OrdersPage from './features/orders/OrdersPage';
 import OrderDetailPage from './features/orders/OrderDetailPage';
+import QuestionsPage from './features/questions/QuestionsPage';
 
 const router = createBrowserRouter(
   [
@@ -72,6 +73,10 @@ const router = createBrowserRouter(
             {
               path: 'settings',
               element: <SettingsPage />,
+            },
+            {
+              path: 'questions',
+              element: <QuestionsPage />,
             },
           ],
         },

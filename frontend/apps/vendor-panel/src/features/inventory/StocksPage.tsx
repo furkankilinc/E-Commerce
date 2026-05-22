@@ -26,6 +26,8 @@ const StocksPage: React.FC = () => {
         totalPages: 1,
         total: 0,
         totalStock: 0,
+        lowStockCount: 0,
+        outOfStockCount: 0,
         limit: 20
     });
 
@@ -40,7 +42,15 @@ const StocksPage: React.FC = () => {
             if (res.ok) {
                 const data = await res.json();
                 setProducts(data.products || []);
-                setPagination(data.pagination || { page: 1, totalPages: 1, total: data.products?.length || 0, totalStock: 0, limit: 20 });
+                setPagination(data.pagination || {
+                    page: 1,
+                    totalPages: 1,
+                    total: data.products?.length || 0,
+                    totalStock: 0,
+                    lowStockCount: 0,
+                    outOfStockCount: 0,
+                    limit: 20
+                });
             }
         } catch (err) {
             toast.error('Ürünler yüklenemedi.');
@@ -109,17 +119,15 @@ const StocksPage: React.FC = () => {
 
     const changedCount = Object.keys(editedStocks).length;
     const totalStockVolume = pagination.totalStock;
-    // Note: Stats like lowStockCount/outOfStockCount would ideally come from server for accuracy with pagination
-    // But for now we show what we have on the current page or just keep labels
-    const lowStockCount = products.filter(p => p.stock > 0 && p.stock <= 10).length;
-    const outOfStockCount = products.filter(p => p.stock <= 0).length;
+    const lowStockCount = pagination.lowStockCount;
+    const outOfStockCount = pagination.outOfStockCount;
 
     return (
         <div className="max-w-[1400px] mx-auto min-h-screen pb-20">
             {/* Page Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 gap-6">
                 <div>
-                    <h1 className="text-[36px] font-semibold text-slate-800 tracking-tight mb-2">
+                    <h1 className="text-4xl font-semibold text-slate-800  mb-2">
                         Stok <span className="text-indigo-600">Yönetimi</span>
                     </h1>
                     <p className="text-slate-500 font-medium text-sm max-w-lg">
@@ -131,14 +139,14 @@ const StocksPage: React.FC = () => {
                         <>
                             <button
                                 onClick={handleResetChanges}
-                                className="px-6 py-3 bg-white border border-slate-200 rounded-md text-xs font-bold  tracking-wider text-slate-400 hover:bg-slate-50 transition-all"
+                                className="px-6 py-3 bg-white border border-slate-200 rounded-md text-xs font-bold  r text-slate-400 hover:bg-slate-50 transition-all"
                             >
                                 SIFIRLA
                             </button>
                             <button
                                 onClick={handleSaveAll}
                                 disabled={isSaving}
-                                className="px-8 py-3 bg-indigo-600 text-white rounded-md text-xs font-bold  tracking-widest shadow-lg shadow-indigo-100 transition-all active:scale-95 flex items-center gap-2"
+                                className="px-8 py-3 bg-indigo-600 text-white rounded-md text-xs font-bold   shadow-lg shadow-indigo-100 transition-all active:scale-95 flex items-center gap-2"
                             >
                                 {isSaving && <div className="w-4 h-4 border-2 border-white/50 border-t-white rounded-full animate-spin"></div>}
                                 {changedCount} ÜRÜN KAYDET
@@ -155,7 +163,7 @@ const StocksPage: React.FC = () => {
                         <div className="w-10 h-10 bg-indigo-50 rounded-md flex items-center justify-center">
                             <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-14L4 7m8 4v10M4 7v10l8 4" /></svg>
                         </div>
-                        <span className="text-10px font-semibold text-slate-400  tracking-widest">TOPLAM STOK ADEDİ</span>
+                        <span className="text-10px font-semibold text-slate-400  ">TOPLAM STOK ADEDİ</span>
                     </div>
                     <span className="text-3xl font-semibold text-indigo-600">{(totalStockVolume || 0).toLocaleString()}</span>
                 </div>
@@ -165,7 +173,7 @@ const StocksPage: React.FC = () => {
                         <div className="w-10 h-10 bg-amber-50 rounded-md flex items-center justify-center">
                             <svg className="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.072 16.5c-.77.833.192 2.5 1.732 2.5z" /></svg>
                         </div>
-                        <span className="text-10px font-semibold text-slate-400  tracking-widest">DÜŞÜK STOK (SAYFA)</span>
+                        <span className="text-10px font-semibold text-slate-400  ">DÜŞÜK STOK (SAYFA)</span>
                     </div>
                     <span className="text-3xl font-semibold text-amber-600">{lowStockCount}</span>
                 </div>
@@ -174,7 +182,7 @@ const StocksPage: React.FC = () => {
                         <div className="w-10 h-10 bg-rose-50 rounded-md flex items-center justify-center">
                             <svg className="w-5 h-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
                         </div>
-                        <span className="text-10px font-semibold text-slate-400  tracking-widest">TÜKENMİŞ (SAYFA)</span>
+                        <span className="text-10px font-semibold text-slate-400  ">TÜKENMİŞ (SAYFA)</span>
                     </div>
                     <span className="text-3xl font-semibold text-rose-600">{outOfStockCount}</span>
                 </div>
@@ -187,7 +195,7 @@ const StocksPage: React.FC = () => {
                         <button
                             key={f}
                             onClick={() => setStockFilter(f)}
-                            className={`px-5 py-3 rounded-md text-10px font-semibold  tracking-wider transition-all ${stockFilter === f
+                            className={`px-5 py-3 rounded-md text-10px font-semibold  r transition-all ${stockFilter === f
                                 ? 'bg-indigo-600 text-white shadow-md'
                                 : 'bg-slate-50 text-slate-500 hover:bg-slate-100 border border-slate-200'
                                 }`}
@@ -203,7 +211,7 @@ const StocksPage: React.FC = () => {
                 {isLoading ? (
                     <div className="p-20 text-center">
                         <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                        <p className="text-slate-400 font-bold text-xs  tracking-widest">Yükleniyor...</p>
+                        <p className="text-slate-400 font-bold text-xs  ">Yükleniyor...</p>
                     </div>
                 ) : filteredProducts.length === 0 ? (
                     <div className="p-20 text-center">
@@ -213,13 +221,13 @@ const StocksPage: React.FC = () => {
                     <table className="w-full text-left">
                         <thead className="bg-slate-50 border-b border-slate-100">
                             <tr>
-                                <th className="px-6 py-4 text-10px font-semibold text-slate-400  tracking-widest">ÜRÜN</th>
-                                <th className="px-6 py-4 text-10px font-semibold text-slate-400  tracking-widest">SKU</th>
-                                <th className="px-6 py-4 text-10px font-semibold text-slate-400  tracking-widest">KATEGORİ</th>
-                                <th className="px-6 py-4 text-10px font-semibold text-slate-400  tracking-widest">FİYAT</th>
-                                <th className="px-6 py-4 text-10px font-semibold text-slate-400  tracking-widest">MEVCUT STOK</th>
-                                <th className="px-6 py-4 text-10px font-semibold text-slate-400  tracking-widest">YENİ STOK</th>
-                                <th className="px-6 py-4 text-10px font-semibold text-slate-400  tracking-widest">DURUM</th>
+                                <th className="px-6 py-4 text-10px font-semibold text-slate-400  ">ÜRÜN</th>
+                                <th className="px-6 py-4 text-10px font-semibold text-slate-400  ">SKU</th>
+                                <th className="px-6 py-4 text-10px font-semibold text-slate-400  ">KATEGORİ</th>
+                                <th className="px-6 py-4 text-10px font-semibold text-slate-400  ">FİYAT</th>
+                                <th className="px-6 py-4 text-10px font-semibold text-slate-400  ">MEVCUT STOK</th>
+                                <th className="px-6 py-4 text-10px font-semibold text-slate-400  ">YENİ STOK</th>
+                                <th className="px-6 py-4 text-10px font-semibold text-slate-400  ">DURUM</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-50">
@@ -283,7 +291,7 @@ const StocksPage: React.FC = () => {
                                             />
                                         </td>
                                         <td className="px-6 py-4">
-                                            <span className={`px-3 py-1.5 rounded-md text-9px font-semibold  tracking-wider ${stockLevel === 'out'
+                                            <span className={`px-3 py-1.5 rounded-md text-nano font-semibold  r ${stockLevel === 'out'
                                                 ? 'bg-rose-50 text-rose-600'
                                                 : stockLevel === 'low'
                                                     ? 'bg-amber-50 text-amber-600'
@@ -302,16 +310,16 @@ const StocksPage: React.FC = () => {
 
             {/* Pagination UI */}
             {!isLoading && pagination.totalPages > 1 && (
-                <div className="flex justify-center items-center gap-6 py-12">
+                <div className="ui-pagination-container">
                     <button
                         onClick={() => handlePageChange(pagination.page - 1)}
                         disabled={pagination.page === 1}
-                        className="w-14 h-14 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-indigo-600 disabled:opacity-20 transition-all shadow-sm active:scale-95"
+                        className="ui-pagination-btn"
                     >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                     </button>
 
-                    <div className="flex items-center gap-2 bg-white px-6 py-2 rounded-2xl border border-slate-50 shadow-sm">
+                    <div className="flex items-center gap-3">
                         {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
                             let pageNum = pagination.page;
                             if (pagination.page <= 3) pageNum = i + 1;
@@ -324,7 +332,7 @@ const StocksPage: React.FC = () => {
                                 <button
                                     key={pageNum}
                                     onClick={() => handlePageChange(pageNum)}
-                                    className={`w-10 h-10 rounded-xl text-10px font-semibold transition-all ${pagination.page === pageNum ? 'bg-indigo-600 text-white  shadow-indigo-600/30 scale-110' : 'text-slate-400 hover:text-slate-900'}`}
+                                    className={`ui-pagination-btn ${pagination.page === pageNum ? 'active' : ''}`}
                                 >
                                     {pageNum}
                                 </button>
@@ -335,9 +343,9 @@ const StocksPage: React.FC = () => {
                     <button
                         onClick={() => handlePageChange(pagination.page + 1)}
                         disabled={pagination.page === pagination.totalPages}
-                        className="w-14 h-14 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-indigo-600 disabled:opacity-20 transition-all shadow-sm active:scale-95"
+                        className="ui-pagination-btn"
                     >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                     </button>
                 </div>
             )}
@@ -352,14 +360,14 @@ const StocksPage: React.FC = () => {
                     <div className="w-px h-16 bg-slate-700"></div>
                     <button
                         onClick={handleResetChanges}
-                        className="text-xs font-bold  tracking-wider text-slate-400 hover:text-white transition-colors"
+                        className="text-xs font-bold  r text-slate-400 hover:text-white transition-colors"
                     >
                         İptal
                     </button>
                     <button
                         onClick={handleSaveAll}
                         disabled={isSaving}
-                        className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 rounded-md text-xs font-bold  tracking-wider transition-all flex items-center gap-2"
+                        className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 rounded-md text-xs font-bold  r transition-all flex items-center gap-2"
                     >
                         {isSaving && <div className="w-3 h-3 border-2 border-white/50 border-t-white rounded-full animate-spin"></div>}
                         KAYDET

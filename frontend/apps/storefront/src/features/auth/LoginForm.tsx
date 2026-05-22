@@ -21,7 +21,7 @@ const LoginForm: React.FC = () => {
         <div className="w-full max-w-[480px] bg-white rounded-3xl p-6 sm:p-10 md:p-12 shadow-[0_20px_60px_rgba(0,0,0,0.06)] border border-gray-100/50">
             {/* Header */}
             <div className="mb-5 text-center">
-                <h2 className="text-3xl md:text-4xl font-extrabold mb-3 tracking-tighter text-gray-900 ">
+                <h2 className="text-3xl md:text-4xl font-extrabold mb-3  text-gray-900 ">
                     Hoş <span className="italic text-brand-pink underline underline-offset-[6px] decoration-gray-900/5">Geldin</span>
                 </h2>
                 <p className="text-gray-400 text-xs md:text-sm font-medium px-4">
@@ -40,7 +40,7 @@ const LoginForm: React.FC = () => {
                     </div>
                 )}
                 <div className="space-y-1">
-                    <label className="flex items-center gap-2 text-10px font-bold text-gray-400  tracking-widest ml-1">
+                    <label className="flex items-center gap-2 text-10px font-bold text-gray-400   ml-1">
                         E-Posta Adresi
                     </label>
                     <input
@@ -52,15 +52,15 @@ const LoginForm: React.FC = () => {
                         required
                         className={`w-full p-4 rounded-xl border ${errors.email ? 'border-brand-pink bg-red-50/20' : 'border-gray-50 bg-gray-50/50'} text-gray-900 text-sm focus:bg-white focus:border-gray-900 focus:ring-4 focus:ring-gray-900/5 outline-none transition-all placeholder:text-gray-300 font-medium`}
                     />
-                    {errors.email && <p className="text-9px font-semibold text-brand-pink  tracking-tighter ml-1">{errors.email}</p>}
+                    {errors.email && <p className="text-nano font-semibold text-brand-pink   ml-1">{errors.email}</p>}
                 </div>
 
                 <div className="space-y-1">
                     <div className="flex justify-between items-center ml-1">
-                        <label className="text-10px font-bold text-gray-400  tracking-widest">
+                        <label className="text-10px font-bold text-gray-400  ">
                             Şifre
                         </label>
-                        <a href="#" className="text-10px font-semibold text-gray-300 hover:text-brand-pink transition-colors  tracking-tight">Şifiremi Unuttum?</a>
+                        <a href="#" className="text-10px font-semibold text-gray-300 hover:text-brand-pink transition-colors  ">Şifiremi Unuttum?</a>
                     </div>
                     <div className="relative">
                         <input
@@ -90,13 +90,13 @@ const LoginForm: React.FC = () => {
                     >
                         {rememberMe && <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="4"><path d="M5 13l4 4L19 7" /></svg>}
                     </button>
-                    <span className="text-[11px] font-bold text-gray-500 cursor-pointer select-none tracking-tight" onClick={() => setRememberMe(!rememberMe)}>BİRİ OTURUMUMU AÇIK TUT</span>
+                    <span className="text-caption font-bold text-gray-500 cursor-pointer select-none " onClick={() => setRememberMe(!rememberMe)}>BİRİ OTURUMUMU AÇIK TUT</span>
                 </div>
 
                 <button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full py-4 bg-gray-900 text-white rounded-xl font-semibold text-[11px] flex items-center justify-center gap-3 hover:bg-brand-pink transform hover:-translate-y-0.5 transition-all  shadow-gray-200 hover:shadow-brand-pink/20 mt-8 active:scale-95 group  tracking-[0.2em] disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full py-4 bg-gray-900 text-white rounded-xl font-semibold text-caption flex items-center justify-center gap-3 hover:bg-brand-pink transform hover:-translate-y-0.5 transition-all  shadow-gray-200 hover:shadow-brand-pink/20 mt-8 active:scale-95 group   disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     {isLoading ? 'Giriş Yapılıyor...' : 'Giriş Yap'}
                     {!isLoading && (
@@ -107,7 +107,7 @@ const LoginForm: React.FC = () => {
                 </button>
             </form>
 
-            <p className="text-center mt-10 text-[11px] text-gray-400 font-bold tracking-tight">
+            <p className="text-center mt-10 text-caption text-gray-400 font-bold ">
                 Hesabın yok mu? <Link to="/register" className="font-semibold text-gray-900 hover:text-brand-pink transition-colors">ÜYE OL</Link>
             </p>
         </div>

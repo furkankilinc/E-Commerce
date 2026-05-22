@@ -83,10 +83,10 @@ const ProductListPage: React.FC = () => {
             cancelButtonText: 'Vazgeç',
             background: '#ffffff',
             customClass: {
-                title: 'font-semibold italic  tracking-tighter',
+                title: 'font-semibold italic  ',
                 popup: 'rounded-xl',
-                confirmButton: 'rounded-2xl px-6 py-4 font-semibold  tracking-widest text-10px',
-                cancelButton: 'rounded-2xl px-6 py-4 font-semibold  tracking-widest text-10px'
+                confirmButton: 'rounded-2xl px-6 py-4 font-semibold   text-10px',
+                cancelButton: 'rounded-2xl px-6 py-4 font-semibold   text-10px'
             }
         });
 
@@ -111,12 +111,12 @@ const ProductListPage: React.FC = () => {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
-                    <h1 className="text-[40px] font-[1000] text-slate-900 tracking-tighter mb-2 italic leading-none">Ürün <span className="text-brand-pink">Envanteri</span></h1>
+                    <h1 className="text-4xl font-[1000] text-slate-900  mb-2 italic leading-none">Ürün <span className="text-brand-pink">Envanteri</span></h1>
                     <p className="text-slate-400 font-bold text-lg italic opacity-70">Vitrinini yönet ve stok seviyelerini gerçek zamanlı takip et.</p>
                 </div>
                 <Link
                     to="/products/create"
-                    className="px-12 py-6 bg-brand-pink text-white rounded-2xl text-[11px] font-semibold tracking-[0.2em] shadow-xl shadow-brand-pink/20 hover:bg-brand-pink-hover hover:scale-105 transition-all active:scale-95 flex items-center gap-4 italic"
+                    className="px-12 py-6 bg-brand-pink text-white rounded-2xl text-caption font-semibold  shadow-xl shadow-brand-pink/20 hover:bg-brand-pink-hover  transition-all active:scale-95 flex items-center gap-4 italic"
                 >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4" /></svg>
                     YENİ ÜRÜN EKLE
@@ -143,7 +143,7 @@ const ProductListPage: React.FC = () => {
                         aria-label="Durum Filtresi"
                         value={statusFilter}
                         onChange={(e) => setStatusFilter(e.target.value)}
-                        className="w-full h-14 px-6 bg-slate-50 border border-slate-100 rounded-xl text-10px font-semibold tracking-widest text-slate-600 focus:outline-none focus:border-brand-pink focus:bg-white transition-all cursor-pointer appearance-none uppercase italic"
+                        className="w-full h-14 px-6 bg-slate-50 border border-slate-100 rounded-xl text-10px font-semibold  text-slate-600 focus:outline-none focus:border-brand-pink focus:bg-white transition-all cursor-pointer appearance-none uppercase italic"
                     >
                         <option className="cursor-pointer font-bold" value="ALL">TÜM DURUMLAR</option>
                         <option className="cursor-pointer font-bold" value="PUBLISHED">YAYINDA</option>
@@ -160,7 +160,7 @@ const ProductListPage: React.FC = () => {
                         aria-label="Sıralama Ölçütü"
                         value={sortBy}
                         onChange={(e) => setSortBy(e.target.value)}
-                        className="w-full h-14 px-6 bg-slate-50 border border-slate-100 rounded-xl text-10px font-semibold tracking-widest text-slate-600 focus:outline-none focus:border-brand-pink focus:bg-white transition-all cursor-pointer appearance-none uppercase italic"
+                        className="w-full h-14 px-6 bg-slate-50 border border-slate-100 rounded-xl text-10px font-semibold  text-slate-600 focus:outline-none focus:border-brand-pink focus:bg-white transition-all cursor-pointer appearance-none uppercase italic"
                     >
                         <option className="cursor-pointer font-bold" value="newest">EN YENİLER</option>
                         <option className="cursor-pointer font-bold" value="price-asc">FİYAT: DÜŞÜKTEN YÜKSEĞE</option>
@@ -174,7 +174,7 @@ const ProductListPage: React.FC = () => {
                 </div>
 
                 {/* Summary Info */}
-                <div className="flex items-center justify-center lg:justify-end gap-3 text-9px font-semibold text-slate-400 tracking-widest px-4 italic border-t border-slate-50 lg:border-t-0 pt-4 lg:pt-0">
+                <div className="flex items-center justify-center lg:justify-end gap-3 text-nano font-semibold text-slate-400  px-4 italic border-t border-slate-50 lg:border-t-0 pt-4 lg:pt-0">
                     <span className="text-slate-900">{pagination.total} Üründen</span> {products.length} Tanesi Gösteriliyor
                 </div>
             </div>
@@ -185,12 +185,12 @@ const ProductListPage: React.FC = () => {
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="border-b border-slate-50 italic">
-                                <th className="px-12 py-10 text-10px font-semibold  tracking-widest text-slate-400">Ürün Detayları</th>
-                                <th className="px-6 py-10 text-10px font-semibold  tracking-widest text-slate-400 text-center">Stok Durumu</th>
-                                <th className="px-6 py-10 text-10px font-semibold  tracking-widest text-slate-400 text-center">Birim Fiyat</th>
-                                <th className="px-6 py-10 text-10px font-semibold  tracking-widest text-slate-400 text-center">Seçenekler</th>
-                                <th className="px-6 py-10 text-10px font-semibold  tracking-widest text-slate-400 text-center">Durum</th>
-                                <th className="px-12 py-10 text-10px font-semibold  tracking-widest text-slate-400 text-right">İşlemler</th>
+                                <th className="px-12 py-10 text-10px font-semibold   text-slate-400">Ürün Detayları</th>
+                                <th className="px-6 py-10 text-10px font-semibold   text-slate-400 text-center">Stok Durumu</th>
+                                <th className="px-6 py-10 text-10px font-semibold   text-slate-400 text-center">Birim Fiyat</th>
+                                <th className="px-6 py-10 text-10px font-semibold   text-slate-400 text-center">Seçenekler</th>
+                                <th className="px-6 py-10 text-10px font-semibold   text-slate-400 text-center">Durum</th>
+                                <th className="px-12 py-10 text-10px font-semibold   text-slate-400 text-right">İşlemler</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-50">
@@ -212,10 +212,10 @@ const ProductListPage: React.FC = () => {
                                             <div className="w-32 h-32 bg-slate-50 rounded-xl flex items-center justify-center border-4 border-dashed border-slate-100 group-hover:rotate-12 transition-transform opacity-30">
                                                 <svg className="w-14 h-14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-14L4 7m8 4v10M4 7v10l8 4" /></svg>
                                             </div>
-                                            <span className="text-3xl font-semibold tracking-widest italic leading-none text-slate-300">HENÜZ ÜRÜN YOK</span>
+                                            <span className="text-3xl font-semibold  italic leading-none text-slate-300">HENÜZ ÜRÜN YOK</span>
                                             <Link
                                                 to="/products/create"
-                                                className="mt-4 px-8 py-4 bg-brand-pink text-white rounded-xl text-10px font-semibold tracking-widest hover:bg-brand-pink-hover transition-all active:scale-95 flex items-center gap-3 italic shadow-lg shadow-brand-pink/20"
+                                                className="mt-4 px-8 py-4 bg-brand-pink text-white rounded-xl text-10px font-semibold  hover:bg-brand-pink-hover transition-all active:scale-95 flex items-center gap-3 italic shadow-lg shadow-brand-pink/20"
                                             >
                                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4" /></svg>
                                                 İLK ÜRÜNÜNÜZÜ EKLEYİN
@@ -237,12 +237,12 @@ const ProductListPage: React.FC = () => {
                                                 </div>
                                                 <div>
                                                     <span className="text-lg font-semibold text-slate-900 block group-hover:text-brand-pink transition-colors italic leading-tight">{product.name}</span>
-                                                    <span className="text-10px font-bold text-slate-400 tracking-widest  mt-1 block text-nowrap">{product.sku || 'SKU-BEKLEMEDE'}</span>
+                                                    <span className="text-10px font-bold text-slate-400   mt-1 block text-nowrap">{product.sku || 'SKU-BEKLEMEDE'}</span>
                                                 </div>
                                             </div>
                                         </td>
                                         <td className="px-6 py-10 text-center">
-                                            <div className={`inline-flex px-5 py-2.5 rounded-2xl text-[11px] font-semibold italic items-center gap-3 text-nowrap ${product.stock < 10 ? 'bg-rose-50 text-rose-500 shadow-sm shadow-rose-100/50' : 'bg-emerald-50 text-emerald-600 shadow-sm shadow-emerald-100/50'}`}>
+                                            <div className={`inline-flex px-5 py-2.5 rounded-2xl text-caption font-semibold italic items-center gap-3 text-nowrap ${product.stock < 10 ? 'bg-rose-50 text-rose-500 shadow-sm shadow-rose-100/50' : 'bg-emerald-50 text-emerald-600 shadow-sm shadow-emerald-100/50'}`}>
                                                 <div className={`w-2 h-2 rounded-full ${product.stock < 10 ? 'bg-rose-500 animate-pulse' : 'bg-emerald-500'}`}></div>
                                                 {product.stock} Adet Stok
                                             </div>
@@ -254,12 +254,12 @@ const ProductListPage: React.FC = () => {
                                                         <span className="text-10px font-bold text-slate-400 line-through opacity-60 italic mb-1">
                                                             {product.price.toLocaleString()} ₺
                                                         </span>
-                                                        <span className="text-lg font-semibold text-slate-900 italic tracking-tighter leading-none">
+                                                        <span className="text-lg font-semibold text-slate-900 italic  leading-none">
                                                             {product.discountPrice.toLocaleString()} ₺
                                                         </span>
                                                     </>
                                                 ) : (
-                                                    <span className="text-lg font-semibold text-slate-900 italic tracking-tighter leading-none">
+                                                    <span className="text-lg font-semibold text-slate-900 italic  leading-none">
                                                         {product.price.toLocaleString()} ₺
                                                     </span>
                                                 )}
@@ -270,16 +270,16 @@ const ProductListPage: React.FC = () => {
                                                 <span className="text-10px font-semibold text-indigo-500 ">{product.variants?.length || 0} SEÇENEK</span>
                                                 <div className="flex flex-wrap justify-center gap-1 max-w-[120px]">
                                                     {Array.from(new Set(product.variants?.map(v => v.name))).slice(0, 2).map(name => (
-                                                        <span key={name} className="px-2 py-0.5 bg-indigo-50 text-indigo-400 rounded-md text-8px font-bold">{name}</span>
+                                                        <span key={name} className="px-2 py-0.5 bg-indigo-50 text-indigo-400 rounded-md text-micro font-bold">{name}</span>
                                                     ))}
                                                 </div>
                                             </div>
                                         </td>
                                         <td className="px-6 py-10 text-center">
                                             {product.status === 'PUBLISHED' ? (
-                                                <span className="px-5 py-2.5 rounded-2xl bg-indigo-900 text-white text-9px font-semibold  tracking-widest  shadow-indigo-900/20 italic">YAYINDA</span>
+                                                <span className="px-5 py-2.5 rounded-2xl bg-indigo-900 text-white text-nano font-semibold    shadow-indigo-900/20 italic">YAYINDA</span>
                                             ) : (
-                                                <span className="px-5 py-2.5 rounded-2xl bg-slate-100 text-slate-400 text-9px font-semibold  tracking-widest italic border border-slate-200">TASLAK</span>
+                                                <span className="px-5 py-2.5 rounded-2xl bg-slate-100 text-slate-400 text-nano font-semibold   italic border border-slate-200">TASLAK</span>
                                             )}
                                         </td>
                                         <td className="px-12 py-10 text-right">
@@ -310,16 +310,16 @@ const ProductListPage: React.FC = () => {
 
             {/* Premium Pagination */}
             {pagination.totalPages > 1 && (
-                <div className="flex justify-center items-center gap-6 py-16">
+                <div className="ui-pagination-container">
                     <button
                         onClick={() => handlePageChange(pagination.page - 1)}
                         disabled={pagination.page === 1}
-                        className="w-16 h-16 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-brand-pink disabled:opacity-20 transition-all shadow-sm active:scale-90"
+                        className="ui-pagination-btn"
                     >
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                     </button>
 
-                    <div className="flex items-center gap-3 bg-white px-8 py-3 rounded-xl border border-slate-50 shadow-sm">
+                    <div className="flex items-center gap-3">
                         {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
                             let pageNum = pagination.page;
                             if (pagination.page <= 3) pageNum = i + 1;
@@ -332,7 +332,7 @@ const ProductListPage: React.FC = () => {
                                 <button
                                     key={pageNum}
                                     onClick={() => handlePageChange(pageNum)}
-                                    className={`w-12 h-12 rounded-2xl text-[11px] font-semibold transition-all ${pagination.page === pageNum ? 'bg-brand-pink text-white  shadow-brand-pink/30 scale-110' : 'text-slate-400 hover:text-slate-900 italic'}`}
+                                    className={`ui-pagination-btn ${pagination.page === pageNum ? 'active' : ''}`}
                                 >
                                     {pageNum}
                                 </button>
@@ -343,9 +343,9 @@ const ProductListPage: React.FC = () => {
                     <button
                         onClick={() => handlePageChange(pagination.page + 1)}
                         disabled={pagination.page === pagination.totalPages}
-                        className="w-16 h-16 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-brand-pink disabled:opacity-20 transition-all shadow-sm active:scale-90"
+                        className="ui-pagination-btn"
                     >
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                     </button>
                 </div>
             )}

@@ -2,12 +2,13 @@ import { useState } from 'react';
 import { useAuth } from '../../auth/useAuth';
 import { useParams } from 'react-router-dom';
 import { useCollections } from '../store/collections.store';
-import { toast } from 'react-toastify';
+import { useToast } from '../../../shared/components/Toast';
 
 export const useCollectionsPage = () => {
     const { isAuthenticated } = useAuth();
     const { collectionId } = useParams<{ collectionId?: string }>();
     const { collections, create } = useCollections();
+    const toast = useToast();
     
     const [isCreating, setIsCreating] = useState(false);
     const [newName, setNewName] = useState('');
@@ -18,7 +19,7 @@ export const useCollectionsPage = () => {
         if (!newName.trim()) return;
         setIsSubmitting(true);
         await create(newName.trim(), selectedEmoji);
-        toast.success(`"${newName}" koleksiyonu oluşturuldu!`, { autoClose: 1500 });
+        toast.success(`"${newName}" koleksiyonu oluşturuldu!`);
         setNewName('');
         setIsCreating(false);
         setIsSubmitting(false);

@@ -75,8 +75,38 @@ const deleteShippingCompany = async (req, res) => {
     }
 };
 
+const updateShippingCompany = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name, logo, basePrice, deliveryTime, isActive } = req.body;
+        
+        let list = getShippingCompaniesList();
+        const index = list.findIndex(item => item.id === id);
+        if (index === -1) {
+            return res.status(404).json({ success: false, message: 'Kargo firması bulunamadı.' });
+        }
+
+        const updatedCompany = {
+            ...list[index],
+            name: name !== undefined ? name : list[index].name,
+            logo: logo !== undefined ? logo : list[index].logo,
+            basePrice: basePrice !== undefined ? parseFloat(basePrice) : list[index].basePrice,
+            deliveryTime: deliveryTime !== undefined ? deliveryTime : list[index].deliveryTime,
+            isActive: isActive !== undefined ? isActive : (list[index].isActive !== undefined ? list[index].isActive : true)
+        };
+
+        list[index] = updatedCompany;
+        saveShippingCompaniesList(list);
+
+        return res.json({ success: true, data: updatedCompany });
+    } catch (err) {
+        return res.status(500).json({ success: false, message: 'Kargo firması güncellenemedi.' });
+    }
+};
+
 module.exports = {
     getShippingCompanies,
     createShippingCompany,
-    deleteShippingCompany
+    deleteShippingCompany,
+    updateShippingCompany
 };

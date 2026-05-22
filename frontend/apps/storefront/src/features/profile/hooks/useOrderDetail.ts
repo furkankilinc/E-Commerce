@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { useToast } from '../../../shared/components/Toast';
 import { apiClient } from '../../../shared/api/apiClient';
 import { useAuth } from '../../auth/useAuth';
 
 export const useOrderDetail = (id: string | undefined) => {
     const navigate = useNavigate();
     const { isAuthenticated } = useAuth();
+    const toast = useToast();
     const [order, setOrder] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [reviewingItemId, setReviewingItemId] = useState<string | null>(null);

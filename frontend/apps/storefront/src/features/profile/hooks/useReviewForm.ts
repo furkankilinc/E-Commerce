@@ -1,9 +1,10 @@
 import { useState, useRef } from 'react';
-import { toast } from 'react-toastify';
+import { useToast } from '../../../shared/components/Toast';
 import { apiClient } from '../../../shared/api/apiClient';
 
 export const useReviewForm = (item: any, onSuccess: () => void) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const toast = useToast();
     const [rating, setRating] = useState(5);
     const [title, setTitle] = useState('');
     const [comment, setComment] = useState('');
@@ -45,7 +46,7 @@ export const useReviewForm = (item: any, onSuccess: () => void) => {
 
     const handleSubmit = async () => {
         if (!title || !comment) {
-            toast.warn('Lütfen başlık ve yorum alanlarını doldurun.');
+            toast.warning('Lütfen başlık ve yorum alanlarını doldurun.');
             return;
         }
 

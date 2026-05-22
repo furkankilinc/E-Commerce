@@ -2,11 +2,45 @@ const prisma = require('../../config/prisma');
 
 const getAllUsers = async (req, res) => {
     try {
-        const users = await prisma.user.findMany({
-            select: { id: true, email: true, name: true, phone: true, isActive: true, createdAt: true }
+        const { search, page = 1, limit = 10 } = req.query;
+        const parsedPage = parseInt(page, 10) || 1;
+        const parsedLimit = parseInt(limit, 10) || 10;
+        const skip = (parsedPage - 1) * parsedLimit;
+
+        const where = {};
+        if (search) {
+            where.OR = [
+                { name: { contains: search, mode: 'insensitive' } },
+                { email: { contains: search, mode: 'insensitive' } }
+            ];
+        }
+
+        const [users, total] = await Promise.all([
+            prisma.user.findMany({
+                where,
+                select: { id: true, email: true, name: true, phone: true, isActive: true, createdAt: true },
+                skip,
+                take: parsedLimit,
+                orderBy: { createdAt: 'desc' }
+            }),
+            prisma.user.count({ where })
+        ]);
+
+        const pages = Math.ceil(total / parsedLimit) || 1;
+
+        return res.status(200).json({ 
+            success: true, 
+            users, 
+            pages,
+            pagination: {
+                total,
+                page: parsedPage,
+                pages,
+                limit: parsedLimit
+            }
         });
-        return res.status(200).json({ success: true, users });
     } catch (err) {
+        console.error(err);
         return res.status(500).json({ success: false, message: 'Kullanıcılar alınamadı.' });
     }
 };

@@ -73,7 +73,7 @@ const SellersPage: React.FC = () => {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                             </svg>
                         </div>
-                        <h1 className="text-4xl font-semibold text-admin-dark tracking-tight">Satıcı Yönetimi</h1>
+                        <h1 className="text-4xl font-semibold text-admin-dark ">Satıcı Yönetimi</h1>
                     </div>
                     <p className="text-slate-500 font-medium text-lg ml-1">Platformdaki tüm mağazaları denetleyin ve logları izleyin.</p>
                 </div>
@@ -139,11 +139,11 @@ const SellersPage: React.FC = () => {
                     <table className="w-full">
                         <thead>
                             <tr className="bg-slate-50/50">
-                                <th className="text-left py-5 px-8 text-xs font-semibold text-slate-400  tracking-[0.15em]">Mağaza Bilgisi</th>
-                                <th className="text-left py-5 px-8 text-xs font-semibold text-slate-400  tracking-[0.15em]">İletişim</th>
-                                <th className="text-left py-5 px-8 text-xs font-semibold text-slate-400  tracking-[0.15em]">Ürün Sayısı</th>
-                                <th className="text-left py-5 px-8 text-xs font-semibold text-slate-400  tracking-[0.15em]">Durum</th>
-                                <th className="text-right py-5 px-8 text-xs font-semibold text-slate-400  tracking-[0.15em]">Aksiyon</th>
+                                <th className="text-left py-5 px-8 text-xs font-semibold text-slate-400  ">Mağaza Bilgisi</th>
+                                <th className="text-left py-5 px-8 text-xs font-semibold text-slate-400  ">İletişim</th>
+                                <th className="text-left py-5 px-8 text-xs font-semibold text-slate-400  ">Ürün Sayısı</th>
+                                <th className="text-left py-5 px-8 text-xs font-semibold text-slate-400  ">Durum</th>
+                                <th className="text-right py-5 px-8 text-xs font-semibold text-slate-400  ">Aksiyon</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-50">
@@ -152,7 +152,7 @@ const SellersPage: React.FC = () => {
                                     <td colSpan={5} className="py-20 text-center">
                                         <div className="inline-flex items-center gap-4 bg-slate-50 px-6 py-3 rounded-2xl">
                                             <div className="w-5 h-5 border-3 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-                                            <span className="text-slate-500 font-bold  tracking-widest text-xs">Veriler Getiriliyor...</span>
+                                            <span className="text-slate-500 font-bold   text-xs">Veriler Getiriliyor...</span>
                                         </div>
                                     </td>
                                 </tr>
@@ -190,11 +190,19 @@ const SellersPage: React.FC = () => {
                                             </div>
                                         </td>
                                         <td className="py-6 px-8">
-                                            <div className="flex flex-col gap-2">
-                                                <span className={`inline-flex items-center px-3 py-1 rounded-lg text-10px font-semibold  tracking-widest w-fit ${merchant.isActive ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-red-50 text-red-600 border border-red-100'}`}>
+                                            <div className="flex flex-wrap gap-2">
+                                                <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-nano font-bold ${
+                                                    merchant.isActive 
+                                                        ? 'bg-emerald-50 text-emerald-600 border border-emerald-100/50' 
+                                                        : 'bg-rose-50 text-rose-600 border border-rose-100/50'
+                                                }`}>
                                                     {merchant.isActive ? 'AKTİF' : 'PASİF'}
                                                 </span>
-                                                <span className={`inline-flex items-center px-3 py-1 rounded-lg text-10px font-semibold  tracking-widest w-fit ${merchant.isVerified ? 'bg-blue-50 text-blue-600 border border-blue-100' : 'bg-amber-50 text-amber-600 border border-amber-100'}`}>
+                                                <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-nano font-bold ${
+                                                    merchant.isVerified 
+                                                        ? 'bg-blue-50 text-blue-600 border border-blue-100/50' 
+                                                        : 'bg-amber-50 text-amber-600 border border-amber-100/50'
+                                                }`}>
                                                     {merchant.isVerified ? 'ONAYLI' : 'ONAY BEKLİYOR'}
                                                 </span>
                                             </div>
@@ -219,7 +227,7 @@ const SellersPage: React.FC = () => {
 
                 {/* Footer / Pagination Placeholder */}
                 <div className="p-6 bg-slate-50/30 border-t border-slate-50 flex flex-col md:flex-row items-center justify-between gap-6">
-                    <div className="text-slate-400 text-xs font-semibold  tracking-[0.2em] italic">
+                    <div className="text-slate-400 text-xs font-semibold   italic">
                         Toplam <span className="text-admin-dark">{total}</span> satıcı bulundu
                     </div>
                     <Pagination
@@ -242,15 +250,15 @@ const StatCard: React.FC<{ label: string; value: number | string; color: string;
     };
 
     return (
-        <div className="bg-white p-6 rounded-2xl border-2 border-slate-50  shadow-slate-100 flex items-center gap-5 transition-transform hover:scale-[1.02] cursor-default">
+        <div className="bg-white p-6 rounded-2xl border-2 border-slate-50  shadow-slate-100 flex items-center gap-5 transition-transform  cursor-default">
             <div className={`w-14 h-14 ${colors[color].split(' ')[0]} rounded-2xl flex items-center justify-center text-white shadow-lg ${colors[color].split(' ').pop()}`}>
                 <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={icon} />
                 </svg>
             </div>
             <div>
-                <div className="text-slate-400 text-xs font-semibold  tracking-widest mb-1">{label}</div>
-                <div className="text-3xl font-semibold text-admin-dark tracking-tighter">{value}</div>
+                <div className="text-slate-400 text-xs font-semibold   mb-1">{label}</div>
+                <div className="text-3xl font-semibold text-admin-dark ">{value}</div>
             </div>
         </div>
     );

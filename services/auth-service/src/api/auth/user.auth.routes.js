@@ -7,7 +7,8 @@ const {
     merchantLogin,
     userRefresh,
     merchantRefresh,
-    adminRefresh
+    adminRefresh,
+    getPublicMerchants
 } = require('./user.auth.controller');
 
 const router = Router();
@@ -25,5 +26,8 @@ router.post('/merchant/refresh', merchantRefresh);
 // Admin Auth
 router.post('/admin/login', adminLogin);
 router.post('/admin/refresh', adminRefresh);
+
+// Public Merchant Profiles (Storefront list)
+router.get('/merchants', getPublicMerchants);
 
 module.exports = router;

@@ -214,4 +214,17 @@ const userRefresh = (req, res) => refreshSession(req, res, 'user');
 const merchantRefresh = (req, res) => refreshSession(req, res, 'merchant');
 const adminRefresh = (req, res) => refreshSession(req, res, 'admin');
 
-module.exports = { userRegister, userLogin, adminLogin, merchantRegister, merchantLogin, userRefresh, merchantRefresh, adminRefresh };
+const getPublicMerchants = async (req, res) => {
+    try {
+        const merchants = await prisma.merchant.findMany({
+            where: { isActive: true },
+            select: { id: true, companyName: true }
+        });
+        return res.json(merchants);
+    } catch (err) {
+        console.error('[GET_PUBLIC_MERCHANTS] Error:', err);
+        return res.status(500).json({ success: false, message: 'Satıcılar alınamadı.' });
+    }
+};
+
+module.exports = { userRegister, userLogin, adminLogin, merchantRegister, merchantLogin, userRefresh, merchantRefresh, adminRefresh, getPublicMerchants };

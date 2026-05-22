@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import AddToCollectionModal from '../collections/components/AddToCollectionModal';
 import { getSizedImageUrl } from '../../shared/utils/image.util';
 import { useProductDetail } from './hooks/useProductDetail';
-import { toast } from 'react-toastify';
+import { useToast } from '../../shared/components/Toast';
 
 interface Product {
     id: string;
@@ -39,6 +39,7 @@ interface Product {
 
 const ProductDetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
+    const toast = useToast();
     const {
         isAuthenticated,
         product,
@@ -68,11 +69,78 @@ const ProductDetailPage: React.FC = () => {
         isFetchingNewProduct
     } = useProductDetail(id);
 
+    const [questions, setQuestions] = React.useState<any[]>([]);
+    const [showQuestionForm, setShowQuestionForm] = React.useState(false);
+    const [questionName, setQuestionName] = React.useState('');
+    const [questionText, setQuestionText] = React.useState('');
+    const [isSubmittingQuestion, setIsSubmittingQuestion] = React.useState(false);
+    const [questionsLoading, setQuestionsLoading] = React.useState(false);
+
+    React.useEffect(() => {
+        if (activeTab === 'qa' && product?.id) {
+            const fetchQuestions = async () => {
+                setQuestionsLoading(true);
+                try {
+                    const res = await fetch(`/api/products/${product.id}/questions`);
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data.success) {
+                            setQuestions(data.data);
+                        }
+                    }
+                } catch (err) {
+                    console.error('Sorular alınamadı:', err);
+                } finally {
+                    setQuestionsLoading(false);
+                }
+            };
+            fetchQuestions();
+        }
+    }, [activeTab, product?.id]);
+
+    const handleAskQuestion = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!questionText.trim()) return;
+
+        setIsSubmittingQuestion(true);
+        try {
+            const res = await fetch(`/api/products/${product.id}/questions`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    questionText,
+                    userName: questionName || 'Ziyaretçi',
+                    merchantId: product.merchantId || 'default',
+                    productName: product.name
+                })
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                if (data.success) {
+                    toast.success('Sorunuz satıcıya iletildi. Cevaplandığında burada görünecektir!');
+                    setQuestionText('');
+                    setShowQuestionForm(false);
+                    // Reload
+                    const req = await fetch(`/api/products/${product.id}/questions`);
+                    const resJson = await req.json();
+                    if (resJson.success) setQuestions(resJson.data);
+                }
+            } else {
+                toast.error('Soru gönderilemedi.');
+            }
+        } catch (err) {
+            toast.error('Bir hata oluştu.');
+        } finally {
+            setIsSubmittingQuestion(false);
+        }
+    };
+
     if (isLoading || isFetchingNewProduct) {
         return (
             <div className="min-h-screen bg-white flex flex-col items-center justify-center gap-4">
                 <div className="w-16 h-16 border-4 border-brand-pink border-t-transparent rounded-full animate-spin"></div>
-                <p className="font-bold text-10px  tracking-[0.2em] text-gray-400 italic">Ürün Detayları Yükleniyor...</p>
+                <p className="font-bold text-10px   text-gray-400 italic">Ürün Detayları Yükleniyor...</p>
             </div>
         );
     }
@@ -83,17 +151,17 @@ const ProductDetailPage: React.FC = () => {
                 <div className="w-20 h-16 bg-gray-50 rounded-md flex items-center justify-center mb-6 border border-gray-100 shadow-inner rotate-3">
                     <svg className="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-14L4 7m8 4v10M4 7v10l8 4" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 </div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-4  tracking-tight italic">Ürün Bulunamadı</h2>
-                <Link to="/" className="px-8 py-3 bg-brand-pink text-white rounded-md text-10px font-bold  tracking-widest shadow-lg shadow-brand-pink/20 hover:bg-brand-pink-hover transition-all">Ana Sayfaya Dön</Link>
+                <h2 className="text-2xl font-bold text-gray-900 mb-4   italic">Ürün Bulunamadı</h2>
+                <Link to="/" className="px-8 py-3 bg-brand-pink text-white rounded-md text-10px font-bold   shadow-lg shadow-brand-pink/20 hover:bg-brand-pink-hover transition-all">Ana Sayfaya Dön</Link>
             </div>
         );
     }
 
     return (
         <div className="bg-white">
-            <div className="max-w-[1440px] mx-auto px-4 sm:px-10 lg:px-20 py-10">
+            <div className="max-w-[1650px] mx-auto px-4 sm:px-10 lg:px-20 py-10">
                 {/* Breadcrumbs */}
-                <nav className="flex items-center gap-2 text-10px font-bold text-gray-400  tracking-widest mb-16 italic">
+                <nav className="flex items-center gap-2 text-10px font-bold text-gray-400   mb-16 italic">
                     <Link to="/" className="hover:text-gray-900 transition-colors">ANASAYFA</Link>
 
                     {product.category?.parent && (
@@ -114,14 +182,14 @@ const ProductDetailPage: React.FC = () => {
                     <span className="text-gray-900">{product.name}</span>
                 </nav>
 
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-20 mb-32">
-                    {/* Image Gallery Side Strip */}
-                    <div className="lg:col-span-1 hidden lg:flex flex-col gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-20 mb-32">
+                    {/* Image Gallery Thumbnails */}
+                    <div className="lg:col-span-1 flex flex-row lg:flex-col gap-4 overflow-x-auto lg:overflow-x-visible pb-2 lg:pb-0 scrollbar-hide shrink-0 order-2 lg:order-1">
                         {product.images.map((img, i) => (
                             <button
                                 key={i}
                                 onClick={() => setMainImage(img.url)}
-                                className={`aspect-square w-full rounded-md overflow-hidden border-2 transition-all bg-[#fdfaf5] ${mainImage === img.url ? 'border-brand-pink shadow-lg shadow-brand-pink/10' : 'border-transparent opacity-50 hover:opacity-100 hover:border-gray-200'}`}
+                                className={`aspect-square w-16 sm:w-20 lg:w-full rounded-md overflow-hidden border-2 transition-all bg-[#fdfaf5] shrink-0 ${mainImage === img.url ? 'border-brand-pink shadow-lg shadow-brand-pink/10' : 'border-transparent opacity-50 hover:opacity-100 hover:border-gray-200'}`}
                             >
                                 {img.url && <img src={getSizedImageUrl(img.url, 'small')} alt="" className="w-full h-full object-contain" width="200" height="200" loading="lazy" />}
                             </button>
@@ -129,7 +197,7 @@ const ProductDetailPage: React.FC = () => {
                     </div>
 
                     {/* Main Image View */}
-                    <div className="lg:col-span-4 relative group flex flex-col items-start">
+                    <div className="lg:col-span-4 relative group flex flex-col items-start order-1 lg:order-2">
                         <div className="w-full aspect-square relative rounded-md overflow-hidden bg-white border border-gray-100 flex items-center justify-center shadow-sm transition-all duration-700">
                             {mainImage && (
                                 <img
@@ -144,31 +212,31 @@ const ProductDetailPage: React.FC = () => {
                             )}
                         </div>
                         <div className="absolute top-4 left-4 flex flex-col gap-3">
-                            <span className="px-4 py-2 bg-white/90 backdrop-blur shadow-sm border border-gray-100 text-9px font-bold tracking-widest text-gray-900  italic rounded-lg">
+                            <span className="px-4 py-2 bg-white/90 backdrop-blur shadow-sm border border-gray-100 text-nano font-bold  text-gray-900  italic rounded-lg">
                                 {product.category?.name || 'CORETECH'}
                             </span>
                         </div>
                         <button
                             onClick={handleWishlist}
-                            className={`absolute top-4 right-4 w-12 h-12 rounded-full shadow-md flex items-center justify-center transition-all transform hover:scale-110 border ${isInWishlist(product.id) ? 'bg-brand-pink border-brand-pink text-white' : 'bg-white border-gray-100 text-gray-400 hover:text-brand-pink'}`}
+                            className={`absolute top-4 right-4 w-12 h-12 rounded-full shadow-md flex items-center justify-center transition-all transform  border ${isInWishlist(product.id) ? 'bg-brand-pink border-brand-pink text-white' : 'bg-white border-gray-100 text-gray-400 hover:text-brand-pink'}`}
                         >
                             <svg className="w-5 h-5" fill={isInWishlist(product.id) ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
                         </button>
                     </div>
 
                     {/* Product Info Panel */}
-                    <div className="lg:col-span-7 flex flex-col pt-2">
+                    <div className="lg:col-span-7 flex flex-col pt-2 order-3 lg:order-3">
                         <div className="mb-6 flex items-center gap-4">
-                            <span className="text-10px font-semibold text-brand-pink tracking-[0.2em]  bg-brand-pink/5 px-4 py-2 rounded-md">{product.merchant?.companyName || 'FUIRA STORE'}</span>
+                            <span className="text-10px font-semibold text-brand-pink   bg-brand-pink/5 px-4 py-2 rounded-md">{product.merchant?.companyName || 'FUIRA STORE'}</span>
                             <div className="w-1 h-1 bg-gray-200 rounded-full"></div>
                             <div className="flex items-center gap-1.5">
                                 <svg className="w-3.5 h-3.5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
-                                <span className="text-[11px] font-semibold text-gray-900 border-b border-gray-900 leading-none pb-0.5">{product.rating?.toFixed(2) || '0.00'}</span>
-                                <span className="text-[11px] font-bold text-gray-400">({product.reviewCount || 0} Değerlendirme)</span>
+                                <span className="text-caption font-semibold text-gray-900 border-b border-gray-900 leading-none pb-0.5">{product.rating?.toFixed(2) || '0.00'}</span>
+                                <span className="text-caption font-bold text-gray-400">({product.reviewCount || 0} Değerlendirme)</span>
                             </div>
                         </div>
 
-                        <h1 className="text-2xl lg:text-[1.75rem] font-semibold text-gray-800 leading-[1.3] mb-4">{product.name}</h1>
+                        <h1 className="text-2xl font-semibold text-gray-800 leading-[1.3] mb-4">{product.name}</h1>
 
 
                         {cartCount > 0 && product.stock > 0 && cartCount >= (product.stock * 0.8) && (
@@ -178,7 +246,7 @@ const ProductDetailPage: React.FC = () => {
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                                     </svg>
                                 </div>
-                                <p className="text-[11px] font-[900] text-orange-900  tracking-tight">
+                                <p className="text-caption font-[900] text-orange-900  ">
                                     DİKKAT! <span className="text-orange-600 text-sm mx-0.5">{cartCount}</span> kişi bu ürünü sepetinde tutuyor ve stoklar tükenmek üzere!
                                 </p>
                             </div>
@@ -187,7 +255,7 @@ const ProductDetailPage: React.FC = () => {
                         <div className="flex items-center gap-6 mb-5">
                             <div className="flex flex-col">
                                 {product.discountPrice && (
-                                    <span className="text-10px font-semibold text-slate-400 tracking-[0.2em]  mb-1 italic">İNDİRİMLİ FİYAT</span>
+                                    <span className="text-10px font-semibold text-slate-400   mb-1 italic">İNDİRİMLİ FİYAT</span>
                                 )}
                                 <div className="flex items-center gap-4">
                                     {product.discountPrice ? (
@@ -200,7 +268,7 @@ const ProductDetailPage: React.FC = () => {
                                                 }, 0)).toLocaleString()}&nbsp;₺
                                             </span>
                                             <div className="flex items-center gap-4">
-                                                <span className="text-4xl lg:text-5xl font-[1000] text-slate-900 tracking-tighter italic">
+                                                <span className="text-4xl lg:text-5xl font-[1000] text-slate-900  italic">
                                                     {(product.discountPrice + Object.keys(selectedVariants).reduce((acc, key) => {
                                                         const val = selectedVariants[key];
                                                         const variant = product.variants.find(v => v.name === key && v.value === val);
@@ -210,7 +278,7 @@ const ProductDetailPage: React.FC = () => {
                                             </div>
                                         </>
                                     ) : (
-                                        <span className="text-4xl lg:text-5xl font-[1000] text-slate-900 tracking-tighter italic">
+                                        <span className="text-4xl lg:text-5xl font-[1000] text-slate-900  italic">
                                             {(product.price + Object.keys(selectedVariants).reduce((acc, key) => {
                                                 const val = selectedVariants[key];
                                                 const variant = product.variants.find(v => v.name === key && v.value === val);
@@ -243,14 +311,14 @@ const ProductDetailPage: React.FC = () => {
                                     return (
                                         <div key={groupName}>
                                             <div className="flex justify-between items-center mb-6">
-                                                <span className="text-10px font-semibold  tracking-[0.2em] text-slate-400 italic">
+                                                <span className="text-10px font-semibold   text-slate-400 italic">
                                                     {groupName ? groupName.toUpperCase() : ''} SEÇİN
                                                 </span>
                                                 {groupName?.toUpperCase() === 'BEDEN' && (
-                                                    <button className="text-10px font-semibold text-brand-pink  tracking-widest underline underline-offset-4 decoration-2">Beden Rehberi</button>
+                                                    <button className="text-10px font-semibold text-brand-pink   underline underline-offset-4 decoration-2">Beden Rehberi</button>
                                                 )}
                                             </div>
-                                            <div className="grid grid-cols-3 gap-4">
+                                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
                                                 {groupValues.map(val => {
                                                     const varInfo = product.variants.find(v => v.name === groupName && v.value === val);
                                                     const isSelected = selectedVariants[groupName] === val;
@@ -264,7 +332,7 @@ const ProductDetailPage: React.FC = () => {
                                                         >
                                                             <span>{val}</span>
                                                             {priceDiff !== 0 && (
-                                                                <span className={`text-9px ${isSelected ? 'text-indigo-400' : 'text-indigo-500'} font-bold`}>
+                                                                <span className={`text-nano ${isSelected ? 'text-indigo-400' : 'text-indigo-500'} font-bold`}>
                                                                     {priceDiff > 0 ? `+${priceDiff}` : priceDiff} ₺
                                                                 </span>
                                                             )}
@@ -283,7 +351,7 @@ const ProductDetailPage: React.FC = () => {
                                 <button
                                     onClick={handleAddToCart}
                                     disabled={isAdding}
-                                    className={`flex-grow h-16 rounded-md font-semibold text-[11px]  tracking-[0.2em] flex items-center justify-center gap-4 transition-all transform hover:-translate-y-1 shadow-xl italic ${isAdding ? 'bg-green-500 shadow-green-500/40' : 'bg-brand-pink hover:bg-brand-pink-hover shadow-brand-pink/40 text-white'}`}
+                                    className={`flex-grow h-16 rounded-md font-semibold text-caption   flex items-center justify-center gap-4 transition-all transform hover:-translate-y-1 shadow-xl italic ${isAdding ? 'bg-green-500 shadow-green-500/40' : 'bg-brand-pink hover:bg-brand-pink-hover shadow-brand-pink/40 text-white'}`}
                                 >
                                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d={isAdding ? "M5 13l4 4L19 7" : "M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"} /></svg>
                                     {isAdding ? 'EKLENDİ!' : 'SEPETE EKLE'}
@@ -291,7 +359,7 @@ const ProductDetailPage: React.FC = () => {
                             ) : (
                                 <button
                                     disabled
-                                    className="flex-grow h-16 bg-gray-100 text-gray-400 rounded-md font-semibold text-[11px]  tracking-[0.2em] flex items-center justify-center gap-4 italic border border-gray-100 cursor-not-allowed"
+                                    className="flex-grow h-16 bg-gray-100 text-gray-400 rounded-md font-semibold text-caption   flex items-center justify-center gap-4 italic border border-gray-100 cursor-not-allowed"
                                 >
                                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
                                     STOKTA YOK
@@ -313,16 +381,13 @@ const ProductDetailPage: React.FC = () => {
                             <button
                                 onClick={() => {
                                     if (!isAuthenticated) {
-                                        toast.error('Koleksiyon oluşturmak için lütfen giriş yapın.', {
-                                            position: 'top-center',
-                                            autoClose: 3000
-                                        });
+                                        toast.error('Koleksiyon oluşturmak için lütfen giriş yapın.');
                                         return;
                                     }
                                     setShowCollectionModal(true);
                                 }}
                                 aria-label="Koleksiyona Ekle"
-                                className="w-20 h-16 bg-gray-50 text-gray-900 border border-gray-100 rounded-md flex items-center justify-center hover:bg-white hover:border-gray-900 transition-all shadow-sm"
+                                className="w-20 h-16 bg-gray-50 text-gray-900 border border-gray-100 rounded-md flex items-center justify-center hover:bg-white hover:border-gray-300 transition-all shadow-sm"
                             >
                                 <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
@@ -334,7 +399,7 @@ const ProductDetailPage: React.FC = () => {
                             <AddToCollectionModal product={product} onClose={() => setShowCollectionModal(false)} />
                         )}
 
-                        <div className="mt-8 flex items-center justify-center gap-6 text-9px font-semibold text-gray-300  tracking-widest italic">
+                        <div className="mt-8 flex items-center justify-center gap-6 text-nano font-semibold text-gray-300   italic">
                             <div className="flex items-center gap-2">
                                 <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
                                 ÜCRETSİZ KARGO
@@ -351,13 +416,13 @@ const ProductDetailPage: React.FC = () => {
                 {/* Detailed Tabs */}
                 <div className="mb-32">
                     <div className="flex border-b border-gray-50 gap-16 mb-8 overflow-x-auto whitespace-nowrap scrollbar-hide">
-                        {['AÇIKLAMA', 'ÖZELLİKLER', 'DEĞERLENDİRMELER'].map(tab => {
-                            const key = tab === 'AÇIKLAMA' ? 'description' : (tab === 'ÖZELLİKLER' ? 'specs' : 'reviews');
+                        {['AÇIKLAMA', 'ÖZELLİKLER', 'DEĞERLENDİRMELER', 'SORU & CEVAP'].map(tab => {
+                            const key = tab === 'AÇIKLAMA' ? 'description' : (tab === 'ÖZELLİKLER' ? 'specs' : (tab === 'DEĞERLENDİRMELER' ? 'reviews' : 'qa'));
                             return (
                                 <button
                                     key={key}
                                     onClick={() => setActiveTab(key)}
-                                    className={`pb-8 text-[11px] font-semibold tracking-[0.25em] transition-all relative ${activeTab === key ? 'text-gray-900 italic' : 'text-gray-300 hover:text-gray-500'}`}
+                                    className={`pb-8 text-caption font-semibold  transition-all relative ${activeTab === key ? 'text-gray-900 italic' : 'text-gray-300 hover:text-gray-500'}`}
                                 >
                                     {tab}
                                     {activeTab === key && <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-brand-pink rounded-full shadow-[0_0_10px_rgba(255,51,102,0.5)]"></div>}
@@ -377,7 +442,7 @@ const ProductDetailPage: React.FC = () => {
                             <div className="animate-fadeIn">
                                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-10 mb-8">
                                     <div>
-                                        <h2 className="text-[40px] font-semibold text-gray-900 mb-4 tracking-tighter italic ">Müşteri Yorumları</h2>
+                                        <h2 className="text-4xl font-semibold text-gray-900 mb-4  italic ">Müşteri Yorumları</h2>
                                         <div className="flex items-center gap-4">
                                             <div className="flex gap-1">
                                                 {[...Array(5)].map((_, i) => (
@@ -385,26 +450,26 @@ const ProductDetailPage: React.FC = () => {
                                                 ))}
                                             </div>
                                             <span className="text-lg font-semibold text-gray-900 border-b-2 border-brand-pink leading-none pb-1">{product.rating?.toFixed(2) || '0.00'} Skor</span>
-                                            <span className="text-gray-400 font-bold  text-10px tracking-widest">{product.reviewCount || 0} DEĞERLENDİRME</span>
+                                            <span className="text-gray-400 font-bold  text-10px ">{product.reviewCount || 0} DEĞERLENDİRME</span>
                                         </div>
                                     </div>
                                     <button
                                         onClick={() => {
                                             if (!isAuthenticated) {
-                                                toast.error('Yorum yapmak için lütfen giriş yapın.', { position: 'top-center', autoClose: 3000 });
+                                                toast.error('Yorum yapmak için lütfen giriş yapın.');
                                                 return;
                                             }
                                             if (!canReview) {
                                                 if (reviewReason === 'already_reviewed') {
-                                                    toast.info('Bu ürün için zaten bir değerlendirme yaptınız.', { autoClose: 3000 });
+                                                    toast.info('Bu ürün için zaten bir değerlendirme yaptınız.');
                                                 } else {
-                                                    toast.warning('Yalnızca teslim edilen siparişlerdeki ürünlere yorum yapabilirsiniz.', { autoClose: 4000 });
+                                                    toast.warning('Yalnızca teslim edilen siparişlerdeki ürünlere yorum yapabilirsiniz.');
                                                 }
                                                 return;
                                             }
                                             setShowReviewForm(true);
                                         }}
-                                        className="bg-gray-900 text-white px-12 py-5 rounded-md text-10px font-semibold  tracking-[0.2em] hover:bg-brand-pink transition-all  shadow-gray-900/10 italic"
+                                        className="bg-gray-900 text-white px-12 py-5 rounded-md text-10px font-semibold   hover:bg-brand-pink transition-all  shadow-gray-900/10 italic"
                                     >
                                         Yorum Yaz
                                     </button>
@@ -413,18 +478,18 @@ const ProductDetailPage: React.FC = () => {
                                 {/* Review Form */}
                                 {showReviewForm && (
                                     <div className="bg-white border border-gray-100 rounded-md p-8 mb-6 shadow-lg">
-                                        <h3 className="text-xl font-semibold text-gray-900  italic tracking-tight mb-6">Değerlendirmeniz</h3>
+                                        <h3 className="text-xl font-semibold text-gray-900  italic  mb-6">Değerlendirmeniz</h3>
 
                                         {/* Star Rating Selector */}
                                         <div className="mb-6">
-                                            <label className="text-10px font-semibold text-gray-400  tracking-widest mb-3 block">PUAN VERİN</label>
+                                            <label className="text-10px font-semibold text-gray-400   mb-3 block">PUAN VERİN</label>
                                             <div className="flex gap-2">
                                                 {[1, 2, 3, 4, 5].map(star => (
                                                     <button
                                                         key={star}
                                                         type="button"
                                                         onClick={() => setReviewForm(prev => ({ ...prev, rating: star }))}
-                                                        className="transition-transform hover:scale-125"
+                                                        className="transition-transform "
                                                     >
                                                         <svg className={`w-8 h-8 ${star <= reviewForm.rating ? 'text-yellow-400' : 'text-gray-200'}`} fill="currentColor" viewBox="0 0 20 20">
                                                             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
@@ -437,7 +502,7 @@ const ProductDetailPage: React.FC = () => {
 
                                         {/* Title */}
                                         <div className="mb-4">
-                                            <label className="text-10px font-semibold text-gray-400  tracking-widest mb-2 block">BAŞLIK (OPSİYONEL)</label>
+                                            <label className="text-10px font-semibold text-gray-400   mb-2 block">BAŞLIK (OPSİYONEL)</label>
                                             <input
                                                 type="text"
                                                 value={reviewForm.title}
@@ -449,7 +514,7 @@ const ProductDetailPage: React.FC = () => {
 
                                         {/* Comment */}
                                         <div className="mb-6">
-                                            <label className="text-10px font-semibold text-gray-400  tracking-widest mb-2 block">YORUMUNUZ</label>
+                                            <label className="text-10px font-semibold text-gray-400   mb-2 block">YORUMUNUZ</label>
                                             <textarea
                                                 value={reviewForm.comment}
                                                 onChange={(e) => setReviewForm(prev => ({ ...prev, comment: e.target.value }))}
@@ -463,14 +528,14 @@ const ProductDetailPage: React.FC = () => {
                                         <div className="flex gap-3">
                                             <button
                                                 onClick={() => setShowReviewForm(false)}
-                                                className="px-6 py-3 bg-gray-100 text-gray-500 rounded-md text-10px font-semibold  tracking-widest hover:bg-gray-200 transition-all"
+                                                className="px-6 py-3 bg-gray-100 text-gray-500 rounded-md text-10px font-semibold   hover:bg-gray-200 transition-all"
                                             >
                                                 İPTAL
                                             </button>
                                             <button
                                                 onClick={submitReview}
                                                 disabled={isSubmittingReview}
-                                                className="px-8 py-3 bg-brand-pink text-white rounded-md text-10px font-semibold  tracking-widest hover:bg-brand-pink-hover transition-all flex items-center gap-2 shadow-lg shadow-brand-pink/20"
+                                                className="px-8 py-3 bg-brand-pink text-white rounded-md text-10px font-semibold   hover:bg-brand-pink-hover transition-all flex items-center gap-2 shadow-lg shadow-brand-pink/20"
                                             >
                                                 {isSubmittingReview && <div className="w-3 h-3 border-2 border-white/50 border-t-white rounded-full animate-spin"></div>}
                                                 GÖNDER
@@ -489,10 +554,10 @@ const ProductDetailPage: React.FC = () => {
                                                         {review.user?.name ? review.user.name[0] : 'U'}
                                                     </div>
                                                     <div>
-                                                        <h4 className="font-[900] text-gray-900 text-base  italic tracking-tight">{review.user?.name || 'Kullanıcı'}</h4>
+                                                        <h4 className="font-[900] text-gray-900 text-base  italic ">{review.user?.name || 'Kullanıcı'}</h4>
                                                         <div className="flex items-center gap-2 mt-1">
                                                             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                                                            <span className="text-9px font-semibold text-green-600  tracking-widest leading-none">Doğrulanmış Alıcı</span>
+                                                            <span className="text-nano font-semibold text-green-600   leading-none">Doğrulanmış Alıcı</span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -503,7 +568,7 @@ const ProductDetailPage: React.FC = () => {
                                                 </div>
                                             </div>
                                             <div className="relative z-10">
-                                                <h5 className="text-base font-semibold text-gray-900 mb-4  leading-tight italic tracking-tight">{review.title}</h5>
+                                                <h5 className="text-base font-semibold text-gray-900 mb-4  leading-tight italic ">{review.title}</h5>
                                                 <p className="text-sm text-gray-500 font-bold leading-relaxed opacity-70 italic mb-6">
                                                     "{review.comment}"
                                                 </p>
@@ -522,7 +587,7 @@ const ProductDetailPage: React.FC = () => {
                                         </div>
                                     )) : (
                                         <div className="col-span-2 py-32 text-center bg-gray-50/50 rounded-md border border-dashed border-gray-200">
-                                            <p className="text-gray-400 font-semibold text-10px  tracking-widest italic leading-tight">Henüz bu şaheser için bir yorum yapılmamış.</p>
+                                            <p className="text-gray-400 font-semibold text-10px   italic leading-tight">Henüz bu şaheser için bir yorum yapılmamış.</p>
                                         </div>
                                     )}
                                 </div>
@@ -533,29 +598,149 @@ const ProductDetailPage: React.FC = () => {
                             <div className="animate-fadeIn max-w-[900px] mx-auto">
                                 <div className="bg-white border border-gray-100 rounded-md overflow-hidden">
                                     <div className="p-10 border-b border-gray-50 bg-gray-50/30">
-                                        <h3 className="text-xl font-semibold text-gray-900  tracking-tight italic">TEKNİK ÖZELLİKLER</h3>
+                                        <h3 className="text-xl font-semibold text-gray-900   italic">TEKNİK ÖZELLİKLER</h3>
                                     </div>
                                     <div className="divide-y divide-gray-50">
                                         {product.variants && product.variants.length > 0 ? product.variants.map((v, i) => (
                                             <div key={i} className="flex flex-col md:flex-row p-6 hover:bg-gray-50/50 transition-colors">
-                                                <div className="w-full md:w-1/3 text-[11px] font-semibold text-gray-400  tracking-widest mb-2 md:mb-0 italic">{v.name}</div>
+                                                <div className="w-full md:w-1/3 text-caption font-semibold text-gray-400   mb-2 md:mb-0 italic">{v.name}</div>
                                                 <div className="w-full md:w-2/3 text-sm font-bold text-gray-900 italic leading-relaxed">{v.value}</div>
                                             </div>
                                         )) : (
-                                            <div className="p-20 text-center text-gray-300 font-bold italic  tracking-widest text-10px">
+                                            <div className="p-20 text-center text-gray-300 font-bold italic   text-10px">
                                                 ÖZELLİK BİLGİSİ BULUNMUYOR
                                             </div>
                                         )}
                                         {/* Basic Specs Fallback */}
                                         <div className="flex flex-col md:flex-row p-6 hover:bg-gray-50/50 transition-colors">
-                                            <div className="w-full md:w-1/3 text-[11px] font-semibold text-gray-400  tracking-widest mb-2 md:mb-0 italic">MARKA</div>
+                                            <div className="w-full md:w-1/3 text-caption font-semibold text-gray-400   mb-2 md:mb-0 italic">MARKA</div>
                                             <div className="w-full md:w-2/3 text-sm font-bold text-gray-900 italic leading-relaxed">{product.merchant?.companyName || 'BİLİNMİYOR'}</div>
                                         </div>
                                         <div className="flex flex-col md:flex-row p-6 hover:bg-gray-50/50 transition-colors">
-                                            <div className="w-full md:w-1/3 text-[11px] font-semibold text-gray-400  tracking-widest mb-2 md:mb-0 italic">GARANTİ</div>
+                                            <div className="w-full md:w-1/3 text-caption font-semibold text-gray-400   mb-2 md:mb-0 italic">GARANTİ</div>
                                             <div className="w-full md:w-2/3 text-sm font-bold text-gray-900 italic leading-relaxed">2 Yıl Distribütör Garantili</div>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {activeTab === 'qa' && (
+                            <div className="animate-fadeIn max-w-[900px] mx-auto">
+                                <div className="flex flex-col md:flex-row md:items-end justify-between gap-10 mb-8">
+                                    <div>
+                                        <h2 className="text-4xl font-semibold text-gray-900 mb-4 italic">Satıcıya Sorular</h2>
+                                        <p className="text-sm font-bold text-gray-400 italic">Bu ürün ve teslimat detayları hakkında satıcıya merak ettiklerinizi sorun.</p>
+                                    </div>
+                                    <button
+                                        onClick={() => setShowQuestionForm(!showQuestionForm)}
+                                        className="bg-brand-pink text-white px-12 py-5 rounded-md text-10px font-semibold hover:bg-brand-pink-hover transition-all shadow-lg shadow-brand-pink/20 italic"
+                                    >
+                                        {showQuestionForm ? 'Formu Kapat' : 'Satıcıya Soru Sor'}
+                                    </button>
+                                </div>
+
+                                {/* Question Form */}
+                                {showQuestionForm && (
+                                    <form onSubmit={handleAskQuestion} className="bg-white border border-gray-100 rounded-md p-8 mb-6 shadow-lg space-y-6">
+                                        <h3 className="text-xl font-semibold text-gray-900 italic">Sorunuzu Gönderin</h3>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="text-10px font-semibold text-gray-400 mb-2 block">ADINIZ SOYADINIZ</label>
+                                                <input
+                                                    type="text"
+                                                    value={questionName}
+                                                    onChange={(e) => setQuestionName(e.target.value)}
+                                                    placeholder="Örn: Furkan Kılınç"
+                                                    className="w-full h-14 px-6 rounded-md bg-gray-50 border border-gray-200 text-sm font-bold outline-none focus:border-brand-pink transition-all italic"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="text-10px font-semibold text-gray-400 mb-2 block font-mono">SATICI MAĞAZA</label>
+                                                <input
+                                                    type="text"
+                                                    disabled
+                                                    value={product.merchant?.companyName || 'Resmi Mağaza'}
+                                                    className="w-full h-14 px-6 rounded-md bg-gray-100 border border-gray-200 text-sm font-bold outline-none text-gray-400 italic cursor-not-allowed"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label className="text-10px font-semibold text-gray-400 mb-2 block">SORUNUZ</label>
+                                            <textarea
+                                                required
+                                                value={questionText}
+                                                onChange={(e) => setQuestionText(e.target.value)}
+                                                placeholder="Ürünün özellikleri, kargo süresi vb. konularda sorunuzu detaylandırın..."
+                                                rows={4}
+                                                className="w-full px-6 py-4 rounded-md bg-gray-50 border border-gray-200 text-sm font-bold outline-none focus:border-brand-pink transition-all resize-none italic"
+                                            />
+                                        </div>
+                                        <div className="flex gap-3">
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowQuestionForm(false)}
+                                                className="px-6 py-3 bg-gray-100 text-gray-500 rounded-md text-10px font-semibold hover:bg-gray-200 transition-all italic"
+                                            >
+                                                İPTAL
+                                            </button>
+                                            <button
+                                                type="submit"
+                                                disabled={isSubmittingQuestion}
+                                                className="px-8 py-3 bg-brand-pink text-white rounded-md text-10px font-semibold hover:bg-brand-pink-hover transition-all flex items-center gap-2 shadow-lg shadow-brand-pink/20 italic"
+                                            >
+                                                {isSubmittingQuestion && <div className="w-3 h-3 border-2 border-white/50 border-t-white rounded-full animate-spin"></div>}
+                                                SORUYU GÖNDER
+                                            </button>
+                                        </div>
+                                    </form>
+                                )}
+
+                                {/* Questions List */}
+                                <div className="space-y-6">
+                                    {questionsLoading ? (
+                                        <div className="flex justify-center py-20">
+                                            <div className="w-8 h-8 border-4 border-brand-pink border-t-transparent rounded-full animate-spin"></div>
+                                        </div>
+                                    ) : questions.length > 0 ? (
+                                        questions.map((q) => (
+                                            <div key={q.id} className="bg-white p-8 rounded-md border border-gray-100 shadow-sm space-y-4">
+                                                <div className="flex items-center justify-between border-b border-gray-50 pb-4">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-500 text-xs italic">
+                                                            {q.userName ? q.userName[0].toUpperCase() : 'Z'}
+                                                        </div>
+                                                        <div>
+                                                            <h4 className="text-xs font-black text-gray-800 italic leading-none">{q.userName}</h4>
+                                                            <span className="text-[9px] font-semibold text-slate-400 italic">Soru Tarihi: {new Date(q.createdAt).toLocaleDateString()}</span>
+                                                        </div>
+                                                    </div>
+                                                    {q.answerText ? (
+                                                        <span className="px-3 py-1 bg-emerald-50 text-emerald-600 text-[9px] font-bold rounded-full italic">Cevaplandı</span>
+                                                    ) : (
+                                                        <span className="px-3 py-1 bg-amber-50 text-amber-600 text-[9px] font-bold rounded-full italic">Cevap Bekliyor</span>
+                                                    )}
+                                                </div>
+                                                <div className="space-y-3">
+                                                    <div className="bg-slate-50/50 p-4 rounded-xl border border-slate-100">
+                                                        <span className="text-[9px] font-black text-slate-400 italic block mb-1">SORU:</span>
+                                                        <p className="text-xs font-bold text-gray-700 italic">{q.questionText}</p>
+                                                    </div>
+                                                    {q.answerText && (
+                                                        <div className="bg-emerald-50/20 p-4 rounded-xl border border-emerald-50/50 ml-6">
+                                                            <span className="text-[9px] font-black text-emerald-600 italic block mb-1">SATICI CEVABI:</span>
+                                                            <p className="text-xs font-bold text-gray-800 italic">{q.answerText}</p>
+                                                            <span className="text-[8px] font-semibold text-slate-400 italic mt-2 block">Cevap Tarihi: {new Date(q.answeredAt || q.createdAt).toLocaleDateString()}</span>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="py-20 text-center bg-gray-50/50 rounded-md border border-dashed border-gray-200">
+                                            <p className="text-gray-400 font-semibold text-10px italic leading-tight">Bu ürün için henüz soru sorulmamış. İlk soruyu siz sorun!</p>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         )}
@@ -565,7 +750,7 @@ const ProductDetailPage: React.FC = () => {
                 {/* Suggested Products Section */}
                 {suggestedProducts.length > 0 && (
                     <div className="pt-20 border-t border-gray-50">
-                        <h2 className="text-2xl font-semibold text-gray-900 mb-6  tracking-[0.2em] italic text-center animate-in fade-in duration-700">İlginizi Çekebilir</h2>
+                        <h2 className="text-2xl font-semibold text-gray-900 mb-6   italic text-center animate-in fade-in duration-700">İlginizi Çekebilir</h2>
                         <div className="grid grid-cols-2 lg:grid-cols-4 gap-10">
                             {suggestedProducts.map((p) => (
                                 <Link
@@ -578,25 +763,25 @@ const ProductDetailPage: React.FC = () => {
                                         <img
                                             src={getSizedImageUrl(p.images?.[0]?.url, 'medium')}
                                             alt={p.name}
-                                            className="w-full h-full object-contain transform group-hover:scale-110 transition-transform duration-700"
+                                            className="w-full h-full object-contain transform group- transition-transform duration-700"
                                         />
                                         {p.discountPrice && (
-                                            <div className="absolute top-4 right-4 px-3 py-1 bg-brand-pink text-white text-9px font-semibold  tracking-widest rounded-full italic shadow-lg shadow-brand-pink/20">
+                                            <div className="absolute top-4 right-4 px-3 py-1 bg-brand-pink text-white text-nano font-semibold   rounded-full italic shadow-lg shadow-brand-pink/20">
                                                 İNDİRİM
                                             </div>
                                         )}
                                     </div>
                                     <div className="mt-6 space-y-2 text-center">
-                                        <h3 className="text-10px font-semibold text-gray-400  tracking-widest italic">{p.merchant?.companyName}</h3>
-                                        <h4 className="text-sm font-semibold text-gray-900  italic tracking-tight group-hover:text-brand-pink transition-colors line-clamp-1">{p.name}</h4>
+                                        <h3 className="text-10px font-semibold text-gray-400   italic">{p.merchant?.companyName}</h3>
+                                        <h4 className="text-sm font-semibold text-gray-900  italic  group-hover:text-brand-pink transition-colors line-clamp-1">{p.name}</h4>
                                         <div className="flex items-center justify-center gap-3">
                                             {p.discountPrice ? (
                                                 <>
                                                     <span className="text-10px font-bold text-gray-300 line-through italic">{p.price.toLocaleString()} ₺</span>
-                                                    <span className="text-base font-semibold text-gray-900 italic tracking-tighter">{p.discountPrice.toLocaleString()} ₺</span>
+                                                    <span className="text-base font-semibold text-gray-900 italic ">{p.discountPrice.toLocaleString()} ₺</span>
                                                 </>
                                             ) : (
-                                                <span className="text-base font-semibold text-gray-900 italic tracking-tighter">{p.price.toLocaleString()} ₺</span>
+                                                <span className="text-base font-semibold text-gray-900 italic ">{p.price.toLocaleString()} ₺</span>
                                             )}
                                         </div>
                                     </div>
@@ -639,7 +824,7 @@ const DescriptionRenderer: React.FC<{ content: string; mainImage: string }> = ({
             {blocks.map((block: any, idx: number) => {
                 switch (block.type) {
                     case 'HEADING':
-                        return <h2 key={idx} className="text-3xl font-semibold text-gray-900 tracking-tight italic  mb-6">{block.content}</h2>;
+                        return <h2 key={idx} className="text-3xl font-semibold text-gray-900  italic  mb-6">{block.content}</h2>;
                     case 'TEXT':
                         return <p key={idx} className="text-gray-600 text-lg font-bold leading-[1.8] italic whitespace-pre-line">{block.content}</p>;
                     case 'IMAGE':
@@ -655,7 +840,7 @@ const DescriptionRenderer: React.FC<{ content: string; mainImage: string }> = ({
                                 {block.content.map((feat: string, fIdx: number) => (
                                     <div key={fIdx} className="flex items-start gap-4">
                                         <div className="w-2 h-2 mt-2 bg-brand-pink rounded-full flex-shrink-0"></div>
-                                        <span className="text-sm font-semibold text-gray-800  italic tracking-tight leading-tight">{feat}</span>
+                                        <span className="text-sm font-semibold text-gray-800  italic  leading-tight">{feat}</span>
                                     </div>
                                 ))}
                             </div>

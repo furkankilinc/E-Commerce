@@ -1,26 +1,29 @@
 import { useWishlist } from '../store/wishlist.store';
 import { useCart } from '../../cart/cart.store';
 import { useAuth } from '../../auth/useAuth';
-import { toast } from 'react-toastify';
+import { useToast } from '../../../shared/components/Toast';
 
 export const useWishlistPage = () => {
     const { isAuthenticated } = useAuth();
     const { items, removeItem, clearWishlist } = useWishlist();
     const { addItem } = useCart();
+    const toast = useToast();
 
     const handleAddToCart = (item: any) => {
-        addItem(item);
-        toast.success(`${item.name} sepete eklendi!`, { autoClose: 2000 });
+        const success = addItem(item);
+        if (success) {
+            toast.success(`${item.name} sepete eklendi!`);
+        }
     };
 
     const handleRemove = (id: string, name: string) => {
         removeItem(id);
-        toast.info(`${name} favorilerden çıkarıldı.`, { autoClose: 1500 });
+        toast.info(`${name} favorilerden çıkarıldı.`);
     };
 
     const handleClearWishlist = () => {
         clearWishlist();
-        toast.info('Tüm favoriler temizlendi.', { autoClose: 1500 });
+        toast.info('Tüm favoriler temizlendi.');
     };
 
     return {

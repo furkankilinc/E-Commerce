@@ -8,18 +8,21 @@ interface ShippingCompany {
     logo: string;
     basePrice: number;
     deliveryTime: string;
+    isActive?: boolean;
 }
 
 const ShippingPage: React.FC = () => {
     const [companies, setCompanies] = useState<ShippingCompany[]>([]);
     const [loading, setLoading] = useState(true);
     const [showAddModal, setShowAddModal] = useState(false);
+    const [editTarget, setEditTarget] = useState<ShippingCompany | null>(null);
 
     const [newForm, setNewForm] = useState({
         name: '',
         logo: '🚚',
         basePrice: '',
-        deliveryTime: '2-3 İş Günü'
+        deliveryTime: '2-3 İş Günü',
+        isActive: true
     });
 
     const fetchCompanies = async () => {
@@ -57,53 +60,155 @@ const ShippingPage: React.FC = () => {
         }
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        const { name, logo, basePrice, deliveryTime } = newForm;
-        if (!name || !logo) {
-            toast.warning('Lütfen zorunlu alanları doldurun.');
-            return;
-        }
-
+    const handleToggleActive = async (company: ShippingCompany) => {
         try {
-            const res = await apiClient.post('/api/admin/products/shipping-companies', {
-                name,
-                logo,
-                basePrice: parseFloat(basePrice) || 0,
-                deliveryTime
+            const targetStatus = company.isActive !== undefined ? !company.isActive : false;
+            const res = await apiClient.put(`/api/admin/products/shipping-companies/${company.id}`, {
+                isActive: targetStatus
             });
             if (res.ok) {
-                toast.success('Kargo firması başarıyla eklendi!');
-                setShowAddModal(false);
-                setNewForm({ name: '', logo: '🚚', basePrice: '', deliveryTime: '2-3 İş Günü' });
+                toast.success(`${company.name} durumu güncellendi.`);
                 fetchCompanies();
             } else {
-                const data = await res.json();
-                toast.error(data.message || 'Kargo firması eklenemedi.');
+                toast.error('Durum güncellenirken hata oluştu.');
             }
         } catch (err) {
             toast.error('Bir hata oluştu.');
         }
     };
 
+    const handleEditClick = (company: ShippingCompany) => {
+        setEditTarget(company);
+        setNewForm({
+            name: company.name,
+            logo: company.logo,
+            basePrice: company.basePrice.toString(),
+            deliveryTime: company.deliveryTime,
+            isActive: company.isActive !== undefined ? company.isActive : true
+        });
+        setShowAddModal(true);
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        const { name, logo, basePrice, deliveryTime, isActive } = newForm;
+        if (!name || !logo) {
+            toast.warning('Lütfen zorunlu alanları doldurun.');
+            return;
+        }
+
+        try {
+            if (editTarget) {
+                // Update
+                const res = await apiClient.put(`/api/admin/products/shipping-companies/${editTarget.id}`, {
+                    name,
+                    logo,
+                    basePrice: parseFloat(basePrice) || 0,
+                    deliveryTime,
+                    isActive
+                });
+                if (res.ok) {
+                    toast.success('Kargo firması başarıyla güncellendi!');
+                    setShowAddModal(false);
+                    setEditTarget(null);
+                    setNewForm({ name: '', logo: '🚚', basePrice: '', deliveryTime: '2-3 İş Günü', isActive: true });
+                    fetchCompanies();
+                } else {
+                    const data = await res.json();
+                    toast.error(data.message || 'Kargo firması güncellenemedi.');
+                }
+            } else {
+                // Create
+                const res = await apiClient.post('/api/admin/products/shipping-companies', {
+                    name,
+                    logo,
+                    basePrice: parseFloat(basePrice) || 0,
+                    deliveryTime,
+                    isActive: true
+                });
+                if (res.ok) {
+                    toast.success('Kargo firması başarıyla eklendi!');
+                    setShowAddModal(false);
+                    setNewForm({ name: '', logo: '🚚', basePrice: '', deliveryTime: '2-3 İş Günü', isActive: true });
+                    fetchCompanies();
+                } else {
+                    const data = await res.json();
+                    toast.error(data.message || 'Kargo firması eklenemedi.');
+                }
+            }
+        } catch (err) {
+            toast.error('Bir hata oluştu.');
+        }
+    };
+
+    // Calculate metrics
+    const totalCompanies = companies.length;
+    const activeCompanies = companies.filter(c => c.isActive !== false).length;
+    const cheapestPrice = companies.length > 0 ? Math.min(...companies.map(c => c.basePrice)) : 0;
+    const fastestCarrier = companies.length > 0 ? companies[0] : null;
+
     return (
-        <div className="p-10 space-y-10">
+        <div className="p-10 space-y-10 font-['Inter']">
             {/* Header */}
             <div className="flex justify-between items-end">
                 <div>
-                    <h1 className="text-4xl font-[1000] text-admin-navy tracking-tighter italic leading-none mb-4">
+                    <h1 className="text-4xl font-[1000] text-admin-navy italic leading-none mb-4">
                         KARGO <span className="text-brand-pink">FİRMALARI</span>
                     </h1>
-                    <p className="text-10px font-semibold text-slate-400 tracking-widest italic opacity-70">
+                    <p className="text-10px font-semibold text-slate-400 italic opacity-70">
                         Sistemde kayıtlı aktif kargo şirketlerini ve ek ücretlendirmelerini yönetin
                     </p>
                 </div>
                 <button
-                    onClick={() => setShowAddModal(true)}
-                    className="px-6 py-4 bg-brand-pink text-white rounded-xl text-10px font-semibold tracking-widest italic shadow-lg shadow-brand-pink/20 hover:scale-105 transition-all"
+                    onClick={() => {
+                        setEditTarget(null);
+                        setNewForm({ name: '', logo: '🚚', basePrice: '', deliveryTime: '2-3 İş Günü', isActive: true });
+                        setShowAddModal(true);
+                    }}
+                    className="px-6 py-4 bg-brand-pink text-white rounded-xl text-10px font-semibold italic shadow-lg shadow-brand-pink/20 hover:opacity-95 active:scale-95 transition-all"
                 >
                     ＋ YENİ FİRMA EKLE
                 </button>
+            </div>
+
+            {/* Metrics Dashboard */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
+                    <div className="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-500 font-bold text-xl shadow-inner">
+                        🚚
+                    </div>
+                    <div>
+                        <div className="text-slate-400 text-nano font-bold uppercase tracking-wider mb-0.5">Toplam Kargo</div>
+                        <div className="text-2xl font-bold text-slate-800">{totalCompanies} Firma</div>
+                    </div>
+                </div>
+                <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
+                    <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-500 font-bold text-xl shadow-inner">
+                        ⚡
+                    </div>
+                    <div>
+                        <div className="text-slate-400 text-nano font-bold uppercase tracking-wider mb-0.5">Aktif Kurye</div>
+                        <div className="text-2xl font-bold text-slate-800">{activeCompanies} Dağıtıcı</div>
+                    </div>
+                </div>
+                <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
+                    <div className="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center text-amber-500 font-bold text-xl shadow-inner">
+                        💸
+                    </div>
+                    <div>
+                        <div className="text-slate-400 text-nano font-bold uppercase tracking-wider mb-0.5">En Uygun Taban</div>
+                        <div className="text-2xl font-bold text-slate-800">{cheapestPrice} ₺</div>
+                    </div>
+                </div>
+                <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
+                    <div className="w-12 h-12 bg-rose-50 rounded-xl flex items-center justify-center text-rose-500 font-bold text-xl shadow-inner">
+                        🚀
+                    </div>
+                    <div>
+                        <div className="text-slate-400 text-nano font-bold uppercase tracking-wider mb-0.5">Hızlı Taşıma</div>
+                        <div className="text-2xl font-bold text-slate-800">{fastestCarrier ? fastestCarrier.name : 'Yok'}</div>
+                    </div>
+                </div>
             </div>
 
             {/* List */}
@@ -111,23 +216,25 @@ const ShippingPage: React.FC = () => {
                 <table className="w-full">
                     <thead>
                         <tr className="border-b border-slate-50 bg-slate-50/50">
-                            <th className="px-10 py-8 text-10px font-semibold text-slate-400 tracking-widest italic text-left">Logo</th>
-                            <th className="px-10 py-8 text-10px font-semibold text-slate-400 tracking-widest italic text-left">Firma Adı</th>
-                            <th className="px-10 py-8 text-10px font-semibold text-slate-400 tracking-widest italic text-left">Teslimat Süresi</th>
-                            <th className="px-10 py-8 text-10px font-semibold text-slate-400 tracking-widest italic text-left">Taban Ücret</th>
-                            <th className="px-10 py-8 text-10px font-semibold text-slate-400 tracking-widest italic text-right">İşlemler</th>
+                            <th className="px-10 py-8 text-10px font-semibold text-slate-400 italic text-left">Logo</th>
+                            <th className="px-10 py-8 text-10px font-semibold text-slate-400 italic text-left">Firma Adı</th>
+                            <th className="px-10 py-8 text-10px font-semibold text-slate-400 italic text-left">Teslimat Süresi</th>
+                            <th className="px-10 py-8 text-10px font-semibold text-slate-400 italic text-left">Taban Ücret</th>
+                            <th className="px-10 py-8 text-10px font-semibold text-slate-400 italic text-center">Durum</th>
+                            <th className="px-10 py-8 text-10px font-semibold text-slate-400 italic text-right">İşlemler</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-50">
                         {loading ? (
                             <tr>
-                                <td colSpan={5} className="py-20 text-center text-slate-400 font-bold italic tracking-widest">
+                                <td colSpan={6} className="py-20 text-center text-slate-400 font-bold italic">
+                                    <div className="w-8 h-8 border-3 border-brand-pink border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
                                     Yükleniyor...
                                 </td>
                             </tr>
                         ) : companies.length === 0 ? (
                             <tr>
-                                <td colSpan={5} className="py-20 text-center text-slate-400 font-bold italic tracking-widest">
+                                <td colSpan={6} className="py-20 text-center text-slate-400 font-bold italic">
                                     Kargo firması bulunamadı.
                                 </td>
                             </tr>
@@ -146,13 +253,33 @@ const ShippingPage: React.FC = () => {
                                     <td className="px-10 py-8">
                                         <span className="text-xs font-semibold text-slate-900 italic">{company.basePrice.toFixed(2)} ₺</span>
                                     </td>
-                                    <td className="px-10 py-8 text-right">
+                                    <td className="px-10 py-8 text-center">
                                         <button
-                                            onClick={() => handleDelete(company.id)}
-                                            className="px-4 py-2 bg-rose-500 text-white rounded-xl text-9px font-semibold tracking-widest italic shadow-lg shadow-rose-500/20 hover:bg-rose-600"
+                                            onClick={() => handleToggleActive(company)}
+                                            className={`px-3 py-1 rounded-full text-[10px] font-bold transition-all border ${
+                                                company.isActive !== false
+                                                    ? 'bg-emerald-50 text-emerald-600 border-emerald-100 hover:bg-emerald-100'
+                                                    : 'bg-slate-50 text-slate-400 border-slate-200 hover:bg-slate-100'
+                                            }`}
                                         >
-                                            Sil
+                                            {company.isActive !== false ? 'AKTİF' : 'PASİF'}
                                         </button>
+                                    </td>
+                                    <td className="px-10 py-8 text-right">
+                                        <div className="flex items-center justify-end gap-3">
+                                            <button
+                                                onClick={() => handleEditClick(company)}
+                                                className="px-4 py-2 bg-slate-100 text-slate-600 rounded-xl text-nano font-semibold italic border border-slate-200 hover:bg-slate-200"
+                                            >
+                                                Düzenle
+                                            </button>
+                                            <button
+                                                onClick={() => handleDelete(company.id)}
+                                                className="px-4 py-2 bg-rose-50 text-rose-500 rounded-xl text-nano font-semibold italic border border-rose-100 hover:bg-rose-500 hover:text-white"
+                                            >
+                                                Sil
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             ))
@@ -161,14 +288,14 @@ const ShippingPage: React.FC = () => {
                 </table>
             </div>
 
-            {/* Glassmorphic Add Modal */}
+            {/* Glassmorphic Add/Edit Modal */}
             {showAddModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md">
                     <div className="bg-white rounded-lg shadow-xl border border-gray-100 w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-300">
                         {/* Header */}
                         <div className="flex justify-between items-center px-8 py-6 border-b border-gray-100 bg-slate-50/50">
-                            <h3 className="text-lg font-[1000] text-slate-900 italic tracking-tighter">
-                                YENİ <span className="text-brand-pink">KARGO FİRMASI</span>
+                            <h3 className="text-lg font-[1000] text-slate-900 italic">
+                                {editTarget ? 'FİRMAYI' : 'YENİ'} <span className="text-brand-pink">DÜZENLE</span>
                             </h3>
                             <button
                                 onClick={() => setShowAddModal(false)}
@@ -181,7 +308,7 @@ const ShippingPage: React.FC = () => {
                         {/* Form */}
                         <form onSubmit={handleSubmit} className="p-8 space-y-6">
                             <div className="space-y-1.5">
-                                <label className="text-9px font-semibold text-gray-400 tracking-widest ml-2 italic">FİRMA ADI *</label>
+                                <label className="text-nano font-semibold text-gray-400 ml-2 italic">FİRMA ADI *</label>
                                 <input
                                     type="text"
                                     required
@@ -194,7 +321,7 @@ const ShippingPage: React.FC = () => {
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-1.5">
-                                    <label className="text-9px font-semibold text-gray-400 tracking-widest ml-2 italic">LOGO İKONU *</label>
+                                    <label className="text-nano font-semibold text-gray-400 ml-2 italic">LOGO İKONU *</label>
                                     <select
                                         value={newForm.logo}
                                         onChange={(e) => setNewForm({ ...newForm, logo: e.target.value })}
@@ -208,7 +335,7 @@ const ShippingPage: React.FC = () => {
                                     </select>
                                 </div>
                                 <div className="space-y-1.5">
-                                    <label className="text-9px font-semibold text-gray-400 tracking-widest ml-2 italic">TESLİMAT SÜRESİ</label>
+                                    <label className="text-nano font-semibold text-gray-400 ml-2 italic">TESLİMAT SÜRESİ</label>
                                     <input
                                         type="text"
                                         value={newForm.deliveryTime}
@@ -220,7 +347,7 @@ const ShippingPage: React.FC = () => {
                             </div>
 
                             <div className="space-y-1.5">
-                                <label className="text-9px font-semibold text-gray-400 tracking-widest ml-2 italic">TABAN ÜCRET (₺)</label>
+                                <label className="text-nano font-semibold text-gray-400 ml-2 italic">TABAN ÜCRET (₺)</label>
                                 <input
                                     type="number"
                                     step="0.01"
@@ -231,9 +358,22 @@ const ShippingPage: React.FC = () => {
                                 />
                             </div>
 
+                            <div className="flex items-center gap-3">
+                                <label className="relative inline-flex items-center cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        checked={newForm.isActive}
+                                        onChange={(e) => setNewForm({ ...newForm, isActive: e.target.checked })}
+                                        className="sr-only peer"
+                                    />
+                                    <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+                                </label>
+                                <span className="text-10px font-semibold text-slate-600 italic">Aktif Kargo Firması</span>
+                            </div>
+
                             <button
                                 type="submit"
-                                className="w-full mt-4 py-5 bg-brand-pink text-white rounded-md text-10px font-semibold tracking-widest shadow-lg shadow-brand-pink/20 cursor-pointer flex items-center justify-center gap-2 hover:bg-rose-600 transition-colors italic"
+                                className="w-full mt-4 py-5 bg-brand-pink text-white rounded-md text-10px font-semibold shadow-lg shadow-brand-pink/20 cursor-pointer flex items-center justify-center gap-2 hover:bg-rose-600 transition-colors italic"
                             >
                                 💾 FİRMAYI KAYDET
                             </button>

@@ -64,8 +64,8 @@ const OrdersPage: React.FC = () => {
         <div className="p-10 space-y-10">
             <div className="flex justify-between items-end">
                 <div>
-                    <h1 className="text-4xl font-[1000] text-admin-navy tracking-tighter italic  leading-none mb-4">SİPARİŞ <span className="text-brand-pink">YÖNETİMİ</span></h1>
-                    <p className="text-10px font-semibold text-slate-400  tracking-widest italic opacity-70">Platform genelindeki tüm siparişleri takip et</p>
+                    <h1 className="text-4xl font-[1000] text-admin-navy  italic  leading-none mb-4">SİPARİŞ <span className="text-brand-pink">YÖNETİMİ</span></h1>
+                    <p className="text-10px font-semibold text-slate-400   italic opacity-70">Platform genelindeki tüm siparişleri takip et</p>
                 </div>
 
                 <div className="flex bg-white p-2 rounded-3xl border border-slate-100 shadow-sm">
@@ -73,7 +73,7 @@ const OrdersPage: React.FC = () => {
                         <button
                             key={f}
                             onClick={() => setFilter(f)}
-                            className={`px-6 py-3 rounded-2xl text-10px font-semibold  tracking-widest transition-all italic ${filter === f ? 'bg-admin-navy text-white shadow-lg' : 'text-slate-400 hover:text-slate-600'}`}
+                            className={`px-6 py-3 rounded-2xl text-10px font-semibold   transition-all italic ${filter === f ? 'bg-admin-navy text-white shadow-lg' : 'text-slate-400 hover:text-slate-600'}`}
                         >
                             {f === 'ALL' ? 'TÜMÜ' : f}
                         </button>
@@ -85,10 +85,10 @@ const OrdersPage: React.FC = () => {
                 <table className="w-full text-left">
                     <thead>
                         <tr className="border-b border-slate-50 bg-slate-50/50">
-                            <th className="px-10 py-8 text-10px font-semibold text-slate-400  tracking-widest italic">Sipariş No</th>
-                            <th className="px-10 py-8 text-10px font-semibold text-slate-400  tracking-widest italic">Müşteri</th>
-                            <th className="px-10 py-8 text-10px font-semibold text-slate-400  tracking-widest italic">Tutar</th>
-                            <th className="px-10 py-8 text-10px font-semibold text-slate-400  tracking-widest italic text-right">Durum</th>
+                            <th className="px-10 py-8 text-10px font-semibold text-slate-400   italic">Sipariş No</th>
+                            <th className="px-10 py-8 text-10px font-semibold text-slate-400   italic">Müşteri</th>
+                            <th className="px-10 py-8 text-10px font-semibold text-slate-400   italic">Tutar</th>
+                            <th className="px-10 py-8 text-10px font-semibold text-slate-400   italic text-right">Durum</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-50">
@@ -96,13 +96,13 @@ const OrdersPage: React.FC = () => {
                             <tr>
                                 <td colSpan={4} className="px-10 py-20 text-center">
                                     <div className="w-10 h-10 border-4 border-brand-pink border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                                    <span className="text-10px font-semibold text-slate-300  tracking-widest italic">Yükleniyor...</span>
+                                    <span className="text-10px font-semibold text-slate-300   italic">Yükleniyor...</span>
                                 </td>
                             </tr>
                         ) : orders.length === 0 ? (
                             <tr>
                                 <td colSpan={4} className="px-10 py-20 text-center">
-                                    <span className="text-10px font-semibold text-slate-300  tracking-widest italic">Sipariş bulunamadı.</span>
+                                    <span className="text-10px font-semibold text-slate-300   italic">Sipariş bulunamadı.</span>
                                 </td>
                             </tr>
                         ) : (
@@ -111,20 +111,20 @@ const OrdersPage: React.FC = () => {
                                     <td className="px-10 py-8">
                                         <div className="flex flex-col">
                                             <span className="text-xs font-semibold text-slate-900 italic">#{order.orderNumber}</span>
-                                            <span className="text-9px font-bold text-slate-400  tracking-widest italic">{new Date(order.createdAt).toLocaleDateString()}</span>
+                                            <span className="text-nano font-bold text-slate-400   italic">{new Date(order.createdAt).toLocaleDateString()}</span>
                                         </div>
                                     </td>
                                     <td className="px-10 py-8">
                                         <div className="flex flex-col">
                                             <span className="text-xs font-semibold text-slate-900 italic">{order.user?.name || 'Anonim'}</span>
-                                            <span className="text-9px font-bold text-slate-400 tracking-widest italic">{order.user?.email}</span>
+                                            <span className="text-nano font-bold text-slate-400  italic">{order.user?.email}</span>
                                         </div>
                                     </td>
                                     <td className="px-10 py-8">
                                         <span className="text-xs font-semibold text-slate-900 italic">${order.totalAmount.toLocaleString()}</span>
                                     </td>
                                     <td className="px-10 py-8 text-right">
-                                        <span className={`px-4 py-1.5 rounded-full text-9px font-semibold  tracking-widest italic ${statusColors[order.status]}`}>
+                                        <span className={`px-4 py-1.5 rounded-full text-nano font-semibold   italic ${statusColors[order.status]}`}>
                                             {order.status}
                                         </span>
                                     </td>

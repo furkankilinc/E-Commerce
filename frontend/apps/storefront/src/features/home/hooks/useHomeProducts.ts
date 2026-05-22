@@ -232,6 +232,12 @@ export const useHomeProducts = () => {
         return () => controller.abort();
     }, [filters.category]);
 
+    // Reset page number and local search when route path changes
+    useEffect(() => {
+        setCurrentPage(1);
+        setLocalSearch('');
+    }, [pathname]);
+
     useEffect(() => {
         const controller = new AbortController();
         if (isFirstLoad.current) {

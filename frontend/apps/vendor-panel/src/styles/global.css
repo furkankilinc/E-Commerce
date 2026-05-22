@@ -6,3 +6,312 @@ body {
     min-height: 100vh;
     background-color: var(--color-merchant-bg);
 }
+
+/* Responsive Typography System */
+
+.text-atomic,
+.text-7px {
+    font-size: 7px !important;
+    line-height: 9px !important;
+
+    @media (max-width: 1024px) {
+        font-size: 7px !important;
+        line-height: 9px !important;
+    }
+
+    @media (max-width: 640px) {
+        font-size: 6.5px !important;
+        line-height: 8px !important;
+    }
+}
+
+.text-micro,
+.text-8px {
+    font-size: 8px !important;
+    line-height: 10px !important;
+
+    @media (max-width: 1024px) {
+        font-size: 8px !important;
+        line-height: 10px !important;
+    }
+
+    @media (max-width: 640px) {
+        font-size: 7px !important;
+        line-height: 9px !important;
+    }
+}
+
+.text-nano,
+.text-9px {
+    font-size: 9px !important;
+    line-height: 12px !important;
+
+    @media (max-width: 1024px) {
+        font-size: 8px !important;
+        line-height: 11px !important;
+    }
+
+    @media (max-width: 640px) {
+        font-size: 8px !important;
+        line-height: 11px !important;
+    }
+}
+
+.text-tiny,
+.text-10px {
+    font-size: 10px !important;
+    line-height: 14px !important;
+
+    @media (max-width: 1024px) {
+        font-size: 9px !important;
+        line-height: 13px !important;
+    }
+
+    @media (max-width: 640px) {
+        font-size: 8px !important;
+        line-height: 12px !important;
+    }
+}
+
+.text-caption,
+.text-11px {
+    font-size: 11px !important;
+    line-height: 15px !important;
+
+    @media (max-width: 1024px) {
+        font-size: 10px !important;
+        line-height: 14px !important;
+    }
+
+    @media (max-width: 640px) {
+        font-size: 9px !important;
+        line-height: 13px !important;
+    }
+}
+
+.text-xs,
+.text-12px {
+    font-size: 12px !important;
+    line-height: 16px !important;
+
+    @media (max-width: 1024px) {
+        font-size: 11px !important;
+        line-height: 15px !important;
+    }
+
+    @media (max-width: 640px) {
+        font-size: 10px !important;
+        line-height: 14px !important;
+    }
+}
+
+.text-compact,
+.text-subtext,
+.text-13px {
+    font-size: 13px !important;
+    line-height: 18px !important;
+
+    @media (max-width: 1024px) {
+        font-size: 12px !important;
+        line-height: 17px !important;
+    }
+
+    @media (max-width: 640px) {
+        font-size: 11px !important;
+        line-height: 15px !important;
+    }
+}
+
+.text-sm {
+    font-size: 14px !important;
+    line-height: 20px !important;
+
+    @media (max-width: 1024px) {
+        font-size: 13px !important;
+        line-height: 18px !important;
+    }
+
+    @media (max-width: 640px) {
+        font-size: 12px !important;
+        line-height: 16px !important;
+    }
+}
+
+.text-base {
+    font-size: 16px !important;
+    line-height: 24px !important;
+
+    @media (max-width: 1024px) {
+        font-size: 15px !important;
+        line-height: 22px !important;
+    }
+
+    @media (max-width: 640px) {
+        font-size: 14px !important;
+        line-height: 20px !important;
+    }
+}
+
+.text-lg {
+    font-size: 18px !important;
+    line-height: 26px !important;
+
+    @media (max-width: 1024px) {
+        font-size: 17px !important;
+        line-height: 24px !important;
+    }
+
+    @media (max-width: 640px) {
+        font-size: 15px !important;
+        line-height: 22px !important;
+    }
+}
+
+.text-xl {
+    font-size: 20px !important;
+    line-height: 28px !important;
+
+    @media (max-width: 1024px) {
+        font-size: 18px !important;
+        line-height: 26px !important;
+    }
+
+    @media (max-width: 640px) {
+        font-size: 16px !important;
+        line-height: 24px !important;
+    }
+}
+
+.text-title,
+.text-heading,
+.text-22px {
+    font-size: 22px !important;
+    line-height: 30px !important;
+
+    @media (max-width: 1024px) {
+        font-size: 20px !important;
+        line-height: 28px !important;
+    }
+
+    @media (max-width: 640px) {
+        font-size: 17px !important;
+        line-height: 24px !important;
+    }
+}
+
+.text-2xl {
+    font-size: 24px !important;
+    line-height: 32px !important;
+
+    @media (max-width: 1024px) {
+        font-size: 21px !important;
+        line-height: 28px !important;
+    }
+
+    @media (max-width: 640px) {
+        font-size: 18px !important;
+        line-height: 24px !important;
+    }
+}
+
+.text-3xl {
+    font-size: 30px !important;
+    line-height: 38px !important;
+
+    @media (max-width: 1024px) {
+        font-size: 26px !important;
+        line-height: 32px !important;
+    }
+
+    @media (max-width: 640px) {
+        font-size: 22px !important;
+        line-height: 28px !important;
+    }
+}
+
+.text-4xl {
+    font-size: 36px !important;
+    line-height: 44px !important;
+
+    @media (max-width: 1024px) {
+        font-size: 30px !important;
+        line-height: 36px !important;
+    }
+
+    @media (max-width: 640px) {
+        font-size: 26px !important;
+        line-height: 32px !important;
+    }
+}
+
+/* Custom Interactive Cursor Pointer & Focus Reset */
+button,
+[role="button"],
+select,
+input[type="submit"],
+input[type="button"],
+input[type="reset"],
+.cursor-pointer {
+    cursor: pointer !important;
+}
+
+*:focus,
+*:focus-visible,
+*:focus-within {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* Premium Unified Pagination System */
+.ui-pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 4rem;
+}
+
+.ui-pagination-btn {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.75rem;
+    /* rounded-xl */
+    background-color: #ffffff;
+    border: 2px solid #f1f5f9;
+    /* border-slate-100 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    /* text-slate-400 */
+    font-size: 0.75rem;
+    /* text-xs */
+    font-weight: 600;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.ui-pagination-btn:hover:not(:disabled) {
+    color: #ff3366 !important;
+    /* brand-pink */
+    border-color: #ff3366 !important;
+}
+
+.ui-pagination-btn:disabled {
+    opacity: 0.2;
+    cursor: not-allowed;
+}
+
+.ui-pagination-btn.active {
+    background-color: #ff3366 !important;
+    /* brand-pink */
+    border-color: #ff3366 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px 0 rgba(255, 51, 102, 0.25) !important;
+    transform: scale(1.08);
+}
+
+.ui-pagination-dots {
+    color: #94a3b8;
+    font-weight: 600;
+}

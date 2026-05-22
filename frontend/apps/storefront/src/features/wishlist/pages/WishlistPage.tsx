@@ -13,24 +13,24 @@ const WishlistPage: React.FC = () => {
 
     return (
         <div className="bg-white min-h-screen">
-            <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-20 py-10">
+            <div className="max-w-[1650px] mx-auto px-4 sm:px-10 lg:px-20 py-6 sm:py-10">
 
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-8">
                     <div>
-                        <p className="text-10px font-semibold text-brand-pink tracking-widest  italic mb-3">
+                        <p className="text-10px font-semibold text-brand-pink   italic mb-3">
                             Listem
                         </p>
-                        <h1 className="text-3xl sm:text-4xl lg:text-[40px] font-[1000] text-gray-900 leading-none tracking-tighter italic ">
+                        <h1 className="text-3xl sm:text-4xl lg:text-4xl font-[1000] text-gray-900 leading-none  italic ">
                             FAVORİ<span className="text-brand-pink">LERİM</span>
                         </h1>
                     </div>
                     {items.length > 0 && (
                         <div className="flex items-center gap-4">
-                            <span className="text-xs font-semibold text-gray-500  tracking-widest italic">{items.length} ürün</span>
+                            <span className="text-xs font-semibold text-gray-500   italic">{items.length} ürün</span>
                             <button
                                 onClick={handleClearWishlist}
-                                className="px-6 py-3 bg-gray-50 text-gray-500 rounded-md text-10px font-semibold  tracking-widest hover:bg-red-50 hover:text-red-500 transition-all italic"
+                                className="px-6 py-3 bg-gray-50 text-gray-500 rounded-md text-10px font-semibold   hover:bg-red-50 hover:text-red-500 transition-all italic"
                             >
                                 Tümünü Sil
                             </button>
@@ -45,11 +45,11 @@ const WishlistPage: React.FC = () => {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                             </svg>
                         </div>
-                        <h2 className="text-3xl font-semibold text-gray-900 mb-4  tracking-tighter italic">Giriş Yapmalısınız</h2>
-                        <p className="text-gray-500 text-sm font-bold mb-6 italic tracking-wide">Favorilerinizi görmek ve yönetmek için lütfen oturum açın.</p>
+                        <h2 className="text-3xl font-semibold text-gray-900 mb-4   italic">Giriş Yapmalısınız</h2>
+                        <p className="text-gray-500 text-sm font-bold mb-6 italic ">Favorilerinizi görmek ve yönetmek için lütfen oturum açın.</p>
                         <Link
                             to="/login"
-                            className="px-12 py-5 bg-brand-pink text-white rounded-md text-[11px] font-semibold  tracking-[0.25em] shadow-xl shadow-brand-pink/20 hover:scale-105 transition-all italic"
+                            className="px-12 py-5 bg-brand-pink text-white rounded-md text-caption font-semibold   shadow-xl shadow-brand-pink/20  transition-all italic"
                         >
                             Giriş Yap
                         </Link>
@@ -62,26 +62,26 @@ const WishlistPage: React.FC = () => {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                             </svg>
                         </div>
-                        <h2 className="text-3xl font-semibold text-gray-900 mb-4  tracking-tighter italic">Henüz favori yok</h2>
-                        <p className="text-gray-500 text-sm font-bold mb-6 italic tracking-wide">Beğendiğin ürünleri favorilere ekle, daha sonra bul.</p>
+                        <h2 className="text-3xl font-semibold text-gray-900 mb-4   italic">Henüz favori yok</h2>
+                        <p className="text-gray-500 text-sm font-bold mb-6 italic ">Beğendiğin ürünleri favorilere ekle, daha sonra bul.</p>
                         <Link
                             to="/shop"
-                            className="px-12 py-5 bg-brand-pink text-white rounded-md text-[11px] font-semibold  tracking-[0.25em] shadow-xl shadow-brand-pink/20 hover:scale-105 transition-all italic"
+                            className="px-12 py-5 bg-brand-pink text-white rounded-md text-caption font-semibold   shadow-xl shadow-brand-pink/20  transition-all italic"
                         >
                             Keşfetmeye Başla
                         </Link>
                     </div>
                 ) : (
                     /* Wishlist Grid */
-                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-x-8 gap-y-12">
+                    <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-8 sm:gap-x-8 sm:gap-y-12">
                         {items.map(item => (
-                            <div key={item.id} className="group relative flex flex-col bg-white rounded-md p-6 border-2 border-transparent hover:border-gray-50 hover:shadow-xl hover:shadow-gray-200/50 transition-all">
+                            <div key={item.id} className="group relative flex flex-col bg-white rounded-md p-4 transition-all border-2 border-transparent  hover:shadow-xl hover:shadow-gray-200/50">
 
                                 {/* Remove Button */}
                                 <button
                                     onClick={() => handleRemove(item.id, item.name)}
                                     aria-label="Favorilerden Çıkar"
-                                    className="absolute top-6 right-6 z-10 w-10 h-10 rounded-md bg-white border border-gray-100 flex items-center justify-center text-brand-pink shadow-sm opacity-0 group-hover:opacity-100 transition-all hover:bg-red-50 hover:scale-110"
+                                    className="absolute top-6 right-6 z-10 w-10 h-10 rounded-md bg-white border border-gray-100 flex items-center justify-center text-brand-pink shadow-sm lg:opacity-0 lg:group-hover:opacity-100 opacity-100 transition-all hover:bg-red-50 "
                                 >
                                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                                         <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
@@ -97,7 +97,7 @@ const WishlistPage: React.FC = () => {
                                                 alt={item.name}
                                                 width="400"
                                                 height="400"
-                                                className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700"
+                                                className="w-full h-full object-contain group- transition-transform duration-700"
                                                 loading="lazy"
                                             />
                                         )}
@@ -107,20 +107,20 @@ const WishlistPage: React.FC = () => {
                                 {/* Product Info */}
                                 <div className="flex flex-col flex-grow px-2">
                                     {item.category && (
-                                        <span className="text-9px font-[1000] text-brand-pink tracking-widest  italic mb-2">
+                                        <span className="text-nano font-[1000] text-brand-pink   italic mb-2">
                                             {item.category}
                                         </span>
                                     )}
 
                                     <Link to={`/product/${item.id}`}>
-                                        <h3 className="text-base font-[1000] text-gray-900 mb-6 leading-[1.2] group-hover:text-brand-pink transition-colors italic line-clamp-2  tracking-tighter">
+                                        <h3 className="text-base font-[1000] text-gray-900 mb-6 leading-[1.2] group-hover:text-brand-pink transition-colors italic line-clamp-2  ">
                                             {item.name}
                                         </h3>
                                     </Link>
 
                                     <div className="mt-auto flex justify-between items-center pt-6 border-t border-gray-50">
                                         <div className="flex flex-col">
-                                            <span className="text-8px font-semibold text-gray-500  tracking-widest italic leading-none mb-1">
+                                            <span className="text-micro font-semibold text-gray-500   italic leading-none mb-1">
                                                 {item.originalPrice ? 'İNDİRİMLİ FİYAT' : 'FUIRA FİYAT'}
                                             </span>
                                             <div className="flex items-baseline gap-2">
@@ -129,7 +129,7 @@ const WishlistPage: React.FC = () => {
                                                         {item.originalPrice.toLocaleString('tr-TR')} ₺
                                                     </span>
                                                 )}
-                                                <span className="text-2xl font-[1000] text-gray-900 tracking-tighter italic leading-none">
+                                                <span className="text-2xl font-[1000] text-gray-900  italic leading-none">
                                                     {item.price.toLocaleString('tr-TR')} ₺
                                                 </span>
                                             </div>
@@ -137,7 +137,7 @@ const WishlistPage: React.FC = () => {
                                         <button
                                             onClick={() => handleAddToCart(item)}
                                             aria-label={`${item.name} sepete ekle`}
-                                            className="w-14 h-14 rounded-md cursor-pointer bg-gray-900 text-white flex items-center justify-center hover:bg-brand-pink transition-all transform hover:scale-110 shadow-xl shadow-gray-200"
+                                            className="w-14 h-14 rounded-md cursor-pointer bg-gray-900 text-white flex items-center justify-center hover:bg-brand-pink transition-all transform  shadow-xl shadow-gray-200"
                                         >
                                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3.5">
                                                 <path d="M12 4v16m8-8H4" />

@@ -58,13 +58,13 @@ const VendorLoginPage: React.FC = () => {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                             </svg>
                         </div>
-                        <span className="text-2xl font-bold tracking-tight">
+                        <span className="text-2xl font-bold ">
                             Merchant.<span className="text-brand-pink font-extrabold ">Fuira</span>
                         </span>
                     </div>
 
                     <div className="mt-20 max-w-lg">
-                        <h1 className="text-[40px] font-bold leading-tight mb-6  italic tracking-tighter">
+                        <h1 className="text-4xl font-bold leading-tight mb-6  italic ">
                             Kurumsal Seviye<br />
                             Ticaret<br />
                             Altyapısı.
@@ -95,7 +95,7 @@ const VendorLoginPage: React.FC = () => {
             <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-8 lg:p-16">
                 <div className="w-full max-w-md space-y-8">
                     <div className="text-left">
-                        <h2 className="text-[40px] font-bold text-slate-900 mb-2">Tekrar Hoş Geldiniz</h2>
+                        <h2 className="text-4xl font-bold text-slate-900 mb-2">Tekrar Hoş Geldiniz</h2>
                         <p className="text-slate-500">Satıcı panelinize erişmek için lütfen bilgilerinizi girin.</p>
                     </div>
 

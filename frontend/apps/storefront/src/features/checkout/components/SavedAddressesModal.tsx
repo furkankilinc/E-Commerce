@@ -218,13 +218,16 @@ export const SavedAddressesModal: React.FC<SavedAddressesModalProps> = ({
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300">
+        <div
+            onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300"
+        >
             <div className={`bg-white rounded-lg shadow-xl border border-gray-100 overflow-y-hidden w-full ${isFormOpen ? 'max-w-7xl' : 'max-w-xl'} h-[85vh] flex flex-col relative overflow-hidden transition-all duration-300 ease-in-out animate-in zoom-in-95`}>
                 {/* Modal Header */}
                 <div className="flex justify-between items-center px-8 py-6 border-b border-gray-100 bg-slate-50/50">
                     <div className="flex items-center gap-3">
                         <span className="text-xl">📖</span>
-                        <h3 className="text-xl font-[1000] text-gray-900 italic tracking-tighter">ADRES <span className="text-brand-pink">DEFTERİM</span></h3>
+                        <h3 className="text-xl font-[1000] text-gray-900 italic ">ADRES <span className="text-brand-pink">DEFTERİM</span></h3>
                     </div>
                     <button
                         onClick={() => {
@@ -245,7 +248,7 @@ export const SavedAddressesModal: React.FC<SavedAddressesModalProps> = ({
                     {/* Left Section: Saved Addresses List */}
                     <div className={`${isFormOpen ? 'lg:col-span-2 border-r border-slate-100 bg-slate-50/20' : 'lg:col-span-1 border-r-0 bg-white'} overflow-y-auto p-8 flex flex-col justify-between transition-all duration-300`}>
                         <div className="space-y-4">
-                            <span className="text-9px font-semibold text-gray-400 tracking-widest block mb-4 italic">KAYITLI ADRESLERİNİZ</span>
+                            <span className="text-nano font-semibold text-gray-400  block mb-4 italic">KAYITLI ADRESLERİNİZ</span>
 
                             {savedAddresses.length === 0 ? (
                                 <div className="text-center py-12 text-gray-400 text-xs font-bold italic">
@@ -263,11 +266,11 @@ export const SavedAddressesModal: React.FC<SavedAddressesModalProps> = ({
                                             >
                                                 <div className="flex-1 min-w-0">
                                                     <div className="flex items-center gap-2 mb-1.5">
-                                                        <span className="text-9px font-semibold tracking-widest text-brand-pink uppercase italic">{addr.title}</span>
+                                                        <span className="text-nano font-semibold  text-brand-pink uppercase italic">{addr.title}</span>
                                                     </div>
-                                                    <h4 className="text-[11px] font-semibold text-gray-900 mb-0.5 truncate">{addr.fullName}</h4>
+                                                    <h4 className="text-caption font-semibold text-gray-900 mb-0.5 truncate">{addr.fullName}</h4>
                                                     <p className="text-10px font-bold text-gray-400 leading-relaxed italic truncate">{addr.district ? `${addr.district}` : ''} {addr.neighborhood} {addr.address} </p>
-                                                    <p className="text-9px font-extrabold text-slate-500 tracking-wider mt-1">{addr.city}, {addr.zipCode}</p>
+                                                    <p className="text-nano font-extrabold text-slate-500 r mt-1">{addr.city}, {addr.zipCode}</p>
                                                 </div>
 
                                                 <div className="flex items-center gap-1.5 shrink-0 border-l border-slate-100 pl-3">
@@ -300,7 +303,7 @@ export const SavedAddressesModal: React.FC<SavedAddressesModalProps> = ({
                                 setShowMap(false);
                                 setIsFormOpen(true);
                             }}
-                            className={`w-full ${isFormOpen ? 'mt-0' : 'mt-12 max-w-md mx-auto'} py-4 border border-dashed border-gray-200 hover:border-brand-pink text-gray-400 hover:text-brand-pink rounded-md text-10px font-semibold tracking-widest transition-all italic flex items-center justify-center gap-2 cursor-pointer bg-white shadow-xs`}
+                            className={`w-full ${isFormOpen ? 'mt-0' : 'mt-12 max-w-md mx-auto'} py-4 border border-dashed border-gray-200 hover:border-brand-pink text-gray-400 hover:text-brand-pink rounded-md text-10px font-semibold  transition-all italic flex items-center justify-center gap-2 cursor-pointer bg-white shadow-xs`}
                         >
                             ＋ YENİ ADRES FORMU AÇ
                         </button>
@@ -310,13 +313,13 @@ export const SavedAddressesModal: React.FC<SavedAddressesModalProps> = ({
                     {isFormOpen && (
                         <div className="lg:col-span-3 overflow-y-auto p-8 flex flex-col justify-between bg-slate-50/10 border-l border-slate-100 animate-in slide-in-from-right-4 duration-300">
                             <div className="space-y-6">
-                                <span className="text-9px font-semibold text-gray-400 tracking-widest block italic mb-2">
+                                <span className="text-nano font-semibold text-gray-400  block italic mb-2">
                                     {editingAddressId ? 'ADRESİ DÜZENLE' : 'YENİ ADRES EKLE'}
                                 </span>
 
                                 <div className="space-y-4">
                                     <div className="space-y-1.5">
-                                        <label className="text-9px font-semibold text-gray-400 tracking-widest ml-2 italic">ADRES BAŞLIĞI (Örn: Evim, Ofis) <span className="text-brand-pink">*</span></label>
+                                        <label className="text-nano font-semibold text-gray-400  ml-2 italic">ADRES BAŞLIĞI (Örn: Evim, Ofis) <span className="text-brand-pink">*</span></label>
                                         <input
                                             type="text"
                                             value={newAddressForm.title}
@@ -328,7 +331,7 @@ export const SavedAddressesModal: React.FC<SavedAddressesModalProps> = ({
 
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="space-y-1.5">
-                                            <label className="text-9px font-semibold text-gray-400 tracking-widest ml-2 italic">ALICI AD SOYAD <span className="text-brand-pink">*</span></label>
+                                            <label className="text-nano font-semibold text-gray-400  ml-2 italic">ALICI AD SOYAD <span className="text-brand-pink">*</span></label>
                                             <input
                                                 type="text"
                                                 value={newAddressForm.fullName}
@@ -338,7 +341,7 @@ export const SavedAddressesModal: React.FC<SavedAddressesModalProps> = ({
                                             />
                                         </div>
                                         <div className="space-y-1.5">
-                                            <label className="text-9px font-semibold text-gray-400 tracking-widest ml-2 italic">TELEFON NUMARASI <span className="text-brand-pink">*</span></label>
+                                            <label className="text-nano font-semibold text-gray-400  ml-2 italic">TELEFON NUMARASI <span className="text-brand-pink">*</span></label>
                                             <input
                                                 type="text"
                                                 value={newAddressForm.phone}
@@ -351,7 +354,7 @@ export const SavedAddressesModal: React.FC<SavedAddressesModalProps> = ({
 
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="space-y-1.5">
-                                            <label className="text-9px font-semibold text-gray-400 tracking-widest ml-2 italic">E-POSTA ADRESİ <span className="text-brand-pink">*</span></label>
+                                            <label className="text-nano font-semibold text-gray-400  ml-2 italic">E-POSTA ADRESİ <span className="text-brand-pink">*</span></label>
                                             <input
                                                 type="email"
                                                 value={newAddressForm.email}
@@ -363,7 +366,7 @@ export const SavedAddressesModal: React.FC<SavedAddressesModalProps> = ({
                                         <div className="space-y-1.5 flex flex-col justify-end">
                                             <button
                                                 onClick={() => setShowMap(!showMap)}
-                                                className="w-full h-16 border border-brand-pink/20 hover:border-brand-pink bg-rose-500/5 hover:bg-rose-500/10 text-brand-pink rounded-md text-10px font-semibold tracking-widest transition-all italic flex items-center justify-center gap-2 cursor-pointer"
+                                                className="w-full h-10 border border-brand-pink/20 hover:border-brand-pink bg-rose-500/5 hover:bg-rose-500/10 text-brand-pink rounded-md text-10px font-semibold  transition-all italic flex items-center justify-center gap-2 cursor-pointer"
                                             >
                                                 📍 {showMap ? 'HARİTAYI KAPAT' : 'HARİTA ÜZERİNDEN SEÇ'}
                                             </button>
@@ -375,15 +378,15 @@ export const SavedAddressesModal: React.FC<SavedAddressesModalProps> = ({
                                         <div className="w-full rounded-md border border-gray-100 overflow-hidden relative shadow-inner animate-in slide-in-from-top-4 duration-300">
                                             <div id="address-picker-map" className="w-full h-[320px] rounded-md min-h-[320px] z-10"></div>
                                             <div className="absolute bottom-4 right-4 z-20 bg-white/90 backdrop-blur-md px-4 py-2 rounded-md shadow-xs border border-gray-100">
-                                                <span className="text-8px font-semibold text-gray-400 tracking-widest italic block leading-none">HARİTA İPUCU</span>
-                                                <span className="text-9px font-semibold text-gray-600 italic">İşaretçiyi sürükleyin veya haritada bir yere tıklayın.</span>
+                                                <span className="text-micro font-semibold text-gray-400  italic block leading-none">HARİTA İPUCU</span>
+                                                <span className="text-nano font-semibold text-gray-600 italic">İşaretçiyi sürükleyin veya haritada bir yere tıklayın.</span>
                                             </div>
                                         </div>
                                     )}
 
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="space-y-1.5">
-                                            <label className="text-9px font-semibold text-gray-400 tracking-widest ml-2 italic">ŞEHİR (İL) <span className="text-brand-pink">*</span></label>
+                                            <label className="text-nano font-semibold text-gray-400  ml-2 italic">ŞEHİR (İL) <span className="text-brand-pink">*</span></label>
                                             <input
                                                 type="text"
                                                 value={newAddressForm.city}
@@ -393,7 +396,7 @@ export const SavedAddressesModal: React.FC<SavedAddressesModalProps> = ({
                                             />
                                         </div>
                                         <div className="space-y-1.5">
-                                            <label className="text-9px font-semibold text-gray-400 tracking-widest ml-2 italic">İLÇE <span className="text-brand-pink">*</span></label>
+                                            <label className="text-nano font-semibold text-gray-400  ml-2 italic">İLÇE <span className="text-brand-pink">*</span></label>
                                             <input
                                                 type="text"
                                                 value={newAddressForm.district}
@@ -406,7 +409,7 @@ export const SavedAddressesModal: React.FC<SavedAddressesModalProps> = ({
 
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="space-y-1.5">
-                                            <label className="text-9px font-semibold text-gray-400 tracking-widest ml-2 italic">MAHALLE <span className="text-brand-pink">*</span></label>
+                                            <label className="text-nano font-semibold text-gray-400  ml-2 italic">MAHALLE <span className="text-brand-pink">*</span></label>
                                             <input
                                                 type="text"
                                                 value={newAddressForm.neighborhood}
@@ -416,7 +419,7 @@ export const SavedAddressesModal: React.FC<SavedAddressesModalProps> = ({
                                             />
                                         </div>
                                         <div className="space-y-1.5">
-                                            <label className="text-9px font-semibold text-gray-400 tracking-widest ml-2 italic">POSTA KODU <span className="text-brand-pink">*</span></label>
+                                            <label className="text-nano font-semibold text-gray-400  ml-2 italic">POSTA KODU <span className="text-brand-pink">*</span></label>
                                             <input
                                                 type="text"
                                                 value={newAddressForm.zipCode}
@@ -428,11 +431,11 @@ export const SavedAddressesModal: React.FC<SavedAddressesModalProps> = ({
                                     </div>
 
                                     <div className="space-y-1.5">
-                                        <label className="text-9px font-semibold text-gray-400 tracking-widest ml-2 italic">AÇIK ADRES (Sokak, Bina No, Daire No) <span className="text-brand-pink">*</span></label>
+                                        <label className="text-nano font-semibold text-gray-400  ml-2 italic">AÇIK ADRES (Sokak, Bina No, Daire No) <span className="text-brand-pink">*</span></label>
                                         <textarea
                                             value={newAddressForm.address}
                                             onChange={(e) => setNewAddressForm({ ...newAddressForm, address: e.target.value })}
-                                            className="w-full h-16 bg-gray-50 border border-gray-100 rounded-md p-6 text-xs font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all italic text-slate-800 resize-none"
+                                            className="w-full bg-gray-50 border border-gray-100 rounded-md p-6 text-xs font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all italic text-slate-800 resize-none"
                                             placeholder="Şehit Asım Cad. No: 12 D: 4"
                                         />
                                     </div>
@@ -446,13 +449,13 @@ export const SavedAddressesModal: React.FC<SavedAddressesModalProps> = ({
                                         setShowMap(false);
                                         setEditingAddressId(null);
                                     }}
-                                    className="w-full py-4 bg-gray-100 hover:bg-gray-200 text-gray-500 rounded-md text-10px font-semibold tracking-widest cursor-pointer flex items-center justify-center gap-2 transition-colors italic"
+                                    className="w-full py-4 bg-gray-100 hover:bg-gray-200 text-gray-500 rounded-md text-10px font-semibold  cursor-pointer flex items-center justify-center gap-2 transition-colors italic"
                                 >
                                     ✕ VAZGEÇ
                                 </button>
                                 <button
                                     onClick={handleSaveAddress}
-                                    className="w-full py-4 bg-brand-pink text-white rounded-md text-10px font-semibold tracking-widest shadow-xs cursor-pointer flex items-center justify-center gap-2 hover:bg-rose-600 transition-colors italic"
+                                    className="w-full py-4 bg-brand-pink text-white rounded-md text-10px font-semibold  shadow-xs cursor-pointer flex items-center justify-center gap-2 hover:bg-rose-600 transition-colors italic"
                                 >
                                     💾 {editingAddressId ? 'GÜNCELLE' : 'KAYDET'}
                                 </button>

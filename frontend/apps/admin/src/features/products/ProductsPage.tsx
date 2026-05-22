@@ -65,8 +65,8 @@ const ProductsPage: React.FC = () => {
         <div className="p-10 space-y-10">
             <div className="flex justify-between items-end">
                 <div>
-                    <h1 className="text-4xl font-[1000] text-admin-navy tracking-tighter italic  leading-none mb-4">ÜRÜN <span className="text-brand-pink">MODERASYONU</span></h1>
-                    <p className="text-10px font-semibold text-slate-400  tracking-widest italic opacity-70">Sitedeki tüm ürünleri incele ve onayla</p>
+                    <h1 className="text-4xl font-[1000] text-admin-navy  italic  leading-none mb-4">ÜRÜN <span className="text-brand-pink">MODERASYONU</span></h1>
+                    <p className="text-10px font-semibold text-slate-400   italic opacity-70">Sitedeki tüm ürünleri incele ve onayla</p>
                 </div>
 
                 <div className="flex bg-white p-2 rounded-3xl border border-slate-100 shadow-sm">
@@ -74,7 +74,7 @@ const ProductsPage: React.FC = () => {
                         <button
                             key={f}
                             onClick={() => setFilter(f)}
-                            className={`px-6 py-3 rounded-2xl text-10px font-semibold  tracking-widest transition-all italic ${filter === f ? 'bg-admin-navy text-white shadow-lg' : 'text-slate-400 hover:text-slate-600'}`}
+                            className={`px-6 py-3 rounded-2xl text-10px font-semibold   transition-all italic ${filter === f ? 'bg-admin-navy text-white shadow-lg' : 'text-slate-400 hover:text-slate-600'}`}
                         >
                             {f === 'ALL' ? 'TÜMÜ' : f.replace('_', ' ')}
                         </button>
@@ -86,18 +86,18 @@ const ProductsPage: React.FC = () => {
                 <table className="w-full">
                     <thead>
                         <tr className="border-b border-slate-50 bg-slate-50/50">
-                            <th className="px-10 py-8 text-10px font-semibold text-slate-400  tracking-widest italic">Ürün</th>
-                            <th className="px-10 py-8 text-10px font-semibold text-slate-400  tracking-widest italic">Satıcı</th>
-                            <th className="px-10 py-8 text-10px font-semibold text-slate-400  tracking-widest italic">Fiyat</th>
-                            <th className="px-10 py-8 text-10px font-semibold text-slate-400  tracking-widest italic">Durum</th>
-                            <th className="px-10 py-8 text-10px font-semibold text-slate-400  tracking-widest italic text-right">İşlemler</th>
+                            <th className="px-10 py-8 text-10px font-semibold text-slate-400   italic">Ürün</th>
+                            <th className="px-10 py-8 text-10px font-semibold text-slate-400   italic">Satıcı</th>
+                            <th className="px-10 py-8 text-10px font-semibold text-slate-400   italic">Fiyat</th>
+                            <th className="px-10 py-8 text-10px font-semibold text-slate-400   italic">Durum</th>
+                            <th className="px-10 py-8 text-10px font-semibold text-slate-400   italic text-right">İşlemler</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-50">
                         {loading ? (
-                            <tr><td colSpan={5} className="py-20 text-center text-slate-400 font-bold italic  tracking-widest">Yükleniyor...</td></tr>
+                            <tr><td colSpan={5} className="py-20 text-center text-slate-400 font-bold italic  ">Yükleniyor...</td></tr>
                         ) : products.length === 0 ? (
-                            <tr><td colSpan={5} className="py-20 text-center text-slate-400 font-bold italic  tracking-widest">Ürün bulunamadı.</td></tr>
+                            <tr><td colSpan={5} className="py-20 text-center text-slate-400 font-bold italic  ">Ürün bulunamadı.</td></tr>
                         ) : (
                             products.map(product => (
                                 <tr key={product.id} className="hover:bg-slate-50/50 transition-colors">
@@ -108,32 +108,32 @@ const ProductsPage: React.FC = () => {
                                             </div>
                                             <div className="flex flex-col">
                                                 <span className="text-xs font-semibold text-slate-900 italic ">{product.name}</span>
-                                                <span className="text-9px font-bold text-slate-400  tracking-widest italic">{product.category?.name}</span>
+                                                <span className="text-nano font-bold text-slate-400   italic">{product.category?.name}</span>
                                             </div>
                                         </div>
                                     </td>
                                     <td className="px-10 py-8">
                                         <div className="flex flex-col">
                                             <span className="text-xs font-semibold text-slate-900 italic ">{product.merchant?.companyName}</span>
-                                            <span className="text-9px font-bold text-slate-400  tracking-widest italic">{product.merchant?.email}</span>
+                                            <span className="text-nano font-bold text-slate-400   italic">{product.merchant?.email}</span>
                                         </div>
                                     </td>
                                     <td className="px-10 py-8">
                                         <span className="text-xs font-semibold text-slate-900 italic">${product.price.toLocaleString()}</span>
                                     </td>
                                     <td className="px-10 py-8">
-                                        <span className={`px-4 py-1.5 rounded-full text-9px font-semibold  tracking-widest italic ${product.status === 'PUBLISHED' ? 'bg-emerald-100 text-emerald-600' :
+                                        <span className={`px-4 py-1.5 rounded-full text-nano font-semibold   italic ${product.status === 'PUBLISHED' ? 'bg-emerald-100 text-emerald-600' :
                                             product.status === 'PENDING_APPROVAL' ? 'bg-amber-100 text-amber-600' :
                                                 'bg-rose-100 text-rose-600'
                                             }`}>
                                             {product.status}
                                         </span>
                                     </td>
-                                    <td className="px-10 py-8 text-right space-x-2">
+                                     <td className="px-10 py-8 text-right space-x-2">
                                         {product.status === 'PENDING_APPROVAL' && (
                                             <button
                                                 onClick={() => handleStatusUpdate(product.id, 'PUBLISHED')}
-                                                className="px-4 py-2 bg-emerald-500 text-white rounded-xl text-9px font-semibold  tracking-widest italic shadow-lg shadow-emerald-500/20 hover:bg-emerald-600"
+                                                className="px-4 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 border border-emerald-200 rounded-xl text-nano font-[800] uppercase tracking-wider transition-all"
                                             >
                                                 Onayla
                                             </button>
@@ -141,14 +141,14 @@ const ProductsPage: React.FC = () => {
                                         {product.status !== 'REJECTED' && (
                                             <button
                                                 onClick={() => handleStatusUpdate(product.id, 'REJECTED')}
-                                                className="px-4 py-2 bg-amber-500 text-white rounded-xl text-9px font-semibold  tracking-widest italic shadow-lg shadow-amber-500/20 hover:bg-amber-600"
+                                                className="px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 rounded-xl text-nano font-[800] uppercase tracking-wider transition-all"
                                             >
                                                 Reddet
                                             </button>
                                         )}
                                         <button
                                             onClick={() => handleDelete(product.id)}
-                                            className="px-4 py-2 bg-rose-500 text-white rounded-xl text-9px font-semibold  tracking-widest italic shadow-lg shadow-rose-500/20 hover:bg-rose-600"
+                                            className="px-4 py-2 bg-slate-50 hover:bg-slate-100 text-slate-500 border border-slate-200 rounded-xl text-nano font-[800] uppercase tracking-wider transition-all"
                                         >
                                             Sil
                                         </button>

@@ -27,8 +27,8 @@
     --radius-3xl: var(--radius);
 
     /* Centralized Font Sizes for 9px, 10px, and 11px */
-    --text-8px: 8px;
-    --text-9px: 9px;
+    --text-micro: 8px;
+    --text-nano: 9px;
     --text-10px: 10px;
     --text-11px: 11px;
     --text-12px: 12px;

@@ -30,7 +30,7 @@ const CategoryItem: React.FC<{
         <div className="space-y-1">
             <button
                 onClick={() => onSelect(category.slug)}
-                className={`w-full flex items-center justify-between px-5 py-3 rounded-md text-10px font-semibold  tracking-widest  transition-all group ${isSelected ? 'bg-brand-pink text-white  shadow-brand-pink/20' : activeChildBranch ? 'bg-gray-900 text-white' : 'text-gray-600 hover:bg-gray-50'}`}
+                className={`w-full flex items-center justify-between px-5 py-3 rounded-md text-10px font-semibold    transition-all group ${isSelected ? 'bg-brand-pink text-white  shadow-brand-pink/20' : activeChildBranch ? 'bg-gray-900 text-white' : 'text-gray-600 hover:bg-gray-50'}`}
             >
                 <span className="truncate pr-4">{category.name}</span>
                 {children.length > 0 && (
@@ -104,7 +104,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
     const { t } = useTranslation();
     return (
         <aside className={`
-            fixed lg:sticky top-0 lg:top-24 left-0 w-[85%] sm:w-80 lg:w-[20vw] h-full lg:h-auto 
+            fixed lg:sticky top-0 lg:top-24 left-0 w-[75%] sm:w-72 lg:w-64 h-full lg:h-auto 
             bg-white lg:bg-transparent z-[100] lg:z-0 p-8 lg:p-0
             transition-transform duration-500 ease-in-out lg:transition-none
             ${isMobileFiltersOpen ? 'translate-x-0 shadow-xl overflow-y-auto' : '-translate-x-full lg:translate-x-0'}
@@ -125,13 +125,13 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
                         placeholder={t('sidebar.searchPlaceholder')}
                         value={localSearch}
                         onChange={(e) => setLocalSearch(e.target.value)}
-                        className="w-full py-2 pl-12 pr-6 bg-gray-50 rounded-md text-[11px] font-bold  focus:bg-white border-2 border-transparent focus:border-brand-pink outline-none transition-all placeholder:text-gray-300"
+                        className="w-full py-2 pl-12 pr-6 bg-gray-50 rounded-md text-caption font-bold  focus:bg-white border-2 border-transparent focus:border-brand-pink outline-none transition-all placeholder:text-gray-300"
                     />
                     <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" strokeWidth="3" /></svg>
                 </div>
 
                 <div>
-                    <button onClick={() => toggleSection('category')} className="w-full flex items-center justify-between text-10px font-semibold text-gray-500  tracking-[0.2em] mb-4  hover:text-gray-900 transition-colors">
+                    <button onClick={() => toggleSection('category')} className="w-full flex items-center justify-between text-10px font-semibold text-gray-500   mb-4  hover:text-gray-900 transition-colors">
                         {t('sidebar.category')}
                         <svg className={`w-4 h-4 transform transition-transform ${collapsedSections['category'] ? '-rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" strokeWidth="3" /></svg>
                     </button>
@@ -141,7 +141,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
                                 <>
                                     <button
                                         onClick={() => updateCategory('')}
-                                        className={`w-full flex items-center justify-between px-5 py-3 rounded-md text-10px font-semibold  tracking-widest  transition-all ${!filters.category ? 'bg-gray-900 text-white ' : 'text-gray-600 hover:bg-gray-50'}`}
+                                        className={`w-full flex items-center justify-between px-5 py-3 rounded-md text-10px font-semibold    transition-all ${!filters.category ? 'bg-gray-900 text-white ' : 'text-gray-600 hover:bg-gray-50'}`}
                                     >
                                         {t('sidebar.all')}
                                     </button>
@@ -155,14 +155,14 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
                 </div>
 
                 <div className="py-2">
-                    <div role="heading" aria-level={2} className="text-10px font-semibold text-gray-500  tracking-[0.2em] mb-4 ">{t('sidebar.priceRange')}</div>
+                    <div role="heading" aria-level={2} className="text-10px font-semibold text-gray-500   mb-4 ">{t('sidebar.priceRange')}</div>
                     <div className="flex gap-4">
                         <div className="flex-1 bg-white border border-gray-50 p-4 rounded-md shadow-xs py-2 flex flex-col justify-center">
-                            <span className="text-8px font-semibold text-gray-500  block mb-1 leading-none">{t('sidebar.min')}</span>
+                            <span className="text-micro font-semibold text-gray-500  block mb-1 leading-none">{t('sidebar.min')}</span>
                             <input aria-label={t('sidebar.min')} type="number" value={filters.minPrice} onChange={e => setFilters(prev => ({ ...prev, minPrice: e.target.value }))} className="bg-transparent w-full outline-none text-xs font-semibold text-gray-900  h-5 leading-none no-spinner" />
                         </div>
                         <div className="flex-1 bg-white border border-gray-50 p-4 rounded-md shadow-xs py-2 flex flex-col justify-center">
-                            <span className="text-8px font-semibold text-gray-500  block mb-1 leading-none">{t('sidebar.max')}</span>
+                            <span className="text-micro font-semibold text-gray-500  block mb-1 leading-none">{t('sidebar.max')}</span>
                             <input aria-label={t('sidebar.max')} type="number" value={filters.maxPrice} onChange={e => setFilters(prev => ({ ...prev, maxPrice: e.target.value }))} className="bg-transparent w-full outline-none text-xs font-semibold text-gray-900  h-5 leading-none no-spinner" />
                         </div>
                     </div>
@@ -175,7 +175,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
                         const isColorFilter = name === 'Color' || name.toLowerCase() === 'renk' || name.toLowerCase() === 'color';
                         return (
                             <div key={name} className="animate-in fade-in slide-in-from-top-2">
-                                <button onClick={() => toggleSection(name)} className="w-full flex items-center justify-between text-10px font-semibold text-gray-500  tracking-[0.2em] mb-6 ">
+                                <button onClick={() => toggleSection(name)} className="w-full flex items-center justify-between text-10px font-semibold text-gray-500   mb-6 ">
                                     {label}
                                     <svg className={`w-4 h-4 transform transition-transform ${collapsedSections[name] ? '-rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" strokeWidth="3" /></svg>
                                 </button>
@@ -187,7 +187,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
                                                     key={val}
                                                     onClick={() => toggleVariant(name, val)}
                                                     title={val}
-                                                    className={`w-8 h-8 rounded-full border-2 transition-all transform hover:scale-125 ${filters.selectedVariants[name]?.includes(val) ? 'border-brand-pink ring-4 ring-brand-pink/10 shadow-lg' : 'border-gray-100'}`}
+                                                    className={`w-8 h-8 rounded-full border-2 transition-all transform ${filters.selectedVariants[name]?.includes(val) ? 'border-brand-pink ring-4 ring-brand-pink/10 shadow-lg' : 'border-gray-100'}`}
                                                     style={{ backgroundColor: val.toLowerCase() }}
                                                 />
                                             ) : (
@@ -196,7 +196,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
                                                         <input type="checkbox" checked={filters.selectedVariants[name]?.includes(val) || false} onChange={() => toggleVariant(name, val)} className="w-5 h-5 border-2 border-gray-200 rounded-md appearance-none checked:bg-brand-pink checked:border-brand-pink cursor-pointer transition-all" />
                                                         {filters.selectedVariants[name]?.includes(val) && <svg className="absolute w-3.5 h-3.5 text-white left-0.5 top-0.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" /></svg>}
                                                     </div>
-                                                    <span className="ml-3 text-[11px] font-semibold text-gray-500 group-hover:text-gray-900 transition-colors  ">{val}</span>
+                                                    <span className="ml-3 text-caption font-semibold text-gray-500 group-hover:text-gray-900 transition-colors  ">{val}</span>
                                                 </label>
                                             )
                                         ))}
@@ -207,7 +207,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
                     })}
 
                     <div>
-                        <button onClick={() => toggleSection('merchants')} className="w-full flex items-center justify-between text-10px font-semibold text-gray-500  tracking-[0.2em] mb-4 ">
+                        <button onClick={() => toggleSection('merchants')} className="w-full flex items-center justify-between text-10px font-semibold text-gray-500   mb-4 ">
                             {t('sidebar.merchants')}
                             <svg className={`w-4 h-4 transform transition-transform ${collapsedSections['merchants'] ? '-rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" strokeWidth="3" /></svg>
                         </button>
@@ -219,7 +219,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
                                             <input type="checkbox" checked={filters.merchants.includes(m.id)} onChange={() => toggleMerchant(m.id)} className="w-5 h-5 border-2 border-gray-200 rounded-md appearance-none checked:bg-brand-pink checked:border-brand-pink cursor-pointer transition-all" />
                                             {filters.merchants.includes(m.id) && <svg className="absolute w-3.5 h-3.5 text-white left-0.5 top-0.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" /></svg>}
                                         </div>
-                                        <span className="ml-3 text-[11px] font-semibold text-gray-500 group-hover:text-gray-900 transition-colors  ">{m.companyName}</span>
+                                        <span className="ml-3 text-caption font-semibold text-gray-500 group-hover:text-gray-900 transition-colors  ">{m.companyName}</span>
                                     </label>
                                 ))}
                             </div>
@@ -228,7 +228,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
                 </div>
 
                 <div>
-                    <button onClick={clearFilters} className="w-full py-4 bg-gray-50 text-gray-500 rounded-md text-[11px] font-semibold  tracking-widest  hover:bg-brand-pink hover:text-white transition-all shadow-sm">{t('sidebar.reset')}</button>
+                    <button onClick={clearFilters} className="w-full py-4 bg-gray-50 text-gray-500 rounded-md text-caption font-semibold    hover:bg-brand-pink hover:text-white transition-all shadow-sm">{t('sidebar.reset')}</button>
                 </div>
             </div>
         </aside>

@@ -5,12 +5,13 @@ import { useWishlist } from '../../wishlist/store/wishlist.store';
 import { apiClient } from '../../../shared/api/apiClient';
 import { getSizedImageUrl } from '../../../shared/utils/image.util';
 import { preload } from 'react-dom';
-import { toast } from 'react-toastify';
+import { useToast } from '../../../shared/components/Toast';
 
 export const useProductDetail = (id: string | undefined) => {
     const { isAuthenticated } = useAuth();
     const { addItem } = useCart();
     const { toggleItem, isInWishlist } = useWishlist();
+    const toast = useToast();
 
     const [showCollectionModal, setShowCollectionModal] = useState(false);
     const [product, setProduct] = useState<any | null>(null);
@@ -51,7 +52,7 @@ export const useProductDetail = (id: string | undefined) => {
 
             const success = addItem({ ...product, price: finalPrice }, selectionString || 'Standard');
             if (success) {
-                toast.success(`${product.name} isimli ürün sepete eklendi.`, { autoClose: 2000 });
+                toast.success(`${product.name} isimli ürün sepete eklendi.`);
                 setTimeout(() => setIsAdding(false), 2000);
             } else {
                 setIsAdding(false);
@@ -165,14 +166,15 @@ export const useProductDetail = (id: string | undefined) => {
     const handleWishlist = () => {
         if (product) {
             if (!isAuthenticated) {
-                toast.error('Favorilere eklemek için lütfen giriş yapın.', { position: 'top-center', autoClose: 3000 });
+                toast.error('Favorilere eklemek için lütfen giriş yapın.');
                 return;
             }
             const added = toggleItem(product);
-            toast[added ? 'success' : 'info'](
-                added ? `${product.name} favorilere eklendi!` : `${product.name} favorilerden çıkarıldı.`,
-                { autoClose: 1500 }
-            );
+            if (added) {
+                toast.success(`${product.name} favorilere eklendi!`);
+            } else {
+                toast.info(`${product.name} favorilerden çıkarıldı.`);
+            }
         }
     };
 

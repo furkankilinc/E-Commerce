@@ -17,8 +17,8 @@ const StatCard: React.FC<StatCardProps> = ({ label, value, icon, color, subtext 
                 {icon}
             </div>
         </div>
-        <div className="text-4xl font-semibold text-admin-dark mb-2 tracking-tight">{value}</div>
-        <div className="text-sm font-bold text-slate-500  tracking-widest">{label}</div>
+        <div className="text-4xl font-semibold text-admin-dark mb-2 ">{value}</div>
+        <div className="text-sm font-bold text-slate-500  ">{label}</div>
         <div className="text-xs text-slate-400 mt-2 font-medium">{subtext}</div>
     </div>
 );
@@ -89,7 +89,7 @@ const DashboardPage: React.FC = () => {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                             </svg>
                         </div>
-                        <h1 className="text-4xl font-semibold text-admin-dark tracking-tight">Kontrol Paneli</h1>
+                        <h1 className="text-4xl font-semibold text-admin-dark ">Kontrol Paneli</h1>
                     </div>
                     <p className="text-slate-500 font-medium text-lg ml-1">Platformdaki tüm aktiviteleri canlı olarak izleyin.</p>
                 </div>
@@ -127,49 +127,19 @@ const DashboardPage: React.FC = () => {
                 />
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-6">
-                {/* Critical Stock Alerts */}
-                <div className="bg-white rounded-xl p-10 border border-slate-50 shadow-sm transition-all hover: duration-500">
-                    <div className="flex items-center justify-between mb-5">
-                        <h3 className="text-xl font-semibold text-admin-navy  tracking-tight italic flex items-center gap-3">
-                            <span className="w-2 h-2 bg-brand-pink rounded-full animate-pulse"></span>
-                            Kritik Stok Uyarıları
-                        </h3>
-                        <a href="/products" className="text-10px font-semibold text-slate-400  tracking-widest hover:text-brand-pink transition-colors italic">TÜM ÜRÜNLER</a>
-                    </div>
-                    <div className="space-y-6">
-                        {!stats.lowStock || stats.lowStock.length === 0 ? (
-                            <div className="py-20 text-center bg-slate-50/50 rounded-2xl border border-dashed border-slate-100">
-                                <p className="text-10px font-semibold text-slate-300  tracking-widest italic">Her şey yolunda görünüyor</p>
-                            </div>
-                        ) : (
-                            [...stats.lowStock]
-                                .sort((a, b) => a.stock - b.stock)
-                                .map((item: any) => (
-                                    <div key={item.id} className="flex items-center justify-between p-6 bg-slate-50/50 hover:bg-white rounded-2xl border border-transparent hover:border-slate-100 transition-all group">
-                                        <div className="flex flex-col">
-                                            <span className="text-sm font-semibold text-admin-navy group-hover:text-brand-pink transition-colors italic  leading-tight">{item.name}</span>
-                                            <span className="text-9px font-bold text-slate-400  tracking-widest italic mt-1">{item.merchant?.companyName}</span>
-                                        </div>
-                                        <span className="px-4 py-2 bg-rose-100 text-rose-600 rounded-xl text-10px font-semibold  tracking-widest italic">{item.stock} KALDI</span>
-                                    </div>
-                                ))
-                        )}
-                    </div>
-                </div>
-
+            <div className="grid grid-cols-1 gap-8 mb-6">
                 {/* Sales Activity Preview */}
                 <div className="bg-white rounded-xl p-10 border border-slate-50 shadow-sm overflow-hidden flex flex-col group">
                     <div className="flex items-center justify-between mb-5">
-                        <h3 className="text-xl font-semibold text-admin-navy  tracking-tight italic flex items-center gap-3">
+                        <h3 className="text-xl font-semibold text-admin-navy   italic flex items-center gap-3">
                             <span className="w-2 h-2 bg-indigo-500 rounded-full"></span>
                             Son 30 Günlük Aktivite
                         </h3>
-                        <a href="/analytics" className="text-10px font-semibold text-slate-400  tracking-widest hover:text-indigo-500 transition-colors italic">DETAYLI ANALİZ</a>
+                        <a href="/analytics" className="text-10px font-semibold text-slate-400   hover:text-indigo-500 transition-colors italic">DETAYLI ANALİZ</a>
                     </div>
                     <div className="flex-1 min-h-[300px] flex items-end justify-between px-4 pb-4">
                         {/* Simplistic bar chart preview with brand-pink */}
-                        {[...Array(12)].map((_, i) => (
+                        {[...Array(24)].map((_, i) => (
                             <div key={i} className="flex flex-col items-center gap-4 flex-1">
                                 <div className="w-2.5 bg-slate-100 rounded-full h-[200px] relative overflow-hidden flex items-end">
                                     <div
@@ -186,35 +156,10 @@ const DashboardPage: React.FC = () => {
             {/* Map Section */}
             <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-50 mb-6">
                 <div className="p-8 pb-4">
-                    <h2 className="text-2xl font-semibold text-slate-800 tracking-tight mb-2  italic">Platform Aktivite Haritası</h2>
+                    <h2 className="text-2xl font-semibold text-slate-800  mb-2  italic">Platform Aktivite Haritası</h2>
                     <p className="text-slate-400 font-medium text-sm text-left">Satıcıların ve aktif kullanıcıların konumlarını anlık olarak takip edin.</p>
                 </div>
                 <DashboardMap points={mapData} />
-            </div>
-
-            {/* Quick Actions */}
-            <div className="bg-white rounded-xl border border-slate-50 p-12 shadow-sm relative overflow-hidden group">
-                <div className="absolute top-[-50%] right-[-10%] w-[500px] h-[500px] bg-brand-pink/5 rounded-full blur-[100px] pointer-events-none"></div>
-                <h2 className="text-xl font-extrabold text-admin-dark mb-5 flex items-center gap-3 italic  relative z-10">
-                    <span className="w-8 h-1 bg-brand-pink rounded-full"></span>
-                    Hızlı İşlemler
-                </h2>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 relative z-10">
-                    {[
-                        { label: 'Kategori Ekle', path: '/categories', color: 'bg-indigo-600 shadow-indigo-200' },
-                        { label: 'Ürün Yönet', path: '/products', color: 'bg-blue-600 shadow-blue-200' },
-                        { label: 'Satıcı Listesi', path: '/sellers', color: 'bg-emerald-600 shadow-emerald-200' },
-                        { label: 'Sistem Logları', path: '/analytics', color: 'bg-rose-600 shadow-rose-200' },
-                    ].map(action => (
-                        <a
-                            key={action.label}
-                            href={action.path}
-                            className={`${action.color} text-white rounded-2xl px-6 py-6 text-10px font-semibold  tracking-widest text-center shadow-lg hover:scale-110 active:scale-95 transition-all duration-500 italic`}
-                        >
-                            {action.label}
-                        </a>
-                    ))}
-                </div>
             </div>
         </div>
     );

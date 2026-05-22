@@ -11,10 +11,15 @@ const getAllProducts = async (req, res) => {
             sort,
             isNewArrival,
             isOnSale,
-            limit = 20,
-            offset = 0,
+            page,
+            limit,
+            offset,
             status
         } = req.query;
+
+        const parsedPage = parseInt(page, 10) || 1;
+        const parsedLimit = parseInt(limit, 10) || 20;
+        const calculatedOffset = offset !== undefined ? parseInt(offset, 10) : (parsedPage - 1) * parsedLimit;
 
         console.log('[PRODUCT_LIST] Received Query:', req.query);
 
@@ -57,9 +62,28 @@ const getAllProducts = async (req, res) => {
             }
         }
 
-        // 2. Flags
-        if (isNewArrival === 'true') where.isNewArrival = true;
-        if (isOnSale === 'true') where.isOnSale = true;
+        // 2. Flags and Search conditions
+        const conditions = [];
+
+        if (isNewArrival === 'true') {
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            conditions.push({
+                OR: [
+                    { isNewArrival: true },
+                    { createdAt: { gte: thirtyDaysAgo } }
+                ]
+            });
+        }
+
+        if (isOnSale === 'true') {
+            conditions.push({
+                OR: [
+                    { isOnSale: true },
+                    { discountPrice: { not: null } }
+                ]
+            });
+        }
 
         // 3. Price
         if (minPrice || maxPrice) {
@@ -75,10 +99,16 @@ const getAllProducts = async (req, res) => {
 
         // 5. Search
         if (search) {
-            where.OR = [
-                { name: { contains: search, mode: 'insensitive' } },
-                { description: { contains: search, mode: 'insensitive' } }
-            ];
+            conditions.push({
+                OR: [
+                    { name: { contains: search, mode: 'insensitive' } },
+                    { description: { contains: search, mode: 'insensitive' } }
+                ]
+            });
+        }
+
+        if (conditions.length > 0) {
+            where.AND = conditions;
         }
 
         // 6. Sorting
@@ -89,24 +119,49 @@ const getAllProducts = async (req, res) => {
         else if (sort === 'stock-asc') orderBy = { stock: 'asc' };
         else if (sort === 'stock-desc') orderBy = { stock: 'desc' };
 
-        const [products, total] = await Promise.all([
+        const [products, total, totalStock, lowStockCount, outOfStockCount] = await Promise.all([
             prisma.product.findMany({
                 where,
                 include: { images: true, category: true, variants: true },
                 orderBy,
-                take: Number(limit),
-                skip: Number(offset)
+                take: Number(parsedLimit),
+                skip: Number(calculatedOffset)
             }),
-            prisma.product.count({ where })
+            prisma.product.count({ where }),
+            prisma.product.aggregate({
+                where,
+                _sum: {
+                    stock: true
+                }
+            }),
+            prisma.product.count({
+                where: {
+                    ...where,
+                    stock: { gt: 0, lte: 10 }
+                }
+            }),
+            prisma.product.count({
+                where: {
+                    ...where,
+                    stock: { lte: 0 }
+                }
+            })
         ]);
+
+        const totalPages = Math.ceil(total / parsedLimit);
 
         return res.json({
             success: true,
             products,
             pagination: {
                 total,
-                limit: Number(limit),
-                offset: Number(offset)
+                page: parsedPage,
+                totalPages,
+                limit: parsedLimit,
+                offset: calculatedOffset,
+                totalStock: totalStock._sum?.stock || 0,
+                lowStockCount,
+                outOfStockCount
             }
         });
     } catch (err) {
@@ -142,14 +197,55 @@ const getProductMeta = async (req, res) => {
             _max: { price: true }
         });
 
+        // Fetch variants
+        const variantsRaw = await prisma.productVariant.findMany({
+            where: {
+                product: {
+                    status: 'PUBLISHED',
+                    isActive: true
+                }
+            },
+            select: {
+                name: true,
+                value: true
+            },
+            distinct: ['name', 'value']
+        });
+
+        // Group variants by name
+        const variants = {};
+        variantsRaw.forEach(v => {
+            if (!variants[v.name]) {
+                variants[v.name] = [];
+            }
+            if (!variants[v.name].includes(v.value)) {
+                variants[v.name].push(v.value);
+            }
+        });
+
+        // Fetch merchants from auth-service
+        let merchants = [];
+        try {
+            const authUrl = `${process.env.AUTH_SERVICE_URL || 'http://auth-service:5001'}/api/auth/merchants`;
+            const response = await fetch(authUrl);
+            if (response.ok) {
+                merchants = await response.json();
+            }
+        } catch (authErr) {
+            console.error('[PRODUCT_META] Failed to fetch merchants from auth-service:', authErr.message);
+        }
+
         return res.json({
             categories,
             priceRange: {
                 min: priceAgg._min.price || 0,
                 max: priceAgg._max.price || 100000
-            }
+            },
+            variants,
+            merchants
         });
     } catch (err) {
+        console.error('[PRODUCT_META] Error:', err);
         return res.status(500).json({ success: false, message: 'Metadata alınamadı.' });
     }
 };
@@ -172,6 +268,8 @@ const createProduct = async (req, res) => {
                 merchantId,
                 status: req.body.status || 'DRAFT',
                 isActive: true,
+                isNewArrival: true,
+                isOnSale: discountPrice ? parseFloat(discountPrice) < parseFloat(price) : false,
                 metadata: metadata || {},
                 images: {
                     create: (images || []).map(url => ({ url }))
@@ -220,6 +318,7 @@ const updateProduct = async (req, res) => {
                 categoryId,
                 status: status || existing.status,
                 metadata: metadata || {},
+                isOnSale: discountPrice ? parseFloat(discountPrice) < parseFloat(price) : false,
                 // Simple strategy: Replace images and variants if provided
                 images: images ? {
                     deleteMany: {},

@@ -53,10 +53,10 @@ const DraftsPage: React.FC = () => {
             cancelButtonText: 'Vazgeç',
             background: '#ffffff',
             customClass: {
-                title: 'font-semibold italic  tracking-tighter',
+                title: 'font-semibold italic  ',
                 popup: 'rounded-xl',
-                confirmButton: 'rounded-2xl px-6 py-4 font-semibold  tracking-widest text-10px',
-                cancelButton: 'rounded-2xl px-6 py-4 font-semibold  tracking-widest text-10px'
+                confirmButton: 'rounded-2xl px-6 py-4 font-semibold   text-10px',
+                cancelButton: 'rounded-2xl px-6 py-4 font-semibold   text-10px'
             }
         });
 
@@ -89,7 +89,7 @@ const DraftsPage: React.FC = () => {
         <div className="space-y-12">
             <div className="flex justify-between items-end">
                 <div>
-                    <h1 className="text-[40px] font-[1000] text-slate-900 tracking-tighter mb-4 italic leading-none ">
+                    <h1 className="text-4xl font-[1000] text-slate-900  mb-4 italic leading-none ">
                         Taslak <span className="text-brand-pink">Ürünler</span>
                     </h1>
                     <p className="text-slate-400 font-bold text-lg italic opacity-70">Henüz yayınlamadığınız ürünleri buradan yönetebilirsiniz.</p>
@@ -102,7 +102,7 @@ const DraftsPage: React.FC = () => {
                         <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
                     </div>
                     <h3 className="text-2xl font-semibold text-slate-400 italic  mb-4">Taslak Ürün Bulunmuyor</h3>
-                    <Link to="/products/create" className="text-brand-pink font-semibold text-sm  tracking-widest hover:underline">Yeni Ürün Ekle</Link>
+                    <Link to="/products/create" className="text-brand-pink font-semibold text-sm   hover:underline">Yeni Ürün Ekle</Link>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
@@ -111,10 +111,10 @@ const DraftsPage: React.FC = () => {
                             <div className="aspect-square rounded-2xl bg-slate-50 overflow-hidden mb-6 relative">
                                 <img
                                     src={draft.images[0]?.url || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30'}
-                                    className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700"
+                                    className="w-full h-full object-contain group- transition-transform duration-700"
                                     alt={draft.name}
                                 />
-                                <div className="absolute top-4 right-4 bg-slate-900/80 backdrop-blur px-3 py-1 rounded-full text-8px font-semibold text-white  tracking-widest italic">TASLAK</div>
+                                <div className="absolute top-4 right-4 bg-slate-900/80 backdrop-blur px-3 py-1 rounded-full text-micro font-semibold text-white   italic">TASLAK</div>
                             </div>
 
                             <h3 className="text-lg font-semibold text-slate-900 mb-2 truncate italic">{draft.name || 'İsimsiz Ürün'}</h3>
@@ -135,13 +135,13 @@ const DraftsPage: React.FC = () => {
                                         </span>
                                     )}
                                 </div>
-                                <span className="text-9px font-bold text-slate-300  italic">{new Date(draft.createdAt).toLocaleDateString('tr-TR')}</span>
+                                <span className="text-nano font-bold text-slate-300  italic">{new Date(draft.createdAt).toLocaleDateString('tr-TR')}</span>
                             </div>
 
                             <div className="flex gap-3">
                                 <button
                                     onClick={() => navigate(`/products/edit/${draft.id}`)}
-                                    className="flex-1 h-16 bg-slate-50 rounded-2xl text-10px font-semibold text-slate-500 hover:bg-slate-900 hover:text-white transition-all  tracking-widest italic"
+                                    className="flex-1 h-16 bg-slate-50 rounded-2xl text-10px font-semibold text-slate-500 hover:bg-slate-900 hover:text-white transition-all   italic"
                                 >
                                     DÜZENLE
                                 </button>
