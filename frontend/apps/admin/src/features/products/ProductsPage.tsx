@@ -69,7 +69,7 @@ const ProductsPage: React.FC = () => {
                     <p className="text-10px font-semibold text-slate-400    opacity-70">Sitedeki tüm ürünleri incele ve onayla</p>
                 </div>
 
-                <div className="flex bg-white dark:bg-slate-900 p-1.5 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-x-auto max-w-full">
+                <div className="flex bg-white  p-1.5 rounded-3xl border border-slate-100     shadow-sm overflow-x-auto max-w-full">
                     {['ALL', 'PENDING_APPROVAL', 'PUBLISHED', 'REJECTED'].map((f) => (
                         <button
                             key={f}
@@ -96,9 +96,9 @@ const ProductsPage: React.FC = () => {
                         </thead>
                         <tbody className="divide-y divide-slate-50">
                             {loading ? (
-                                <tr><td colSpan={5} className="py-20 text-center text-slate-400 font-bold   ">Yükleniyor...</td></tr>
+                                <tr><td colSpan={5} className="py-20 text-center text-slate-400 font-semibold   ">Yükleniyor...</td></tr>
                             ) : products.length === 0 ? (
-                                <tr><td colSpan={5} className="py-20 text-center text-slate-400 font-bold   ">Ürün bulunamadı.</td></tr>
+                                <tr><td colSpan={5} className="py-20 text-center text-slate-400 font-semibold   ">Ürün bulunamadı.</td></tr>
                             ) : (
                                 products.map(product => (
                                     <tr key={product.id} className="hover:bg-slate-50/50 transition-colors">
@@ -109,14 +109,14 @@ const ProductsPage: React.FC = () => {
                                                 </div>
                                                 <div className="flex flex-col">
                                                     <span className="text-xs font-semibold text-slate-900  ">{product.name}</span>
-                                                    <span className="text-nano font-bold text-slate-400   ">{product.category?.name}</span>
+                                                    <span className="text-nano font-semibold text-slate-400   ">{product.category?.name}</span>
                                                 </div>
                                             </div>
                                         </td>
                                         <td className="px-10 py-8">
                                             <div className="flex flex-col">
                                                 <span className="text-xs font-semibold text-slate-900  ">{product.merchant?.companyName}</span>
-                                                <span className="text-nano font-bold text-slate-400   ">{product.merchant?.email}</span>
+                                                <span className="text-nano font-semibold text-slate-400   ">{product.merchant?.email}</span>
                                             </div>
                                         </td>
                                         <td className="px-10 py-8">

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import RegisterForm from './RegisterForm';
 import { useAuth } from './useAuth';
@@ -6,6 +6,16 @@ import { useAuth } from './useAuth';
 const RegisterPage: React.FC = () => {
     const { isAuthenticated } = useAuth();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+    useEffect(() => {
+        const hadDarkClass = document.documentElement.classList.contains('dark');
+        document.documentElement.classList.remove('dark');
+        return () => {
+            if (hadDarkClass) {
+                document.documentElement.classList.add('dark');
+            }
+        };
+    }, []);
 
     if (isAuthenticated) return <Navigate to="/" replace />;
 
@@ -26,9 +36,9 @@ const RegisterPage: React.FC = () => {
 
                 {/* Masaüstü Nav */}
                 <nav className="hidden lg:flex items-center gap-8">
-                    <a href="#" className="text-caption font-bold text-gray-400 hover:text-gray-900 transition-colors  ">Mağaza</a>
-                    <a href="#" className="text-caption font-bold text-gray-400 hover:text-gray-900 transition-colors  ">Topluluk</a>
-                    <a href="#" className="text-caption font-bold text-gray-400 hover:text-gray-900 transition-colors  ">Yenilikler</a>
+                    <a href="#" className="text-caption font-semibold text-gray-400 hover:text-gray-900 transition-colors  ">Mağaza</a>
+                    <a href="#" className="text-caption font-semibold text-gray-400 hover:text-gray-900 transition-colors  ">Topluluk</a>
+                    <a href="#" className="text-caption font-semibold text-gray-400 hover:text-gray-900 transition-colors  ">Yenilikler</a>
                     <Link to="/login" className="px-6 py-2 rounded-full border-2 border-gray-900 text-caption font-[1000] text-gray-900 hover:bg-gray-900 hover:text-white transition-all transform active:scale-95   shadow-sm">
                         Giriş Yap
                     </Link>
@@ -84,7 +94,7 @@ const RegisterPage: React.FC = () => {
             <footer className="w-full py-8 px-6 md:px-12 bg-white/40 backdrop-blur-md border-t border-gray-100/50 hidden md:flex flex-row justify-between items-center gap-6 z-20">
                 <div className="flex flex-col items-start gap-1">
                     <span className="text-sm font-[1000] text-gray-900   ">FUI<span className="text-brand-pink">RA</span></span>
-                    <p className="text-10px font-bold text-gray-300 r">Tüm Hakları Saklıdır © {/**/}</p>
+                    <p className="text-10px font-semibold text-gray-300 r">Tüm Hakları Saklıdır © {/**/}</p>
                 </div>
                 <div className="flex items-center gap-8 md:gap-10">
                     {['Instagram', 'Twitter', 'Discord'].map(link => (

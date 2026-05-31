@@ -40,19 +40,19 @@ const RegisterForm: React.FC = () => {
 
             <form className="space-y-5" onSubmit={handleSubmit}>
                 {apiError && (
-                    <div className="p-3 bg-red-50/50 border border-brand-pink/20 rounded-xl text-brand-pink text-xs font-bold text-center">
+                    <div className="p-3 bg-red-50/50 border border-brand-pink/20 rounded-xl text-brand-pink text-xs font-semibold text-center">
                         {apiError}
                     </div>
                 )}
                 {apiSuccess && (
-                    <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-600 text-xs font-bold text-center">
+                    <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-600 text-xs font-semibold text-center">
                         {apiSuccess}
                     </div>
                 )}
 
                 <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1">
-                        <label className="flex items-center gap-2 text-10px font-bold text-gray-400   ml-1">Adınız</label>
+                        <label className="flex items-center gap-2 text-10px font-semibold text-gray-400   ml-1">Adınız</label>
                         <input
                             type="text"
                             name="firstName"
@@ -64,7 +64,7 @@ const RegisterForm: React.FC = () => {
                         />
                     </div>
                     <div className="space-y-1">
-                        <label className="flex items-center gap-2 text-10px font-bold text-gray-400   ml-1">Soyadınız</label>
+                        <label className="flex items-center gap-2 text-10px font-semibold text-gray-400   ml-1">Soyadınız</label>
                         <input
                             type="text"
                             name="lastName"
@@ -78,7 +78,7 @@ const RegisterForm: React.FC = () => {
                 </div>
 
                 <div className="space-y-1">
-                    <label className="flex items-center gap-2 text-10px font-bold text-gray-400   ml-1">
+                    <label className="flex items-center gap-2 text-10px font-semibold text-gray-400   ml-1">
                         E-Posta Adresi
                     </label>
                     <input
@@ -94,7 +94,7 @@ const RegisterForm: React.FC = () => {
                 </div>
 
                 <div className="space-y-1">
-                    <label className="flex items-center gap-2 text-10px font-bold text-gray-400   ml-1">
+                    <label className="flex items-center gap-2 text-10px font-semibold text-gray-400   ml-1">
                         Şifre
                     </label>
                     <div className="relative">
@@ -132,7 +132,7 @@ const RegisterForm: React.FC = () => {
                 </button>
             </form>
 
-            <p className="text-center mt-10 text-caption text-gray-400 font-bold ">
+            <p className="text-center mt-10 text-caption text-gray-400 font-semibold ">
                 Zaten üyemiz misin? <Link to="/login" className="font-semibold text-gray-900 hover:text-brand-pink transition-colors">GİRİŞ YAP</Link>
             </p>
         </div>

@@ -3,7 +3,7 @@ const crypto = require('crypto');
 const prisma = new PrismaClient({
   datasources: {
     db: {
-      url: "postgresql://postgres:password123@localhost:5434/product_db"
+      url: process.env.DATABASE_URL || "postgresql://postgres:password123@localhost:5434/product_db"
     }
   }
 });
@@ -71,7 +71,7 @@ async function main() {
   const childCategories = categories.filter(c => c.parentId !== null);
   const selectedCategories = childCategories.length > 0 ? childCategories : categories;
 
-  const targetMerchantId = 'cmpd26b8t0005b33fc715z2cn';
+  const targetMerchantId = process.argv[2] || 'cmpts2cea0000z64i37w9a5xc';
   const totalCount = 10000;
   const batchSize = 2000;
 
@@ -179,7 +179,7 @@ async function main() {
     console.log(`📦 Seeded batch ${batch + 1}/${totalCount / batchSize} (${seededCount} / ${totalCount} products done)`);
   }
 
-  console.log(`✅ Success! Successfully generated and seeded ${seededCount} products with images for merchant cmpd26b8t0005b33fc715z2cn.`);
+  console.log(`✅ Success! Successfully generated and seeded ${seededCount} products with images for merchant ${targetMerchantId}.`);
 }
 
 main()

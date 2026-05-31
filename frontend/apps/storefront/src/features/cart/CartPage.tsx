@@ -40,7 +40,7 @@ const CartPage: React.FC = () => {
                     </svg>
                 </div>
                 <h1 className="text-4xl font-[1000] text-gray-900    mb-4 leading-none">SEPETİNİZ <span className="text-brand-pink">BOŞ</span></h1>
-                <p className="text-gray-400 font-bold   text-xs mb-5 ">Henüz sepetinize bir ürün eklemediniz.</p>
+                <p className="text-gray-400 font-semibold   text-xs mb-5 ">Henüz sepetinize bir ürün eklemediniz.</p>
                 <Link to="/shop" className="px-12 py-5 bg-gray-900 text-white rounded-md text-caption font-semibold   hover:bg-brand-pink  transition-all  shadow-gray-200 ">ALIŞVERİŞE BAŞLA</Link>
             </div>
         );
@@ -51,7 +51,7 @@ const CartPage: React.FC = () => {
             <div className="mb-8">
                 <span className="text-brand-pink text-10px font-semibold   mb-4 block">ALIŞVERİŞ SÜRECİ</span>
                 <h1 className="text-4xl font-[1000] text-gray-900    leading-none mb-4">SEPETİM <span className="text-brand-pink">({itemCount})</span></h1>
-                <p className="text-gray-400 font-bold   text-10px ">Siparişinizi tamamlamadan önce ürünlerinizi gözden geçirin.</p>
+                <p className="text-gray-400 font-semibold   text-10px ">Siparişinizi tamamlamadan önce ürünlerinizi gözden geçirin.</p>
             </div>
 
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 lg:gap-16 xl:gap-20">
@@ -72,7 +72,7 @@ const CartPage: React.FC = () => {
                                 </Link>
                                 <div className="min-w-0 flex-1">
                                     <h3 className="text-base sm:text-lg font-semibold text-gray-900  truncate max-w-[200px] sm:max-w-[300px] leading-tight mb-1 sm:mb-2">{item.name}</h3>
-                                    <p className="text-10px font-bold text-gray-400 ">{item.variant || 'Standard Edition'}</p>
+                                    <p className="text-10px font-semibold text-gray-400 ">{item.variant || 'Standard Edition'}</p>
 
                                     {/* Mobile-only Price Display */}
                                     <div className="md:hidden mt-2 flex items-baseline gap-2">
@@ -118,7 +118,7 @@ const CartPage: React.FC = () => {
                                 )}
                                 <div className="flex flex-col items-end">
                                     {item.originalPrice && (
-                                        <span className="text-xs font-bold text-gray-400 line-through opacity-60  mb-1">
+                                        <span className="text-xs font-semibold text-gray-400 line-through opacity-60  mb-1">
                                             {item.originalPrice.toLocaleString()} ₺
                                         </span>
                                     )}
@@ -129,7 +129,7 @@ const CartPage: React.FC = () => {
                             </div>
 
                             <div className="text-center md:text-right mt-4 md:mt-0 flex justify-between md:flex-col items-center md:items-end w-full md:w-auto">
-                                <span className="text-xs font-bold text-gray-400 md:hidden ">TOPLAM FİYAT</span>
+                                <span className="text-xs font-semibold text-gray-400 md:hidden ">TOPLAM FİYAT</span>
                                 <span className="text-lg font-semibold text-gray-900  leading-none">{(item.price * item.quantity).toLocaleString()} ₺</span>
                             </div>
                         </div>

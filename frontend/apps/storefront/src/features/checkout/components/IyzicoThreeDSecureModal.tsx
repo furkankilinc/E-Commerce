@@ -102,16 +102,15 @@ export const IyzicoThreeDSecureModal: React.FC<IyzicoThreeDSecureModalProps> = (
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
             {/* Backdrop Blur */}
-            <div 
-                className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" 
+            <div
+                className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
                 onClick={onClose}
             />
 
             {/* Modal Container */}
-            <div 
-                className={`relative w-full max-w-[460px] bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden transform transition-all duration-300 animate-in zoom-in-95 ${
-                    shouldShake ? 'animate-shake' : ''
-                }`}
+            <div
+                className={`relative w-full max-w-[460px] bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden transform transition-all duration-300 animate-in zoom-in-95 ${shouldShake ? 'animate-shake' : ''
+                    }`}
             >
                 {/* Official iyzico Blue Header */}
                 <div className="bg-[#193264] px-6 py-4 flex items-center justify-between border-b border-sky-950/20">
@@ -120,11 +119,11 @@ export const IyzicoThreeDSecureModal: React.FC<IyzicoThreeDSecureModalProps> = (
                         <div className="flex items-center select-none font-[1000] text-lg italic text-white tracking-wider">
                             <span className="text-[#F39200]">iyzi</span>co
                         </div>
-                        <span className="text-[10px] font-bold bg-[#F39200] text-white px-2 py-0.5 rounded-full uppercase tracking-wider ml-2">
+                        <span className="text-[10px] font-semibold bg-[#F39200] text-white px-2 py-0.5 rounded-full uppercase tracking-wider ml-2">
                             SANDBOX TEST
                         </span>
                     </div>
-                    <button 
+                    <button
                         onClick={onClose}
                         className="text-white/60 hover:text-white transition-colors"
                         aria-label="Kapat"
@@ -144,12 +143,12 @@ export const IyzicoThreeDSecureModal: React.FC<IyzicoThreeDSecureModalProps> = (
                     </div>
                     <div>
                         <h3 className="text-[13px] font-extrabold text-slate-800 leading-none">3D SECURE GÜVENLİK DOĞRULAMASI</h3>
-                        <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-wider">Kredi Kartı Güvenlik Katmanı</p>
+                        <p className="text-[10px] font-semibold text-slate-400 mt-1 uppercase tracking-wider">Kredi Kartı Güvenlik Katmanı</p>
                     </div>
                 </div>
 
                 {/* Details Table */}
-                <div className="p-6 pb-4 border-b border-slate-50 text-[11px] font-bold text-slate-600 space-y-2">
+                <div className="p-6 pb-4 border-b border-slate-50 text-[11px] font-semibold text-slate-600 space-y-2">
                     <div className="flex justify-between py-1 border-b border-slate-50/50">
                         <span className="text-slate-400 font-semibold">ÜYE İŞYERİ:</span>
                         <span className="text-slate-800 font-extrabold">FUI & RA STOREFRONT</span>
@@ -168,13 +167,13 @@ export const IyzicoThreeDSecureModal: React.FC<IyzicoThreeDSecureModalProps> = (
                 <form onSubmit={handleVerify} className="p-6 space-y-6">
                     <div className="text-center space-y-2">
                         <p className="text-xs font-semibold text-slate-500 leading-relaxed">
-                            Lütfen bankanızda kayıtlı <strong className="text-slate-800 font-bold">{maskedPhone}</strong> nolu cep telefonunuza gönderilen tek kullanımlık şifreyi giriniz.
+                            Lütfen bankanızda kayıtlı <strong className="text-slate-800 font-semibold">{maskedPhone}</strong> nolu cep telefonunuza gönderilen tek kullanımlık şifreyi giriniz.
                         </p>
                     </div>
 
                     {/* Helper Banner for Sandbox */}
                     <div className="bg-[#F39200]/5 border border-[#F39200]/20 rounded-xl p-3.5 flex items-start gap-3">
-                        <div className="w-5 h-5 bg-[#F39200]/10 rounded-full flex items-center justify-center text-[#F39200] flex-shrink-0 mt-0.5 text-xs font-bold font-serif">!</div>
+                        <div className="w-5 h-5 bg-[#F39200]/10 rounded-full flex items-center justify-center text-[#F39200] flex-shrink-0 mt-0.5 text-xs font-semibold font-serif">!</div>
                         <div className="text-left">
                             <span className="text-[10px] font-extrabold text-[#F39200] uppercase block tracking-wider mb-0.5">Sandbox Test Şifresi</span>
                             <span className="text-[11px] font-extrabold text-slate-600">Ödemeyi onaylamak için şifre kısmına <strong className="text-brand-pink font-extrabold">123456</strong> yazabilirsiniz.</span>
@@ -183,7 +182,7 @@ export const IyzicoThreeDSecureModal: React.FC<IyzicoThreeDSecureModalProps> = (
 
                     {/* Input Field */}
                     <div className="space-y-2 relative">
-                        <input 
+                        <input
                             type="text"
                             maxLength={6}
                             value={otp}
@@ -197,12 +196,12 @@ export const IyzicoThreeDSecureModal: React.FC<IyzicoThreeDSecureModalProps> = (
                             className="w-full h-16 bg-slate-50 border-2 border-slate-100 rounded-xl text-center text-xl font-extrabold tracking-[0.6em] text-slate-800 focus:outline-none focus:border-[#193264] focus:bg-white transition-all placeholder:tracking-normal placeholder:font-normal placeholder:text-slate-300"
                         />
                         {errorMessage && (
-                            <p className="text-[10px] font-bold text-red-500 text-center animate-pulse">{errorMessage}</p>
+                            <p className="text-[10px] font-semibold text-red-500 text-center animate-pulse">{errorMessage}</p>
                         )}
                     </div>
 
                     {/* Countdown and Resend Link */}
-                    <div className="flex justify-between items-center text-xs font-bold">
+                    <div className="flex justify-between items-center text-xs font-semibold">
                         <span className="text-slate-400">KALAN SÜRE:</span>
                         <div className="flex items-center gap-1.5 text-slate-800 font-extrabold">
                             <svg className="w-4 h-4 text-[#F39200]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -220,7 +219,7 @@ export const IyzicoThreeDSecureModal: React.FC<IyzicoThreeDSecureModalProps> = (
                             type="button"
                             onClick={onClose}
                             disabled={isVerifying}
-                            className="w-full h-12 border border-slate-200 hover:bg-slate-50 rounded-xl text-xs font-bold text-slate-500 transition-all cursor-pointer"
+                            className="w-full h-12 border border-slate-200 hover:bg-slate-50 rounded-xl text-xs font-semibold text-slate-500 transition-all cursor-pointer"
                         >
                             İPTAL ET
                         </button>

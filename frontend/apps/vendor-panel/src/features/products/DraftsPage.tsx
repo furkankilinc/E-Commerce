@@ -92,7 +92,7 @@ const DraftsPage: React.FC = () => {
                     <h1 className="text-2xl md:text-4xl font-[1000] text-slate-900  mb-2 md:mb-4  leading-none ">
                         Taslak <span className="text-brand-pink">Ürünler</span>
                     </h1>
-                    <p className="text-sm md:text-lg text-slate-400 font-bold  opacity-70">Henüz yayınlamadığınız ürünleri buradan yönetebilirsiniz.</p>
+                    <p className="text-sm md:text-lg text-slate-400 font-semibold  opacity-70">Henüz yayınlamadığınız ürünleri buradan yönetebilirsiniz.</p>
                 </div>
             </div>
 
@@ -122,7 +122,7 @@ const DraftsPage: React.FC = () => {
                                 <div className="flex items-baseline gap-2">
                                     {draft.discountPrice ? (
                                         <>
-                                            <span className="text-sm font-bold text-slate-400 line-through opacity-60 ">
+                                            <span className="text-sm font-semibold text-slate-400 line-through opacity-60 ">
                                                 {draft.price.toLocaleString()} ₺
                                             </span>
                                             <span className="text-brand-pink font-semibold text-xl ">
@@ -135,7 +135,7 @@ const DraftsPage: React.FC = () => {
                                         </span>
                                     )}
                                 </div>
-                                <span className="text-nano font-bold text-slate-300  ">{new Date(draft.createdAt).toLocaleDateString('tr-TR')}</span>
+                                <span className="text-nano font-semibold text-slate-300  ">{new Date(draft.createdAt).toLocaleDateString('tr-TR')}</span>
                             </div>
 
                             <div className="flex items-center gap-3">

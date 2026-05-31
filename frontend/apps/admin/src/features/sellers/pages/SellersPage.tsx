@@ -81,19 +81,19 @@ const SellersPage: React.FC = () => {
                 <div className="flex items-center gap-4 bg-white p-2 rounded-2xl border border-slate-100 shadow-sm">
                     <button
                         onClick={() => setFilter('all')}
-                        className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${filter === 'all' ? 'bg-admin-navy text-white shadow-lg' : 'text-slate-400 hover:text-slate-600'}`}
+                        className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${filter === 'all' ? 'bg-admin-navy text-white shadow-lg' : 'text-slate-400 hover:text-slate-600'}`}
                     >
                         Tümü
                     </button>
                     <button
                         onClick={() => setFilter('active')}
-                        className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${filter === 'active' ? 'bg-emerald-500 text-white shadow-lg' : 'text-slate-400 hover:text-slate-600'}`}
+                        className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${filter === 'active' ? 'bg-emerald-500 text-white shadow-lg' : 'text-slate-400 hover:text-slate-600'}`}
                     >
                         Aktif
                     </button>
                     <button
                         onClick={() => setFilter('verified')}
-                        className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${filter === 'verified' ? 'bg-blue-500 text-white shadow-lg' : 'text-slate-400 hover:text-slate-600'}`}
+                        className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${filter === 'verified' ? 'bg-blue-500 text-white shadow-lg' : 'text-slate-400 hover:text-slate-600'}`}
                     >
                         Onaylı
                     </button>
@@ -126,7 +126,7 @@ const SellersPage: React.FC = () => {
                             className="w-full pl-14 pr-6 py-4 bg-slate-50 border-2 border-transparent rounded-[1.25rem] focus:outline-none focus:bg-white focus:border-indigo-500/20 focus:ring-4 focus:ring-indigo-500/5 transition-all text-slate-700 font-semibold"
                         />
                     </div>
-                    <button className="flex items-center justify-center gap-3 px-8 py-4 bg-slate-900 text-white rounded-[1.25rem] font-bold hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/10">
+                    <button className="flex items-center justify-center gap-3 px-8 py-4 bg-slate-900 text-white rounded-[1.25rem] font-semibold hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/10">
                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                         </svg>
@@ -152,7 +152,7 @@ const SellersPage: React.FC = () => {
                                     <td colSpan={5} className="py-20 text-center">
                                         <div className="inline-flex items-center gap-4 bg-slate-50 px-6 py-3 rounded-2xl">
                                             <div className="w-5 h-5 border-3 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-                                            <span className="text-slate-500 font-bold   text-xs">Veriler Getiriliyor...</span>
+                                            <span className="text-slate-500 font-semibold   text-xs">Veriler Getiriliyor...</span>
                                         </div>
                                     </td>
                                 </tr>
@@ -161,7 +161,7 @@ const SellersPage: React.FC = () => {
                                     <td colSpan={5} className="py-20 text-center">
                                         <div className="p-10 grayscale opacity-40">
                                             <div className="text-6xl mb-4">📭</div>
-                                            <p className="text-slate-500 font-bold text-lg">Kriterlere uygun satıcı bulunamadı.</p>
+                                            <p className="text-slate-500 font-semibold text-lg">Kriterlere uygun satıcı bulunamadı.</p>
                                         </div>
                                     </td>
                                 </tr>
@@ -180,26 +180,26 @@ const SellersPage: React.FC = () => {
                                             </div>
                                         </td>
                                         <td className="py-6 px-8">
-                                            <div className="text-slate-700 font-bold">{merchant.contactPerson || 'Belirtilmemiş'}</div>
+                                            <div className="text-slate-700 font-semibold">{merchant.contactPerson || 'Belirtilmemiş'}</div>
                                             <div className="text-slate-400 text-sm font-medium">{merchant.phone || '-'}</div>
                                         </td>
                                         <td className="py-6 px-8">
                                             <div className="inline-flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-100">
                                                 <span className="font-semibold text-slate-700">{merchant._count?.products || 0}</span>
-                                                <span className="text-xs font-bold text-slate-400 ">Ürün</span>
+                                                <span className="text-xs font-semibold text-slate-400 ">Ürün</span>
                                             </div>
                                         </td>
                                         <td className="py-6 px-8">
                                             <div className="flex flex-wrap gap-2">
-                                                <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-nano font-bold ${merchant.isActive
-                                                        ? 'bg-emerald-50 text-emerald-600 border border-emerald-100/50'
-                                                        : 'bg-rose-50 text-rose-600 border border-rose-100/50'
+                                                <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-nano font-semibold ${merchant.isActive
+                                                    ? 'bg-emerald-50 text-emerald-600 border border-emerald-100/50'
+                                                    : 'bg-rose-50 text-rose-600 border border-rose-100/50'
                                                     }`}>
                                                     {merchant.isActive ? 'AKTİF' : 'PASİF'}
                                                 </span>
-                                                <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-nano font-bold ${merchant.isVerified
-                                                        ? 'bg-blue-50 text-blue-600 border border-blue-100/50'
-                                                        : 'bg-amber-50 text-amber-600 border border-amber-100/50'
+                                                <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-nano font-semibold ${merchant.isVerified
+                                                    ? 'bg-blue-50 text-blue-600 border border-blue-100/50'
+                                                    : 'bg-amber-50 text-amber-600 border border-amber-100/50'
                                                     }`}>
                                                     {merchant.isVerified ? 'ONAYLI' : 'ONAY BEKLİYOR'}
                                                 </span>
@@ -208,7 +208,7 @@ const SellersPage: React.FC = () => {
                                         <td className="py-6 px-8 text-right">
                                             <Link
                                                 to={`/sellers/${merchant.id}`}
-                                                className="inline-flex items-center gap-2 px-5 py-3 bg-white border-2 border-slate-100 rounded-xl text-slate-700 font-bold hover:border-indigo-500/30 hover:bg-indigo-50/30 hover:text-indigo-600 transition-all shadow-sm"
+                                                className="inline-flex items-center gap-2 px-5 py-3 bg-white border-2 border-slate-100 rounded-xl text-slate-700 font-semibold hover:border-indigo-500/30 hover:bg-indigo-50/30 hover:text-indigo-600 transition-all shadow-sm"
                                             >
                                                 Detaylar
                                                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

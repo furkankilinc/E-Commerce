@@ -18,15 +18,36 @@ const getDashboardStats = async (req, res) => {
             }
         });
 
-        // Diğer verileri (user, merchant count) mikroservis yapısında başka servislerden 
-        // çekmek gerekir. Şimdilik arayüzün çökmemesi için mock (sabit) değerler döndürüyoruz.
+        // Diğer verileri (user, merchant count, online users) mikroservis yapısında 
+        // auth-service üzerinden dinamik olarak çekiyoruz
+        const authHeader = req.headers.authorization;
+        let totalMerchants = 1;
+        let totalUsers = 1;
+        let onlineUsers = 1;
+
+        try {
+            const authRes = await fetch('http://auth-service:5001/api/admin/stats', {
+                headers: { 'Authorization': authHeader }
+            });
+            if (authRes.ok) {
+                const authData = await authRes.json();
+                if (authData.success) {
+                    totalMerchants = authData.data.totalMerchants;
+                    totalUsers = authData.data.totalUsers;
+                    onlineUsers = authData.data.onlineUsers;
+                }
+            }
+        } catch (fetchErr) {
+            console.error('[STATS] Failed to fetch real stats from auth-service, using fallbacks:', fetchErr.message);
+        }
+
         return res.status(200).json({
             success: true,
             stats: {
-                totalMerchants: 15, // Mock data
+                totalMerchants: totalMerchants,
                 totalProducts: productCount,
-                totalUsers: 250,   // Mock data
-                onlineUsers: 42,   // Mock data
+                totalUsers: totalUsers,
+                onlineUsers: onlineUsers,
                 lowStock: lowStock
             }
         });
@@ -38,11 +59,31 @@ const getDashboardStats = async (req, res) => {
 
 const getMapData = async (req, res) => {
     try {
+        const authHeader = req.headers.authorization;
+        let merchants = [];
+        let users = [];
+
+        try {
+            const authRes = await fetch('http://auth-service:5001/api/admin/map-data', {
+                headers: { 'Authorization': authHeader }
+            });
+            if (authRes.ok) {
+                const authData = await authRes.json();
+                if (authData.success) {
+                    merchants = authData.data.merchants;
+                    users = authData.data.users;
+                }
+            }
+        } catch (fetchErr) {
+            console.error('[MAP] Failed to fetch map data from auth-service:', fetchErr.message);
+        }
+
         return res.status(200).json({
             success: true,
-            data: { merchants: [], users: [] }
+            data: { merchants, users }
         });
     } catch (err) {
+        console.error('[MAP] Error:', err);
         return res.status(500).json({ success: false, message: 'Harita verileri alınamadı.' });
     }
 };

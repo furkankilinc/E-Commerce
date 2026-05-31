@@ -68,7 +68,7 @@ const OrdersPage: React.FC = () => {
                     <p className="text-10px font-semibold text-slate-400    opacity-70">Platform genelindeki tüm siparişleri takip et</p>
                 </div>
 
-                <div className="flex bg-white dark:bg-slate-900 p-1.5 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-x-auto max-w-full">
+                <div className="flex bg-white  p-1.5 rounded-3xl border border-slate-100     shadow-sm overflow-x-auto max-w-full">
                     {['ALL', 'PENDING', 'PROCESSING', 'SHIPPED', 'DELIVERED'].map((f) => (
                         <button
                             key={f}
@@ -112,13 +112,13 @@ const OrdersPage: React.FC = () => {
                                         <td className="px-10 py-8">
                                             <div className="flex flex-col">
                                                 <span className="text-xs font-semibold text-slate-900 ">#{order.orderNumber}</span>
-                                                <span className="text-nano font-bold text-slate-400   ">{new Date(order.createdAt).toLocaleDateString()}</span>
+                                                <span className="text-nano font-semibold text-slate-400   ">{new Date(order.createdAt).toLocaleDateString()}</span>
                                             </div>
                                         </td>
                                         <td className="px-10 py-8">
                                             <div className="flex flex-col">
                                                 <span className="text-xs font-semibold text-slate-900 ">{order.user?.name || 'Anonim'}</span>
-                                                <span className="text-nano font-bold text-slate-400  ">{order.user?.email}</span>
+                                                <span className="text-nano font-semibold text-slate-400  ">{order.user?.email}</span>
                                             </div>
                                         </td>
                                         <td className="px-10 py-8">

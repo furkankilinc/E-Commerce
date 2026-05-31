@@ -72,7 +72,7 @@ const AnalyticsPage: React.FC = () => {
                                     setActiveTab(tab);
                                     setSelectedBar(null);
                                 }}
-                                className={`px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg text-[10px] sm:text-xs font-bold transition-all flex-1 sm:flex-initial text-center ${activeTab === tab
+                                className={`px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg text-[10px] sm:text-xs font-semibold transition-all flex-1 sm:flex-initial text-center ${activeTab === tab
                                     ? 'bg-brand-pink text-white shadow-sm'
                                     : 'text-slate-500 hover:text-admin-navy dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800'
                                     }`}
@@ -83,7 +83,7 @@ const AnalyticsPage: React.FC = () => {
                     </div>
 
                     {/* Export Action Button */}
-                    <button className="flex items-center justify-center gap-2 bg-admin-navy text-white hover:bg-admin-navy/90 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl text-[10px] sm:text-xs font-bold transition-all shadow-md active:scale-95 whitespace-nowrap">
+                    <button className="flex items-center justify-center gap-2 bg-admin-navy text-white hover:bg-admin-navy/90 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl text-[10px] sm:text-xs font-semibold transition-all shadow-md active:scale-95 whitespace-nowrap">
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                         </svg>
@@ -98,11 +98,11 @@ const AnalyticsPage: React.FC = () => {
                 <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm flex flex-col justify-between relative overflow-hidden group">
                     <div className="absolute top-0 right-0 w-24 h-24 bg-rose-50 rounded-bl-[5rem] -mr-4 -mt-4 transition-all group-hover:scale-110 duration-300"></div>
                     <div className="z-10">
-                        <span className="text-10px font-bold text-slate-400 block mb-3 uppercase ">Toplam Hacim</span>
+                        <span className="text-10px font-semibold text-slate-400 block mb-3 uppercase ">Toplam Hacim</span>
                         <h2 className="text-3xl font-[1000] text-admin-navy  mb-2">
                             ${totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </h2>
-                        <span className="text-[11px] font-bold text-emerald-500 flex items-center gap-1">
+                        <span className="text-[11px] font-semibold text-emerald-500 flex items-center gap-1">
                             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M13 7h8m0 0v8m0-8l-9 9-4-4-6 6" />
                             </svg>
@@ -115,11 +115,11 @@ const AnalyticsPage: React.FC = () => {
                 <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm flex flex-col justify-between relative overflow-hidden group">
                     <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-50 rounded-bl-[5rem] -mr-4 -mt-4 transition-all group-hover:scale-110 duration-300"></div>
                     <div className="z-10">
-                        <span className="text-10px font-bold text-slate-400 block mb-3 uppercase ">Toplam Sipariş</span>
+                        <span className="text-10px font-semibold text-slate-400 block mb-3 uppercase ">Toplam Sipariş</span>
                         <h2 className="text-3xl font-[1000] text-indigo-600  mb-2">
                             {totalOrders.toLocaleString()} Adet
                         </h2>
-                        <span className="text-[11px] font-bold text-emerald-500 flex items-center gap-1">
+                        <span className="text-[11px] font-semibold text-emerald-500 flex items-center gap-1">
                             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M13 7h8m0 0v8m0-8l-9 9-4-4-6 6" />
                             </svg>
@@ -132,11 +132,11 @@ const AnalyticsPage: React.FC = () => {
                 <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm flex flex-col justify-between relative overflow-hidden group">
                     <div className="absolute top-0 right-0 w-24 h-24 bg-amber-50 rounded-bl-[5rem] -mr-4 -mt-4 transition-all group-hover:scale-110 duration-300"></div>
                     <div className="z-10">
-                        <span className="text-10px font-bold text-slate-400 block mb-3 uppercase ">Ortalama Sepet</span>
+                        <span className="text-10px font-semibold text-slate-400 block mb-3 uppercase ">Ortalama Sepet</span>
                         <h2 className="text-3xl font-[1000] text-amber-500  mb-2">
                             ${averageOrderValue.toFixed(2)}
                         </h2>
-                        <span className="text-[11px] font-bold text-emerald-500 flex items-center gap-1">
+                        <span className="text-[11px] font-semibold text-emerald-500 flex items-center gap-1">
                             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M13 7h8m0 0v8m0-8l-9 9-4-4-6 6" />
                             </svg>
@@ -149,11 +149,11 @@ const AnalyticsPage: React.FC = () => {
                 <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm flex flex-col justify-between relative overflow-hidden group">
                     <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-50 rounded-bl-[5rem] -mr-4 -mt-4 transition-all group-hover:scale-110 duration-300"></div>
                     <div className="z-10">
-                        <span className="text-10px font-bold text-slate-400 block mb-3 uppercase ">Dönüşüm Oranı</span>
+                        <span className="text-10px font-semibold text-slate-400 block mb-3 uppercase ">Dönüşüm Oranı</span>
                         <h2 className="text-3xl font-[1000] text-emerald-600  mb-2">
                             3.42%
                         </h2>
-                        <span className="text-[11px] font-bold text-emerald-500 flex items-center gap-1">
+                        <span className="text-[11px] font-semibold text-emerald-500 flex items-center gap-1">
                             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M13 7h8m0 0v8m0-8l-9 9-4-4-6 6" />
                             </svg>
@@ -169,10 +169,10 @@ const AnalyticsPage: React.FC = () => {
                 <div className="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm flex flex-col justify-between">
                     <div className="flex items-center justify-between mb-8">
                         <div>
-                            <h3 className="text-sm font-bold text-slate-800 ">Günlük Gelir Akışı</h3>
+                            <h3 className="text-sm font-semibold text-slate-800 ">Günlük Gelir Akışı</h3>
                             <span className="text-[10px] text-slate-400 font-semibold uppercase">Hacim ve Trend Analizi</span>
                         </div>
-                        <span className="text-xs font-bold text-brand-pink bg-rose-50 px-3 py-1.5 rounded-lg">Maks: ${maxRevenue.toLocaleString()}</span>
+                        <span className="text-xs font-semibold text-brand-pink bg-rose-50 px-3 py-1.5 rounded-lg">Maks: ${maxRevenue.toLocaleString()}</span>
                     </div>
 
                     <div className="flex items-end gap-1.5 h-64 border-b border-slate-100 relative px-4 pb-2">
@@ -196,8 +196,8 @@ const AnalyticsPage: React.FC = () => {
                                     >
                                         {/* Hover Dynamic Tooltip */}
                                         {isSelected && (
-                                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 bg-slate-900 text-white rounded-xl p-3 shadow-xl text-[10px] font-bold z-30 pointer-events-none border border-slate-800 animate-in fade-in zoom-in-95 duration-150">
-                                                <div className="text-slate-400 font-bold mb-1 uppercase whitespace-nowrap">
+                                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 bg-slate-900 text-white rounded-xl p-3 shadow-xl text-[10px] font-semibold z-30 pointer-events-none border border-slate-800 animate-in fade-in zoom-in-95 duration-150">
+                                                <div className="text-slate-400 font-semibold mb-1 uppercase whitespace-nowrap">
                                                     {new Date(d.date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })}
                                                 </div>
                                                 <div className="text-white text-xs font-[1000]  whitespace-nowrap">
@@ -210,7 +210,7 @@ const AnalyticsPage: React.FC = () => {
                             })
                         )}
                     </div>
-                    <div className="flex justify-between mt-4 text-[10px] font-bold text-slate-400 uppercase ">
+                    <div className="flex justify-between mt-4 text-[10px] font-semibold text-slate-400 uppercase ">
                         <span>{filteredData.length > 0 ? new Date(filteredData[0].date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' }) : ''}</span>
                         <span>{filteredData.length > 0 ? new Date(filteredData[filteredData.length - 1].date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' }) : ''}</span>
                     </div>
@@ -220,10 +220,10 @@ const AnalyticsPage: React.FC = () => {
                 <div className="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm flex flex-col justify-between">
                     <div className="flex items-center justify-between mb-8">
                         <div>
-                            <h3 className="text-sm font-bold text-slate-800 ">Günlük Sipariş Dağılımı</h3>
+                            <h3 className="text-sm font-semibold text-slate-800 ">Günlük Sipariş Dağılımı</h3>
                             <span className="text-[10px] text-slate-400 font-semibold uppercase">Miktar ve Talep Analizi</span>
                         </div>
-                        <span className="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg">Maks: {maxOrders} Sipariş</span>
+                        <span className="text-xs font-semibold text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg">Maks: {maxOrders} Sipariş</span>
                     </div>
 
                     <div className="flex items-end gap-1.5 h-64 border-b border-slate-100 relative px-4 pb-2">
@@ -247,8 +247,8 @@ const AnalyticsPage: React.FC = () => {
                                     >
                                         {/* Hover Dynamic Tooltip */}
                                         {isSelected && (
-                                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 bg-slate-900 text-white rounded-xl p-3 shadow-xl text-[10px] font-bold z-30 pointer-events-none border border-slate-800 animate-in fade-in zoom-in-95 duration-150">
-                                                <div className="text-slate-400 font-bold mb-1 uppercase whitespace-nowrap">
+                                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 bg-slate-900 text-white rounded-xl p-3 shadow-xl text-[10px] font-semibold z-30 pointer-events-none border border-slate-800 animate-in fade-in zoom-in-95 duration-150">
+                                                <div className="text-slate-400 font-semibold mb-1 uppercase whitespace-nowrap">
                                                     {new Date(d.date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })}
                                                 </div>
                                                 <div className="text-white text-xs font-[1000]  whitespace-nowrap">
@@ -261,7 +261,7 @@ const AnalyticsPage: React.FC = () => {
                             })
                         )}
                     </div>
-                    <div className="flex justify-between mt-4 text-[10px] font-bold text-slate-400 uppercase ">
+                    <div className="flex justify-between mt-4 text-[10px] font-semibold text-slate-400 uppercase ">
                         <span>{filteredData.length > 0 ? new Date(filteredData[0].date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' }) : ''}</span>
                         <span>{filteredData.length > 0 ? new Date(filteredData[filteredData.length - 1].date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' }) : ''}</span>
                     </div>
@@ -273,7 +273,7 @@ const AnalyticsPage: React.FC = () => {
                 {/* Category Sales Distribution */}
                 <div className="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm lg:col-span-1 flex flex-col justify-between">
                     <div>
-                        <h3 className="text-sm font-bold text-slate-800  mb-1">Kategori Dağılımı</h3>
+                        <h3 className="text-sm font-semibold text-slate-800  mb-1">Kategori Dağılımı</h3>
                         <span className="text-[10px] text-slate-400 font-semibold uppercase block mb-6">Satışların Sektörel Dağılımı</span>
 
                         <div className="space-y-6">
@@ -288,7 +288,7 @@ const AnalyticsPage: React.FC = () => {
                                     return (
                                         <div key={i} className="space-y-2">
                                             <div className="flex justify-between items-center text-xs">
-                                                <span className="font-bold text-slate-700">{c.name}</span>
+                                                <span className="font-semibold text-slate-700">{c.name}</span>
                                                 <span className="font-semibold text-slate-400">
                                                     {c.percentage}% (${catSales.toLocaleString(undefined, { maximumFractionDigits: 0 })})
                                                 </span>
@@ -303,7 +303,7 @@ const AnalyticsPage: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="mt-8 pt-6 border-t border-slate-50 flex items-center justify-between text-xs font-bold text-slate-400 ">
+                    <div className="mt-8 pt-6 border-t border-slate-50 flex items-center justify-between text-xs font-semibold text-slate-400 ">
                         <span>TOPLAM KATEGORİ: {categories.length}</span>
                         <span className="text-brand-pink">Tümünü İncele &rarr;</span>
                     </div>
@@ -312,12 +312,12 @@ const AnalyticsPage: React.FC = () => {
                 {/* Top Performing Sellers */}
                 <div className="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm lg:col-span-2 flex flex-col justify-between">
                     <div>
-                        <h3 className="text-sm font-bold text-slate-800  mb-1">En Çok Satan Mağazalar</h3>
+                        <h3 className="text-sm font-semibold text-slate-800  mb-1">En Çok Satan Mağazalar</h3>
                         <span className="text-[10px] text-slate-400 font-semibold uppercase block mb-6">Platformdaki En İyi Performans Gösteren Satıcılar</span>
 
                         <div className="overflow-x-auto">
                             <table className="w-full min-w-[700px] text-left">
-                                <thead className="bg-slate-50 border-b border-slate-100 text-[10px] font-bold text-slate-400 uppercase ">
+                                <thead className="bg-slate-50 border-b border-slate-100 text-[10px] font-semibold text-slate-400 uppercase ">
                                     <tr>
                                         <th className="px-4 py-3">Satıcı / Mağaza</th>
                                         <th className="px-4 py-3">Ciro</th>
@@ -326,7 +326,7 @@ const AnalyticsPage: React.FC = () => {
                                         <th className="px-4 py-3 text-right">Durum</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-slate-50 text-xs font-bold">
+                                <tbody className="divide-y divide-slate-50 text-xs font-semibold">
                                     {loading ? (
                                         <tr>
                                             <td colSpan={5} className="px-4 py-8 text-center text-xs text-slate-400 animate-pulse">Mağazalar yükleniyor...</td>

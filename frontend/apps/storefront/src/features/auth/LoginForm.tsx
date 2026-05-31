@@ -30,17 +30,17 @@ const LoginForm: React.FC = () => {
             </div>
             <form className="space-y-6" onSubmit={handleSubmit}>
                 {apiError && (
-                    <div className="p-3 bg-red-50/50 border border-brand-pink/20 rounded-xl text-brand-pink text-xs font-bold text-center">
+                    <div className="p-3 bg-red-50/50 border border-brand-pink/20 rounded-xl text-brand-pink text-xs font-semibold text-center">
                         {apiError}
                     </div>
                 )}
                 {apiSuccess && (
-                    <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-600 text-xs font-bold text-center">
+                    <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-600 text-xs font-semibold text-center">
                         {apiSuccess}
                     </div>
                 )}
                 <div className="space-y-1">
-                    <label className="flex items-center gap-2 text-10px font-bold text-gray-400   ml-1">
+                    <label className="flex items-center gap-2 text-10px font-semibold text-gray-400   ml-1">
                         E-Posta Adresi
                     </label>
                     <input
@@ -57,7 +57,7 @@ const LoginForm: React.FC = () => {
 
                 <div className="space-y-1">
                     <div className="flex justify-between items-center ml-1">
-                        <label className="text-10px font-bold text-gray-400  ">
+                        <label className="text-10px font-semibold text-gray-400  ">
                             Şifre
                         </label>
                         <a href="#" className="text-10px font-semibold text-gray-300 hover:text-brand-pink transition-colors  ">Şifiremi Unuttum?</a>
@@ -90,7 +90,7 @@ const LoginForm: React.FC = () => {
                     >
                         {rememberMe && <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="4"><path d="M5 13l4 4L19 7" /></svg>}
                     </button>
-                    <span className="text-caption font-bold text-gray-500 cursor-pointer select-none " onClick={() => setRememberMe(!rememberMe)}>BİRİ OTURUMUMU AÇIK TUT</span>
+                    <span className="text-caption font-semibold text-gray-500 cursor-pointer select-none " onClick={() => setRememberMe(!rememberMe)}>BİRİ OTURUMUMU AÇIK TUT</span>
                 </div>
 
                 <button
@@ -107,7 +107,7 @@ const LoginForm: React.FC = () => {
                 </button>
             </form>
 
-            <p className="text-center mt-10 text-caption text-gray-400 font-bold ">
+            <p className="text-center mt-10 text-caption text-gray-400 font-semibold ">
                 Hesabın yok mu? <Link to="/register" className="font-semibold text-gray-900 hover:text-brand-pink transition-colors">ÜYE OL</Link>
             </p>
         </div>

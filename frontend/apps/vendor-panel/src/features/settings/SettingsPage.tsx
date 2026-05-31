@@ -213,7 +213,7 @@ const SettingsPage: React.FC = () => {
                                 </div>
                                 <div>
                                     <h1 className="text-2xl sm:text-4xl font-[1000] text-slate-900   mb-2">Kişisel <span className="text-brand-pink">Bilgiler</span></h1>
-                                    <p className="text-slate-400 font-bold  opacity-70  text-xs ">Fotoğrafını ve hesap detaylarını yönet</p>
+                                    <p className="text-slate-400 font-semibold  opacity-70  text-xs ">Fotoğrafını ve hesap detaylarını yönet</p>
                                 </div>
                             </div>
                             <button onClick={handleSave} className="w-full md:w-auto px-8 py-4 bg-brand-pink text-white rounded-2xl text-10px font-semibold    shadow-brand-pink/20 hover:bg-brand-pink-hover transition-all active:scale-95 ">Değişiklikleri Kaydet</button>
@@ -222,19 +222,19 @@ const SettingsPage: React.FC = () => {
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-10">
                             <div className="space-y-3">
                                 <label className="text-10px font-semibold text-slate-400   ml-4 ">ADINIZ</label>
-                                <input type="text" defaultValue={merchant?.companyName?.split(' ')[0] || ''} className="w-full h-14 sm:h-16 px-6 sm:px-8 bg-slate-50 border-2 border-transparent rounded-2xl text-sm font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all " />
+                                <input type="text" defaultValue={merchant?.companyName?.split(' ')[0] || ''} className="w-full h-14 sm:h-16 px-6 sm:px-8 bg-slate-50 border-2 border-transparent rounded-2xl text-sm font-semibold focus:outline-none focus:border-brand-pink focus:bg-white transition-all " />
                             </div>
                             <div className="space-y-3">
                                 <label className="text-10px font-semibold text-slate-400   ml-4 ">SOYADINIZ</label>
-                                <input type="text" defaultValue={merchant?.companyName?.split(' ')[1] || ''} className="w-full h-14 sm:h-16 px-6 sm:px-8 bg-slate-50 border-2 border-transparent rounded-2xl text-sm font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all " />
+                                <input type="text" defaultValue={merchant?.companyName?.split(' ')[1] || ''} className="w-full h-14 sm:h-16 px-6 sm:px-8 bg-slate-50 border-2 border-transparent rounded-2xl text-sm font-semibold focus:outline-none focus:border-brand-pink focus:bg-white transition-all " />
                             </div>
                             <div className="space-y-3">
                                 <label className="text-10px font-semibold text-slate-400   ml-4 ">E-POSTA ADRESİ</label>
-                                <input type="email" defaultValue={merchant?.email} className="w-full h-14 sm:h-16 px-6 sm:px-8 bg-slate-50 border-2 border-transparent rounded-2xl text-sm font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all " />
+                                <input type="email" defaultValue={merchant?.email} className="w-full h-14 sm:h-16 px-6 sm:px-8 bg-slate-50 border-2 border-transparent rounded-2xl text-sm font-semibold focus:outline-none focus:border-brand-pink focus:bg-white transition-all " />
                             </div>
                             <div className="space-y-3">
                                 <label className="text-10px font-semibold text-slate-400   ml-4 ">TELEFON NUMARASI</label>
-                                <input type="text" placeholder="+90 (---) --- -- --" className="w-full h-14 sm:h-16 px-6 sm:px-8 bg-slate-50 border-2 border-transparent rounded-2xl text-sm font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all " />
+                                <input type="text" placeholder="+90 (---) --- -- --" className="w-full h-14 sm:h-16 px-6 sm:px-8 bg-slate-50 border-2 border-transparent rounded-2xl text-sm font-semibold focus:outline-none focus:border-brand-pink focus:bg-white transition-all " />
                             </div>
                         </div>
                     </div>
@@ -246,7 +246,7 @@ const SettingsPage: React.FC = () => {
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                             <div>
                                 <h2 className="text-2xl sm:text-3xl font-[1000] text-slate-900   mb-2">Adres <span className="text-brand-pink">Yönetimi</span></h2>
-                                <p className="text-slate-400 font-bold  opacity-70  text-xs ">Teslimat ve fatura adreslerini düzenle</p>
+                                <p className="text-slate-400 font-semibold  opacity-70  text-xs ">Teslimat ve fatura adreslerini düzenle</p>
                             </div>
                             {!isFormOpen && (
                                 <button
@@ -266,7 +266,7 @@ const SettingsPage: React.FC = () => {
                         {isFormOpen ? (
                             /* Beautiful Inline Address Form */
                             <div className="border border-slate-100 rounded-xl p-6 sm:p-8 bg-slate-50/50 space-y-6 animate-in slide-in-from-top-4 duration-300">
-                                <h3 className="text-lg font-bold text-slate-800 ">{editingAddressId ? 'Adresi Düzenle' : 'Yeni Adres Ekle'}</h3>
+                                <h3 className="text-lg font-semibold text-slate-800 ">{editingAddressId ? 'Adresi Düzenle' : 'Yeni Adres Ekle'}</h3>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     <div className="space-y-2">
                                         <label className="text-10px font-semibold text-slate-400 ml-4 ">ADRES BAŞLIĞI *</label>
@@ -274,7 +274,7 @@ const SettingsPage: React.FC = () => {
                                             type="text"
                                             value={newAddressForm.title}
                                             onChange={(e) => setNewAddressForm({ ...newAddressForm, title: e.target.value })}
-                                            className="w-full h-14 px-6 bg-white border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:border-brand-pink transition-all  text-slate-800"
+                                            className="w-full h-14 px-6 bg-white border border-slate-200 rounded-2xl text-sm font-semibold focus:outline-none focus:border-brand-pink transition-all  text-slate-800"
                                             placeholder="Örn: Merkez Depo"
                                         />
                                     </div>
@@ -284,7 +284,7 @@ const SettingsPage: React.FC = () => {
                                             type="text"
                                             value={newAddressForm.fullName}
                                             onChange={(e) => setNewAddressForm({ ...newAddressForm, fullName: e.target.value })}
-                                            className="w-full h-14 px-6 bg-white border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:border-brand-pink transition-all  text-slate-800"
+                                            className="w-full h-14 px-6 bg-white border border-slate-200 rounded-2xl text-sm font-semibold focus:outline-none focus:border-brand-pink transition-all  text-slate-800"
                                             placeholder="Örn: Furkan Kılınç"
                                         />
                                     </div>
@@ -294,7 +294,7 @@ const SettingsPage: React.FC = () => {
                                             type="text"
                                             value={newAddressForm.phone}
                                             onChange={(e) => setNewAddressForm({ ...newAddressForm, phone: e.target.value })}
-                                            className="w-full h-14 px-6 bg-white border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:border-brand-pink transition-all  text-slate-800"
+                                            className="w-full h-14 px-6 bg-white border border-slate-200 rounded-2xl text-sm font-semibold focus:outline-none focus:border-brand-pink transition-all  text-slate-800"
                                             placeholder="+90 5XX XXX XX XX"
                                         />
                                     </div>
@@ -304,7 +304,7 @@ const SettingsPage: React.FC = () => {
                                             type="email"
                                             value={newAddressForm.email}
                                             onChange={(e) => setNewAddressForm({ ...newAddressForm, email: e.target.value })}
-                                            className="w-full h-14 px-6 bg-white border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:border-brand-pink transition-all  text-slate-800"
+                                            className="w-full h-14 px-6 bg-white border border-slate-200 rounded-2xl text-sm font-semibold focus:outline-none focus:border-brand-pink transition-all  text-slate-800"
                                             placeholder="depo@firma.com"
                                         />
                                     </div>
@@ -314,7 +314,7 @@ const SettingsPage: React.FC = () => {
                                             type="text"
                                             value={newAddressForm.city}
                                             onChange={(e) => setNewAddressForm({ ...newAddressForm, city: e.target.value.toUpperCase() })}
-                                            className="w-full h-14 px-6 bg-white border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:border-brand-pink transition-all  text-slate-800"
+                                            className="w-full h-14 px-6 bg-white border border-slate-200 rounded-2xl text-sm font-semibold focus:outline-none focus:border-brand-pink transition-all  text-slate-800"
                                             placeholder="İSTANBUL"
                                         />
                                     </div>
@@ -324,7 +324,7 @@ const SettingsPage: React.FC = () => {
                                             type="text"
                                             value={newAddressForm.district}
                                             onChange={(e) => setNewAddressForm({ ...newAddressForm, district: e.target.value })}
-                                            className="w-full h-14 px-6 bg-white border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:border-brand-pink transition-all  text-slate-800"
+                                            className="w-full h-14 px-6 bg-white border border-slate-200 rounded-2xl text-sm font-semibold focus:outline-none focus:border-brand-pink transition-all  text-slate-800"
                                             placeholder="Levent"
                                         />
                                     </div>
@@ -334,7 +334,7 @@ const SettingsPage: React.FC = () => {
                                             type="text"
                                             value={newAddressForm.neighborhood}
                                             onChange={(e) => setNewAddressForm({ ...newAddressForm, neighborhood: e.target.value })}
-                                            className="w-full h-14 px-6 bg-white border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:border-brand-pink transition-all  text-slate-800"
+                                            className="w-full h-14 px-6 bg-white border border-slate-200 rounded-2xl text-sm font-semibold focus:outline-none focus:border-brand-pink transition-all  text-slate-800"
                                             placeholder="Levent Mh."
                                         />
                                     </div>
@@ -344,7 +344,7 @@ const SettingsPage: React.FC = () => {
                                             type="text"
                                             value={newAddressForm.zipCode}
                                             onChange={(e) => setNewAddressForm({ ...newAddressForm, zipCode: e.target.value })}
-                                            className="w-full h-14 px-6 bg-white border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:border-brand-pink transition-all  text-slate-800"
+                                            className="w-full h-14 px-6 bg-white border border-slate-200 rounded-2xl text-sm font-semibold focus:outline-none focus:border-brand-pink transition-all  text-slate-800"
                                             placeholder="34330"
                                         />
                                     </div>
@@ -354,7 +354,7 @@ const SettingsPage: React.FC = () => {
                                     <textarea
                                         value={newAddressForm.address}
                                         onChange={(e) => setNewAddressForm({ ...newAddressForm, address: e.target.value })}
-                                        className="w-full bg-white border border-slate-200 rounded-2xl p-6 text-sm font-bold focus:outline-none focus:border-brand-pink transition-all  text-slate-800 resize-none h-24"
+                                        className="w-full bg-white border border-slate-200 rounded-2xl p-6 text-sm font-semibold focus:outline-none focus:border-brand-pink transition-all  text-slate-800 resize-none h-24"
                                         placeholder="Büyükdere Cad. Kristal Plaza Kat:22"
                                     />
                                 </div>
@@ -390,8 +390,8 @@ const SettingsPage: React.FC = () => {
                                     <div
                                         key={addr.id}
                                         className={`p-6 sm:p-8 rounded-xl border-2 transition-all flex flex-col justify-between relative overflow-hidden ${addr.isDefault
-                                                ? 'border-brand-pink bg-rose-50/20'
-                                                : 'border-slate-100 hover:border-brand-pink/30 hover:bg-slate-50/50'
+                                            ? 'border-brand-pink bg-rose-50/20'
+                                            : 'border-slate-100 hover:border-brand-pink/30 hover:bg-slate-50/50'
                                             }`}
                                     >
                                         {addr.isDefault && (
@@ -400,7 +400,7 @@ const SettingsPage: React.FC = () => {
                                         <div>
                                             <h4 className="text-sm font-semibold text-slate-900 mb-2  pt-4 uppercase">{addr.title}</h4>
                                             <h5 className="text-xs font-extrabold text-slate-700 mb-2 ">{addr.fullName}</h5>
-                                            <p className="text-xs font-bold text-slate-500 leading-relaxed mb-6  opacity-85">
+                                            <p className="text-xs font-semibold text-slate-500 leading-relaxed mb-6  opacity-85">
                                                 {addr.neighborhood} {addr.district ? `${addr.district}, ` : ''}<br />
                                                 {addr.address}<br />
                                                 {addr.city}, {addr.zipCode}
@@ -424,7 +424,7 @@ const SettingsPage: React.FC = () => {
                                             {!addr.isDefault && (
                                                 <button
                                                     onClick={(e) => handleSetDefaultAddress(addr.id, e)}
-                                                    className="text-[9px] font-bold text-indigo-500 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg  transition-colors cursor-pointer"
+                                                    className="text-[9px] font-semibold text-indigo-500 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg  transition-colors cursor-pointer"
                                                 >
                                                     Varsayılan Yap
                                                 </button>
@@ -456,7 +456,7 @@ const SettingsPage: React.FC = () => {
                     <div className="bg-white p-6 sm:p-10 lg:p-12 rounded-xl shadow-sm border border-slate-50">
                         <div className="mb-6">
                             <h2 className="text-2xl sm:text-3xl font-[1000] text-slate-900   mb-2">Güvenlik <span className="text-brand-pink">&</span> Erişim</h2>
-                            <p className="text-slate-400 font-bold  opacity-70  text-xs ">Hesap güvenliğini ve şifreni güncelle</p>
+                            <p className="text-slate-400 font-semibold  opacity-70  text-xs ">Hesap güvenliğini ve şifreni güncelle</p>
                         </div>
 
                         <div className="space-y-8 sm:space-y-10">
@@ -464,18 +464,18 @@ const SettingsPage: React.FC = () => {
                                 <div className="space-y-3">
                                     <label className="text-10px font-semibold text-slate-400   ml-4 ">MEVCUT ŞİFRE</label>
                                     <div className="relative">
-                                        <input type="password" placeholder="••••••••" className="w-full h-14 sm:h-16 px-6 sm:px-8 bg-slate-50 border-2 border-transparent rounded-2xl text-sm font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all " />
+                                        <input type="password" placeholder="••••••••" className="w-full h-14 sm:h-16 px-6 sm:px-8 bg-slate-50 border-2 border-transparent rounded-2xl text-sm font-semibold focus:outline-none focus:border-brand-pink focus:bg-white transition-all " />
                                         <svg className="absolute right-6 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                                     </div>
                                 </div>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
                                     <div className="space-y-3">
                                         <label className="text-10px font-semibold text-slate-400   ml-4 ">YENİ ŞİFRE</label>
-                                        <input type="password" placeholder="Min. 8 Karakter" className="w-full h-14 sm:h-16 px-6 sm:px-8 bg-slate-50 border-2 border-transparent rounded-2xl text-sm font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all " />
+                                        <input type="password" placeholder="Min. 8 Karakter" className="w-full h-14 sm:h-16 px-6 sm:px-8 bg-slate-50 border-2 border-transparent rounded-2xl text-sm font-semibold focus:outline-none focus:border-brand-pink focus:bg-white transition-all " />
                                     </div>
                                     <div className="space-y-3">
                                         <label className="text-10px font-semibold text-slate-400   ml-4 ">ŞİFRE TEKRAR</label>
-                                        <input type="password" placeholder="Yeni Şifreyi Onayla" className="w-full h-14 sm:h-16 px-6 sm:px-8 bg-slate-50 border-2 border-transparent rounded-2xl text-sm font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all " />
+                                        <input type="password" placeholder="Yeni Şifreyi Onayla" className="w-full h-14 sm:h-16 px-6 sm:px-8 bg-slate-50 border-2 border-transparent rounded-2xl text-sm font-semibold focus:outline-none focus:border-brand-pink focus:bg-white transition-all " />
                                     </div>
                                 </div>
                             </div>
@@ -487,7 +487,7 @@ const SettingsPage: React.FC = () => {
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between p-6 sm:p-8 rounded-xl bg-slate-50 border border-slate-100 gap-4">
                                 <div>
                                     <h4 className="text-sm font-semibold text-slate-900 mb-1 ">İki Faktörlü Doğrulama (2FA)</h4>
-                                    <p className="text-xs font-bold text-slate-400  opacity-80  ">Hesabına ekstra bir güvenlik katmanı ekle</p>
+                                    <p className="text-xs font-semibold text-slate-400  opacity-80  ">Hesabına ekstra bir güvenlik katmanı ekle</p>
                                 </div>
                                 <button className="group flex items-center justify-between sm:justify-end gap-4 self-stretch sm:self-auto border border-slate-200/50 sm:border-0 p-3 sm:p-0 rounded-xl">
                                     <span className="text-10px font-semibold text-emerald-500   ">AKTİF ET</span>

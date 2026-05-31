@@ -250,7 +250,7 @@ const MainLayout: React.FC = () => {
                                     <span className="text-brand-pink">FUI & </span>RA
                                 </span>
                             </Link>
-                            <nav className="hidden lg:flex items-center gap-10 text-10px font-bold text-gray-500">
+                            <nav className="hidden lg:flex items-center gap-10 text-10px font-semibold text-gray-500">
                                 <Link
                                     to="/shop"
                                     className={`relative py-1 transition-colors ${isShop
@@ -295,7 +295,7 @@ const MainLayout: React.FC = () => {
                                     }}
                                     onFocus={() => setShowSuggestions(true)}
                                     onClick={() => setShowSuggestions(true)}
-                                    className="w-full bg-gray-50 border border-gray-100 rounded-md py-3.5 pl-14 pr-6 focus:ring-4 focus:ring-brand-pink/5 focus:bg-white focus:border-brand-pink transition-all text-xs font-bold"
+                                    className="w-full bg-gray-50 border border-gray-100 rounded-md py-3.5 pl-14 pr-6 focus:ring-4 focus:ring-brand-pink/5 focus:bg-white focus:border-brand-pink transition-all text-xs font-semibold"
                                 />
                                 <svg className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300 group-focus-within:text-brand-pink transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -311,7 +311,7 @@ const MainLayout: React.FC = () => {
                                             <div className="px-8 pb-4 border-b border-gray-50 mb-2 flex justify-between items-center">
                                                 <div className="flex items-center gap-2">
                                                     <svg className="w-2.5 h-2.5 text-brand-pink" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" /></svg>
-                                                    <span className="text-nano font-bold text-gray-400  ">{t('search.recent')}</span>
+                                                    <span className="text-nano font-semibold text-gray-400  ">{t('search.recent')}</span>
                                                 </div>
                                                 <button
                                                     onClick={(e) => {
@@ -340,7 +340,7 @@ const MainLayout: React.FC = () => {
                                                         <div className="w-8 h-8 rounded-md bg-gray-50 flex items-center justify-center group-hover:bg-white transition-colors border border-transparent group-hover:border-gray-100">
                                                             <svg className="w-3 h-3 text-gray-300 group-hover:text-brand-pink transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                                         </div>
-                                                        <span className="text-caption font-bold text-gray-500 group-hover:text-gray-900   transition-colors truncate">{term}</span>
+                                                        <span className="text-caption font-semibold text-gray-500 group-hover:text-gray-900   transition-colors truncate">{term}</span>
                                                     </div>
                                                     <button
                                                         onClick={(e) => {
@@ -389,11 +389,11 @@ const MainLayout: React.FC = () => {
                                                                 />
                                                             </div>
                                                             <div className="flex-1 truncate">
-                                                                <h4 className="text-caption font-bold text-gray-900   truncate leading-none mb-1.5">{product.name}</h4>
+                                                                <h4 className="text-caption font-semibold text-gray-900   truncate leading-none mb-1.5">{product.name}</h4>
                                                                 <div className="flex items-center gap-3">
                                                                     {product.discountPrice ? (
                                                                         <>
-                                                                            <span className="text-micro font-bold text-gray-400 line-through  opacity-60">
+                                                                            <span className="text-micro font-semibold text-gray-400 line-through  opacity-60">
                                                                                 {product.price.toLocaleString()} ₺
                                                                             </span>
                                                                             <span className="text-10px font-semibold text-brand-pink ">
@@ -468,7 +468,7 @@ const MainLayout: React.FC = () => {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                                 </svg>
                                 {isAuthenticated && wishlistCount > 0 && (
-                                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-brand-pink text-white text-nano font-bold rounded-full flex items-center justify-center shadow-sm shadow-brand-pink/40 border-2 border-white">{wishlistCount}</span>
+                                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-brand-pink text-white text-nano font-semibold rounded-full flex items-center justify-center shadow-sm shadow-brand-pink/40 border-2 border-white">{wishlistCount}</span>
                                 )}
                             </Link>
 
@@ -512,12 +512,12 @@ const MainLayout: React.FC = () => {
                                                         </div>
                                                         <div className="flex-1 min-w-0 flex flex-col justify-center">
                                                             <h4 className="text-caption font-[1000] text-gray-900   truncate mb-1">{item.name}</h4>
-                                                            <p className="text-nano font-bold text-gray-400   mb-2">{item.variant || t('cart.standardEdition')}</p>
+                                                            <p className="text-nano font-semibold text-gray-400   mb-2">{item.variant || t('cart.standardEdition')}</p>
                                                             <div className="flex justify-between items-center">
                                                                 <div className="flex items-center gap-2">
                                                                     {item.originalPrice ? (
                                                                         <>
-                                                                            <span className="text-10px font-bold text-gray-400 line-through  opacity-60">
+                                                                            <span className="text-10px font-semibold text-gray-400 line-through  opacity-60">
                                                                                 {item.originalPrice.toLocaleString()} ₺
                                                                             </span>
                                                                             <span className="text-xs font-semibold text-brand-pink ">
@@ -549,8 +549,8 @@ const MainLayout: React.FC = () => {
 
                                         <div className="p-8 bg-gray-50/50 border-t border-gray-50">
                                             <div className="flex justify-between items-center mb-4">
-                                                <span className="text-10px font-bold text-gray-400   ">{t('cart.total')}</span>
-                                                <span className="text-xl font-bold text-gray-900   leading-none">{total.toLocaleString()}&nbsp;₺</span>
+                                                <span className="text-10px font-semibold text-gray-400   ">{t('cart.total')}</span>
+                                                <span className="text-xl font-semibold text-gray-900   leading-none">{total.toLocaleString()}&nbsp;₺</span>
                                             </div>
                                             <div className="grid grid-cols-2 gap-4">
                                                 <Link
@@ -665,7 +665,7 @@ const MainLayout: React.FC = () => {
                                         {/* Desktop Only Login */}
                                         <Link
                                             to="/login"
-                                            className="hidden md:flex px-6 h-10 rounded-md bg-gray-900 text-white text-10px font-semibold items-center justify-center hover:bg-brand-pink transition-all shadow-lg shadow-gray-200"
+                                            className="hidden md:flex px-6 h-10 rounded-md bg-gray-900 text-white text-10px font-semibold items-center justify-center hover:bg-brand-pink transition-all shadow-xs shadow-gray-200"
                                         >
                                             {t('user.login')}
                                         </Link>
@@ -758,7 +758,7 @@ const MainLayout: React.FC = () => {
                                     <span className="text-brand-pink">F</span>UIRA
                                 </span>
                             </Link>
-                            <p className="text-gray-600 text-xs font-bold leading-relaxed mb-5 ">
+                            <p className="text-gray-600 text-xs font-semibold leading-relaxed mb-5 ">
                                 {t('footer.about')}
                             </p>
                             <div className="flex gap-6">
@@ -791,11 +791,11 @@ const MainLayout: React.FC = () => {
                         </div>
 
                         <div>
-                            <h4 className="text-10px font-bold text-gray-900 mb-5   ">{t('footer.newsletterTitle')}</h4>
-                            <p className="text-caption font-bold text-gray-600 mb-4 ">{t('footer.newsletterDesc')}</p>
+                            <h4 className="text-10px font-semibold text-gray-900 mb-5   ">{t('footer.newsletterTitle')}</h4>
+                            <p className="text-caption font-semibold text-gray-600 mb-4 ">{t('footer.newsletterDesc')}</p>
                             <div className="flex flex-col gap-4">
-                                <input aria-label={t('footer.emailPlaceholder')} type="email" placeholder={t('footer.emailPlaceholder')} className="w-full bg-gray-50 border border-gray-100 rounded-md px-6 py-4 text-xs font-bold focus:ring-4 focus:ring-brand-pink/5" />
-                                <button className="w-full bg-brand-pink text-gray-900 py-3 rounded-md text-10px font-bold   shadow-lg shadow-brand-pink/20 hover:bg-brand-pink-hover transition-all ">{t('footer.subscribe')}</button>
+                                <input aria-label={t('footer.emailPlaceholder')} type="email" placeholder={t('footer.emailPlaceholder')} className="w-full bg-gray-50 border border-gray-100 rounded-md px-6 py-4 text-xs font-semibold focus:ring-4 focus:ring-brand-pink/5" />
+                                <button className="w-full bg-brand-pink text-gray-900 py-3 rounded-md text-10px font-semibold   shadow-lg shadow-brand-pink/20 hover:bg-brand-pink-hover transition-all ">{t('footer.subscribe')}</button>
                             </div>
                         </div>
                     </div>

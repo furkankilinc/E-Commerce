@@ -58,13 +58,13 @@ const VendorLoginPage: React.FC = () => {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                             </svg>
                         </div>
-                        <span className="text-2xl font-bold ">
+                        <span className="text-2xl font-semibold ">
                             Merchant.<span className="text-brand-pink font-extrabold ">Fuira</span>
                         </span>
                     </div>
 
                     <div className="mt-20 max-w-lg">
-                        <h1 className="text-4xl font-bold leading-tight mb-6   ">
+                        <h1 className="text-4xl font-semibold leading-tight mb-6   ">
                             Kurumsal Seviye<br />
                             Ticaret<br />
                             Altyapısı.
@@ -95,18 +95,18 @@ const VendorLoginPage: React.FC = () => {
             <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-8 lg:p-16">
                 <div className="w-full max-w-md space-y-8">
                     <div className="text-left">
-                        <h2 className="text-4xl font-bold text-slate-900 mb-2">Tekrar Hoş Geldiniz</h2>
+                        <h2 className="text-4xl font-semibold text-slate-900 mb-2">Tekrar Hoş Geldiniz</h2>
                         <p className="text-slate-500">Satıcı panelinize erişmek için lütfen bilgilerinizi girin.</p>
                     </div>
 
                     <form className="space-y-6" onSubmit={handleSubmit}>
                         {apiError && (
-                            <div className="p-3 bg-red-50/50 border border-brand-pink/20 rounded-xl text-brand-pink text-sm font-bold text-center">
+                            <div className="p-3 bg-red-50/50 border border-brand-pink/20 rounded-xl text-brand-pink text-sm font-semibold text-center">
                                 {apiError}
                             </div>
                         )}
                         {apiSuccess && (
-                            <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-600 text-sm font-bold text-center">
+                            <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-600 text-sm font-semibold text-center">
                                 {apiSuccess}
                             </div>
                         )}
@@ -168,14 +168,14 @@ const VendorLoginPage: React.FC = () => {
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full bg-brand-pink text-white py-3 px-4 rounded-xl font-bold text-lg hover:bg-brand-pink-hover transform active:scale-[0.98] transition-all shadow-lg shadow-brand-pink/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full bg-brand-pink text-white py-3 px-4 rounded-xl font-semibold text-lg hover:bg-brand-pink-hover transform active:scale-[0.98] transition-all shadow-lg shadow-brand-pink/20 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {isLoading ? 'Giriş Yapılıyor...' : 'Panele Giriş Yap'}
                         </button>
                     </form>
 
                     <p className="text-center text-slate-600">
-                        Platformda yeni misiniz? <Link to="/register" className="font-bold text-brand-pink hover:text-brand-pink-hover transition-colors underline underline-offset-4">İşletmenizi kaydedin</Link>
+                        Platformda yeni misiniz? <Link to="/register" className="font-semibold text-brand-pink hover:text-brand-pink-hover transition-colors underline underline-offset-4">İşletmenizi kaydedin</Link>
                     </p>
                 </div>
 

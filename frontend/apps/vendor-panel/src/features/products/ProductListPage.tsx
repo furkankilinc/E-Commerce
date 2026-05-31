@@ -112,7 +112,7 @@ const ProductListPage: React.FC = () => {
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
                     <h1 className="text-2xl md:text-4xl font-[1000] text-slate-900  mb-2  leading-none">Ürün <span className="text-brand-pink">Envanteri</span></h1>
-                    <p className="text-sm md:text-lg text-slate-400 font-bold  opacity-70">Vitrinini yönet ve stok seviyelerini gerçek zamanlı takip et.</p>
+                    <p className="text-sm md:text-lg text-slate-400 font-semibold  opacity-70">Vitrinini yönet ve stok seviyelerini gerçek zamanlı takip et.</p>
                 </div>
                 <Link
                     to="/products/create"
@@ -132,7 +132,7 @@ const ProductListPage: React.FC = () => {
                         placeholder="Ürün adı veya SKU ile ara..."
                         value={search}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
-                        className="w-full h-12 sm:h-14 pl-14 pr-6 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all "
+                        className="w-full h-12 sm:h-14 pl-14 pr-6 bg-slate-50 border border-slate-100 rounded-xl text-xs font-semibold focus:outline-none focus:border-brand-pink focus:bg-white transition-all "
                     />
                     <svg className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-brand-pink transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                 </div>
@@ -145,9 +145,9 @@ const ProductListPage: React.FC = () => {
                         onChange={(e) => setStatusFilter(e.target.value)}
                         className="w-full h-12 sm:h-14 px-6 bg-slate-50 border border-slate-100 rounded-xl text-10px font-semibold  text-slate-600 focus:outline-none focus:border-brand-pink focus:bg-white transition-all cursor-pointer appearance-none uppercase "
                     >
-                        <option className="cursor-pointer font-bold" value="ALL">TÜM DURUMLAR</option>
-                        <option className="cursor-pointer font-bold" value="PUBLISHED">YAYINDA</option>
-                        <option className="cursor-pointer font-bold" value="DRAFT">TASLAK</option>
+                        <option className="cursor-pointer font-semibold" value="ALL">TÜM DURUMLAR</option>
+                        <option className="cursor-pointer font-semibold" value="PUBLISHED">YAYINDA</option>
+                        <option className="cursor-pointer font-semibold" value="DRAFT">TASLAK</option>
                     </select>
                     <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7" /></svg>
@@ -162,11 +162,11 @@ const ProductListPage: React.FC = () => {
                         onChange={(e) => setSortBy(e.target.value)}
                         className="w-full h-12 sm:h-14 px-6 bg-slate-50 border border-slate-100 rounded-xl text-10px font-semibold  text-slate-600 focus:outline-none focus:border-brand-pink focus:bg-white transition-all cursor-pointer appearance-none uppercase "
                     >
-                        <option className="cursor-pointer font-bold" value="newest">EN YENİLER</option>
-                        <option className="cursor-pointer font-bold" value="price-asc">FİYAT: DÜŞÜKTEN YÜKSEĞE</option>
-                        <option className="cursor-pointer font-bold" value="price-desc">FİYAT: YÜKSEKTEN DÜŞÜĞE</option>
-                        <option className="cursor-pointer font-bold" value="stock-asc">STOK: DÜŞÜKTEN YÜKSEĞE</option>
-                        <option className="cursor-pointer font-bold" value="stock-desc">STOK: YÜKSEKTEN DÜŞÜĞE</option>
+                        <option className="cursor-pointer font-semibold" value="newest">EN YENİLER</option>
+                        <option className="cursor-pointer font-semibold" value="price-asc">FİYAT: DÜŞÜKTEN YÜKSEĞE</option>
+                        <option className="cursor-pointer font-semibold" value="price-desc">FİYAT: YÜKSEKTEN DÜŞÜĞE</option>
+                        <option className="cursor-pointer font-semibold" value="stock-asc">STOK: DÜŞÜKTEN YÜKSEĞE</option>
+                        <option className="cursor-pointer font-semibold" value="stock-desc">STOK: YÜKSEKTEN DÜŞÜĞE</option>
                     </select>
                     <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7" /></svg>
@@ -237,7 +237,7 @@ const ProductListPage: React.FC = () => {
                                                 </div>
                                                 <div>
                                                     <span className="text-lg font-semibold text-slate-900 block group-hover:text-brand-pink transition-colors  leading-tight">{product.name}</span>
-                                                    <span className="text-10px font-bold text-slate-400   mt-1 block text-nowrap">{product.sku || 'SKU-BEKLEMEDE'}</span>
+                                                    <span className="text-10px font-semibold text-slate-400   mt-1 block text-nowrap">{product.sku || 'SKU-BEKLEMEDE'}</span>
                                                 </div>
                                             </div>
                                         </td>
@@ -251,7 +251,7 @@ const ProductListPage: React.FC = () => {
                                             <div className="flex flex-col items-center">
                                                 {product.discountPrice ? (
                                                     <>
-                                                        <span className="text-10px font-bold text-slate-400 line-through opacity-60  mb-1">
+                                                        <span className="text-10px font-semibold text-slate-400 line-through opacity-60  mb-1">
                                                             {product.price.toLocaleString()} ₺
                                                         </span>
                                                         <span className="text-lg font-semibold text-slate-900   leading-none">
@@ -270,7 +270,7 @@ const ProductListPage: React.FC = () => {
                                                 <span className="text-10px font-semibold text-indigo-500 ">{product.variants?.length || 0} SEÇENEK</span>
                                                 <div className="flex flex-wrap justify-center gap-1 max-w-[120px]">
                                                     {Array.from(new Set(product.variants?.map(v => v.name))).slice(0, 2).map(name => (
-                                                        <span key={name} className="px-2 py-0.5 bg-indigo-50 text-indigo-400 rounded-md text-micro font-bold">{name}</span>
+                                                        <span key={name} className="px-2 py-0.5 bg-indigo-50 text-indigo-400 rounded-md text-micro font-semibold">{name}</span>
                                                     ))}
                                                 </div>
                                             </div>

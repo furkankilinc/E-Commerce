@@ -15,9 +15,9 @@ export default defineConfig({
     port: 5173,
     host: true,
     watch: {
-        usePolling: true
+      usePolling: true
     },
-    allowedHosts: ['user.fuira.com'],
+    allowedHosts: ['fuira.shop', '.fuira.shop', 'fuira.com', '.fuira.com', 'localhost'],
     proxy: {
       '/api': {
         target: 'http://api-gateway:80',

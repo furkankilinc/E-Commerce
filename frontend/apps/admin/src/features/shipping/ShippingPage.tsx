@@ -174,39 +174,39 @@ const ShippingPage: React.FC = () => {
             {/* Metrics Dashboard */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-                    <div className="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-500 font-bold text-xl shadow-inner">
+                    <div className="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-500 font-semibold text-xl shadow-inner">
                         🚚
                     </div>
                     <div>
-                        <div className="text-slate-400 text-md font-bold uppercase  mb-0.5">Toplam Kargo</div>
-                        <div className="text-md font-bold text-slate-800">{totalCompanies} Firma</div>
+                        <div className="text-slate-400 text-md font-semibold uppercase  mb-0.5">Toplam Kargo</div>
+                        <div className="text-md font-semibold text-slate-800">{totalCompanies} Firma</div>
                     </div>
                 </div>
                 <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-                    <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-500 font-bold text-xl shadow-inner">
+                    <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-500 font-semibold text-xl shadow-inner">
                         ⚡
                     </div>
                     <div>
-                        <div className="text-slate-400 text-md font-bold uppercase  mb-0.5">Aktif Kurye</div>
-                        <div className="text-md font-bold text-slate-800">{activeCompanies} Dağıtıcı</div>
+                        <div className="text-slate-400 text-md font-semibold uppercase  mb-0.5">Aktif Kurye</div>
+                        <div className="text-md font-semibold text-slate-800">{activeCompanies} Dağıtıcı</div>
                     </div>
                 </div>
                 <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-                    <div className="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center text-amber-500 font-bold text-xl shadow-inner">
+                    <div className="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center text-amber-500 font-semibold text-xl shadow-inner">
                         💸
                     </div>
                     <div>
-                        <div className="text-slate-400 text-md font-bold uppercase  mb-0.5">En Uygun Taban</div>
-                        <div className="text-md font-bold text-slate-800">{cheapestPrice} ₺</div>
+                        <div className="text-slate-400 text-md font-semibold uppercase  mb-0.5">En Uygun Taban</div>
+                        <div className="text-md font-semibold text-slate-800">{cheapestPrice} ₺</div>
                     </div>
                 </div>
                 <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-                    <div className="w-12 h-12 bg-rose-50 rounded-xl flex items-center justify-center text-rose-500 font-bold text-xl shadow-inner">
+                    <div className="w-12 h-12 bg-rose-50 rounded-xl flex items-center justify-center text-rose-500 font-semibold text-xl shadow-inner">
                         🚀
                     </div>
                     <div>
-                        <div className="text-slate-400 text-md font-bold uppercase  mb-0.5">Hızlı Taşıma</div>
-                        <div className="text-md font-bold text-slate-800">{fastestCarrier ? fastestCarrier.name : 'Yok'}</div>
+                        <div className="text-slate-400 text-md font-semibold uppercase  mb-0.5">Hızlı Taşıma</div>
+                        <div className="text-md font-semibold text-slate-800">{fastestCarrier ? fastestCarrier.name : 'Yok'}</div>
                     </div>
                 </div>
             </div>
@@ -228,14 +228,14 @@ const ShippingPage: React.FC = () => {
                         <tbody className="divide-y divide-slate-50">
                             {loading ? (
                                 <tr>
-                                    <td colSpan={6} className="py-20 text-center text-slate-400 font-bold ">
+                                    <td colSpan={6} className="py-20 text-center text-slate-400 font-semibold ">
                                         <div className="w-8 h-8 border-3 border-brand-pink border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
                                         Yükleniyor...
                                     </td>
                                 </tr>
                             ) : companies.length === 0 ? (
                                 <tr>
-                                    <td colSpan={6} className="py-20 text-center text-slate-400 font-bold ">
+                                    <td colSpan={6} className="py-20 text-center text-slate-400 font-semibold ">
                                         Kargo firması bulunamadı.
                                     </td>
                                 </tr>
@@ -249,7 +249,7 @@ const ShippingPage: React.FC = () => {
                                             <span className="text-xs font-semibold text-slate-900 ">{company.name}</span>
                                         </td>
                                         <td className="px-10 py-8">
-                                            <span className="text-xs font-bold text-slate-500 ">{company.deliveryTime}</span>
+                                            <span className="text-xs font-semibold text-slate-500 ">{company.deliveryTime}</span>
                                         </td>
                                         <td className="px-10 py-8">
                                             <span className="text-xs font-semibold text-slate-900 ">{company.basePrice.toFixed(2)} ₺</span>
@@ -257,7 +257,7 @@ const ShippingPage: React.FC = () => {
                                         <td className="px-10 py-8 text-center">
                                             <button
                                                 onClick={() => handleToggleActive(company)}
-                                                className={`px-3 py-1 rounded-full text-[10px] font-bold transition-all border ${company.isActive !== false
+                                                className={`px-3 py-1 rounded-full text-[10px] font-semibold transition-all border ${company.isActive !== false
                                                     ? 'bg-emerald-50 text-emerald-600 border-emerald-100 hover:bg-emerald-100'
                                                     : 'bg-slate-50 text-slate-400 border-slate-200 hover:bg-slate-100'
                                                     }`}
@@ -315,7 +315,7 @@ const ShippingPage: React.FC = () => {
                                     required
                                     value={newForm.name}
                                     onChange={(e) => setNewForm({ ...newForm, name: e.target.value })}
-                                    className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800"
+                                    className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-semibold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800"
                                     placeholder="Örn: Sürat Kargo"
                                 />
                             </div>
@@ -326,7 +326,7 @@ const ShippingPage: React.FC = () => {
                                     <select
                                         value={newForm.logo}
                                         onChange={(e) => setNewForm({ ...newForm, logo: e.target.value })}
-                                        className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800"
+                                        className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-semibold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800"
                                     >
                                         <option value="🚚">🚚 Kamyon</option>
                                         <option value="⚡">⚡ Şimşek</option>
@@ -341,7 +341,7 @@ const ShippingPage: React.FC = () => {
                                         type="text"
                                         value={newForm.deliveryTime}
                                         onChange={(e) => setNewForm({ ...newForm, deliveryTime: e.target.value })}
-                                        className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800"
+                                        className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-semibold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800"
                                         placeholder="Örn: 2-3 İş Günü"
                                     />
                                 </div>
@@ -354,7 +354,7 @@ const ShippingPage: React.FC = () => {
                                     step="0.01"
                                     value={newForm.basePrice}
                                     onChange={(e) => setNewForm({ ...newForm, basePrice: e.target.value })}
-                                    className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800"
+                                    className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-semibold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800"
                                     placeholder="0.00"
                                 />
                             </div>

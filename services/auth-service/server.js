@@ -1,3 +1,4 @@
+require('./src/utils/logger');
 const express = require('express');
 const cookieParser = require('cookie-parser');
 require('dotenv').config();

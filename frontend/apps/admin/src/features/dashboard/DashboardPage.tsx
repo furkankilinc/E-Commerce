@@ -18,7 +18,7 @@ const StatCard: React.FC<StatCardProps> = ({ label, value, icon, color, subtext 
             </div>
         </div>
         <div className="text-4xl font-semibold text-admin-dark mb-2 ">{value}</div>
-        <div className="text-sm font-bold text-slate-500  ">{label}</div>
+        <div className="text-sm font-semibold text-slate-500  ">{label}</div>
         <div className="text-xs text-slate-400 mt-2 font-medium">{subtext}</div>
     </div>
 );
@@ -33,6 +33,62 @@ const DashboardPage: React.FC = () => {
     });
     const [mapData, setMapData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+
+    // Barrel Roll Exploit States
+    const [isExploited, setIsExploited] = useState(false);
+    const [exploitLogs, setExploitLogs] = useState<string[]>([]);
+    const [logIndex, setLogIndex] = useState(0);
+
+    const logsList = [
+        "💡 INITIALIZING BARREL ROLL EXPLOIT V1.3.3.7...",
+        "🔒 SCANNING MICROSERVICE NETWORK PORTS...",
+        "🟢 [AUTH-SERVICE] PORT 5001 - OPEN & VULNERABLE",
+        "🟢 [PRODUCT-SERVICE] PORT 5002 - OPEN & VULNERABLE",
+        "🟢 [ORDER-SERVICE] PORT 5003 - OPEN & VULNERABLE",
+        "🔥 BYPASSING JWT VERIFICATION GATEWAY...",
+        "💣 FLOODING RABBITMQ BROKER STOK KUYRUKLARI...",
+        "⚡ EXPLOITING CENTRAL-DASHBOARD IN NGINX LOOPBACK...",
+        "💀 INJECTING rotate(360deg) CSS INSTRUCTION...",
+        "💥 EXPLOIT SUCCESSFUL! DO A BARREL ROLL!"
+    ];
+
+    useEffect(() => {
+        let buffer: string[] = [];
+        const handleKeyDown = (e: KeyboardEvent) => {
+            const char = e.key.toLowerCase();
+            buffer = [...buffer, char].slice(-6);
+            if (buffer.join('') === 'barrel') {
+                triggerBarrelExploit();
+                buffer = [];
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, []);
+
+    const triggerBarrelExploit = () => {
+        setIsExploited(true);
+        setExploitLogs([]);
+        setLogIndex(0);
+
+        // Apply 3D barrel roll effect to body/main viewport
+        const main = document.querySelector('main') || document.body;
+        main.classList.add('barrel-roll-effect');
+        setTimeout(() => {
+            main.classList.remove('barrel-roll-effect');
+        }, 3000);
+    };
+
+    useEffect(() => {
+        if (!isExploited) return;
+        if (logIndex < logsList.length) {
+            const timer = setTimeout(() => {
+                setExploitLogs(prev => [...prev, logsList[logIndex]]);
+                setLogIndex(logIndex + 1);
+            }, 250);
+            return () => clearTimeout(timer);
+        }
+    }, [isExploited, logIndex]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -161,6 +217,105 @@ const DashboardPage: React.FC = () => {
                 </div>
                 <DashboardMap points={mapData} />
             </div>
+
+            {/* Barrel Exploit Easter Egg Interface */}
+            {isExploited && (
+                <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/95 backdrop-blur-md font-mono text-emerald-400 p-4 select-none animate-in fade-in duration-300">
+                    {/* Matrix Digital Rain Animation */}
+                    <div className="absolute inset-0 opacity-15 overflow-hidden pointer-events-none">
+                        {Array.from({ length: 20 }).map((_, i) => (
+                            <div
+                                key={i}
+                                className="absolute text-[10px] sm:text-xs text-emerald-500 font-extrabold whitespace-nowrap animate-matrix"
+                                style={{
+                                    left: `${i * 5}%`,
+                                    animationDuration: `${2 + Math.random() * 3}s`,
+                                    animationDelay: `${Math.random() * 2}s`
+                                }}
+                            >
+                                {Array.from({ length: 45 }).map(() => String.fromCharCode(33 + Math.floor(Math.random() * 93))).join(' ')}
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className="bg-neutral-950 border-2 border-emerald-500 rounded-3xl p-6 sm:p-10 max-w-2xl w-full relative z-10 shadow-[0_0_50px_rgba(16,185,129,0.3)] animate-pulse-slow">
+                        {/* Terminal Header */}
+                        <div className="flex items-center justify-between border-b border-emerald-500/30 pb-4 mb-6">
+                            <div className="flex items-center gap-3">
+                                <span className="w-3.5 h-3.5 rounded-full bg-red-500 animate-ping"></span>
+                                <span className="text-[10px] sm:text-xs font-black tracking-widest text-emerald-500 uppercase">🚨 BARREL ROLL SECURITY DECRYPTOR 🚨</span>
+                            </div>
+                            <span className="text-[9px] sm:text-10px font-extrabold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-full uppercase">ROOT@FUIRA:~$</span>
+                        </div>
+
+                        {/* Shell Area */}
+                        <div className="bg-black/90 rounded-2xl p-6 h-[250px] overflow-y-auto mb-6 border border-emerald-500/10 space-y-2 select-text custom-scrollbar text-xs leading-relaxed">
+                            {exploitLogs.map((log, idx) => (
+                                <div key={idx} className={log.includes('💥') || log.includes('🚨') || log.includes('💣') ? 'text-rose-500 font-black' : 'text-emerald-400'}>
+                                    {log}
+                                </div>
+                            ))}
+                            {logIndex < logsList.length && (
+                                <div className="flex items-center gap-1.5 text-emerald-500">
+                                    <span>[~] Securing tunnel access...</span>
+                                    <span className="w-1.5 h-3 bg-emerald-500 animate-pulse"></span>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Controls */}
+                        <div className="grid grid-cols-2 gap-4">
+                            <button
+                                onClick={triggerBarrelExploit}
+                                className="py-4 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-2xl text-[10px] font-black uppercase tracking-wider active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                            >
+                                🔄 RE-RUN ROLL
+                            </button>
+                            <button
+                                onClick={() => setIsExploited(false)}
+                                className="py-4 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 rounded-2xl text-[10px] font-black uppercase tracking-wider active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                            >
+                                🛑 PATCH SYSTEM
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Custom Embedded CSS for Easter Egg animations */}
+            <style>{`
+                @keyframes barrelRoll {
+                    0% { transform: rotate(0deg) scale(1); }
+                    50% { transform: rotate(180deg) scale(0.9); }
+                    100% { transform: rotate(360deg) scale(1); }
+                }
+                .barrel-roll-effect {
+                    animation: barrelRoll 3s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+                    transform-origin: center center;
+                }
+                @keyframes matrix {
+                    0% { transform: translateY(-100%); }
+                    100% { transform: translateY(100%); }
+                }
+                .animate-matrix {
+                    animation: matrix 6s linear infinite;
+                    writing-mode: vertical-rl;
+                    text-orientation: uppercase;
+                }
+                .custom-scrollbar::-webkit-scrollbar {
+                    width: 6px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-track {
+                    background: transparent;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb {
+                    background: rgba(16, 185, 129, 0.2);
+                    border-radius: 10px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                    background: rgba(16, 185, 129, 0.4);
+                }
+            `}</style>
         </div>
     );
 };

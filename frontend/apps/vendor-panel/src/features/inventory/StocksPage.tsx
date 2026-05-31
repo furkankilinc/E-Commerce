@@ -139,14 +139,14 @@ const StocksPage: React.FC = () => {
                         <>
                             <button
                                 onClick={handleResetChanges}
-                                className="w-full md:w-auto px-6 py-3 bg-white border border-slate-200 rounded-md text-xs font-bold  r text-slate-400 hover:bg-slate-50 transition-all"
+                                className="w-full md:w-auto px-6 py-3 bg-white border border-slate-200 rounded-md text-xs font-semibold  r text-slate-400 hover:bg-slate-50 transition-all"
                             >
                                 SIFIRLA
                             </button>
                             <button
                                 onClick={handleSaveAll}
                                 disabled={isSaving}
-                                className="w-full md:w-auto px-8 py-3 bg-indigo-600 text-white rounded-md text-xs font-bold   shadow-lg shadow-indigo-100 transition-all active:scale-95 flex items-center justify-center gap-2 whitespace-nowrap"
+                                className="w-full md:w-auto px-8 py-3 bg-indigo-600 text-white rounded-md text-xs font-semibold   shadow-lg shadow-indigo-100 transition-all active:scale-95 flex items-center justify-center gap-2 whitespace-nowrap"
                             >
                                 {isSaving && <div className="w-4 h-4 border-2 border-white/50 border-t-white rounded-full animate-spin"></div>}
                                 {changedCount} ÜRÜN KAYDET
@@ -211,11 +211,11 @@ const StocksPage: React.FC = () => {
                 {isLoading ? (
                     <div className="p-20 text-center">
                         <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                        <p className="text-slate-400 font-bold text-xs  ">Yükleniyor...</p>
+                        <p className="text-slate-400 font-semibold text-xs  ">Yükleniyor...</p>
                     </div>
                 ) : filteredProducts.length === 0 ? (
                     <div className="p-20 text-center">
-                        <p className="text-slate-400 font-bold text-sm ">Ürün bulunamadı.</p>
+                        <p className="text-slate-400 font-semibold text-sm ">Ürün bulunamadı.</p>
                     </div>
                 ) : (
                     <div className="overflow-x-auto">
@@ -250,14 +250,14 @@ const StocksPage: React.FC = () => {
                                                             </div>
                                                         )}
                                                     </div>
-                                                    <span className="text-sm font-bold text-slate-800 truncate max-w-[200px]">{product.name}</span>
+                                                    <span className="text-sm font-semibold text-slate-800 truncate max-w-[200px]">{product.name}</span>
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <span className="text-xs font-mono font-bold text-slate-500 bg-slate-50 px-2 py-1 rounded">{product.sku}</span>
+                                                <span className="text-xs font-mono font-semibold text-slate-500 bg-slate-50 px-2 py-1 rounded">{product.sku}</span>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <span className="text-xs font-bold text-slate-500">{product.category?.name || '-'}</span>
+                                                <span className="text-xs font-semibold text-slate-500">{product.category?.name || '-'}</span>
                                             </td>
                                             <td className="px-6 py-4">
                                                 <span className="text-sm font-semibold text-slate-800">{product.price.toLocaleString()} ₺</span>
@@ -285,7 +285,7 @@ const StocksPage: React.FC = () => {
                                                             handleStockChange(product.id, val);
                                                         }
                                                     }}
-                                                    className={`w-28 h-10 px-4 rounded-md border text-sm font-bold outline-none transition-all ${isEdited
+                                                    className={`w-28 h-10 px-4 rounded-md border text-sm font-semibold outline-none transition-all ${isEdited
                                                         ? 'bg-indigo-50 border-indigo-300 text-indigo-700 focus:border-indigo-500'
                                                         : 'bg-white border-slate-200 text-slate-700 focus:border-indigo-500'
                                                         }`}
@@ -357,19 +357,19 @@ const StocksPage: React.FC = () => {
                 <div className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-slate-900 text-white rounded-md px-8 py-2 shadow-xl shadow-slate-900/40 flex items-center gap-6 z-50 animate-in slide-in-from-bottom duration-300">
                     <div className="flex items-center gap-3">
                         <div className="w-8 h-8 bg-indigo-500 rounded-md flex items-center justify-center text-white font-semibold text-sm">{changedCount}</div>
-                        <span className="text-sm font-bold">ürün değiştirildi</span>
+                        <span className="text-sm font-semibold">ürün değiştirildi</span>
                     </div>
                     <div className="w-px h-16 bg-slate-700"></div>
                     <button
                         onClick={handleResetChanges}
-                        className="text-xs font-bold  r text-slate-400 hover:text-white transition-colors"
+                        className="text-xs font-semibold  r text-slate-400 hover:text-white transition-colors"
                     >
                         İptal
                     </button>
                     <button
                         onClick={handleSaveAll}
                         disabled={isSaving}
-                        className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 rounded-md text-xs font-bold  r transition-all flex items-center gap-2"
+                        className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 rounded-md text-xs font-semibold  r transition-all flex items-center gap-2"
                     >
                         {isSaving && <div className="w-3 h-3 border-2 border-white/50 border-t-white rounded-full animate-spin"></div>}
                         KAYDET

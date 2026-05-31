@@ -79,7 +79,7 @@ const OrdersPage: React.FC = () => {
             {/* Header */}
             <div>
                 <h1 className="text-2xl md:text-4xl font-[1000] text-slate-900  mb-2  leading-none">Sipariş <span className="text-brand-pink">Yönetimi</span></h1>
-                <p className="text-sm md:text-lg text-slate-400 font-bold  opacity-70">Gelen siparişleri takip et, durumlarını güncelle ve müşteri memnuniyetini artır.</p>
+                <p className="text-sm md:text-lg text-slate-400 font-semibold  opacity-70">Gelen siparişleri takip et, durumlarını güncelle ve müşteri memnuniyetini artır.</p>
             </div>
 
             {/* Status Tabs */}
@@ -104,7 +104,7 @@ const OrdersPage: React.FC = () => {
                         placeholder="Sipariş numarası veya ID ile ara..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="w-full h-12 sm:h-14 pl-14 pr-6 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all "
+                        className="w-full h-12 sm:h-14 pl-14 pr-6 bg-slate-50 border border-slate-100 rounded-xl text-xs font-semibold focus:outline-none focus:border-brand-pink focus:bg-white transition-all "
                     />
                     <svg className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-brand-pink transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                 </div>
@@ -117,10 +117,10 @@ const OrdersPage: React.FC = () => {
                         onChange={(e) => setSortBy(e.target.value)}
                         className="w-full h-12 sm:h-14 px-6 bg-slate-50 border border-slate-100 rounded-xl text-10px font-semibold  text-slate-600 focus:outline-none focus:border-brand-pink focus:bg-white transition-all cursor-pointer appearance-none uppercase "
                     >
-                        <option className="cursor-pointer font-bold" value="newest">EN YENİ SİPARİŞLER</option>
-                        <option className="cursor-pointer font-bold" value="oldest">EN ESKİ SİPARİŞLER</option>
-                        <option className="cursor-pointer font-bold" value="amount-desc">TUTAR: YÜKSEKTEN DÜŞÜĞE</option>
-                        <option className="cursor-pointer font-bold" value="amount-asc">TUTAR: DÜŞÜKTEN YÜKSEĞE</option>
+                        <option className="cursor-pointer font-semibold" value="newest">EN YENİ SİPARİŞLER</option>
+                        <option className="cursor-pointer font-semibold" value="oldest">EN ESKİ SİPARİŞLER</option>
+                        <option className="cursor-pointer font-semibold" value="amount-desc">TUTAR: YÜKSEKTEN DÜŞÜĞE</option>
+                        <option className="cursor-pointer font-semibold" value="amount-asc">TUTAR: DÜŞÜKTEN YÜKSEĞE</option>
                     </select>
                     <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7" /></svg>
@@ -174,7 +174,7 @@ const OrdersPage: React.FC = () => {
                                         <td className="px-6 py-10">
                                             <div>
                                                 <span className="text-sm font-semibold text-slate-900 block leading-tight mb-1">{order?.user?.name}</span>
-                                                <span className="text-10px font-bold text-slate-400  ">{order?.user?.email}</span>
+                                                <span className="text-10px font-semibold text-slate-400  ">{order?.user?.email}</span>
                                             </div>
                                         </td>
                                         <td className="px-6 py-10 text-center">

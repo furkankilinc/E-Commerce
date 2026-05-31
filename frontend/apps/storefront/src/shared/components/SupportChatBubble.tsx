@@ -225,10 +225,14 @@ const SupportChatBubble: React.FC = () => {
                     {/* Header */}
                     <div className="bg-brand-pink p-6 text-white flex items-center justify-between shadow-md relative">
                         <div className="flex items-center gap-3">
-                            <span className="text-2xl">👩‍💼</span>
+                            <div className="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center border border-white/10 shadow-inner">
+                                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                                </svg>
+                            </div>
                             <div>
                                 <h4 className="text-xs font-black   leading-none mb-1">FUIRA CANLI DESTEK</h4>
-                                <span className="text-[9px] font-bold text-rose-100  flex items-center gap-1">
+                                <span className="text-[9px] font-semibold text-rose-100  flex items-center gap-1">
                                     <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-ping"></span>
                                     {isBlocked ? 'Erişim Askıya Alındı' : 'Müşteri Temsilcisi Çevrimiçi'}
                                 </span>
@@ -239,14 +243,16 @@ const SupportChatBubble: React.FC = () => {
                                 <button
                                     onClick={handleNewChat}
                                     title="Yeni Destek Oturumu Başlat"
-                                    className="p-1.5 rounded-lg hover:bg-white/10 text-white transition-all text-xs font-bold"
+                                    className="p-1.5 rounded-lg hover:bg-white/10 text-white transition-all flex items-center justify-center"
                                 >
-                                    🔄
+                                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                                    </svg>
                                 </button>
                             )}
                             <button
                                 onClick={() => setIsOpen(false)}
-                                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center font-bold text-xs cursor-pointer transition-all"
+                                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center font-semibold text-xs cursor-pointer transition-all"
                             >
                                 ✕
                             </button>
@@ -258,9 +264,11 @@ const SupportChatBubble: React.FC = () => {
                         {isBlocked ? (
                             /* Blocked User Warning */
                             <div className="flex-grow flex flex-col items-center justify-center text-center p-4">
-                                <span className="text-5xl mb-4 animate-bounce">🚫</span>
+                                <svg className="w-16 h-16 text-rose-500 mb-4 animate-bounce" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m0-10.03L3.07 19.5a1.5 1.5 0 001.285 2.25h15.29c.82 0 1.33-.89.913-1.5L12 2.72zM12 16.5h.008v.008H12v-.008z" />
+                                </svg>
                                 <h4 className="text-xs font-black text-rose-600   uppercase mb-2">Destek Erişiminiz Engellendi</h4>
-                                <p className="text-[10px] font-bold text-slate-400 max-w-[220px] leading-relaxed ">
+                                <p className="text-[10px] font-semibold text-slate-400 max-w-[220px] leading-relaxed ">
                                     Destek sistemini kötüye kullandığınız tespit edildiği için canlı yardım erişiminiz askıya alınmıştır.
                                 </p>
                             </div>
@@ -270,7 +278,9 @@ const SupportChatBubble: React.FC = () => {
                                 {/* Icon + Welcome text */}
                                 <div className="flex flex-col items-center text-center gap-3">
                                     <div className="w-14 h-14 rounded-2xl bg-brand-pink/10 flex items-center justify-center">
-                                        <span className="text-3xl">💬</span>
+                                        <svg className="w-7 h-7 text-brand-pink" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 8.511c.084.29.125.597.125.913 0 3.73-3.791 6.75-8.462 6.75-1.07 0-2.096-.16-3.031-.453-2.062 1.34-4.57 1.86-7.158 1.942a1.002 1.002 0 01-1.03-1.185c.348-1.57.85-3.08 1.488-4.482C1.504 11.233 1 10.396 1 9.497c0-3.73 3.792-6.75 8.463-6.75a9.01 9.01 0 015.656 2.015c2.399 1.077 4.195 2.766 5.131 3.749z" />
+                                        </svg>
                                     </div>
                                     <div>
                                         <h4 className="text-xs font-black text-slate-800   mb-1">Canlı Destek'e Hoş Geldiniz</h4>
@@ -327,7 +337,7 @@ const SupportChatBubble: React.FC = () => {
                                         className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}
                                     >
                                         <div
-                                            className={`max-w-[80%] rounded-2xl px-4 py-3 text-xs font-bold shadow-sm ${msg.sender === 'user'
+                                            className={`max-w-[80%] rounded-2xl px-4 py-3 text-xs font-semibold shadow-sm ${msg.sender === 'user'
                                                 ? 'bg-brand-pink text-white rounded-tr-none'
                                                 : 'bg-white text-slate-800 border border-slate-100 rounded-tl-none'
                                                 }`}
@@ -352,13 +362,15 @@ const SupportChatBubble: React.FC = () => {
                                 value={inputText}
                                 onChange={(e) => setInputText(e.target.value)}
                                 placeholder="Mesajınızı buraya yazın..."
-                                className="flex-grow bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-xs font-bold text-slate-800 focus:outline-none focus:border-brand-pink focus:bg-white transition-all "
+                                className="flex-grow bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-xs font-semibold text-slate-800 focus:outline-none focus:border-brand-pink focus:bg-white transition-all "
                             />
                             <button
                                 type="submit"
                                 className="w-10 h-10 bg-brand-pink text-white rounded-xl flex items-center justify-center shadow-md hover:scale-105 active:scale-95 transition-all"
                             >
-                                ✈️
+                                <svg className="w-4 h-4 text-white transform rotate-45 -translate-x-0.5 translate-y-0.5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M3.4 22a.8.8 0 0 1-.7-.4.8.8 0 0 1 0-.8L5.9 13H13a1 1 0 0 0 0-2H5.9L2.7 3.2a.8.8 0 0 1 .4-.9.8.8 0 0 1 .8 0l17 8.8a.8.8 0 0 1 0 1.5l-17 8.8a.8.8 0 0 1-.5.1z" />
+                                </svg>
                             </button>
                         </form>
                     )}
@@ -372,7 +384,9 @@ const SupportChatBubble: React.FC = () => {
             >
                 {/* Ping/Ripple Ring */}
                 <span className="absolute -inset-1 rounded-full border-2 border-brand-pink/30 animate-pulse pointer-events-none"></span>
-                <span className="text-2xl transition-transform group-hover:rotate-12 duration-200">💬</span>
+                <svg className="w-6 h-6 text-white transition-transform group-hover:scale-110 duration-200" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
 
                 {/* Unread Message Notification Badge */}
                 {unreadCount > 0 && !isOpen && (

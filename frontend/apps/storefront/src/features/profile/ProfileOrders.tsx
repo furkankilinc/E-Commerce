@@ -109,7 +109,7 @@ export const ProfileOrders: React.FC = () => {
             <div className="pb-12 border-b border-gray-100/50 text-left flex justify-between items-end">
                 <div>
                     <h2 className="text-4xl font-[1000] text-gray-900    leading-none mb-4">SİPARİŞ <span className="text-brand-pink">GEÇMİŞİM</span></h2>
-                    <p className="text-sm font-bold text-gray-400 ">Geçmiş siparişlerini ve durumlarını kontrol et.</p>
+                    <p className="text-sm font-semibold text-gray-400 ">Geçmiş siparişlerini ve durumlarını kontrol et.</p>
                 </div>
             </div>
 

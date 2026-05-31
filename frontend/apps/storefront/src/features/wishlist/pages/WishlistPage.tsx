@@ -46,7 +46,7 @@ const WishlistPage: React.FC = () => {
                             </svg>
                         </div>
                         <h2 className="text-3xl font-semibold text-gray-900 mb-4   ">Giriş Yapmalısınız</h2>
-                        <p className="text-gray-500 text-sm font-bold mb-6  ">Favorilerinizi görmek ve yönetmek için lütfen oturum açın.</p>
+                        <p className="text-gray-500 text-sm font-semibold mb-6  ">Favorilerinizi görmek ve yönetmek için lütfen oturum açın.</p>
                         <Link
                             to="/login"
                             className="px-12 py-5 bg-brand-pink text-white rounded-md text-caption font-semibold   shadow-xl shadow-brand-pink/20  transition-all "
@@ -63,7 +63,7 @@ const WishlistPage: React.FC = () => {
                             </svg>
                         </div>
                         <h2 className="text-3xl font-semibold text-gray-900 mb-4   ">Henüz favori yok</h2>
-                        <p className="text-gray-500 text-sm font-bold mb-6  ">Beğendiğin ürünleri favorilere ekle, daha sonra bul.</p>
+                        <p className="text-gray-500 text-sm font-semibold mb-6  ">Beğendiğin ürünleri favorilere ekle, daha sonra bul.</p>
                         <Link
                             to="/shop"
                             className="px-12 py-5 bg-brand-pink text-white rounded-md text-caption font-semibold   shadow-xl shadow-brand-pink/20  transition-all "
@@ -125,7 +125,7 @@ const WishlistPage: React.FC = () => {
                                             </span>
                                             <div className="flex items-baseline gap-2">
                                                 {item.originalPrice && (
-                                                    <span className="text-xs font-bold text-gray-400 line-through opacity-60 ">
+                                                    <span className="text-xs font-semibold text-gray-400 line-through opacity-60 ">
                                                         {item.originalPrice.toLocaleString('tr-TR')} ₺
                                                     </span>
                                                 )}

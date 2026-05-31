@@ -113,5 +113,21 @@
         "createdAt": "2026-05-22T05:36:41.674Z"
       }
     ]
+  },
+  {
+    "id": "sess-1780230981424",
+    "userName": "Furkan Kılınç",
+    "email": "furkaankilinc35@gmail.com",
+    "status": "active",
+    "unreadAdminCount": 0,
+    "unreadUserCount": 0,
+    "createdAt": "2026-05-31T12:36:21.424Z",
+    "messages": [
+      {
+        "sender": "admin",
+        "text": "Merhaba Furkan Kılınç, size nasıl yardımcı olabilirim?",
+        "createdAt": "2026-05-31T12:36:21.424Z"
+      }
+    ]
   }
 ]

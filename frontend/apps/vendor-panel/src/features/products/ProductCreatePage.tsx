@@ -437,21 +437,21 @@ const ProductCreatePage: React.FC = () => {
                 <div className="flex gap-6">
                     <button
                         onClick={() => navigate('/products')}
-                        className="px-8 py-4 bg-white border border-slate-200 rounded-md text-xs font-bold  r text-slate-400 hover:bg-slate-50 transition-all"
+                        className="px-8 py-4 bg-white border border-slate-200 rounded-md text-xs font-semibold  r text-slate-400 hover:bg-slate-50 transition-all"
                     >
                         İPTAL
                     </button>
                     <button
                         onClick={() => handleSubmit('DRAFT')}
                         disabled={isLoading}
-                        className="px-8 py-4 bg-white border border-indigo-100 rounded-md text-xs font-bold   text-indigo-600 hover:bg-indigo-50 transition-all shadow-sm"
+                        className="px-8 py-4 bg-white border border-indigo-100 rounded-md text-xs font-semibold   text-indigo-600 hover:bg-indigo-50 transition-all shadow-sm"
                     >
                         TASLAK KAYDET
                     </button>
                     <button
                         onClick={() => handleSubmit('PUBLISHED')}
                         disabled={isLoading}
-                        className="px-10 py-4 bg-indigo-600 text-white rounded-md text-xs font-bold   shadow-lg shadow-indigo-100 transition-all active:scale-95 flex items-center gap-3"
+                        className="px-10 py-4 bg-indigo-600 text-white rounded-md text-xs font-semibold   shadow-lg shadow-indigo-100 transition-all active:scale-95 flex items-center gap-3"
                     >
                         {isLoading && <div className="w-4 h-4 border-2 border-white/50 border-t-white rounded-full animate-spin"></div>}
                         ÜRÜNÜ YAYINLA
@@ -468,12 +468,12 @@ const ProductCreatePage: React.FC = () => {
                             <div className="w-12 h-12 bg-indigo-50 rounded-md flex items-center justify-center text-indigo-600">
                                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                             </div>
-                            <h3 className="text-md font-bold text-slate-800  ">Genel Bilgiler</h3>
+                            <h3 className="text-md font-semibold text-slate-800  ">Genel Bilgiler</h3>
                         </div>
 
                         <div className="space-y-10 relative z-10">
                             <div className="space-y-3">
-                                <label className="text-10px font-bold  r text-slate-400 ml-1">ÜRÜN ADI</label>
+                                <label className="text-10px font-semibold  r text-slate-400 ml-1">ÜRÜN ADI</label>
                                 <input
                                     type="text"
                                     name="name"
@@ -487,15 +487,15 @@ const ProductCreatePage: React.FC = () => {
                             <div className="space-y-4">
                                 <label className="text-caption font-semibold   text-slate-400  ml-2">KATEGORİ SEÇİMİ</label>
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                    <select value={selectedLevel1} onChange={handleLevel1Change} className="h-12 px-6 rounded-md bg-slate-50 border-2 border-transparent focus:border-brand-pink outline-none font-bold ">
+                                    <select value={selectedLevel1} onChange={handleLevel1Change} className="h-12 px-6 rounded-md bg-slate-50 border-2 border-transparent focus:border-brand-pink outline-none font-semibold ">
                                         <option value="">Ana Kategori</option>
                                         {level1Categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
                                     </select>
-                                    <select value={selectedLevel2} onChange={handleLevel2Change} disabled={!selectedLevel1 || level2Categories.length === 0} className="h-12 px-6 rounded-md bg-slate-50 border-2 border-transparent focus:border-brand-pink outline-none font-bold  disabled:opacity-30">
+                                    <select value={selectedLevel2} onChange={handleLevel2Change} disabled={!selectedLevel1 || level2Categories.length === 0} className="h-12 px-6 rounded-md bg-slate-50 border-2 border-transparent focus:border-brand-pink outline-none font-semibold  disabled:opacity-30">
                                         <option value="">Alt Kategori</option>
                                         {level2Categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
                                     </select>
-                                    <select value={selectedLevel3} onChange={(e) => { setSelectedLevel3(e.target.value); setIsDirty(true); }} disabled={!selectedLevel2 || level3Categories.length === 0} className="h-12 px-6 rounded-md bg-slate-50 border-2 border-transparent focus:border-brand-pink outline-none font-bold  disabled:opacity-30">
+                                    <select value={selectedLevel3} onChange={(e) => { setSelectedLevel3(e.target.value); setIsDirty(true); }} disabled={!selectedLevel2 || level3Categories.length === 0} className="h-12 px-6 rounded-md bg-slate-50 border-2 border-transparent focus:border-brand-pink outline-none font-semibold  disabled:opacity-30">
                                         <option value="">Detay Kategori</option>
                                         {level3Categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
                                     </select>
@@ -524,7 +524,7 @@ const ProductCreatePage: React.FC = () => {
                                         id="newAttrKey"
                                         type="text"
                                         placeholder="Örn: Renk, Beden..."
-                                        className="w-full h-12 px-4 rounded-md bg-white border border-slate-200 text-sm font-bold outline-none focus:border-indigo-500"
+                                        className="w-full h-12 px-4 rounded-md bg-white border border-slate-200 text-sm font-semibold outline-none focus:border-indigo-500"
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -533,16 +533,16 @@ const ProductCreatePage: React.FC = () => {
                                         id="newAttrVal"
                                         type="text"
                                         placeholder="Örn: Mavi, XL..."
-                                        className="w-full h-12 px-4 rounded-md bg-white border border-slate-200 text-sm font-bold outline-none focus:border-indigo-500"
+                                        className="w-full h-12 px-4 rounded-md bg-white border border-slate-200 text-sm font-semibold outline-none focus:border-indigo-500"
                                     />
                                 </div>
                                 <div className="space-y-2">
                                     <label className="text-10px font-semibold text-slate-400  ml-1">Fiyat Farkı (+/-)</label>
-                                    <input id="newAttrPrice" type="number" placeholder="0.00" className="w-full h-12 px-4 rounded-md bg-white border border-slate-200 text-sm font-bold outline-none focus:border-indigo-500" />
+                                    <input id="newAttrPrice" type="number" placeholder="0.00" className="w-full h-12 px-4 rounded-md bg-white border border-slate-200 text-sm font-semibold outline-none focus:border-indigo-500" />
                                 </div>
                                 <div className="space-y-2">
                                     <label className="text-10px font-semibold text-slate-400  ml-1">Stok</label>
-                                    <input id="newAttrStock" type="number" placeholder="0" className="w-full h-12 px-4 rounded-md bg-white border border-slate-200 text-sm font-bold outline-none focus:border-indigo-500" />
+                                    <input id="newAttrStock" type="number" placeholder="0" className="w-full h-12 px-4 rounded-md bg-white border border-slate-200 text-sm font-semibold outline-none focus:border-indigo-500" />
                                 </div>
                                 <div className="flex items-end">
                                     <button
@@ -592,7 +592,7 @@ const ProductCreatePage: React.FC = () => {
                                 <tbody className="divide-y divide-slate-50">
                                     {productVariants.length === 0 && (
                                         <tr>
-                                            <td colSpan={5} className="px-6 py-12 text-center text-slate-400  text-sm font-bold">Henüz varyant eklenmedi. Ürün standart tek tip olarak kaydedilecek.</td>
+                                            <td colSpan={5} className="px-6 py-12 text-center text-slate-400  text-sm font-semibold">Henüz varyant eklenmedi. Ürün standart tek tip olarak kaydedilecek.</td>
                                         </tr>
                                     )}
                                     {productVariants.map((v, i) => (
@@ -613,7 +613,7 @@ const ProductCreatePage: React.FC = () => {
                                                             setIsDirty(true);
                                                         }
                                                     }}
-                                                    className="w-28 h-9 px-3 rounded-md bg-white border border-slate-200 text-xs font-bold outline-none focus:border-indigo-500"
+                                                    className="w-28 h-9 px-3 rounded-md bg-white border border-slate-200 text-xs font-semibold outline-none focus:border-indigo-500"
                                                 />
                                             </td>
                                             <td className="px-6 py-4">
@@ -628,7 +628,7 @@ const ProductCreatePage: React.FC = () => {
                                                             setIsDirty(true);
                                                         }
                                                     }}
-                                                    className="w-28 h-9 px-3 rounded-md bg-white border border-slate-200 text-xs font-bold outline-none focus:border-indigo-500"
+                                                    className="w-28 h-9 px-3 rounded-md bg-white border border-slate-200 text-xs font-semibold outline-none focus:border-indigo-500"
                                                 />
                                             </td>
                                             <td className="px-6 py-4 text-right">
@@ -652,14 +652,14 @@ const ProductCreatePage: React.FC = () => {
                                 <div className="w-12 h-12 bg-amber-50 rounded-md flex items-center justify-center text-amber-600">
                                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
                                 </div>
-                                <h3 className="text-md font-bold text-slate-800  ">Ürün İçerik Editörü</h3>
+                                <h3 className="text-md font-semibold text-slate-800  ">Ürün İçerik Editörü</h3>
                             </div>
                         </div>
 
                         <div className="space-y-6 mb-5">
                             {blocks.length === 0 && (
                                 <div className="py-16 text-center bg-slate-50 rounded-md border-2 border-dashed border-slate-200">
-                                    <p className="text-slate-400 font-bold text-xs  ">Henüz içerik bloğu eklenmedi.</p>
+                                    <p className="text-slate-400 font-semibold text-xs  ">Henüz içerik bloğu eklenmedi.</p>
                                 </div>
                             )}
 
@@ -675,14 +675,14 @@ const ProductCreatePage: React.FC = () => {
 
                                     {block.type === 'HEADING' && (
                                         <div className="space-y-2">
-                                            <span className="text-nano font-bold text-slate-400  ">BÖLÜM BAŞLIĞI</span>
-                                            <input type="text" value={block.content} onChange={(e) => updateBlock(block.id, e.target.value)} placeholder="Başlık..." className="w-full bg-transparent text-md font-bold text-slate-800 outline-none" />
+                                            <span className="text-nano font-semibold text-slate-400  ">BÖLÜM BAŞLIĞI</span>
+                                            <input type="text" value={block.content} onChange={(e) => updateBlock(block.id, e.target.value)} placeholder="Başlık..." className="w-full bg-transparent text-md font-semibold text-slate-800 outline-none" />
                                         </div>
                                     )}
 
                                     {block.type === 'TEXT' && (
                                         <div className="space-y-2">
-                                            <span className="text-nano font-bold text-slate-400  ">PARAGRAF METNİ</span>
+                                            <span className="text-nano font-semibold text-slate-400  ">PARAGRAF METNİ</span>
                                             <textarea value={block.content} onChange={(e) => updateBlock(block.id, e.target.value)} placeholder="Açıklama metni..." className="w-full min-h-[100px] bg-transparent text-sm font-medium text-slate-600 outline-none leading-relaxed resize-none" />
                                         </div>
                                     )}
@@ -690,7 +690,7 @@ const ProductCreatePage: React.FC = () => {
                                     {block.type === 'IMAGE' && (
                                         <div className="space-y-4">
                                             <div className="flex items-center justify-between">
-                                                <span className="text-nano font-bold text-slate-400  ">GÖRSEL BLOĞU</span>
+                                                <span className="text-nano font-semibold text-slate-400  ">GÖRSEL BLOĞU</span>
                                                 {block.content && typeof block.content !== 'string' && block.content.url && (
                                                     <div className="flex bg-slate-100 p-1 rounded-xl gap-1">
                                                         <div className="flex border-r border-slate-200 pr-1 gap-1">
@@ -719,7 +719,7 @@ const ProductCreatePage: React.FC = () => {
                                                     <label className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer bg-slate-50 hover:bg-slate-100 transition-colors">
                                                         <input type="file" className="hidden" onChange={(e) => handleBlockImageUpload(e, block.id)} />
                                                         <svg className="w-6 h-6 text-slate-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                                                        <span className="text-10px font-bold text-slate-400  r">GÖRSEL EKLE</span>
+                                                        <span className="text-10px font-semibold text-slate-400  r">GÖRSEL EKLE</span>
                                                     </label>
                                                 )}
                                             </div>
@@ -728,7 +728,7 @@ const ProductCreatePage: React.FC = () => {
 
                                     {block.type === 'FEATURES' && (
                                         <div className="space-y-3">
-                                            <span className="text-nano font-bold text-slate-400  ">TEKNİK DETAY LİSTESİ</span>
+                                            <span className="text-nano font-semibold text-slate-400  ">TEKNİK DETAY LİSTESİ</span>
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                                 {block.content.map((feature: string, fIdx: number) => (
                                                     <input key={fIdx} value={feature} onChange={(e) => {
@@ -744,12 +744,12 @@ const ProductCreatePage: React.FC = () => {
 
                                     {block.type === 'SPLIT' && (
                                         <div className="space-y-3">
-                                            <span className="text-nano font-bold text-slate-400  ">METİN & GÖRSEL (IKILI)</span>
+                                            <span className="text-nano font-semibold text-slate-400  ">METİN & GÖRSEL (IKILI)</span>
                                             <div className={`flex flex-col md:flex-row gap-6 ${block.content.reverse ? 'md:flex-row-reverse' : ''}`}>
                                                 <textarea value={block.content.text} onChange={(e) => updateBlock(block.id, { ...block.content, text: e.target.value })} placeholder="Metin..." className="flex-1 min-h-[120px] bg-slate-50 rounded-xl p-4 border border-slate-200 text-xs font-medium text-slate-600 outline-none focus:bg-white focus:border-indigo-500" />
                                                 <div className="flex-1 aspect-video rounded-xl bg-slate-50 border border-slate-200 overflow-hidden relative">
                                                     {block.content.image ? <img src={block.content.image} className="w-full h-full object-contain p-2" alt="" /> : (
-                                                        <label className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer"><input type="file" className="hidden" onChange={(e) => handleBlockImageUpload(e, block.id, 'image')} /><span className="text-10px font-bold text-slate-400 ">+ GÖRSEL</span></label>
+                                                        <label className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer"><input type="file" className="hidden" onChange={(e) => handleBlockImageUpload(e, block.id, 'image')} /><span className="text-10px font-semibold text-slate-400 ">+ GÖRSEL</span></label>
                                                     )}
                                                 </div>
                                             </div>
@@ -761,11 +761,11 @@ const ProductCreatePage: React.FC = () => {
 
                         {/* Add Block Menu Toolbar */}
                         <div className="flex flex-wrap gap-2 p-3 bg-slate-50 border border-slate-200 rounded-md">
-                            <button onClick={() => addBlock('HEADING')} className="px-4 h-10 bg-white hover:bg-slate-100 text-slate-600 text-xs font-bold rounded-lg border border-slate-200 transition-colors">H Başlık</button>
-                            <button onClick={() => addBlock('TEXT')} className="px-4 h-10 bg-white hover:bg-slate-100 text-slate-600 text-xs font-bold rounded-lg border border-slate-200 transition-colors">Metin Paragrafı</button>
-                            <button onClick={() => addBlock('IMAGE')} className="px-4 h-10 bg-white hover:bg-slate-100 text-slate-600 text-xs font-bold rounded-lg border border-slate-200 transition-colors">Görsel Blok</button>
-                            <button onClick={() => addBlock('FEATURES')} className="px-4 h-10 bg-white hover:bg-slate-100 text-slate-600 text-xs font-bold rounded-lg border border-slate-200 transition-colors">Detay Listesi</button>
-                            <button onClick={() => addBlock('SPLIT')} className="ml-auto px-6 h-10 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-lg transition-colors">Metin + Görsel Ekle</button>
+                            <button onClick={() => addBlock('HEADING')} className="px-4 h-10 bg-white hover:bg-slate-100 text-slate-600 text-xs font-semibold rounded-lg border border-slate-200 transition-colors">H Başlık</button>
+                            <button onClick={() => addBlock('TEXT')} className="px-4 h-10 bg-white hover:bg-slate-100 text-slate-600 text-xs font-semibold rounded-lg border border-slate-200 transition-colors">Metin Paragrafı</button>
+                            <button onClick={() => addBlock('IMAGE')} className="px-4 h-10 bg-white hover:bg-slate-100 text-slate-600 text-xs font-semibold rounded-lg border border-slate-200 transition-colors">Görsel Blok</button>
+                            <button onClick={() => addBlock('FEATURES')} className="px-4 h-10 bg-white hover:bg-slate-100 text-slate-600 text-xs font-semibold rounded-lg border border-slate-200 transition-colors">Detay Listesi</button>
+                            <button onClick={() => addBlock('SPLIT')} className="ml-auto px-6 h-10 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg transition-colors">Metin + Görsel Ekle</button>
                         </div>
                     </div>
 
@@ -865,7 +865,7 @@ const ProductCreatePage: React.FC = () => {
                                                         onChange={(e) => handleCheckboxChange(e.target.checked)}
                                                         className="w-5 h-5 accent-indigo-600 cursor-pointer shrink-0"
                                                     />
-                                                    <label htmlFor={`comp-${comp.id}`} className="text-xs font-bold text-slate-700 cursor-pointer flex items-center gap-2 select-none flex-1">
+                                                    <label htmlFor={`comp-${comp.id}`} className="text-xs font-semibold text-slate-700 cursor-pointer flex items-center gap-2 select-none flex-1">
                                                         <span className="text-xl shrink-0">{comp.logo}</span>
                                                         <span className="truncate">{comp.name}</span>
                                                     </label>
@@ -881,7 +881,7 @@ const ProductCreatePage: React.FC = () => {
                                                                 value={extraFeeValue}
                                                                 onChange={(e) => handleExtraFeeChange(e.target.value)}
                                                                 placeholder="0.00"
-                                                                className="w-full h-10 pl-0 pr-4 rounded-md bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:bg-white outline-none font-bold text-xs transition-all text-center"
+                                                                className="w-full h-10 pl-0 pr-4 rounded-md bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:bg-white outline-none font-semibold text-xs transition-all text-center"
                                                             />
                                                             <span className="absolute right-3 top-1/2 -translate-y-1/2 text-nano font-semibold text-slate-400 pointer-events-none">₺</span>
                                                         </div>
@@ -892,7 +892,7 @@ const ProductCreatePage: React.FC = () => {
                                     })}
 
                                     {shippingCompanies.length === 0 && (
-                                        <p className="text-10px font-bold text-slate-400  text-center py-4">Kayıtlı aktif kargo firması bulunamadı.</p>
+                                        <p className="text-10px font-semibold text-slate-400  text-center py-4">Kayıtlı aktif kargo firması bulunamadı.</p>
                                     )}
                                 </div>
                             </div>

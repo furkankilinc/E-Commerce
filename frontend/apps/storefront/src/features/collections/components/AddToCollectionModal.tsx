@@ -80,7 +80,7 @@ const AddToCollectionModal: React.FC<AddToCollectionModalProps> = ({ product, on
                 {/* Collections List */}
                 <div className="px-8 py-6 max-h-64 overflow-y-auto space-y-3">
                     {(collections || []).length === 0 && !isCreating && (
-                        <p className="text-center text-xs font-bold text-gray-400  py-4">Henüz koleksiyonunuz yok.</p>
+                        <p className="text-center text-xs font-semibold text-gray-400  py-4">Henüz koleksiyonunuz yok.</p>
                     )}
                     {(collections || []).map(col => {
                         const inCol = isInCollection(col.id, product.id);
@@ -96,7 +96,7 @@ const AddToCollectionModal: React.FC<AddToCollectionModalProps> = ({ product, on
                                 <span className="text-xl">{col.emoji}</span>
                                 <div className="flex-1 min-w-0">
                                     <p className="text-caption font-semibold    truncate">{col.name}</p>
-                                    <p className="text-nano font-bold text-gray-400">{(col.items || []).length} ürün</p>
+                                    <p className="text-nano font-semibold text-gray-400">{(col.items || []).length} ürün</p>
                                 </div>
                                 <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${inCol ? 'border-brand-pink bg-brand-pink' : 'border-gray-200'}`}>
                                     {inCol && (

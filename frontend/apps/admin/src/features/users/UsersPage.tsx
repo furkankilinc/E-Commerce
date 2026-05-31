@@ -75,7 +75,7 @@ const UsersPage: React.FC = () => {
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         placeholder="İsim veya e-posta ara..."
-                        className="w-full h-12 sm:h-14 pl-12 pr-6 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl text-sm font-bold focus:outline-none focus:border-brand-pink transition-all shadow-sm"
+                        className="w-full h-12 sm:h-14 pl-12 pr-6 bg-white  border border-slate-100  rounded-2xl text-sm font-semibold focus:outline-none focus:border-brand-pink transition-all shadow-sm"
                     />
                     <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                 </div>
@@ -95,9 +95,9 @@ const UsersPage: React.FC = () => {
                         </thead>
                         <tbody className="divide-y divide-slate-50">
                             {loading ? (
-                                <tr><td colSpan={5} className="py-20 text-center text-slate-400 font-bold   ">Yükleniyor...</td></tr>
+                                <tr><td colSpan={5} className="py-20 text-center text-slate-400 font-semibold   ">Yükleniyor...</td></tr>
                             ) : users.length === 0 ? (
-                                <tr><td colSpan={5} className="py-20 text-center text-slate-400 font-bold   ">Kullanıcı bulunamadı.</td></tr>
+                                <tr><td colSpan={5} className="py-20 text-center text-slate-400 font-semibold   ">Kullanıcı bulunamadı.</td></tr>
                             ) : (
                                 users.map(user => (
                                     <tr key={user.id} className="hover:bg-slate-50/50 transition-colors">
@@ -108,14 +108,14 @@ const UsersPage: React.FC = () => {
                                                 </div>
                                                 <div className="flex flex-col">
                                                     <span className="text-xs font-semibold text-slate-900  ">{user.name || 'İsimsiz'}</span>
-                                                    <span className="text-nano font-bold text-slate-400   ">{user.id}</span>
+                                                    <span className="text-nano font-semibold text-slate-400   ">{user.id}</span>
                                                 </div>
                                             </div>
                                         </td>
                                         <td className="px-10 py-8">
                                             <div className="flex flex-col">
                                                 <span className="text-xs font-semibold text-slate-900  ">{user.email}</span>
-                                                <span className="text-nano font-bold text-slate-400   ">{user.phone || '-'}</span>
+                                                <span className="text-nano font-semibold text-slate-400   ">{user.phone || '-'}</span>
                                             </div>
                                         </td>
                                         <td className="px-10 py-8 text-center">

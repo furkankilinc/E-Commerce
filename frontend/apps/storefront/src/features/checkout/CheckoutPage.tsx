@@ -66,10 +66,10 @@ const getLocalBrand = (number: string): CardInfo['brand'] => {
 };
 
 const CheckoutPage: React.FC = () => {
-    const { 
-        checkout, 
-        items, 
-        total, 
+    const {
+        checkout,
+        items,
+        total,
         handleNext,
         isIyzicoModalOpen,
         setIsIyzicoModalOpen,
@@ -324,7 +324,7 @@ const CheckoutPage: React.FC = () => {
                     </svg>
                 </div>
                 <h1 className="text-4xl font-[1000] text-gray-900    mb-4 leading-none">SİPARİŞ <span className="text-emerald-500">TAMAMLANDI!</span></h1>
-                <p className="text-gray-400 font-bold   text-10px mb-6  text-center leading-relaxed">Sipariş numaranız: <span className="text-gray-900">{checkout.orderSuccess?.orderNumber}</span><br />Onay e-postası tarafınıza gönderilmiştir.</p>
+                <p className="text-gray-400 font-semibold   text-10px mb-6  text-center leading-relaxed">Sipariş numaranız: <span className="text-gray-900">{checkout.orderSuccess?.orderNumber}</span><br />Onay e-postası tarafınıza gönderilmiştir.</p>
                 <div className="flex gap-4 items-center justify-center">
                     <Link to="/" className="h-12 px-10 bg-gray-900 text-white rounded-md text-10px font-semibold hover:bg-brand-pink transition-all shadow-gray-200  flex items-center justify-center">ANA SAYFAYA DÖN</Link>
                     <Link to="/profile/orders" className="h-12 px-10 bg-white text-gray-900 border border-gray-100 rounded-md text-10px font-semibold hover:bg-gray-50 transition-all  flex items-center justify-center">SİPARİŞLERİM</Link>
@@ -394,7 +394,7 @@ const CheckoutPage: React.FC = () => {
                                                         {isSelected && <span className="text-brand-pink text-10px font-semibold  ">✓ SEÇİLDİ</span>}
                                                     </div>
                                                     <h4 className="text-xs font-semibold text-gray-900 mb-1  truncate">{addr.fullName}</h4>
-                                                    <p className="text-10px font-bold text-gray-400 leading-relaxed  truncate">{addr.neighborhood} {addr.district ? `${addr.district}` : ''}</p>
+                                                    <p className="text-10px font-semibold text-gray-400 leading-relaxed  truncate">{addr.neighborhood} {addr.district ? `${addr.district}` : ''}</p>
                                                     <p className="text-nano font-extrabold text-gray-400 r mt-1.5">{addr.city}, {addr.zipCode}</p>
                                                 </div>
                                             );
@@ -405,35 +405,35 @@ const CheckoutPage: React.FC = () => {
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                                     <div className="col-span-1 sm:col-span-2 space-y-2">
                                         <label className="text-nano font-semibold text-gray-400   ml-4 ">AD SOYAD <span className="text-brand-pink">*</span></label>
-                                        <input type="text" value={checkout.shippingAddress.fullName} onChange={(e) => checkout.updateShippingAddress({ fullName: e.target.value })} className="w-full h-16 bg-gray-50 border border-gray-100 rounded-md px-8 text-sm font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all " placeholder="FURKAN" />
+                                        <input type="text" value={checkout.shippingAddress.fullName} onChange={(e) => checkout.updateShippingAddress({ fullName: e.target.value })} className="w-full h-16 bg-gray-50 border border-gray-100 rounded-md px-8 text-sm font-semibold focus:outline-none focus:border-brand-pink focus:bg-white transition-all " placeholder="FURKAN" />
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-nano font-semibold text-gray-400   ml-4 ">E-POSTA <span className="text-brand-pink">*</span></label>
-                                        <input type="email" value={checkout.shippingAddress.email} onChange={(e) => checkout.updateShippingAddress({ email: e.target.value })} className="w-full h-16 bg-gray-50 border border-gray-100 rounded-md px-8 text-sm font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all " placeholder="furkan@example.com" />
+                                        <input type="email" value={checkout.shippingAddress.email} onChange={(e) => checkout.updateShippingAddress({ email: e.target.value })} className="w-full h-16 bg-gray-50 border border-gray-100 rounded-md px-8 text-sm font-semibold focus:outline-none focus:border-brand-pink focus:bg-white transition-all " placeholder="furkan@example.com" />
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-nano font-semibold text-gray-400   ml-4 ">TELEFON <span className="text-brand-pink">*</span></label>
-                                        <input type="text" value={checkout.shippingAddress.phone} onChange={(e) => checkout.updateShippingAddress({ phone: e.target.value })} className="w-full h-16 bg-gray-50 border border-gray-100 rounded-md px-8 text-sm font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all " placeholder="+90 5XX XXX XX XX" />
+                                        <input type="text" value={checkout.shippingAddress.phone} onChange={(e) => checkout.updateShippingAddress({ phone: e.target.value })} className="w-full h-16 bg-gray-50 border border-gray-100 rounded-md px-8 text-sm font-semibold focus:outline-none focus:border-brand-pink focus:bg-white transition-all " placeholder="+90 5XX XXX XX XX" />
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-nano font-semibold text-gray-400   ml-4 ">ŞEHİR (İL) <span className="text-brand-pink">*</span></label>
-                                        <input type="text" value={checkout.shippingAddress.city} onChange={(e) => checkout.updateShippingAddress({ city: e.target.value.toUpperCase() })} className="w-full h-16 bg-gray-50 border border-gray-100 rounded-md px-8 text-sm font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all " placeholder="İSTANBUL" />
+                                        <input type="text" value={checkout.shippingAddress.city} onChange={(e) => checkout.updateShippingAddress({ city: e.target.value.toUpperCase() })} className="w-full h-16 bg-gray-50 border border-gray-100 rounded-md px-8 text-sm font-semibold focus:outline-none focus:border-brand-pink focus:bg-white transition-all " placeholder="İSTANBUL" />
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-nano font-semibold text-gray-400   ml-4 ">İLÇE <span className="text-brand-pink">*</span></label>
-                                        <input type="text" value={checkout.shippingAddress.district} onChange={(e) => checkout.updateShippingAddress({ district: e.target.value })} className="w-full h-16 bg-gray-50 border border-gray-100 rounded-md px-8 text-sm font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all " placeholder="Beşiktaş" />
+                                        <input type="text" value={checkout.shippingAddress.district} onChange={(e) => checkout.updateShippingAddress({ district: e.target.value })} className="w-full h-16 bg-gray-50 border border-gray-100 rounded-md px-8 text-sm font-semibold focus:outline-none focus:border-brand-pink focus:bg-white transition-all " placeholder="Beşiktaş" />
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-nano font-semibold text-gray-400   ml-4 ">MAHALLE <span className="text-brand-pink">*</span></label>
-                                        <input type="text" value={checkout.shippingAddress.neighborhood} onChange={(e) => checkout.updateShippingAddress({ neighborhood: e.target.value })} className="w-full h-16 bg-gray-50 border border-gray-100 rounded-md px-8 text-sm font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all " placeholder="Sinanpaşa Mh." />
+                                        <input type="text" value={checkout.shippingAddress.neighborhood} onChange={(e) => checkout.updateShippingAddress({ neighborhood: e.target.value })} className="w-full h-16 bg-gray-50 border border-gray-100 rounded-md px-8 text-sm font-semibold focus:outline-none focus:border-brand-pink focus:bg-white transition-all " placeholder="Sinanpaşa Mh." />
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-nano font-semibold text-gray-400   ml-4 ">POSTA KODU <span className="text-brand-pink">*</span></label>
-                                        <input type="text" value={checkout.shippingAddress.zipCode} onChange={(e) => checkout.updateShippingAddress({ zipCode: e.target.value })} className="w-full h-16 bg-gray-50 border border-gray-100 rounded-md px-8 text-sm font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all " placeholder="34XXX" />
+                                        <input type="text" value={checkout.shippingAddress.zipCode} onChange={(e) => checkout.updateShippingAddress({ zipCode: e.target.value })} className="w-full h-16 bg-gray-50 border border-gray-100 rounded-md px-8 text-sm font-semibold focus:outline-none focus:border-brand-pink focus:bg-white transition-all " placeholder="34XXX" />
                                     </div>
                                     <div className="col-span-1 sm:col-span-2 space-y-2">
                                         <label className="text-nano font-semibold text-gray-400   ml-4 ">AÇIK ADRES (Sokak, Bina No, Daire No) <span className="text-brand-pink">*</span></label>
-                                        <textarea value={checkout.shippingAddress.address} onChange={(e) => checkout.updateShippingAddress({ address: e.target.value })} className="w-full h-24 bg-gray-50 border border-gray-100 rounded-md p-8 text-sm font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  resize-none" placeholder="Şehit Asım Cad. No: 12 D: 4" />
+                                        <textarea value={checkout.shippingAddress.address} onChange={(e) => checkout.updateShippingAddress({ address: e.target.value })} className="w-full h-24 bg-gray-50 border border-gray-100 rounded-md p-8 text-sm font-semibold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  resize-none" placeholder="Şehit Asım Cad. No: 12 D: 4" />
                                     </div>
                                     <div className="col-span-1 sm:col-span-2 flex items-center gap-3 mt-4 ml-2">
                                         <input
@@ -455,7 +455,7 @@ const CheckoutPage: React.FC = () => {
                             <h3 className="text-2xl font-[1000] text-gray-900    mb-4 leading-none">KARGO <span className="text-brand-pink">SEÇENEĞİ</span></h3>
                             <div className="space-y-6">
                                 {shippingCompanies.length === 0 ? (
-                                    <div className="p-8 text-center text-slate-400 font-bold   bg-gray-50 rounded-md border border-gray-100">
+                                    <div className="p-8 text-center text-slate-400 font-semibold   bg-gray-50 rounded-md border border-gray-100">
                                         Aktif kargo firması bulunamadı.
                                     </div>
                                 ) : (
@@ -584,7 +584,7 @@ const CheckoutPage: React.FC = () => {
                                     onChange={(e) => setSaveCardOnSubmit(e.target.checked)}
                                     className="w-4 h-4 accent-indigo-600 cursor-pointer"
                                 />
-                                <label htmlFor="saveCardCheckbox" className="text-10px font-bold text-slate-400 cursor-pointer select-none  r">
+                                <label htmlFor="saveCardCheckbox" className="text-10px font-semibold text-slate-400 cursor-pointer select-none  r">
                                     Bu kartı sonraki alışverişlerim için güvenle kaydet.
                                 </label>
                             </div>
@@ -605,7 +605,7 @@ const CheckoutPage: React.FC = () => {
                                 <div className="p-10 rounded-md bg-gray-50 border border-gray-100">
                                     <span className="text-nano font-semibold text-gray-300   mb-4 block ">TESLİMAT ADRESİ</span>
                                     <h4 className="text-sm font-semibold text-gray-900 mb-2  ">{checkout.shippingAddress.fullName}</h4>
-                                    <p className="text-xs font-bold text-gray-400 leading-relaxed  ">
+                                    <p className="text-xs font-semibold text-gray-400 leading-relaxed  ">
                                         {checkout.shippingAddress.neighborhood} {checkout.shippingAddress.district ? `${checkout.shippingAddress.district}` : ''}<br />
                                         {checkout.shippingAddress.address}<br />
                                         {checkout.shippingAddress.city}, {checkout.shippingAddress.zipCode}
@@ -614,7 +614,7 @@ const CheckoutPage: React.FC = () => {
                                 <div className="p-10 rounded-md bg-gray-50 border border-gray-100">
                                     <span className="text-nano font-semibold text-gray-300   mb-4 block ">ÖDEME YÖNTEMİ</span>
                                     <h4 className="text-sm font-semibold text-gray-900 mb-2  ">{checkout.cardDetails.holder || 'Kredi Kartı'}</h4>
-                                    <p className="text-xs font-bold text-gray-400 leading-relaxed  ">
+                                    <p className="text-xs font-semibold text-gray-400 leading-relaxed  ">
                                         {checkout.cardDetails.number ? `**** **** **** ${checkout.cardDetails.number.slice(-4)}` : '**** **** **** 4242'}
                                     </p>
                                 </div>
@@ -683,7 +683,7 @@ const CheckoutPage: React.FC = () => {
                                 {(total + shippingCost + (total * 0.2)).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₺
                             </span>
                         </div>
-                        <p className="text-nano font-bold text-gray-300   leading-relaxed ">Siparişi tamamlayarak Kullanım Koşulları ve İptal/İade Politikalarını kabul etmiş sayılırsınız.</p>
+                        <p className="text-nano font-semibold text-gray-300   leading-relaxed ">Siparişi tamamlayarak Kullanım Koşulları ve İptal/İade Politikalarını kabul etmiş sayılırsınız.</p>
                     </div>
                 </div>
             </div>

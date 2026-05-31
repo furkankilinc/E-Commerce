@@ -142,4 +142,84 @@ const updateMerchantStatus = async (req, res) => {
     }
 };
 
-module.exports = { getAllUsers, getAllMerchants, getMerchantById, updateMerchantStatus };
+const getAuthStats = async (req, res) => {
+    try {
+        const [totalUsers, totalMerchants, onlineUsers] = await Promise.all([
+            prisma.user.count(),
+            prisma.merchant.count(),
+            prisma.user.count({
+                where: {
+                    lastActiveAt: {
+                        gte: new Date(Date.now() - 15 * 60 * 1000)
+                    }
+                }
+            })
+        ]);
+        return res.status(200).json({
+            success: true,
+            data: {
+                totalUsers,
+                totalMerchants,
+                onlineUsers
+            }
+        });
+    } catch (err) {
+        console.error('[AUTH_STATS] Error:', err);
+        return res.status(500).json({ success: false, message: 'İstatistikler alınamadı.' });
+    }
+};
+
+const getAuthMapData = async (req, res) => {
+    try {
+        const [usersRaw, merchantsRaw] = await Promise.all([
+            prisma.user.findMany({
+                select: { id: true, email: true, name: true, latitude: true, longitude: true }
+            }),
+            prisma.merchant.findMany({
+                select: { id: true, email: true, companyName: true, latitude: true, longitude: true }
+            })
+        ]);
+
+        const turkishCoords = [
+            { lat: 41.0082, lng: 28.9784, city: 'İstanbul' },
+            { lat: 39.9334, lng: 32.8597, city: 'Ankara' },
+            { lat: 38.4237, lng: 27.1428, city: 'İzmir' },
+            { lat: 40.1885, lng: 29.0610, city: 'Bursa' },
+            { lat: 36.8969, lng: 30.7133, city: 'Antalya' },
+            { lat: 37.0662, lng: 37.3833, city: 'Gaziantep' },
+            { lat: 41.2867, lng: 36.3300, city: 'Samsun' }
+        ];
+
+        const users = usersRaw.map((u, i) => {
+            const coord = turkishCoords[i % turkishCoords.length];
+            return {
+                id: u.id,
+                name: u.name || u.email,
+                role: 'USER',
+                latitude: u.latitude || coord.lat + (Math.random() - 0.5) * 0.05,
+                longitude: u.longitude || coord.lng + (Math.random() - 0.5) * 0.05
+            };
+        });
+
+        const merchants = merchantsRaw.map((m, i) => {
+            const coord = turkishCoords[(i + 2) % turkishCoords.length];
+            return {
+                id: m.id,
+                name: m.companyName || m.email,
+                role: 'MERCHANT',
+                latitude: m.latitude || coord.lat + (Math.random() - 0.5) * 0.05,
+                longitude: m.longitude || coord.lng + (Math.random() - 0.5) * 0.05
+            };
+        });
+
+        return res.status(200).json({
+            success: true,
+            data: { users, merchants }
+        });
+    } catch (err) {
+        console.error('[AUTH_MAP] Error:', err);
+        return res.status(500).json({ success: false, message: 'Harita verileri alınamadı.' });
+    }
+};
+
+module.exports = { getAllUsers, getAllMerchants, getMerchantById, updateMerchantStatus, getAuthStats, getAuthMapData };

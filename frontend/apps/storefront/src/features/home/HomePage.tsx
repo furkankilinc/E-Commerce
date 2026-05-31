@@ -116,7 +116,7 @@ const HomePage: React.FC = () => {
                     <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-900 leading-[0.95]  mb-4  ">
                         {isNewPage ? t('home.titleNew') : isSalePage ? t('home.titleSale') : <>FUI & <span className="text-brand-pink">RA</span></>}
                     </h1>
-                    <p className="text-sm font-bold text-gray-500">
+                    <p className="text-sm font-semibold text-gray-500">
                         {isNewPage ? t('home.descNew') : isSalePage ? t('home.descSale') : t('home.descDefault')}
                     </p>
                 </div>
@@ -151,7 +151,7 @@ const HomePage: React.FC = () => {
                                                 setIsSortOpen(false);
                                             }}
                                             className={`w-full flex items-center pl-10 pr-4 py-3 text-caption font-semibold  transition-all text-left relative ${isSelected
-                                                ? 'bg-brand-pink/5 text-brand-pink font-bold'
+                                                ? 'bg-brand-pink/5 text-brand-pink font-semibold'
                                                 : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
                                                 }`}
                                         >

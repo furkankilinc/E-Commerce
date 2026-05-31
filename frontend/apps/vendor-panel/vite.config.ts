@@ -17,9 +17,13 @@ export default defineConfig({
         watch: {
             usePolling: true
         },
-        allowedHosts: ['merchant.fuira.com', 'localhost'],
+        allowedHosts: ['fuira.shop', '.fuira.shop', 'fuira.com', '.fuira.com', 'localhost'],
         proxy: {
             '/api': {
+                target: 'http://api-gateway:80',
+                changeOrigin: true,
+            },
+            '/products-images': {
                 target: 'http://api-gateway:80',
                 changeOrigin: true,
             },

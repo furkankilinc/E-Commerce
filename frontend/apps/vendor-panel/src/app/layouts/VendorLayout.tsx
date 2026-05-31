@@ -74,7 +74,7 @@ const VendorLayout: React.FC = () => {
                         </div>
                         <div>
                             <span className="text-lg font-semibold text-slate-900 leading-none block ">Satıcı Paneli</span>
-                            <span className="text-10px font-bold text-brand-pink r  ">FUIRA Enterprise</span>
+                            <span className="text-10px font-semibold text-brand-pink r  ">FUIRA Enterprise</span>
                         </div>
                     </div>
                 </div>
@@ -89,7 +89,7 @@ const VendorLayout: React.FC = () => {
                                 key={item.path}
                                 to={item.path}
                                 onClick={() => setMobileOpen(false)}
-                                className={`flex items-center gap-4 px-6 py-4 rounded-2xl text-sm font-bold transition-all cursor-pointer ${isActive ? 'bg-rose-50 text-brand-pink shadow-sm shadow-rose-100/50' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}`}
+                                className={`flex items-center gap-4 px-6 py-4 rounded-2xl text-sm font-semibold transition-all cursor-pointer ${isActive ? 'bg-rose-50 text-brand-pink shadow-sm shadow-rose-100/50' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}`}
                             >
                                 <span className={isActive ? 'text-brand-pink' : 'text-slate-400'}>{item.icon}</span>
                                 {item.label}

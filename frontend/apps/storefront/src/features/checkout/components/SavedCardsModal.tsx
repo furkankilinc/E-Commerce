@@ -200,7 +200,7 @@ export const SavedCardsModal: React.FC<SavedCardsModalProps> = ({
                             <span className="text-nano font-semibold text-gray-400  block mb-4 ">KAYITLI KARTLARINIZ</span>
 
                             {savedCards.length === 0 ? (
-                                <div className="text-center py-12 text-gray-400 text-xs font-bold ">
+                                <div className="text-center py-12 text-gray-400 text-xs font-semibold ">
                                     Kayıtlı kart bulunamadı.
                                 </div>
                             ) : (
@@ -226,8 +226,8 @@ export const SavedCardsModal: React.FC<SavedCardsModalProps> = ({
                                                     •••• •••• •••• {card.number.replace(/\D/g, '').slice(-4)}
                                                 </h4>
                                                 <div className="flex justify-between items-center pr-2 mt-1">
-                                                    <p className="text-nano font-bold text-gray-400  truncate max-w-[120px]">{card.holder}</p>
-                                                    <p className="text-nano font-bold text-slate-500 font-mono shrink-0">{card.expiry}</p>
+                                                    <p className="text-nano font-semibold text-gray-400  truncate max-w-[120px]">{card.holder}</p>
+                                                    <p className="text-nano font-semibold text-slate-500 font-mono shrink-0">{card.expiry}</p>
                                                 </div>
                                             </div>
 
@@ -288,7 +288,7 @@ export const SavedCardsModal: React.FC<SavedCardsModalProps> = ({
                                         type="text"
                                         value={newCardForm.title}
                                         onChange={(e) => setNewCardForm({ ...newCardForm, title: e.target.value })}
-                                        className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800"
+                                        className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-semibold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800"
                                         placeholder="Örn: Benim Kartım"
                                     />
                                 </div>
@@ -300,7 +300,7 @@ export const SavedCardsModal: React.FC<SavedCardsModalProps> = ({
                                         maxLength={19}
                                         value={newCardForm.number}
                                         onChange={(e) => setNewCardForm({ ...newCardForm, number: e.target.value.replace(/\D/g, '').replace(/(.{4})/g, '$1 ').trim() })}
-                                        className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800 font-mono r"
+                                        className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-semibold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800 font-mono r"
                                         placeholder="4242 4242 4242 4242"
                                     />
                                 </div>
@@ -311,7 +311,7 @@ export const SavedCardsModal: React.FC<SavedCardsModalProps> = ({
                                         type="text"
                                         value={newCardForm.holder}
                                         onChange={(e) => setNewCardForm({ ...newCardForm, holder: e.target.value.toUpperCase() })}
-                                        className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800"
+                                        className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-semibold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800"
                                         placeholder="FURKAN KILINÇ"
                                     />
                                 </div>
@@ -324,7 +324,7 @@ export const SavedCardsModal: React.FC<SavedCardsModalProps> = ({
                                             maxLength={5}
                                             value={newCardForm.expiry}
                                             onChange={(e) => setNewCardForm({ ...newCardForm, expiry: e.target.value })}
-                                            className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800 text-center"
+                                            className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-semibold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800 text-center"
                                             placeholder="MM/YY"
                                         />
                                     </div>
@@ -335,7 +335,7 @@ export const SavedCardsModal: React.FC<SavedCardsModalProps> = ({
                                             maxLength={3}
                                             value={newCardForm.cvv}
                                             onChange={(e) => setNewCardForm({ ...newCardForm, cvv: e.target.value.replace(/\D/g, '') })}
-                                            className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800 text-center"
+                                            className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-semibold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800 text-center"
                                             placeholder="***"
                                         />
                                     </div>

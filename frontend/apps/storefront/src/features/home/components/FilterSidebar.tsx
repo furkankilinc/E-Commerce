@@ -112,7 +112,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
         `}>
             <div className="flex flex-col gap-6">
                 <div className="lg:hidden flex items-center justify-between pb-6 border-b-2 border-gray-50">
-                    <h2 className="text-xl font-bold text-gray-900  ">{t('sidebar.filters')}</h2>
+                    <h2 className="text-xl font-semibold text-gray-900  ">{t('sidebar.filters')}</h2>
                     <button aria-label={t('sidebar.filters')} onClick={() => setIsMobileFiltersOpen(false)} className="w-12 h-12 bg-gray-50 rounded-md flex items-center justify-center text-gray-400">
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" strokeWidth="3" /></svg>
                     </button>
@@ -125,7 +125,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
                         placeholder={t('sidebar.searchPlaceholder')}
                         value={localSearch}
                         onChange={(e) => setLocalSearch(e.target.value)}
-                        className="w-full py-2 pl-12 pr-6 bg-gray-50 rounded-md text-caption font-bold  focus:bg-white border-2 border-transparent focus:border-brand-pink outline-none transition-all placeholder:text-gray-300"
+                        className="w-full py-2 pl-12 pr-6 bg-gray-50 rounded-md text-caption font-semibold  focus:bg-white border-2 border-transparent focus:border-brand-pink outline-none transition-all placeholder:text-gray-300"
                     />
                     <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" strokeWidth="3" /></svg>
                 </div>

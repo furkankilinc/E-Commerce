@@ -90,8 +90,8 @@ const SellerDetailPage: React.FC = () => {
     if (!merchant) return (
         <div className="p-10 text-center">
             <div className="text-5xl mb-4">🔍</div>
-            <h1 className="text-2xl font-bold text-slate-700">Merchant bulunamadı.</h1>
-            <button onClick={() => navigate('/sellers')} className="mt-4 text-indigo-500 font-bold hover:underline">Geri Dön</button>
+            <h1 className="text-2xl font-semibold text-slate-700">Merchant bulunamadı.</h1>
+            <button onClick={() => navigate('/sellers')} className="mt-4 text-indigo-500 font-semibold hover:underline">Geri Dön</button>
         </div>
     );
 
@@ -115,7 +115,7 @@ const SellerDetailPage: React.FC = () => {
     return (
         <div className="p-10 font-['Inter'] bg-slate-50/20 min-h-screen">
             {/* Nav Back */}
-            <Link to="/sellers" className="inline-flex items-center gap-2 mb-4 text-slate-400 hover:text-indigo-600 font-bold transition-all group">
+            <Link to="/sellers" className="inline-flex items-center gap-2 mb-4 text-slate-400 hover:text-indigo-600 font-semibold transition-all group">
                 <svg className="w-5 h-5 transition-transform group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
@@ -135,7 +135,7 @@ const SellerDetailPage: React.FC = () => {
                                 {merchant.isVerified ? '✓ DOGRULANMIS' : '⚠ DOGRULAMA BEKLIYOR'}
                             </span>
                         </div>
-                        <div className="flex items-center gap-6 text-slate-400 font-bold text-sm ">
+                        <div className="flex items-center gap-6 text-slate-400 font-semibold text-sm ">
                             <div className="flex items-center gap-2">
                                 <svg className="w-4 h-4 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" strokeWidth={2} /></svg>
                                 {merchant.email}
@@ -205,12 +205,12 @@ const SellerDetailPage: React.FC = () => {
                             <tbody className="divide-y divide-slate-50">
                                 {sessions.length === 0 ? (
                                     <tr>
-                                        <td colSpan={5} className="py-12 text-center text-slate-300 font-bold    text-xs">Oturum verisi bulunamadı</td>
+                                        <td colSpan={5} className="py-12 text-center text-slate-300 font-semibold    text-xs">Oturum verisi bulunamadı</td>
                                     </tr>
                                 ) : (
                                     sessions.map(session => (
                                         <tr key={session.id} className="hover:bg-slate-50/50 transition-colors">
-                                            <td className="py-5 px-6 font-bold text-slate-700 text-sm">
+                                            <td className="py-5 px-6 font-semibold text-slate-700 text-sm">
                                                 {new Date(session.createdAt).toLocaleString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                                             </td>
                                             <td className="py-5 px-6 font-semibold text-slate-500 text-sm">
@@ -253,7 +253,7 @@ const SellerDetailPage: React.FC = () => {
                         {logs.length === 0 ? (
                             <div className="h-full flex flex-col items-center justify-center text-center opacity-40 py-20">
                                 <div className="text-6xl mb-6">📜</div>
-                                <div className="text-slate-500 font-bold   text-sm">Henüz aktivite kaydı bulunmuyor.</div>
+                                <div className="text-slate-500 font-semibold   text-sm">Henüz aktivite kaydı bulunmuyor.</div>
                             </div>
                         ) : (
                             logs.map(log => (
@@ -268,7 +268,7 @@ const SellerDetailPage: React.FC = () => {
                                             </span>
                                             <span className="font-semibold text-slate-800 ">{log.action}</span>
                                         </div>
-                                        <span className="text-10px font-bold text-slate-400  ">
+                                        <span className="text-10px font-semibold text-slate-400  ">
                                             {new Date(log.createdAt).toLocaleString('tr-TR')}
                                         </span>
                                     </div>
@@ -284,7 +284,7 @@ const SellerDetailPage: React.FC = () => {
                     </div>
 
                     <div className="mt-8 p-6 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-100 text-center">
-                        <p className="text-xs text-slate-400 font-bold   leading-loose">
+                        <p className="text-xs text-slate-400 font-semibold   leading-loose">
                             Log kayıtları sistem güvenliği için 2 yıl boyunca saklanır. <br />
                             Şüpheli bir işlem olması durumunda "Audit Team" ile iletişime geçin.
                         </p>
@@ -298,7 +298,7 @@ const SellerDetailPage: React.FC = () => {
 const DetailRow: React.FC<{ label: string; value: string; isBold?: boolean }> = ({ label, value, isBold }) => (
     <div className="space-y-1">
         <div className="text-10px  font-semibold text-slate-400 ">{label}</div>
-        <div className={`${isBold ? 'text-indigo-600 font-semibold' : 'text-slate-700 font-bold'} text-lg `}>{value}</div>
+        <div className={`${isBold ? 'text-indigo-600 font-semibold' : 'text-slate-700 font-semibold'} text-lg `}>{value}</div>
     </div>
 );
 

@@ -46,14 +46,28 @@ const DashboardMap: React.FC<DashboardMapProps> = ({ points }) => {
         });
 
         points.forEach(point => {
-            const color = point.type === 'merchant' ? '#6366f1' : '#ec4899';
+            // Support both raw microservice response properties and custom points schema
+            const rawLat = typeof point.lat === 'number' ? point.lat : (point as any).latitude;
+            const rawLng = typeof point.lng === 'number' ? point.lng : (point as any).longitude;
+            const type = point.type || ((point as any).role === 'MERCHANT' ? 'merchant' : 'user');
+
+            // Skip points with invalid coordinates to prevent markers from crashing
+            if (rawLat === undefined || rawLat === null || isNaN(Number(rawLat)) ||
+                rawLng === undefined || rawLng === null || isNaN(Number(rawLng))) {
+                console.warn(`[MAP] Skipping point due to invalid coordinates:`, point);
+                return;
+            }
+
+            const lat = Number(rawLat);
+            const lng = Number(rawLng);
+            const color = type === 'merchant' ? '#6366f1' : '#ec4899';
             let marker = markers.current.get(point.id);
 
             if (marker) {
-                marker.setPosition({ lat: point.lat, lng: point.lng });
+                marker.setPosition({ lat, lng });
             } else {
                 marker = new window.google.maps.Marker({
-                    position: { lat: point.lat, lng: point.lng },
+                    position: { lat, lng },
                     map: googleMap.current,
                     title: point.name,
                     icon: {
@@ -69,10 +83,10 @@ const DashboardMap: React.FC<DashboardMapProps> = ({ points }) => {
                 const infoWindow = new window.google.maps.InfoWindow({
                     content: `<div style="padding: 10px; font-family: Inter, sans-serif;">
                         <b style="color: #1e293b; display: block; margin-bottom: 2px;">${point.name}</b>
-                        <div style="color: ${color}; font-size: 10px; font-weight: 800; text-transform: ; margin-bottom: 4px;">
-                            ${point.type === 'merchant' ? 'Satıcı' : 'Aktif Kullanıcı'}
+                        <div style="color: ${color}; font-size: 10px; font-weight: 800; text-transform: uppercase; margin-bottom: 4px;">
+                            ${type === 'merchant' ? 'Satıcı' : 'Aktif Kullanıcı'}
                         </div>
-                        <div style="font-size: 9px; color: #94a3b8;">${point.lat.toFixed(6)}, ${point.lng.toFixed(6)}</div>
+                        <div style="font-size: 9px; color: #94a3b8;">${lat.toFixed(6)}, ${lng.toFixed(6)}</div>
                     </div>`
                 });
 

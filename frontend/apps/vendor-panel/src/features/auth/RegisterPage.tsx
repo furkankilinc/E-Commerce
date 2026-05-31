@@ -73,7 +73,7 @@ const VendorRegisterPage: React.FC = () => {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                         </svg>
                     </div>
-                    <span className="text-xl font-bold  text-slate-900 ">
+                    <span className="text-xl font-semibold  text-slate-900 ">
                         Merchant.<span className="text-brand-pink">Fuira</span>
                     </span>
                 </div>
@@ -103,8 +103,8 @@ const VendorRegisterPage: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-4">
-                    <Link to="/login" className="text-sm font-bold text-brand-pink hover:text-brand-pink-hover transition-colors">Giriş Yap</Link>
-                    <Link to="/register" className="bg-brand-pink text-white px-5 py-2.5 rounded-full text-sm font-bold hover:bg-brand-pink-hover shadow-lg shadow-brand-pink/20 transition-all active:scale-95">
+                    <Link to="/login" className="text-sm font-semibold text-brand-pink hover:text-brand-pink-hover transition-colors">Giriş Yap</Link>
+                    <Link to="/register" className="bg-brand-pink text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-brand-pink-hover shadow-lg shadow-brand-pink/20 transition-all active:scale-95">
                         Hemen Kayıt Ol
                     </Link>
                 </div>
@@ -122,12 +122,12 @@ const VendorRegisterPage: React.FC = () => {
                 <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.05)] overflow-hidden border border-white">
                     <div className="p-10 lg:p-16 space-y-12">
                         {apiError && (
-                            <div className="p-4 bg-red-50/50 border border-brand-pink/20 rounded-xl text-brand-pink text-sm font-bold text-center">
+                            <div className="p-4 bg-red-50/50 border border-brand-pink/20 rounded-xl text-brand-pink text-sm font-semibold text-center">
                                 {apiError}
                             </div>
                         )}
                         {apiSuccess && (
-                            <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-600 text-sm font-bold text-center">
+                            <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-600 text-sm font-semibold text-center">
                                 {apiSuccess}
                             </div>
                         )}
@@ -139,7 +139,7 @@ const VendorRegisterPage: React.FC = () => {
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                     </svg>
                                 </div>
-                                <h3 className="text-xl font-bold text-slate-900  ">İşletme Detayları</h3>
+                                <h3 className="text-xl font-semibold text-slate-900  ">İşletme Detayları</h3>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -190,7 +190,7 @@ const VendorRegisterPage: React.FC = () => {
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                                     </svg>
                                 </div>
-                                <h3 className="text-xl font-bold text-slate-900  ">Güvenlik ve Kimlik Bilgileri</h3>
+                                <h3 className="text-xl font-semibold text-slate-900  ">Güvenlik ve Kimlik Bilgileri</h3>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -234,7 +234,7 @@ const VendorRegisterPage: React.FC = () => {
                                             </svg>
                                         </button>
                                     </div>
-                                    <p className="text-10px font-bold text-slate-400 px-1  r">En az 8 karakter ve bir sembol içermelidir.</p>
+                                    <p className="text-10px font-semibold text-slate-400 px-1  r">En az 8 karakter ve bir sembol içermelidir.</p>
                                 </div>
                                 <div className="space-y-2">
                                     <label className="text-xs font-semibold text-slate-700   px-1">Şifre Tekrar</label>
@@ -253,12 +253,12 @@ const VendorRegisterPage: React.FC = () => {
                         <div className="flex items-start gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100">
                             <input type="checkbox" id="terms" className="mt-1.5 w-4 h-4 text-brand-pink border-slate-300 rounded focus:ring-brand-pink cursor-pointer" />
                             <label htmlFor="terms" className="text-sm text-slate-500 leading-relaxed cursor-pointer select-none">
-                                <a href="#" className="font-bold text-brand-pink hover:underline  text-xs r">Hizmet Şartları</a> ve <a href="#" className="font-bold text-brand-pink hover:underline  text-xs r">Gizlilik Politikası</a>'nı kabul ediyorum. İşletme bilgilerimin aktivasyondan önce doğrulanacağını anlıyorum.
+                                <a href="#" className="font-semibold text-brand-pink hover:underline  text-xs r">Hizmet Şartları</a> ve <a href="#" className="font-semibold text-brand-pink hover:underline  text-xs r">Gizlilik Politikası</a>'nı kabul ediyorum. İşletme bilgilerimin aktivasyondan önce doğrulanacağını anlıyorum.
                             </label>
                         </div>
 
                         <div className="flex flex-col md:flex-row items-center justify-between pt-6 gap-6">
-                            <p className="text-sm font-bold text-slate-500">
+                            <p className="text-sm font-semibold text-slate-500">
                                 Zaten bir hesabınız var mı? <Link to="/login" className="text-brand-pink hover:underline ">Buradan giriş yapın</Link>
                             </p>
                             <button
@@ -303,8 +303,8 @@ const VendorRegisterPage: React.FC = () => {
             {/* Footer Bottom */}
             <footer className="mt-20 border-t border-slate-100 bg-white py-10 px-6">
                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-                    <p className="text-xs font-bold text-slate-400">© 2026 Fuira Merchant Network. Tüm hakları saklıdır.</p>
-                    <div className="flex gap-8 text-xs font-bold text-slate-500  ">
+                    <p className="text-xs font-semibold text-slate-400">© 2026 Fuira Merchant Network. Tüm hakları saklıdır.</p>
+                    <div className="flex gap-8 text-xs font-semibold text-slate-500  ">
                         <a href="#" className="hover:text-brand-pink transition-colors">Gizlilik</a>
                         <a href="#" className="hover:text-brand-pink transition-colors">Şartlar</a>
                         <a href="#" className="hover:text-brand-pink transition-colors">Çerezler</a>

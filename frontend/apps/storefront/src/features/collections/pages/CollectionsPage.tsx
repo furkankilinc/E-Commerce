@@ -70,7 +70,7 @@ const CollectionDetailView: React.FC<{ collectionId: string }> = ({ collectionId
                             <span>{col.emoji}</span>
                             <span>{col.name}</span>
                         </h1>
-                        <p className="text-gray-500 text-sm font-bold mt-4 ">{(col.items || []).length} ürün</p>
+                        <p className="text-gray-500 text-sm font-semibold mt-4 ">{(col.items || []).length} ürün</p>
                     </div>
                 )}
 
@@ -93,7 +93,7 @@ const CollectionDetailView: React.FC<{ collectionId: string }> = ({ collectionId
                 <div className="flex flex-col items-center justify-center py-32 border-2 border-dashed border-gray-100 rounded-md bg-gray-50/30">
                     <span className="text-4xl mb-4">{col.emoji}</span>
                     <h2 className="text-2xl font-semibold text-gray-900   mb-4">Bu koleksiyon boş</h2>
-                    <p className="text-gray-500 text-sm font-bold mb-6 ">Ürünleri ürün sayfasından koleksiyona ekleyebilirsiniz.</p>
+                    <p className="text-gray-500 text-sm font-semibold mb-6 ">Ürünleri ürün sayfasından koleksiyona ekleyebilirsiniz.</p>
                     <Link to="/shop" className="px-12 py-5 bg-brand-pink text-white rounded-md text-caption font-semibold   shadow-xl shadow-brand-pink/20  transition-all ">
                         Ürünleri Keşfet
                     </Link>
@@ -128,7 +128,7 @@ const CollectionDetailView: React.FC<{ collectionId: string }> = ({ collectionId
                                         </span>
                                         <div className="flex items-baseline gap-2">
                                             {item.originalPrice && (
-                                                <span className="text-xs font-bold text-gray-400 line-through opacity-60 ">
+                                                <span className="text-xs font-semibold text-gray-400 line-through opacity-60 ">
                                                     {item.originalPrice.toLocaleString('tr-TR')} ₺
                                                 </span>
                                             )}
@@ -189,7 +189,7 @@ const CollectionsPage: React.FC = () => {
                             </svg>
                         </div>
                         <h2 className="text-3xl font-semibold text-gray-900 mb-4   ">Giriş Yapmalısınız</h2>
-                        <p className="text-gray-500 text-sm font-bold mb-6  ">Koleksiyonlarınızı görmek ve yönetmek için lütfen oturum açın.</p>
+                        <p className="text-gray-500 text-sm font-semibold mb-6  ">Koleksiyonlarınızı görmek ve yönetmek için lütfen oturum açın.</p>
                         <Link
                             to="/login"
                             className="px-12 py-5 bg-brand-pink text-white rounded-md text-caption font-semibold   shadow-xl shadow-brand-pink/20  transition-all "
@@ -256,7 +256,7 @@ const CollectionsPage: React.FC = () => {
                             <div className="flex flex-col items-center justify-center py-32 border-2 border-dashed border-gray-100 rounded-md bg-gray-50/30">
                                 <span className="text-4xl mb-4">📚</span>
                                 <h2 className="text-3xl font-semibold text-gray-900   mb-4 ">Henüz koleksiyon yok</h2>
-                                <p className="text-gray-500 text-sm font-bold mb-6 ">Ürünleri kategorilere göre organize et.</p>
+                                <p className="text-gray-500 text-sm font-semibold mb-6 ">Ürünleri kategorilere göre organize et.</p>
                                 <button
                                     onClick={() => setIsCreating(true)}
                                     className="px-12 py-5 bg-brand-pink text-white rounded-md text-caption font-semibold   shadow-xl shadow-brand-pink/20  transition-all "

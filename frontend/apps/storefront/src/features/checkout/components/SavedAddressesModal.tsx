@@ -251,7 +251,7 @@ export const SavedAddressesModal: React.FC<SavedAddressesModalProps> = ({
                             <span className="text-nano font-semibold text-gray-400  block mb-4 ">KAYITLI ADRESLERİNİZ</span>
 
                             {savedAddresses.length === 0 ? (
-                                <div className="text-center py-12 text-gray-400 text-xs font-bold ">
+                                <div className="text-center py-12 text-gray-400 text-xs font-semibold ">
                                     Kayıtlı adres bulunamadı.
                                 </div>
                             ) : (
@@ -269,7 +269,7 @@ export const SavedAddressesModal: React.FC<SavedAddressesModalProps> = ({
                                                         <span className="text-nano font-semibold  text-brand-pink uppercase ">{addr.title}</span>
                                                     </div>
                                                     <h4 className="text-caption font-semibold text-gray-900 mb-0.5 truncate">{addr.fullName}</h4>
-                                                    <p className="text-10px font-bold text-gray-400 leading-relaxed  truncate">{addr.district ? `${addr.district}` : ''} {addr.neighborhood} {addr.address} </p>
+                                                    <p className="text-10px font-semibold text-gray-400 leading-relaxed  truncate">{addr.district ? `${addr.district}` : ''} {addr.neighborhood} {addr.address} </p>
                                                     <p className="text-nano font-extrabold text-slate-500 r mt-1">{addr.city}, {addr.zipCode}</p>
                                                 </div>
 
@@ -324,7 +324,7 @@ export const SavedAddressesModal: React.FC<SavedAddressesModalProps> = ({
                                             type="text"
                                             value={newAddressForm.title}
                                             onChange={(e) => setNewAddressForm({ ...newAddressForm, title: e.target.value })}
-                                            className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800"
+                                            className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-semibold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800"
                                             placeholder="Örn: Evim"
                                         />
                                     </div>
@@ -336,7 +336,7 @@ export const SavedAddressesModal: React.FC<SavedAddressesModalProps> = ({
                                                 type="text"
                                                 value={newAddressForm.fullName}
                                                 onChange={(e) => setNewAddressForm({ ...newAddressForm, fullName: e.target.value })}
-                                                className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800"
+                                                className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-semibold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800"
                                                 placeholder="Örn: Furkan Kılınç"
                                             />
                                         </div>
@@ -346,7 +346,7 @@ export const SavedAddressesModal: React.FC<SavedAddressesModalProps> = ({
                                                 type="text"
                                                 value={newAddressForm.phone}
                                                 onChange={(e) => setNewAddressForm({ ...newAddressForm, phone: e.target.value })}
-                                                className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800"
+                                                className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-semibold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800"
                                                 placeholder="+90 5XX XXX XX XX"
                                             />
                                         </div>
@@ -359,7 +359,7 @@ export const SavedAddressesModal: React.FC<SavedAddressesModalProps> = ({
                                                 type="email"
                                                 value={newAddressForm.email}
                                                 onChange={(e) => setNewAddressForm({ ...newAddressForm, email: e.target.value })}
-                                                className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800"
+                                                className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-semibold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800"
                                                 placeholder="alici@email.com"
                                             />
                                         </div>
@@ -391,7 +391,7 @@ export const SavedAddressesModal: React.FC<SavedAddressesModalProps> = ({
                                                 type="text"
                                                 value={newAddressForm.city}
                                                 onChange={(e) => setNewAddressForm({ ...newAddressForm, city: e.target.value.toUpperCase() })}
-                                                className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800"
+                                                className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-semibold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800"
                                                 placeholder="İSTANBUL"
                                             />
                                         </div>
@@ -401,7 +401,7 @@ export const SavedAddressesModal: React.FC<SavedAddressesModalProps> = ({
                                                 type="text"
                                                 value={newAddressForm.district}
                                                 onChange={(e) => setNewAddressForm({ ...newAddressForm, district: e.target.value })}
-                                                className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800"
+                                                className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-semibold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800"
                                                 placeholder="Beşiktaş"
                                             />
                                         </div>
@@ -414,7 +414,7 @@ export const SavedAddressesModal: React.FC<SavedAddressesModalProps> = ({
                                                 type="text"
                                                 value={newAddressForm.neighborhood}
                                                 onChange={(e) => setNewAddressForm({ ...newAddressForm, neighborhood: e.target.value })}
-                                                className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800"
+                                                className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-semibold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800"
                                                 placeholder="Sinanpaşa Mh."
                                             />
                                         </div>
@@ -424,7 +424,7 @@ export const SavedAddressesModal: React.FC<SavedAddressesModalProps> = ({
                                                 type="text"
                                                 value={newAddressForm.zipCode}
                                                 onChange={(e) => setNewAddressForm({ ...newAddressForm, zipCode: e.target.value })}
-                                                className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800"
+                                                className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-semibold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800"
                                                 placeholder="34XXX"
                                             />
                                         </div>
@@ -435,7 +435,7 @@ export const SavedAddressesModal: React.FC<SavedAddressesModalProps> = ({
                                         <textarea
                                             value={newAddressForm.address}
                                             onChange={(e) => setNewAddressForm({ ...newAddressForm, address: e.target.value })}
-                                            className="w-full bg-gray-50 border border-gray-100 rounded-md p-6 text-xs font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800 resize-none"
+                                            className="w-full bg-gray-50 border border-gray-100 rounded-md p-6 text-xs font-semibold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800 resize-none"
                                             placeholder="Şehit Asım Cad. No: 12 D: 4"
                                         />
                                     </div>

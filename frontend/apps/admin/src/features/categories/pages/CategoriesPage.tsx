@@ -78,7 +78,7 @@ const CategoryRow: React.FC<{
                         : <span className="text-slate-300 ">Yok</span>}
                 </td>
                 <td className="py-3 px-4">
-                    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold ${cat.isActive ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-400'}`}>
+                    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${cat.isActive ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-400'}`}>
                         {cat.isActive ? 'Aktif' : 'Pasif'}
                     </span>
                 </td>
@@ -92,7 +92,7 @@ const CategoryRow: React.FC<{
                                         if (res.ok) window.location.reload();
                                     } catch (err) { }
                                 }}
-                                className="px-3 py-1.5 text-xs font-bold bg-emerald-500 text-white shadow-md shadow-emerald-500/20 rounded-lg hover:bg-emerald-600 transition-all"
+                                className="px-3 py-1.5 text-xs font-semibold bg-emerald-500 text-white shadow-md shadow-emerald-500/20 rounded-lg hover:bg-emerald-600 transition-all"
                             >
                                 Aktifleştir
                             </button>
@@ -100,14 +100,14 @@ const CategoryRow: React.FC<{
                         {cat.isActive && (
                             <button
                                 onClick={() => onEdit(cat)}
-                                className="px-3 py-1.5 text-xs font-bold bg-slate-100 text-slate-600 rounded-lg hover:bg-brand-pink hover:text-white transition-all"
+                                className="px-3 py-1.5 text-xs font-semibold bg-slate-100 text-slate-600 rounded-lg hover:bg-brand-pink hover:text-white transition-all"
                             >
                                 Düzenle
                             </button>
                         )}
                         <button
                             onClick={() => onDelete(cat)}
-                            className="px-3 py-1.5 text-xs font-bold bg-red-50 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-all"
+                            className="px-3 py-1.5 text-xs font-semibold bg-red-50 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-all"
                         >
                             Sil
                         </button>
@@ -175,7 +175,7 @@ const FilterSpecBuilder: React.FC<{
                             onChange={e => { setNewName(e.target.value); setShowSuggestions(true); }}
                             onFocus={() => setShowSuggestions(true)}
                             placeholder="Örn: RAM, CPU, Ekran Kartı"
-                            className="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-brand-pink/5 transition-all"
+                            className="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-brand-pink/5 transition-all"
                         />
                         {showSuggestions && (
                             <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-100 shadow-xl rounded-2xl z-20 max-h-60 overflow-y-auto py-2 animate-in fade-in slide-in-from-top-2">
@@ -186,7 +186,7 @@ const FilterSpecBuilder: React.FC<{
                                             key={attr.name}
                                             type="button"
                                             onClick={() => addSpec(attr.name, attr.values)}
-                                            className="w-full text-left px-4 py-2.5 hover:bg-slate-50 text-xs font-bold text-slate-600 transition-colors flex items-center justify-between"
+                                            className="w-full text-left px-4 py-2.5 hover:bg-slate-50 text-xs font-semibold text-slate-600 transition-colors flex items-center justify-between"
                                         >
                                             <span className="flex items-center gap-2">
                                                 <span className="w-1.5 h-1.5 bg-slate-200 rounded-full"></span>
@@ -197,7 +197,7 @@ const FilterSpecBuilder: React.FC<{
                                             </span>
                                         </button>
                                     ))}
-                                <button onClick={() => setShowSuggestions(false)} className="w-full py-2 text-10px text-slate-300 font-bold hover:text-slate-500   border-t border-slate-50 mt-1">Kapat</button>
+                                <button onClick={() => setShowSuggestions(false)} className="w-full py-2 text-10px text-slate-300 font-semibold hover:text-slate-500   border-t border-slate-50 mt-1">Kapat</button>
                             </div>
                         )}
                     </div>
@@ -239,7 +239,7 @@ const FilterSpecBuilder: React.FC<{
                                 onChange={e => setNewVal(prev => ({ ...prev, [idx]: e.target.value }))}
                                 onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addValue(idx, newVal[idx] || ''))}
                                 placeholder="Yeni değer..."
-                                className="flex-1 px-4 py-2 text-xs border border-slate-100 rounded-xl focus:outline-none focus:border-brand-pink transition-all bg-slate-50/50 font-bold"
+                                className="flex-1 px-4 py-2 text-xs border border-slate-100 rounded-xl focus:outline-none focus:border-brand-pink transition-all bg-slate-50/50 font-semibold"
                             />
                             <button
                                 type="button"
@@ -371,7 +371,7 @@ const CategoryModal: React.FC<{
                         <h2 className="text-xl font-semibold text-admin-dark ">
                             {initial ? 'Kategoriyi Düzenle' : 'Yeni Kategori'}
                         </h2>
-                        <p className="text-10px font-bold text-slate-400   mt-0.5">Kategori Yapılandırması</p>
+                        <p className="text-10px font-semibold text-slate-400   mt-0.5">Kategori Yapılandırması</p>
                     </div>
                     <button onClick={onClose} className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-50 text-slate-400 hover:text-red-500 transition-all">
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" strokeWidth="2.5" /></svg>
@@ -382,7 +382,7 @@ const CategoryModal: React.FC<{
                 <form id="cat-form" onSubmit={handleSubmit} className="flex-1 overflow-y-auto custom-scrollbar">
                     <div className="px-8 py-6 space-y-6">
                         {error && (
-                            <div className="p-4 bg-red-50 border border-red-100 rounded-2xl text-red-600 text-xs font-bold animate-pulse flex items-center gap-3">
+                            <div className="p-4 bg-red-50 border border-red-100 rounded-2xl text-red-600 text-xs font-semibold animate-pulse flex items-center gap-3">
                                 <span className="w-1.5 h-1.5 bg-red-500 rounded-full"></span>
                                 {error}
                             </div>
@@ -398,7 +398,7 @@ const CategoryModal: React.FC<{
                                     required
                                     value={name}
                                     onChange={e => handleNameChange(e.target.value)}
-                                    className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-brand-pink/5 focus:bg-white focus:border-brand-pink/30 transition-all"
+                                    className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-brand-pink/5 focus:bg-white focus:border-brand-pink/30 transition-all"
                                     placeholder="Örn: Akıllı Telefonlar"
                                 />
                             </div>
@@ -419,7 +419,7 @@ const CategoryModal: React.FC<{
                             <select
                                 value={parentId}
                                 onChange={e => setParentId(e.target.value)}
-                                className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-brand-pink/5 transition-all appearance-none cursor-pointer"
+                                className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-brand-pink/5 transition-all appearance-none cursor-pointer"
                             >
                                 <option value="">— Ana Kategori (Üst yok) —</option>
                                 {eligible.map(c => (
@@ -481,13 +481,13 @@ const CategoryModal: React.FC<{
 
                 {/* Footer */}
                 <div className="px-6 py-4 border-t border-slate-100 flex justify-end gap-3">
-                    <button type="button" onClick={onClose} className="px-4 py-2 text-sm font-bold text-slate-600 bg-slate-100 rounded-xl hover:bg-slate-200 transition-colors">İptal</button>
+                    <button type="button" onClick={onClose} className="px-4 py-2 text-sm font-semibold text-slate-600 bg-slate-100 rounded-xl hover:bg-slate-200 transition-colors">İptal</button>
                     <button
                         type="submit"
                         form="cat-form"
                         onClick={handleSubmit as any}
                         disabled={saving}
-                        className="px-6 py-2 text-sm font-bold text-white bg-brand-pink rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-brand-pink/20"
+                        className="px-6 py-2 text-sm font-semibold text-white bg-brand-pink rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-brand-pink/20"
                     >
                         {saving ? 'Kaydediliyor...' : 'Kaydet'}
                     </button>
@@ -581,7 +581,7 @@ const CategoriesPage: React.FC = () => {
         <div className="p-4 md:p-8 space-y-6">
             {/* Toast */}
             {toast && (
-                <div className={`fixed top-6 right-6 z-50 px-5 py-3 rounded-2xl text-sm font-bold shadow-lg ${toast.ok ? 'bg-emerald-500 text-white' : 'bg-red-500 text-white'}`}>
+                <div className={`fixed top-6 right-6 z-50 px-5 py-3 rounded-2xl text-sm font-semibold shadow-lg ${toast.ok ? 'bg-emerald-500 text-white' : 'bg-red-500 text-white'}`}>
                     {toast.msg}
                 </div>
             )}
@@ -594,7 +594,7 @@ const CategoriesPage: React.FC = () => {
                 </div>
                 <button
                     onClick={() => { setEditTarget(null); setModalOpen(true); }}
-                    className="flex items-center gap-2 px-5 py-2.5 bg-brand-pink text-white text-xs sm:text-sm font-bold rounded-xl shadow-lg shadow-brand-pink/20 hover:opacity-90 transition-opacity"
+                    className="flex items-center gap-2 px-5 py-2.5 bg-brand-pink text-white text-xs sm:text-sm font-semibold rounded-xl shadow-lg shadow-brand-pink/20 hover:opacity-90 transition-opacity"
                 >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4" strokeWidth="3" strokeLinecap="round" /></svg>
                     Yeni Kategori
@@ -624,12 +624,12 @@ const CategoriesPage: React.FC = () => {
                         <table className="w-full min-w-[800px]">
                             <thead>
                                 <tr className="border-b border-slate-100 bg-slate-50">
-                                    <th className="text-left py-3 px-4 text-xs font-bold text-slate-400  ">Kategori</th>
-                                    <th className="text-left py-3 px-4 text-xs font-bold text-slate-400  ">Tip</th>
-                                    <th className="text-left py-3 px-4 text-xs font-bold text-slate-400  ">Ürün</th>
-                                    <th className="text-left py-3 px-4 text-xs font-bold text-slate-400  ">Özel Filtreler</th>
-                                    <th className="text-left py-3 px-4 text-xs font-bold text-slate-400  ">Durum</th>
-                                    <th className="text-left py-3 px-4 text-xs font-bold text-slate-400  ">İşlem</th>
+                                    <th className="text-left py-3 px-4 text-xs font-semibold text-slate-400  ">Kategori</th>
+                                    <th className="text-left py-3 px-4 text-xs font-semibold text-slate-400  ">Tip</th>
+                                    <th className="text-left py-3 px-4 text-xs font-semibold text-slate-400  ">Ürün</th>
+                                    <th className="text-left py-3 px-4 text-xs font-semibold text-slate-400  ">Özel Filtreler</th>
+                                    <th className="text-left py-3 px-4 text-xs font-semibold text-slate-400  ">Durum</th>
+                                    <th className="text-left py-3 px-4 text-xs font-semibold text-slate-400  ">İşlem</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -682,7 +682,7 @@ const CategoriesPage: React.FC = () => {
                     <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm">
                         <h3 className="text-lg font-extrabold text-admin-dark mb-2">Kategoriyi Sil</h3>
                         <p className="text-sm text-slate-500 mb-1">
-                            <span className="font-bold text-admin-dark">{deleteTarget.name}</span> kategorisini silmek istediğinizden emin misiniz?
+                            <span className="font-semibold text-admin-dark">{deleteTarget.name}</span> kategorisini silmek istediğinizden emin misiniz?
                         </p>
                         {deleteTarget._count.children > 0 && (
                             <p className="text-xs text-amber-600 bg-amber-50 rounded-lg px-3 py-2 font-semibold mb-3">⚠ {deleteTarget._count.children} alt kategorisi var, önce onları silin.</p>
@@ -691,8 +691,8 @@ const CategoriesPage: React.FC = () => {
                             <p className="text-xs text-amber-600 bg-amber-50 rounded-lg px-3 py-2 font-semibold mb-3">⚠ {deleteTarget._count.products} ürünü var, kategori pasif yapılacak.</p>
                         )}
                         <div className="flex gap-3 mt-4">
-                            <button onClick={() => setDeleteTarget(null)} className="flex-1 py-2 text-sm font-bold text-slate-600 bg-slate-100 rounded-xl hover:bg-slate-200 transition-colors">İptal</button>
-                            <button onClick={handleDelete} disabled={deleting} className="flex-1 py-2 text-sm font-bold text-white bg-red-500 rounded-xl hover:bg-red-600 transition-colors disabled:opacity-50">
+                            <button onClick={() => setDeleteTarget(null)} className="flex-1 py-2 text-sm font-semibold text-slate-600 bg-slate-100 rounded-xl hover:bg-slate-200 transition-colors">İptal</button>
+                            <button onClick={handleDelete} disabled={deleting} className="flex-1 py-2 text-sm font-semibold text-white bg-red-500 rounded-xl hover:bg-red-600 transition-colors disabled:opacity-50">
                                 {deleting ? 'Siliniyor...' : 'Sil'}
                             </button>
                         </div>

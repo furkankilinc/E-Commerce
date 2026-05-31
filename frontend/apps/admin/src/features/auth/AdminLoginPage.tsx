@@ -65,7 +65,7 @@ const AdminLoginPage = () => {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                             </svg>
                         </div>
-                        <span className="text-xl font-bold text-white ">Fuira Yönetim Paneli</span>
+                        <span className="text-xl font-semibold text-white ">Fuira Yönetim Paneli</span>
                     </div>
 
                     {/* Hero Content */}
@@ -108,17 +108,17 @@ const AdminLoginPage = () => {
 
                     <form className="space-y-6" onSubmit={handleSubmit}>
                         {apiError && (
-                            <div className="p-3 bg-red-50/50 border border-brand-pink/20 rounded-xl text-brand-pink text-sm font-bold text-center">
+                            <div className="p-3 bg-red-50/50 border border-brand-pink/20 rounded-xl text-brand-pink text-sm font-semibold text-center">
                                 {apiError}
                             </div>
                         )}
                         {apiSuccess && (
-                            <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-600 text-sm font-bold text-center">
+                            <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-600 text-sm font-semibold text-center">
                                 {apiSuccess}
                             </div>
                         )}
                         <div className="space-y-2">
-                            <label className="text-sm font-bold text-slate-700 ml-1">Yönetici E-Posta</label>
+                            <label className="text-sm font-semibold text-slate-700 ml-1">Yönetici E-Posta</label>
                             <div className="relative group">
                                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-brand-pink transition-colors">
                                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -137,8 +137,8 @@ const AdminLoginPage = () => {
 
                         <div className="space-y-2">
                             <div className="flex justify-between items-center px-1">
-                                <label className="text-sm font-bold text-slate-700">Şifre</label>
-                                <a href="#" className="text-sm font-bold text-brand-pink hover:text-brand-pink-hover transition-colors">Şifremi Unuttum?</a>
+                                <label className="text-sm font-semibold text-slate-700">Şifre</label>
+                                <a href="#" className="text-sm font-semibold text-brand-pink hover:text-brand-pink-hover transition-colors">Şifremi Unuttum?</a>
                             </div>
                             <div className="relative group">
                                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-brand-pink transition-colors">

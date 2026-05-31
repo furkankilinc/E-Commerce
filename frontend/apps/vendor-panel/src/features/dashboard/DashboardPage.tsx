@@ -93,7 +93,7 @@ const DashboardPage: React.FC = () => {
                 <h1 className="text-2xl md:text-3xl lg:text-heading font-semibold text-slate-900 leading-none mb-3 ">
                     PERFORMANS <span className="text-brand-pink">MERKEZİ</span>
                 </h1>
-                <p className="text-slate-400 font-bold text-sm sm:text-lg  opacity-80">Mağazanızın nabzını buradan tutun.</p>
+                <p className="text-slate-400 font-semibold text-sm sm:text-lg  opacity-80">Mağazanızın nabzını buradan tutun.</p>
             </div>
 
             {/* Stats Grid */}

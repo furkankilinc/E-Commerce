@@ -16,27 +16,29 @@ const bucketName = process.env.MINIO_BUCKET || 'products';
         const exists = await minioClient.bucketExists(bucketName);
         if (!exists) {
             await minioClient.makeBucket(bucketName);
-            // Set public read policy for the products bucket
-            const policy = {
-                Version: "2012-10-17",
-                Statement: [
-                    {
-                        Effect: "Allow",
-                        Principal: { AWS: ["*"] },
-                        Action: ["s3:GetBucketLocation", "s3:ListBucket"],
-                        Resource: [`arn:aws:s3:::${bucketName}`]
-                    },
-                    {
-                        Effect: "Allow",
-                        Principal: { AWS: ["*"] },
-                        Action: ["s3:GetObject"],
-                        Resource: [`arn:aws:s3:::${bucketName}/*`]
-                    }
-                ]
-            };
-            await minioClient.setBucketPolicy(bucketName, JSON.stringify(policy));
-            console.log(`✅ MinIO Bucket '${bucketName}' created and policy set.`);
+            console.log(`✅ MinIO Bucket '${bucketName}' created.`);
         }
+
+        // Always verify and set public read policy for the products bucket
+        const policy = {
+            Version: "2012-10-17",
+            Statement: [
+                {
+                    Effect: "Allow",
+                    Principal: { AWS: ["*"] },
+                    Action: ["s3:GetBucketLocation", "s3:ListBucket"],
+                    Resource: [`arn:aws:s3:::${bucketName}`]
+                },
+                {
+                    Effect: "Allow",
+                    Principal: { AWS: ["*"] },
+                    Action: ["s3:GetObject"],
+                    Resource: [`arn:aws:s3:::${bucketName}/*`]
+                }
+            ]
+        };
+        await minioClient.setBucketPolicy(bucketName, JSON.stringify(policy));
+        console.log(`✅ MinIO Bucket '${bucketName}' public policy verified.`);
     } catch (err) {
         console.error('❌ MinIO Init Error:', err.message);
     }

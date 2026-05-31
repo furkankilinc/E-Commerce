@@ -1,1 +1,35 @@
-[]
+[
+  {
+    "id": "q-1780255139087",
+    "productId": "cmpu5td720001yld5yhhp8t8a",
+    "merchantId": "cmpts2cea0000z64i37w9a5xc",
+    "userName": "sa",
+    "productName": "asdgf",
+    "questionText": "test",
+    "answerText": "TEST ? ",
+    "createdAt": "2026-05-31T19:18:59.087Z",
+    "answeredAt": "2026-05-31T19:31:01.427Z"
+  },
+  {
+    "id": "q-1780255356090",
+    "productId": "cmpu5td720001yld5yhhp8t8a",
+    "merchantId": "cmpts2cea0000z64i37w9a5xc",
+    "userName": "sa",
+    "productName": "asdgf",
+    "questionText": "test",
+    "answerText": null,
+    "createdAt": "2026-05-31T19:22:36.090Z",
+    "answeredAt": null
+  },
+  {
+    "id": "q-1780255642948",
+    "productId": "cmpu5td720001yld5yhhp8t8a",
+    "merchantId": "cmpts2cea0000z64i37w9a5xc",
+    "userName": "gsdf",
+    "productName": "asdgf",
+    "questionText": "test",
+    "answerText": null,
+    "createdAt": "2026-05-31T19:27:22.948Z",
+    "answeredAt": null
+  }
+]

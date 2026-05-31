@@ -27,7 +27,7 @@ const OrderDetailPage: React.FC = () => {
         return (
             <div className="min-h-screen bg-white pt-32 pb-20 flex flex-col justify-center items-center">
                 <h1 className="text-2xl font-semibold text-gray-900 mb-4 ">Sipariş Bulunamadı</h1>
-                <Link to="/profile/orders" className="text-brand-pink font-bold">Siparişlerime Dön</Link>
+                <Link to="/profile/orders" className="text-brand-pink font-semibold">Siparişlerime Dön</Link>
             </div>
         );
     }
@@ -45,7 +45,7 @@ const OrderDetailPage: React.FC = () => {
                         <h1 className="text-4xl font-[1000] text-gray-900    leading-none mb-4">
                             SİPARİŞ <span className="text-brand-pink">DETAYI</span>
                         </h1>
-                        <p className="text-sm font-bold text-gray-400 ">#{order.orderNumber} • {new Date(order.createdAt).toLocaleDateString()}</p>
+                        <p className="text-sm font-semibold text-gray-400 ">#{order.orderNumber} • {new Date(order.createdAt).toLocaleDateString()}</p>
                     </div>
                     <div className={`px-8 py-3 rounded-2xl text-caption font-semibold   ${getStatusColor(order.status)}  shadow-sm`}>
                         {getStatusText(order.status)}
@@ -74,7 +74,7 @@ const OrderDetailPage: React.FC = () => {
                                                 </div>
                                                 <div className="min-w-0">
                                                     <h4 className="font-semibold text-gray-900 text-base sm:text-lg  mb-1 truncate max-w-[200px] sm:max-w-[300px]">{item.product.name}</h4>
-                                                    <p className="text-10px font-bold text-gray-400   ">
+                                                    <p className="text-10px font-semibold text-gray-400   ">
                                                         {item.quantity} ADET • {item.price.toLocaleString()} ₺
                                                     </p>
                                                 </div>
@@ -118,7 +118,7 @@ const OrderDetailPage: React.FC = () => {
                             <div className="space-y-4">
                                 <p className="text-xl font-semibold   text-gray-900 leading-none">{order.shippingAddress.fullName}</p>
                                 <div className="h-[2px] w-8 bg-brand-pink/20 rounded-full mb-6"></div>
-                                <p className="text-sm font-bold text-gray-500 leading-relaxed  opacity-80">
+                                <p className="text-sm font-semibold text-gray-500 leading-relaxed  opacity-80">
                                     {order.shippingAddress.address}<br />
                                     {order.shippingAddress.city}<br />
                                     <div className="mt-4 pt-4 border-t border-gray-50 flex items-center gap-3">
@@ -259,7 +259,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ item, onSuccess }) => {
                                 placeholder="Harika bir seçim oldu!"
                                 value={title}
                                 onChange={(e) => setTitle(e.target.value)}
-                                className="w-full px-8 py-4 bg-white border border-gray-100 rounded-2xl text-subtext font-bold outline-none focus:border-brand-pink transition-all "
+                                className="w-full px-8 py-4 bg-white border border-gray-100 rounded-2xl text-subtext font-semibold outline-none focus:border-brand-pink transition-all "
                             />
                         </div>
                         <div>
@@ -269,7 +269,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ item, onSuccess }) => {
                                 rows={5}
                                 value={comment}
                                 onChange={(e) => setComment(e.target.value)}
-                                className="w-full px-8 py-4 bg-white border border-gray-100 rounded-2xl text-subtext font-bold outline-none focus:border-brand-pink transition-all  resize-none"
+                                className="w-full px-8 py-4 bg-white border border-gray-100 rounded-2xl text-subtext font-semibold outline-none focus:border-brand-pink transition-all  resize-none"
                             />
                         </div>
                         <div className="flex justify-end pt-4">

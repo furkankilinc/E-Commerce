@@ -40,7 +40,7 @@ const OfflineDetector: React.FC = () => {
 
 
                 <h2 className="text-3xl font-semibold text-gray-900 mb-4   ">Bağlantı Kesildi</h2>
-                <p className="text-gray-500 font-bold mb-5 leading-relaxed ">
+                <p className="text-gray-500 font-semibold mb-5 leading-relaxed ">
                     İnternet bağlantınız şu an aktif değil. Bağlantı geri geldiğinde uygulama otomatik olarak yenilenecektir.
                 </p>
 

@@ -107,14 +107,14 @@ const OrderDetailPage: React.FC = () => {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
-                    <button onClick={() => navigate('/orders')} className="flex items-center gap-3 text-slate-400 font-bold text-caption   mb-6 hover:text-brand-pink transition-all  group">
+                    <button onClick={() => navigate('/orders')} className="flex items-center gap-3 text-slate-400 font-semibold text-caption   mb-6 hover:text-brand-pink transition-all  group">
                         <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-brand-pink/10 transition-colors">
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
                         </div>
                         LİSTEYE GERİ DÖN
                     </button>
                     <h1 className="text-heading font-[1000] text-slate-900  mb-2  leading-none">SİPARİŞ <span className="text-brand-pink">#{order.orderNumber || order.id.slice(-6).toLowerCase()}</span></h1>
-                    <p className="text-slate-400 font-bold text-lg opacity-70 ">Admin paneli üzerinden siparişin tüm detaylarını görüntüleyin.</p>
+                    <p className="text-slate-400 font-semibold text-lg opacity-70 ">Admin paneli üzerinden siparişin tüm detaylarını görüntüleyin.</p>
                 </div>
             </div>
 
@@ -144,7 +144,7 @@ const OrderDetailPage: React.FC = () => {
                                     </div>
                                     <div className="text-right">
                                         <span className="text-2xl font-semibold text-slate-900 block   mb-1">{(item.price * item.quantity).toLocaleString()} ₺</span>
-                                        <span className="text-10px font-bold text-slate-400  ">BİRİM: {item.price.toLocaleString()} ₺</span>
+                                        <span className="text-10px font-semibold text-slate-400  ">BİRİM: {item.price.toLocaleString()} ₺</span>
                                     </div>
                                 </div>
                             ))}
@@ -223,7 +223,7 @@ const OrderDetailPage: React.FC = () => {
                                 <option value="CANCELLED">İPTAL EDİLDİ</option>
                             </select>
                         </div>
-                        <p className="text-nano font-bold text-slate-400 mt-6 text-center  ">SON GÜNCELLEME: {new Date(order.createdAt).toLocaleString('tr-TR')}</p>
+                        <p className="text-nano font-semibold text-slate-400 mt-6 text-center  ">SON GÜNCELLEME: {new Date(order.createdAt).toLocaleString('tr-TR')}</p>
                     </div>
                 </div>
             </div>
