@@ -26,6 +26,23 @@ let cartItems: any[] = (() => {
 
 const listeners = new Set<(items: any[]) => void>();
 let isFetchTriggered = false;
+let pendingGuestItems: any[] | null = null;
+
+const mergeCarts = (baseCart: any[], mergeCart: any[]) => {
+    const merged = [...baseCart];
+    for (const item2 of mergeCart) {
+        const existing = merged.find(item1 => item1.id === item2.id && item1.variant === item2.variant);
+        if (existing) {
+            existing.quantity += item2.quantity;
+            if (existing.stock !== undefined) {
+                existing.quantity = Math.min(existing.quantity, existing.stock);
+            }
+        } else {
+            merged.push({ ...item2 });
+        }
+    }
+    return merged;
+};
 
 const syncWithBackend = async (items: any[]) => {
     try {
@@ -50,6 +67,23 @@ const notify = () => {
 
 export const cartStore = {
     setUserId: (userId: string | null) => {
+        if (userId) {
+            // We are logging in! Capture the guest items first
+            try {
+                const guestSaved = localStorage.getItem('fuira_cart_items_guest');
+                if (guestSaved) {
+                    pendingGuestItems = JSON.parse(guestSaved);
+                }
+            } catch (e) {
+                pendingGuestItems = null;
+            }
+            // Clear guest cart from local storage so we don't double merge
+            localStorage.removeItem('fuira_cart_items_guest');
+            localStorage.removeItem('fuira_cart_id_guest');
+        } else {
+            pendingGuestItems = null;
+        }
+
         CART_STORAGE_KEY = userId ? `fuira_cart_items_${userId}` : 'fuira_cart_items_guest';
         CART_ID_KEY = userId ? `fuira_cart_id_${userId}` : 'fuira_cart_id_guest';
         
@@ -142,20 +176,31 @@ export const cartStore = {
         cartItems = [];
         notify();
     },
-    fetchFromBackend: async () => {
-        if (isFetchTriggered) return;
+    fetchFromBackend: async (force = false) => {
+        if (isFetchTriggered && !force) return;
         isFetchTriggered = true;
         try {
             const res = await apiClient('/api/cart', {
                 headers: { 'x-cart-id': getCartId() }
             });
             if (res.ok) {
-                const data = await res.json();
-                if (Array.isArray(data) && data.length > 0) {
-                    cartItems = data;
-                    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
-                    listeners.forEach((listener) => listener([...cartItems]));
+                const backendData = await res.json();
+                const backendItems = Array.isArray(backendData) ? backendData : [];
+                
+                let finalItems = [...backendItems];
+                
+                // If we have pending guest items from login, merge them!
+                if (pendingGuestItems && pendingGuestItems.length > 0) {
+                    finalItems = mergeCarts(finalItems, pendingGuestItems);
+                    pendingGuestItems = null; // Clear after merge
+                    
+                    // Sync the newly merged cart back to the backend
+                    await syncWithBackend(finalItems);
                 }
+                
+                cartItems = finalItems;
+                localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
+                listeners.forEach((listener) => listener([...cartItems]));
             }
         } catch (err) {
             console.error('Failed to fetch cart from Redis:', err);
@@ -238,7 +283,18 @@ export const useCart = () => {
     useEffect(() => {
         cartStore.fetchFromBackend();
         const unsubscribe = cartStore.subscribe(setItems);
-        return () => unsubscribe();
+
+        // Periodic polling when user is logged in to sync with other devices
+        const interval = setInterval(() => {
+            if (CART_STORAGE_KEY !== 'fuira_cart_items_guest') {
+                cartStore.fetchFromBackend(true);
+            }
+        }, 8000); // Poll every 8 seconds
+
+        return () => {
+            unsubscribe();
+            clearInterval(interval);
+        };
     }, []);
 
     const wrappedAddItem = useCallback((product: any, variant?: string) => {

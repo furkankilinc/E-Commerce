@@ -79,7 +79,7 @@ const HomePage: React.FC = () => {
                 </Suspense>
             )}
 
-            <div className="mb-6 flex items-center gap-2 text-10px font-semibold text-gray-500   italic min-h-[20px]">
+            <div className="mb-6 flex items-center gap-2 text-10px font-semibold text-gray-500    min-h-[20px]">
                 <Link to="/" className="hover:text-brand-pink transition-colors">{t('nav.home') || 'ANASAYFA'}</Link>
                 {meta ? (() => {
                     const currentCat = meta.categories.find(c => c.slug === filters.category);
@@ -113,7 +113,7 @@ const HomePage: React.FC = () => {
 
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
                 <div>
-                    <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-900 leading-[0.95]  mb-4 italic ">
+                    <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-900 leading-[0.95]  mb-4  ">
                         {isNewPage ? t('home.titleNew') : isSalePage ? t('home.titleSale') : <>FUI & <span className="text-brand-pink">RA</span></>}
                     </h1>
                     <p className="text-sm font-bold text-gray-500">
@@ -124,7 +124,7 @@ const HomePage: React.FC = () => {
                 <div className="flex items-center gap-4 px-4 mt-4 h-10">
                     <button
                         onClick={() => setIsMobileFiltersOpen(true)}
-                        className="lg:hidden flex items-center gap-3 shadow-xs h-full px-6 py-2  text-black rounded-md text-caption font-semibold   italic  shadow-gray-200"
+                        className="lg:hidden flex items-center gap-3 shadow-xs h-full px-6 py-2  text-black rounded-md text-caption font-semibold     shadow-gray-200"
                     >
                         <svg className="w-5 h-5 text-brand-pink" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" strokeWidth="2.5" strokeLinecap="round" /></svg>
                         {t('home.filters')}
@@ -133,7 +133,7 @@ const HomePage: React.FC = () => {
                     <div ref={sortRef} className="relative h-full select-none">
                         <button
                             onClick={() => setIsSortOpen(prev => !prev)}
-                            className="flex items-center justify-between gap-6 cursor-pointer bg-white border border-gray-100 h-full px-5 rounded-md outline-none text-caption font-semibold text-gray-900 italic focus:border-brand-pink transition-all shadow-xs min-w-[190px] text-left"
+                            className="flex items-center justify-between gap-6 cursor-pointer bg-white border border-gray-100 h-full px-5 rounded-md outline-none text-caption font-semibold text-gray-900  focus:border-brand-pink transition-all shadow-xs min-w-[190px] text-left"
                         >
                             <span>{activeSortOption.label}</span>
                             <svg className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${isSortOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -150,9 +150,9 @@ const HomePage: React.FC = () => {
                                                 setFilters(prev => ({ ...prev, sort: opt.value }));
                                                 setIsSortOpen(false);
                                             }}
-                                            className={`w-full flex items-center pl-10 pr-4 py-3 text-caption font-semibold italic transition-all text-left relative ${isSelected
-                                                    ? 'bg-brand-pink/5 text-brand-pink font-bold'
-                                                    : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                                            className={`w-full flex items-center pl-10 pr-4 py-3 text-caption font-semibold  transition-all text-left relative ${isSelected
+                                                ? 'bg-brand-pink/5 text-brand-pink font-bold'
+                                                : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
                                                 }`}
                                         >
                                             {isSelected && (
@@ -207,8 +207,8 @@ const HomePage: React.FC = () => {
                                 <div className="w-20 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-6 text-gray-200 border border-gray-50 shadow-sm">
                                     <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" strokeWidth="2" /></svg>
                                 </div>
-                                <p className="text-10px font-semibold text-gray-600   italic">{t('search.noResults')}</p>
-                                <button onClick={clearFilters} className="mt-8 text-brand-pink text-10px font-semibold   border-b-2 border-brand-pink/20 hover:border-brand-pink transition-all italic">{t('sidebar.reset')}</button>
+                                <p className="text-10px font-semibold text-gray-600   ">{t('search.noResults')}</p>
+                                <button onClick={clearFilters} className="mt-8 text-brand-pink text-10px font-semibold   border-b-2 border-brand-pink/20 hover:border-brand-pink transition-all ">{t('sidebar.reset')}</button>
                             </div>
                         )}
                     </div>

@@ -468,7 +468,7 @@ const ProductCreatePage: React.FC = () => {
                             <div className="w-12 h-12 bg-indigo-50 rounded-md flex items-center justify-center text-indigo-600">
                                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                             </div>
-                            <h3 className="text-xl font-bold text-slate-800  ">Genel Bilgiler</h3>
+                            <h3 className="text-md font-bold text-slate-800  ">Genel Bilgiler</h3>
                         </div>
 
                         <div className="space-y-10 relative z-10">
@@ -485,17 +485,17 @@ const ProductCreatePage: React.FC = () => {
                             </div>
 
                             <div className="space-y-4">
-                                <label className="text-caption font-semibold   text-slate-400 italic ml-2">KATEGORİ SEÇİMİ</label>
+                                <label className="text-caption font-semibold   text-slate-400  ml-2">KATEGORİ SEÇİMİ</label>
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                    <select value={selectedLevel1} onChange={handleLevel1Change} className="h-12 px-6 rounded-md bg-slate-50 border-2 border-transparent focus:border-brand-pink outline-none font-bold italic">
+                                    <select value={selectedLevel1} onChange={handleLevel1Change} className="h-12 px-6 rounded-md bg-slate-50 border-2 border-transparent focus:border-brand-pink outline-none font-bold ">
                                         <option value="">Ana Kategori</option>
                                         {level1Categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
                                     </select>
-                                    <select value={selectedLevel2} onChange={handleLevel2Change} disabled={!selectedLevel1 || level2Categories.length === 0} className="h-12 px-6 rounded-md bg-slate-50 border-2 border-transparent focus:border-brand-pink outline-none font-bold italic disabled:opacity-30">
+                                    <select value={selectedLevel2} onChange={handleLevel2Change} disabled={!selectedLevel1 || level2Categories.length === 0} className="h-12 px-6 rounded-md bg-slate-50 border-2 border-transparent focus:border-brand-pink outline-none font-bold  disabled:opacity-30">
                                         <option value="">Alt Kategori</option>
                                         {level2Categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
                                     </select>
-                                    <select value={selectedLevel3} onChange={(e) => { setSelectedLevel3(e.target.value); setIsDirty(true); }} disabled={!selectedLevel2 || level3Categories.length === 0} className="h-12 px-6 rounded-md bg-slate-50 border-2 border-transparent focus:border-brand-pink outline-none font-bold italic disabled:opacity-30">
+                                    <select value={selectedLevel3} onChange={(e) => { setSelectedLevel3(e.target.value); setIsDirty(true); }} disabled={!selectedLevel2 || level3Categories.length === 0} className="h-12 px-6 rounded-md bg-slate-50 border-2 border-transparent focus:border-brand-pink outline-none font-bold  disabled:opacity-30">
                                         <option value="">Detay Kategori</option>
                                         {level3Categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
                                     </select>
@@ -511,7 +511,7 @@ const ProductCreatePage: React.FC = () => {
                                 <div className="w-14 h-14 bg-indigo-50 rounded-md flex items-center justify-center text-indigo-500 shadow-inner">
                                     <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
                                 </div>
-                                <h3 className="text-2xl font-[900] text-slate-900   italic">ÜRÜN VARYANTLARI</h3>
+                                <h3 className="text-2xl font-[900] text-slate-900   ">ÜRÜN VARYANTLARI</h3>
                             </div>
                         </div>
 
@@ -592,12 +592,12 @@ const ProductCreatePage: React.FC = () => {
                                 <tbody className="divide-y divide-slate-50">
                                     {productVariants.length === 0 && (
                                         <tr>
-                                            <td colSpan={5} className="px-6 py-12 text-center text-slate-400 italic text-sm font-bold">Henüz varyant eklenmedi. Ürün standart tek tip olarak kaydedilecek.</td>
+                                            <td colSpan={5} className="px-6 py-12 text-center text-slate-400  text-sm font-bold">Henüz varyant eklenmedi. Ürün standart tek tip olarak kaydedilecek.</td>
                                         </tr>
                                     )}
                                     {productVariants.map((v, i) => (
                                         <tr key={i} className="hover:bg-slate-50/50 transition-colors">
-                                            <td className="px-6 py-4 text-sm font-semibold text-slate-800  italic">{v.name}</td>
+                                            <td className="px-6 py-4 text-sm font-semibold text-slate-800  ">{v.name}</td>
                                             <td className="px-6 py-4">
                                                 <span className="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-lg text-xs font-semibold ">{v.value}</span>
                                             </td>
@@ -652,7 +652,7 @@ const ProductCreatePage: React.FC = () => {
                                 <div className="w-12 h-12 bg-amber-50 rounded-md flex items-center justify-center text-amber-600">
                                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
                                 </div>
-                                <h3 className="text-xl font-bold text-slate-800  ">Ürün İçerik Editörü</h3>
+                                <h3 className="text-md font-bold text-slate-800  ">Ürün İçerik Editörü</h3>
                             </div>
                         </div>
 
@@ -676,7 +676,7 @@ const ProductCreatePage: React.FC = () => {
                                     {block.type === 'HEADING' && (
                                         <div className="space-y-2">
                                             <span className="text-nano font-bold text-slate-400  ">BÖLÜM BAŞLIĞI</span>
-                                            <input type="text" value={block.content} onChange={(e) => updateBlock(block.id, e.target.value)} placeholder="Başlık..." className="w-full bg-transparent text-2xl font-bold text-slate-800 outline-none" />
+                                            <input type="text" value={block.content} onChange={(e) => updateBlock(block.id, e.target.value)} placeholder="Başlık..." className="w-full bg-transparent text-md font-bold text-slate-800 outline-none" />
                                         </div>
                                     )}
 
@@ -775,7 +775,7 @@ const ProductCreatePage: React.FC = () => {
                             <div className="w-14 h-14 bg-pink-50 rounded-md flex items-center justify-center text-brand-pink">
                                 <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                             </div>
-                            <h3 className="text-2xl font-[900] text-slate-900   italic">ÜRÜN GÖRSELLERİ</h3>
+                            <h3 className="text-2xl font-[900] text-slate-900   ">ÜRÜN GÖRSELLERİ</h3>
                         </div>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                             {uploadedImages.map((url, i) => (
@@ -791,7 +791,7 @@ const ProductCreatePage: React.FC = () => {
                             )}
                             <label className="relative aspect-square rounded-md border-4 border-dashed border-slate-100 flex items-center justify-center cursor-pointer hover:bg-slate-50">
                                 <input type="file" multiple accept="image/*" onChange={handleImageUpload} className="hidden" />
-                                <span className="text-10px font-semibold text-slate-400 italic">+ EKLE</span>
+                                <span className="text-10px font-semibold text-slate-400 ">+ EKLE</span>
                             </label>
                         </div>
                     </div>
@@ -804,35 +804,35 @@ const ProductCreatePage: React.FC = () => {
                             <div className="w-14 h-14 bg-green-50 rounded-md flex items-center justify-center text-green-500">
                                 <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2" strokeWidth="3" /></svg>
                             </div>
-                            <h3 className="text-2xl font-[900] text-slate-900   italic">FİYAT & STOK</h3>
+                            <h3 className="text-2xl font-[900] text-slate-900   ">FİYAT & STOK</h3>
                         </div>
                         <div className="space-y-10">
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                 <div className="space-y-4">
-                                    <label className="text-caption font-semibold  text-slate-400 italic">PARA CİNSİ</label>
-                                    <select name="currency" value={formData.currency} onChange={handleChange} className="w-full h-12 px-2 rounded-md bg-slate-50 border-2 border-transparent outline-none font-semibold italic">
+                                    <label className="text-caption font-semibold  text-slate-400 ">PARA CİNSİ</label>
+                                    <select name="currency" value={formData.currency} onChange={handleChange} className="w-full h-12 px-2 rounded-md bg-slate-50 border-2 border-transparent outline-none font-semibold ">
                                         <option value="TL">TL</option>
                                         <option value="$">USD</option>
                                         <option value="€">EUR</option>
                                     </select>
                                 </div>
                                 <div className="space-y-4">
-                                    <label className="text-caption font-semibold  text-slate-400 italic">FİYAT</label>
-                                    <input type="number" name="price" value={formData.price} onChange={handleChange} className="w-full h-12 px-2 rounded-md bg-slate-50 border-2 border-transparent outline-none font-semibold italic text-lg" />
+                                    <label className="text-caption font-semibold  text-slate-400 ">FİYAT</label>
+                                    <input type="number" name="price" value={formData.price} onChange={handleChange} className="w-full h-12 px-2 rounded-md bg-slate-50 border-2 border-transparent outline-none font-semibold  text-lg" />
                                 </div>
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                 <div className="space-y-4">
-                                    <label className="text-caption font-semibold  text-slate-400 italic">İNDİRİMLİ FİYAT</label>
-                                    <input type="number" name="discountPrice" value={formData.discountPrice} onChange={handleChange} placeholder={formData.price ? (parseInt(formData.price) * 0.8).toFixed(0) : "99"} className="w-full h-12 px-2 rounded-md bg-indigo-50/30 border-2 border-indigo-100/50 focus:border-indigo-500 outline-none font-semibold italic text-indigo-600 text-lg" />
+                                    <label className="text-caption font-semibold  text-slate-400 ">İNDİRİMLİ FİYAT</label>
+                                    <input type="number" name="discountPrice" value={formData.discountPrice} onChange={handleChange} placeholder={formData.price ? (parseInt(formData.price) * 0.8).toFixed(0) : "99"} className="w-full h-12 px-2 rounded-md bg-indigo-50/30 border-2 border-indigo-100/50 focus:border-indigo-500 outline-none font-semibold  text-indigo-600 text-lg" />
                                 </div>
                                 <div className="space-y-4">
-                                    <label className="text-caption font-semibold  text-slate-400 italic">STOK</label>
-                                    <input type="number" name="stock" value={formData.stock} onChange={handleChange} className="w-full h-12 px-2 rounded-md bg-slate-50 border-2 border-transparent outline-none font-semibold italic text-lg" />
+                                    <label className="text-caption font-semibold  text-slate-400 ">STOK</label>
+                                    <input type="number" name="stock" value={formData.stock} onChange={handleChange} className="w-full h-12 px-2 rounded-md bg-slate-50 border-2 border-transparent outline-none font-semibold  text-lg" />
                                 </div>
                             </div>
                             <div className="space-y-4 pt-6 border-t border-slate-100">
-                                <label className="text-caption font-semibold text-slate-400 italic">DESTEKLENEN KARGO FİRMALARI</label>
+                                <label className="text-caption font-semibold text-slate-400 ">DESTEKLENEN KARGO FİRMALARI</label>
                                 <div className="space-y-4 bg-slate-50 rounded-md border border-slate-100 max-h-[300px] overflow-y-auto">
                                     {shippingCompanies.map(comp => {
                                         const isChecked = selectedShippingCompanies.some(sc => sc.companyId === comp.id);
@@ -892,7 +892,7 @@ const ProductCreatePage: React.FC = () => {
                                     })}
 
                                     {shippingCompanies.length === 0 && (
-                                        <p className="text-10px font-bold text-slate-400 italic text-center py-4">Kayıtlı aktif kargo firması bulunamadı.</p>
+                                        <p className="text-10px font-bold text-slate-400  text-center py-4">Kayıtlı aktif kargo firması bulunamadı.</p>
                                     )}
                                 </div>
                             </div>

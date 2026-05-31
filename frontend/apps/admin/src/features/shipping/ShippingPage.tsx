@@ -148,14 +148,14 @@ const ShippingPage: React.FC = () => {
     const fastestCarrier = companies.length > 0 ? companies[0] : null;
 
     return (
-        <div className="p-10 space-y-10 font-['Inter']">
+        <div className="p-4 md:p-10 space-y-6 md:space-y-10 font-['Inter']">
             {/* Header */}
-            <div className="flex justify-between items-end">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
                 <div>
-                    <h1 className="text-4xl font-[1000] text-admin-navy italic leading-none mb-4">
+                    <h1 className="text-2xl md:text-4xl font-[1000] text-admin-navy  leading-none mb-4">
                         KARGO <span className="text-brand-pink">FİRMALARI</span>
                     </h1>
-                    <p className="text-10px font-semibold text-slate-400 italic opacity-70">
+                    <p className="text-10px font-semibold text-slate-400  opacity-70">
                         Sistemde kayıtlı aktif kargo şirketlerini ve ek ücretlendirmelerini yönetin
                     </p>
                 </div>
@@ -165,7 +165,7 @@ const ShippingPage: React.FC = () => {
                         setNewForm({ name: '', logo: '🚚', basePrice: '', deliveryTime: '2-3 İş Günü', isActive: true });
                         setShowAddModal(true);
                     }}
-                    className="px-6 py-4 bg-brand-pink text-white rounded-xl text-10px font-semibold italic shadow-lg shadow-brand-pink/20 hover:opacity-95 active:scale-95 transition-all"
+                    className="w-full sm:w-auto px-6 py-4 bg-brand-pink text-white rounded-xl text-10px font-semibold  shadow-lg shadow-brand-pink/20 hover:opacity-95 active:scale-95 transition-all whitespace-nowrap"
                 >
                     ＋ YENİ FİRMA EKLE
                 </button>
@@ -178,8 +178,8 @@ const ShippingPage: React.FC = () => {
                         🚚
                     </div>
                     <div>
-                        <div className="text-slate-400 text-nano font-bold uppercase tracking-wider mb-0.5">Toplam Kargo</div>
-                        <div className="text-2xl font-bold text-slate-800">{totalCompanies} Firma</div>
+                        <div className="text-slate-400 text-md font-bold uppercase  mb-0.5">Toplam Kargo</div>
+                        <div className="text-md font-bold text-slate-800">{totalCompanies} Firma</div>
                     </div>
                 </div>
                 <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
@@ -187,8 +187,8 @@ const ShippingPage: React.FC = () => {
                         ⚡
                     </div>
                     <div>
-                        <div className="text-slate-400 text-nano font-bold uppercase tracking-wider mb-0.5">Aktif Kurye</div>
-                        <div className="text-2xl font-bold text-slate-800">{activeCompanies} Dağıtıcı</div>
+                        <div className="text-slate-400 text-md font-bold uppercase  mb-0.5">Aktif Kurye</div>
+                        <div className="text-md font-bold text-slate-800">{activeCompanies} Dağıtıcı</div>
                     </div>
                 </div>
                 <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
@@ -196,8 +196,8 @@ const ShippingPage: React.FC = () => {
                         💸
                     </div>
                     <div>
-                        <div className="text-slate-400 text-nano font-bold uppercase tracking-wider mb-0.5">En Uygun Taban</div>
-                        <div className="text-2xl font-bold text-slate-800">{cheapestPrice} ₺</div>
+                        <div className="text-slate-400 text-md font-bold uppercase  mb-0.5">En Uygun Taban</div>
+                        <div className="text-md font-bold text-slate-800">{cheapestPrice} ₺</div>
                     </div>
                 </div>
                 <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
@@ -205,87 +205,88 @@ const ShippingPage: React.FC = () => {
                         🚀
                     </div>
                     <div>
-                        <div className="text-slate-400 text-nano font-bold uppercase tracking-wider mb-0.5">Hızlı Taşıma</div>
-                        <div className="text-2xl font-bold text-slate-800">{fastestCarrier ? fastestCarrier.name : 'Yok'}</div>
+                        <div className="text-slate-400 text-md font-bold uppercase  mb-0.5">Hızlı Taşıma</div>
+                        <div className="text-md font-bold text-slate-800">{fastestCarrier ? fastestCarrier.name : 'Yok'}</div>
                     </div>
                 </div>
             </div>
 
             {/* List */}
             <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
-                <table className="w-full">
-                    <thead>
-                        <tr className="border-b border-slate-50 bg-slate-50/50">
-                            <th className="px-10 py-8 text-10px font-semibold text-slate-400 italic text-left">Logo</th>
-                            <th className="px-10 py-8 text-10px font-semibold text-slate-400 italic text-left">Firma Adı</th>
-                            <th className="px-10 py-8 text-10px font-semibold text-slate-400 italic text-left">Teslimat Süresi</th>
-                            <th className="px-10 py-8 text-10px font-semibold text-slate-400 italic text-left">Taban Ücret</th>
-                            <th className="px-10 py-8 text-10px font-semibold text-slate-400 italic text-center">Durum</th>
-                            <th className="px-10 py-8 text-10px font-semibold text-slate-400 italic text-right">İşlemler</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-50">
-                        {loading ? (
-                            <tr>
-                                <td colSpan={6} className="py-20 text-center text-slate-400 font-bold italic">
-                                    <div className="w-8 h-8 border-3 border-brand-pink border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-                                    Yükleniyor...
-                                </td>
+                <div className="overflow-x-auto">
+                    <table className="w-full min-w-[800px]">
+                        <thead>
+                            <tr className="border-b border-slate-50 bg-slate-50/50">
+                                <th className="px-10 py-8 text-10px font-semibold text-slate-400  text-left">Logo</th>
+                                <th className="px-10 py-8 text-10px font-semibold text-slate-400  text-left">Firma Adı</th>
+                                <th className="px-10 py-8 text-10px font-semibold text-slate-400  text-left">Teslimat Süresi</th>
+                                <th className="px-10 py-8 text-10px font-semibold text-slate-400  text-left">Taban Ücret</th>
+                                <th className="px-10 py-8 text-10px font-semibold text-slate-400  text-center">Durum</th>
+                                <th className="px-10 py-8 text-10px font-semibold text-slate-400  text-right">İşlemler</th>
                             </tr>
-                        ) : companies.length === 0 ? (
-                            <tr>
-                                <td colSpan={6} className="py-20 text-center text-slate-400 font-bold italic">
-                                    Kargo firması bulunamadı.
-                                </td>
-                            </tr>
-                        ) : (
-                            companies.map((company) => (
-                                <tr key={company.id} className="hover:bg-slate-50/50 transition-colors">
-                                    <td className="px-10 py-8">
-                                        <span className="text-3xl">{company.logo}</span>
-                                    </td>
-                                    <td className="px-10 py-8">
-                                        <span className="text-xs font-semibold text-slate-900 italic">{company.name}</span>
-                                    </td>
-                                    <td className="px-10 py-8">
-                                        <span className="text-xs font-bold text-slate-500 italic">{company.deliveryTime}</span>
-                                    </td>
-                                    <td className="px-10 py-8">
-                                        <span className="text-xs font-semibold text-slate-900 italic">{company.basePrice.toFixed(2)} ₺</span>
-                                    </td>
-                                    <td className="px-10 py-8 text-center">
-                                        <button
-                                            onClick={() => handleToggleActive(company)}
-                                            className={`px-3 py-1 rounded-full text-[10px] font-bold transition-all border ${
-                                                company.isActive !== false
-                                                    ? 'bg-emerald-50 text-emerald-600 border-emerald-100 hover:bg-emerald-100'
-                                                    : 'bg-slate-50 text-slate-400 border-slate-200 hover:bg-slate-100'
-                                            }`}
-                                        >
-                                            {company.isActive !== false ? 'AKTİF' : 'PASİF'}
-                                        </button>
-                                    </td>
-                                    <td className="px-10 py-8 text-right">
-                                        <div className="flex items-center justify-end gap-3">
-                                            <button
-                                                onClick={() => handleEditClick(company)}
-                                                className="px-4 py-2 bg-slate-100 text-slate-600 rounded-xl text-nano font-semibold italic border border-slate-200 hover:bg-slate-200"
-                                            >
-                                                Düzenle
-                                            </button>
-                                            <button
-                                                onClick={() => handleDelete(company.id)}
-                                                className="px-4 py-2 bg-rose-50 text-rose-500 rounded-xl text-nano font-semibold italic border border-rose-100 hover:bg-rose-500 hover:text-white"
-                                            >
-                                                Sil
-                                            </button>
-                                        </div>
+                        </thead>
+                        <tbody className="divide-y divide-slate-50">
+                            {loading ? (
+                                <tr>
+                                    <td colSpan={6} className="py-20 text-center text-slate-400 font-bold ">
+                                        <div className="w-8 h-8 border-3 border-brand-pink border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+                                        Yükleniyor...
                                     </td>
                                 </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
+                            ) : companies.length === 0 ? (
+                                <tr>
+                                    <td colSpan={6} className="py-20 text-center text-slate-400 font-bold ">
+                                        Kargo firması bulunamadı.
+                                    </td>
+                                </tr>
+                            ) : (
+                                companies.map((company) => (
+                                    <tr key={company.id} className="hover:bg-slate-50/50 transition-colors">
+                                        <td className="px-10 py-8">
+                                            <span className="text-3xl">{company.logo}</span>
+                                        </td>
+                                        <td className="px-10 py-8">
+                                            <span className="text-xs font-semibold text-slate-900 ">{company.name}</span>
+                                        </td>
+                                        <td className="px-10 py-8">
+                                            <span className="text-xs font-bold text-slate-500 ">{company.deliveryTime}</span>
+                                        </td>
+                                        <td className="px-10 py-8">
+                                            <span className="text-xs font-semibold text-slate-900 ">{company.basePrice.toFixed(2)} ₺</span>
+                                        </td>
+                                        <td className="px-10 py-8 text-center">
+                                            <button
+                                                onClick={() => handleToggleActive(company)}
+                                                className={`px-3 py-1 rounded-full text-[10px] font-bold transition-all border ${company.isActive !== false
+                                                    ? 'bg-emerald-50 text-emerald-600 border-emerald-100 hover:bg-emerald-100'
+                                                    : 'bg-slate-50 text-slate-400 border-slate-200 hover:bg-slate-100'
+                                                    }`}
+                                            >
+                                                {company.isActive !== false ? 'AKTİF' : 'PASİF'}
+                                            </button>
+                                        </td>
+                                        <td className="px-10 py-8 text-right">
+                                            <div className="flex items-center justify-end gap-3">
+                                                <button
+                                                    onClick={() => handleEditClick(company)}
+                                                    className="px-4 py-2 bg-slate-100 text-slate-600 rounded-xl text-nano font-semibold  border border-slate-200 hover:bg-slate-200"
+                                                >
+                                                    Düzenle
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDelete(company.id)}
+                                                    className="px-4 py-2 bg-rose-50 text-rose-500 rounded-xl text-nano font-semibold  border border-rose-100 hover:bg-rose-500 hover:text-white"
+                                                >
+                                                    Sil
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             {/* Glassmorphic Add/Edit Modal */}
@@ -294,7 +295,7 @@ const ShippingPage: React.FC = () => {
                     <div className="bg-white rounded-lg shadow-xl border border-gray-100 w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-300">
                         {/* Header */}
                         <div className="flex justify-between items-center px-8 py-6 border-b border-gray-100 bg-slate-50/50">
-                            <h3 className="text-lg font-[1000] text-slate-900 italic">
+                            <h3 className="text-lg font-[1000] text-slate-900 ">
                                 {editTarget ? 'FİRMAYI' : 'YENİ'} <span className="text-brand-pink">DÜZENLE</span>
                             </h3>
                             <button
@@ -308,24 +309,24 @@ const ShippingPage: React.FC = () => {
                         {/* Form */}
                         <form onSubmit={handleSubmit} className="p-8 space-y-6">
                             <div className="space-y-1.5">
-                                <label className="text-nano font-semibold text-gray-400 ml-2 italic">FİRMA ADI *</label>
+                                <label className="text-nano font-semibold text-gray-400 ml-2 ">FİRMA ADI *</label>
                                 <input
                                     type="text"
                                     required
                                     value={newForm.name}
                                     onChange={(e) => setNewForm({ ...newForm, name: e.target.value })}
-                                    className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all italic text-slate-800"
+                                    className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800"
                                     placeholder="Örn: Sürat Kargo"
                                 />
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-1.5">
-                                    <label className="text-nano font-semibold text-gray-400 ml-2 italic">LOGO İKONU *</label>
+                                    <label className="text-nano font-semibold text-gray-400 ml-2 ">LOGO İKONU *</label>
                                     <select
                                         value={newForm.logo}
                                         onChange={(e) => setNewForm({ ...newForm, logo: e.target.value })}
-                                        className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all italic text-slate-800"
+                                        className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800"
                                     >
                                         <option value="🚚">🚚 Kamyon</option>
                                         <option value="⚡">⚡ Şimşek</option>
@@ -335,25 +336,25 @@ const ShippingPage: React.FC = () => {
                                     </select>
                                 </div>
                                 <div className="space-y-1.5">
-                                    <label className="text-nano font-semibold text-gray-400 ml-2 italic">TESLİMAT SÜRESİ</label>
+                                    <label className="text-nano font-semibold text-gray-400 ml-2 ">TESLİMAT SÜRESİ</label>
                                     <input
                                         type="text"
                                         value={newForm.deliveryTime}
                                         onChange={(e) => setNewForm({ ...newForm, deliveryTime: e.target.value })}
-                                        className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all italic text-slate-800"
+                                        className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800"
                                         placeholder="Örn: 2-3 İş Günü"
                                     />
                                 </div>
                             </div>
 
                             <div className="space-y-1.5">
-                                <label className="text-nano font-semibold text-gray-400 ml-2 italic">TABAN ÜCRET (₺)</label>
+                                <label className="text-nano font-semibold text-gray-400 ml-2 ">TABAN ÜCRET (₺)</label>
                                 <input
                                     type="number"
                                     step="0.01"
                                     value={newForm.basePrice}
                                     onChange={(e) => setNewForm({ ...newForm, basePrice: e.target.value })}
-                                    className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all italic text-slate-800"
+                                    className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800"
                                     placeholder="0.00"
                                 />
                             </div>
@@ -368,12 +369,12 @@ const ShippingPage: React.FC = () => {
                                     />
                                     <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
                                 </label>
-                                <span className="text-10px font-semibold text-slate-600 italic">Aktif Kargo Firması</span>
+                                <span className="text-10px font-semibold text-slate-600 ">Aktif Kargo Firması</span>
                             </div>
 
                             <button
                                 type="submit"
-                                className="w-full mt-4 py-5 bg-brand-pink text-white rounded-md text-10px font-semibold shadow-lg shadow-brand-pink/20 cursor-pointer flex items-center justify-center gap-2 hover:bg-rose-600 transition-colors italic"
+                                className="w-full mt-4 py-5 bg-brand-pink text-white rounded-md text-10px font-semibold shadow-lg shadow-brand-pink/20 cursor-pointer flex items-center justify-center gap-2 hover:bg-rose-600 transition-colors "
                             >
                                 💾 FİRMAYI KAYDET
                             </button>

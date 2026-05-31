@@ -128,10 +128,10 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                                 {TOAST_THEMES[t.type].iconSvg}
                             </div>
                             <div className="flex flex-col min-w-0">
-                                <span className={`text-10px font-[1000] tracking-wider italic leading-none mb-1 ${TOAST_THEMES[t.type].textColor}`}>
+                                <span className={`text-10px font-[1000]   leading-none mb-1 ${TOAST_THEMES[t.type].textColor}`}>
                                     {TOAST_THEMES[t.type].title}
                                 </span>
-                                <p className="text-11px font-bold text-gray-700 italic leading-snug line-clamp-2">{t.message}</p>
+                                <p className="text-11px font-bold text-gray-700  leading-snug line-clamp-2">{t.message}</p>
                             </div>
                         </div>
 

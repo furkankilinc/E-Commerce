@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useCheckoutFlow } from './hooks/useCheckoutFlow';
 import { SavedCardsModal, SavedCard } from './components/SavedCardsModal';
 import { SavedAddressesModal, SavedAddress } from './components/SavedAddressesModal';
+import { IyzicoThreeDSecureModal } from './components/IyzicoThreeDSecureModal';
 interface CardInfo {
     brand: 'Visa' | 'MasterCard' | 'Amex' | 'Troy' | 'Maestro' | 'Discover' | 'Diners' | 'JCB' | null;
     bank: string | null;
@@ -22,7 +23,7 @@ const renderBrandLogo = (brand: CardInfo['brand']) => {
     switch (brand) {
         case 'Visa':
             return (
-                <span className="text-[#1434CB] font-[1000] italic text-[14px]  leading-none flex items-center select-none">
+                <span className="text-[#1434CB] font-[1000]  text-[14px]  leading-none flex items-center select-none">
                     VISA
                 </span>
             );
@@ -41,13 +42,13 @@ const renderBrandLogo = (brand: CardInfo['brand']) => {
             );
         case 'Troy':
             return (
-                <div className="px-2 py-0.5 bg-[#002C6C] rounded text-nano font-semibold text-white italic  leading-none flex items-center justify-center gap-0.5 h-5">
+                <div className="px-2 py-0.5 bg-[#002C6C] rounded text-nano font-semibold text-white   leading-none flex items-center justify-center gap-0.5 h-5">
                     <span className="text-[#FF5C39]">tr</span><span>oy</span>
                 </div>
             );
         default:
             return brand ? (
-                <span className="text-slate-800 font-[1000] italic text-caption uppercase r select-none">
+                <span className="text-slate-800 font-[1000]  text-caption uppercase r select-none">
                     {brand}
                 </span>
             ) : null;
@@ -65,7 +66,16 @@ const getLocalBrand = (number: string): CardInfo['brand'] => {
 };
 
 const CheckoutPage: React.FC = () => {
-    const { checkout, items, total, handleNext } = useCheckoutFlow();
+    const { 
+        checkout, 
+        items, 
+        total, 
+        handleNext,
+        isIyzicoModalOpen,
+        setIsIyzicoModalOpen,
+        handleIyzicoSuccess,
+        handleIyzicoFailure
+    } = useCheckoutFlow();
 
     // State for Binlist-fetched card information
     const [cardInfo, setCardInfo] = React.useState<CardInfo>({
@@ -313,11 +323,11 @@ const CheckoutPage: React.FC = () => {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
                     </svg>
                 </div>
-                <h1 className="text-4xl font-[1000] text-gray-900  italic  mb-4 leading-none">SİPARİŞ <span className="text-emerald-500">TAMAMLANDI!</span></h1>
-                <p className="text-gray-400 font-bold   text-10px mb-6 italic text-center leading-relaxed">Sipariş numaranız: <span className="text-gray-900">{checkout.orderSuccess?.orderNumber}</span><br />Onay e-postası tarafınıza gönderilmiştir.</p>
-                <div className="flex gap-4">
-                    <Link to="/" className="px-10 py-5 bg-gray-900 text-white rounded-md text-10px font-semibold   hover:bg-brand-pink transition-all  shadow-gray-200 italic">ANA SAYFAYA DÖN</Link>
-                    <Link to="/profile/orders" className="px-10 py-5 bg-white text-gray-900 border border-gray-100 rounded-md text-10px font-semibold   hover:bg-gray-50 transition-all italic">SİPARİŞLERİM</Link>
+                <h1 className="text-4xl font-[1000] text-gray-900    mb-4 leading-none">SİPARİŞ <span className="text-emerald-500">TAMAMLANDI!</span></h1>
+                <p className="text-gray-400 font-bold   text-10px mb-6  text-center leading-relaxed">Sipariş numaranız: <span className="text-gray-900">{checkout.orderSuccess?.orderNumber}</span><br />Onay e-postası tarafınıza gönderilmiştir.</p>
+                <div className="flex gap-4 items-center justify-center">
+                    <Link to="/" className="h-12 px-10 bg-gray-900 text-white rounded-md text-10px font-semibold hover:bg-brand-pink transition-all shadow-gray-200  flex items-center justify-center">ANA SAYFAYA DÖN</Link>
+                    <Link to="/profile/orders" className="h-12 px-10 bg-white text-gray-900 border border-gray-100 rounded-md text-10px font-semibold hover:bg-gray-50 transition-all  flex items-center justify-center">SİPARİŞLERİM</Link>
                 </div>
             </div>
         );
@@ -327,12 +337,12 @@ const CheckoutPage: React.FC = () => {
         <div className="max-w-[1650px] mx-auto px-4 sm:px-10 lg:px-20 py-6 sm:py-10 pb-40">
             <div className="mb-8">
                 <span className="text-brand-pink text-10px font-semibold   mb-4 block">GÜVENLİ ÖDEME</span>
-                <h1 className="text-4xl font-[1000] text-gray-900  italic  leading-none mb-4">ÖDEME <span className="text-brand-pink">SAYFASI</span></h1>
+                <h1 className="text-4xl font-[1000] text-gray-900    leading-none mb-4">ÖDEME <span className="text-brand-pink">SAYFASI</span></h1>
                 <div className="flex items-center gap-2 sm:gap-6 mt-8 overflow-x-auto whitespace-nowrap scrollbar-hide pb-2">
                     {['address', 'shipping', 'payment', 'review'].map((s, i) => (
                         <React.Fragment key={s}>
                             <div className={`flex items-center gap-3 shrink-0 ${checkout.step === s ? 'text-brand-pink' : i < ['address', 'shipping', 'payment', 'review'].indexOf(checkout.step) ? 'text-emerald-500' : 'text-gray-300'}`}>
-                                <span className="text-xs font-semibold italic  ">{s === 'address' ? 'ADRES' : s === 'shipping' ? 'KARGO' : s === 'payment' ? 'ÖDEME' : 'KONTROL'}</span>
+                                <span className="text-xs font-semibold   ">{s === 'address' ? 'ADRES' : s === 'shipping' ? 'KARGO' : s === 'payment' ? 'ÖDEME' : 'KONTROL'}</span>
                             </div>
                             {i < 3 && <div className="h-[2px] w-8 sm:w-12 bg-gray-100 rounded-full shrink-0" />}
                         </React.Fragment>
@@ -347,10 +357,10 @@ const CheckoutPage: React.FC = () => {
                         <div className="space-y-12 animate-in slide-in-from-left-4 duration-500">
                             <div>
                                 <div className="flex justify-between items-center mb-4">
-                                    <h3 className="text-2xl font-[1000] text-gray-900  italic  leading-none">TESLİMAT <span className="text-brand-pink">ADRESİ</span></h3>
+                                    <h3 className="text-2xl font-[1000] text-gray-900    leading-none">TESLİMAT <span className="text-brand-pink">ADRESİ</span></h3>
                                     <button
                                         onClick={() => setShowAddressModal(true)}
-                                        className="px-6 py-3 border border-brand-pink text-brand-pink hover:bg-brand-pink hover:text-white rounded-md text-10px font-semibold  transition-all italic flex items-center gap-2 cursor-pointer"
+                                        className="px-6 py-3 border border-brand-pink text-brand-pink hover:bg-brand-pink hover:text-white rounded-md text-10px font-semibold  transition-all  flex items-center gap-2 cursor-pointer"
                                     >
                                         📖 ADRES DEFTERİM
                                     </button>
@@ -380,11 +390,11 @@ const CheckoutPage: React.FC = () => {
                                                     className={`p-6 rounded-md border text-left cursor-pointer transition-all ${isSelected ? 'border-brand-pink bg-rose-500/5 shadow-xs' : 'border-gray-100 bg-gray-50 hover:bg-gray-100/50'}`}
                                                 >
                                                     <div className="flex justify-between items-center mb-3">
-                                                        <span className={`text-10px font-semibold  italic ${isSelected ? 'text-brand-pink' : 'text-gray-400'}`}>{addr.title.toUpperCase()}</span>
-                                                        {isSelected && <span className="text-brand-pink text-10px font-semibold italic ">✓ SEÇİLDİ</span>}
+                                                        <span className={`text-10px font-semibold   ${isSelected ? 'text-brand-pink' : 'text-gray-400'}`}>{addr.title.toUpperCase()}</span>
+                                                        {isSelected && <span className="text-brand-pink text-10px font-semibold  ">✓ SEÇİLDİ</span>}
                                                     </div>
-                                                    <h4 className="text-xs font-semibold text-gray-900 mb-1 italic truncate">{addr.fullName}</h4>
-                                                    <p className="text-10px font-bold text-gray-400 leading-relaxed italic truncate">{addr.neighborhood} {addr.district ? `${addr.district}` : ''}</p>
+                                                    <h4 className="text-xs font-semibold text-gray-900 mb-1  truncate">{addr.fullName}</h4>
+                                                    <p className="text-10px font-bold text-gray-400 leading-relaxed  truncate">{addr.neighborhood} {addr.district ? `${addr.district}` : ''}</p>
                                                     <p className="text-nano font-extrabold text-gray-400 r mt-1.5">{addr.city}, {addr.zipCode}</p>
                                                 </div>
                                             );
@@ -394,36 +404,36 @@ const CheckoutPage: React.FC = () => {
 
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                                     <div className="col-span-1 sm:col-span-2 space-y-2">
-                                        <label className="text-nano font-semibold text-gray-400   ml-4 italic">AD SOYAD <span className="text-brand-pink">*</span></label>
-                                        <input type="text" value={checkout.shippingAddress.fullName} onChange={(e) => checkout.updateShippingAddress({ fullName: e.target.value })} className="w-full h-16 bg-gray-50 border border-gray-100 rounded-md px-8 text-sm font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all italic" placeholder="FURKAN" />
+                                        <label className="text-nano font-semibold text-gray-400   ml-4 ">AD SOYAD <span className="text-brand-pink">*</span></label>
+                                        <input type="text" value={checkout.shippingAddress.fullName} onChange={(e) => checkout.updateShippingAddress({ fullName: e.target.value })} className="w-full h-16 bg-gray-50 border border-gray-100 rounded-md px-8 text-sm font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all " placeholder="FURKAN" />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-nano font-semibold text-gray-400   ml-4 italic">E-POSTA <span className="text-brand-pink">*</span></label>
-                                        <input type="email" value={checkout.shippingAddress.email} onChange={(e) => checkout.updateShippingAddress({ email: e.target.value })} className="w-full h-16 bg-gray-50 border border-gray-100 rounded-md px-8 text-sm font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all italic" placeholder="furkan@example.com" />
+                                        <label className="text-nano font-semibold text-gray-400   ml-4 ">E-POSTA <span className="text-brand-pink">*</span></label>
+                                        <input type="email" value={checkout.shippingAddress.email} onChange={(e) => checkout.updateShippingAddress({ email: e.target.value })} className="w-full h-16 bg-gray-50 border border-gray-100 rounded-md px-8 text-sm font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all " placeholder="furkan@example.com" />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-nano font-semibold text-gray-400   ml-4 italic">TELEFON <span className="text-brand-pink">*</span></label>
-                                        <input type="text" value={checkout.shippingAddress.phone} onChange={(e) => checkout.updateShippingAddress({ phone: e.target.value })} className="w-full h-16 bg-gray-50 border border-gray-100 rounded-md px-8 text-sm font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all italic" placeholder="+90 5XX XXX XX XX" />
+                                        <label className="text-nano font-semibold text-gray-400   ml-4 ">TELEFON <span className="text-brand-pink">*</span></label>
+                                        <input type="text" value={checkout.shippingAddress.phone} onChange={(e) => checkout.updateShippingAddress({ phone: e.target.value })} className="w-full h-16 bg-gray-50 border border-gray-100 rounded-md px-8 text-sm font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all " placeholder="+90 5XX XXX XX XX" />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-nano font-semibold text-gray-400   ml-4 italic">ŞEHİR (İL) <span className="text-brand-pink">*</span></label>
-                                        <input type="text" value={checkout.shippingAddress.city} onChange={(e) => checkout.updateShippingAddress({ city: e.target.value.toUpperCase() })} className="w-full h-16 bg-gray-50 border border-gray-100 rounded-md px-8 text-sm font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all italic" placeholder="İSTANBUL" />
+                                        <label className="text-nano font-semibold text-gray-400   ml-4 ">ŞEHİR (İL) <span className="text-brand-pink">*</span></label>
+                                        <input type="text" value={checkout.shippingAddress.city} onChange={(e) => checkout.updateShippingAddress({ city: e.target.value.toUpperCase() })} className="w-full h-16 bg-gray-50 border border-gray-100 rounded-md px-8 text-sm font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all " placeholder="İSTANBUL" />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-nano font-semibold text-gray-400   ml-4 italic">İLÇE <span className="text-brand-pink">*</span></label>
-                                        <input type="text" value={checkout.shippingAddress.district} onChange={(e) => checkout.updateShippingAddress({ district: e.target.value })} className="w-full h-16 bg-gray-50 border border-gray-100 rounded-md px-8 text-sm font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all italic" placeholder="Beşiktaş" />
+                                        <label className="text-nano font-semibold text-gray-400   ml-4 ">İLÇE <span className="text-brand-pink">*</span></label>
+                                        <input type="text" value={checkout.shippingAddress.district} onChange={(e) => checkout.updateShippingAddress({ district: e.target.value })} className="w-full h-16 bg-gray-50 border border-gray-100 rounded-md px-8 text-sm font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all " placeholder="Beşiktaş" />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-nano font-semibold text-gray-400   ml-4 italic">MAHALLE <span className="text-brand-pink">*</span></label>
-                                        <input type="text" value={checkout.shippingAddress.neighborhood} onChange={(e) => checkout.updateShippingAddress({ neighborhood: e.target.value })} className="w-full h-16 bg-gray-50 border border-gray-100 rounded-md px-8 text-sm font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all italic" placeholder="Sinanpaşa Mh." />
+                                        <label className="text-nano font-semibold text-gray-400   ml-4 ">MAHALLE <span className="text-brand-pink">*</span></label>
+                                        <input type="text" value={checkout.shippingAddress.neighborhood} onChange={(e) => checkout.updateShippingAddress({ neighborhood: e.target.value })} className="w-full h-16 bg-gray-50 border border-gray-100 rounded-md px-8 text-sm font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all " placeholder="Sinanpaşa Mh." />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-nano font-semibold text-gray-400   ml-4 italic">POSTA KODU <span className="text-brand-pink">*</span></label>
-                                        <input type="text" value={checkout.shippingAddress.zipCode} onChange={(e) => checkout.updateShippingAddress({ zipCode: e.target.value })} className="w-full h-16 bg-gray-50 border border-gray-100 rounded-md px-8 text-sm font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all italic" placeholder="34XXX" />
+                                        <label className="text-nano font-semibold text-gray-400   ml-4 ">POSTA KODU <span className="text-brand-pink">*</span></label>
+                                        <input type="text" value={checkout.shippingAddress.zipCode} onChange={(e) => checkout.updateShippingAddress({ zipCode: e.target.value })} className="w-full h-16 bg-gray-50 border border-gray-100 rounded-md px-8 text-sm font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all " placeholder="34XXX" />
                                     </div>
                                     <div className="col-span-1 sm:col-span-2 space-y-2">
-                                        <label className="text-nano font-semibold text-gray-400   ml-4 italic">AÇIK ADRES (Sokak, Bina No, Daire No) <span className="text-brand-pink">*</span></label>
-                                        <textarea value={checkout.shippingAddress.address} onChange={(e) => checkout.updateShippingAddress({ address: e.target.value })} className="w-full h-24 bg-gray-50 border border-gray-100 rounded-md p-8 text-sm font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all italic resize-none" placeholder="Şehit Asım Cad. No: 12 D: 4" />
+                                        <label className="text-nano font-semibold text-gray-400   ml-4 ">AÇIK ADRES (Sokak, Bina No, Daire No) <span className="text-brand-pink">*</span></label>
+                                        <textarea value={checkout.shippingAddress.address} onChange={(e) => checkout.updateShippingAddress({ address: e.target.value })} className="w-full h-24 bg-gray-50 border border-gray-100 rounded-md p-8 text-sm font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  resize-none" placeholder="Şehit Asım Cad. No: 12 D: 4" />
                                     </div>
                                     <div className="col-span-1 sm:col-span-2 flex items-center gap-3 mt-4 ml-2">
                                         <input
@@ -433,7 +443,7 @@ const CheckoutPage: React.FC = () => {
                                             onChange={checkout.toggleBillingSame}
                                             className="w-5 h-5 accent-brand-pink"
                                         />
-                                        <label htmlFor="billingSame" className="text-10px font-semibold text-gray-900   italic cursor-pointer">Fatura adresim teslimat adresiyle aynı olsun</label>
+                                        <label htmlFor="billingSame" className="text-10px font-semibold text-gray-900    cursor-pointer">Fatura adresim teslimat adresiyle aynı olsun</label>
                                     </div>
                                 </div>
                             </div>
@@ -442,10 +452,10 @@ const CheckoutPage: React.FC = () => {
 
                     {checkout.step === 'shipping' && (
                         <div className="space-y-12 animate-in slide-in-from-left-4 duration-500">
-                            <h3 className="text-2xl font-[1000] text-gray-900  italic  mb-4 leading-none">KARGO <span className="text-brand-pink">SEÇENEĞİ</span></h3>
+                            <h3 className="text-2xl font-[1000] text-gray-900    mb-4 leading-none">KARGO <span className="text-brand-pink">SEÇENEĞİ</span></h3>
                             <div className="space-y-6">
                                 {shippingCompanies.length === 0 ? (
-                                    <div className="p-8 text-center text-slate-400 font-bold italic  bg-gray-50 rounded-md border border-gray-100">
+                                    <div className="p-8 text-center text-slate-400 font-bold   bg-gray-50 rounded-md border border-gray-100">
                                         Aktif kargo firması bulunamadı.
                                     </div>
                                 ) : (
@@ -460,11 +470,11 @@ const CheckoutPage: React.FC = () => {
                                                 <div className="flex items-center gap-8">
                                                     <div className="text-3xl">{company.logo}</div>
                                                     <div>
-                                                        <h4 className="text-sm font-[1000] text-gray-900  italic mb-1">{company.name}</h4>
-                                                        <p className="text-10px font-semibold text-gray-400   italic">{company.deliveryTime}</p>
+                                                        <h4 className="text-sm font-[1000] text-gray-900   mb-1">{company.name}</h4>
+                                                        <p className="text-10px font-semibold text-gray-400   ">{company.deliveryTime}</p>
                                                     </div>
                                                 </div>
-                                                <span className="text-sm font-semibold text-gray-900 italic">
+                                                <span className="text-sm font-semibold text-gray-900 ">
                                                     {cost > 0 ? `${cost.toFixed(2)} ₺` : 'ÜCRETSİZ'}
                                                 </span>
                                             </div>
@@ -478,17 +488,17 @@ const CheckoutPage: React.FC = () => {
                     {checkout.step === 'payment' && (
                         <div className="space-y-12 animate-in slide-in-from-left-4 duration-500 max-w-[400px]">
                             <div className="flex justify-between items-center mb-4">
-                                <h3 className="text-2xl font-[1000] text-gray-900 italic  leading-none mb-0">ÖDEME <span className="text-brand-pink">BİLGİLERİ</span></h3>
+                                <h3 className="text-2xl font-[1000] text-gray-900   leading-none mb-0">ÖDEME <span className="text-brand-pink">BİLGİLERİ</span></h3>
                                 <button
                                     onClick={() => setShowCardModal(true)}
-                                    className="px-4 py-2 border border-gray-100 hover:border-brand-pink bg-gray-50 hover:bg-rose-500/5 text-gray-700 hover:text-brand-pink rounded-md text-nano font-semibold  transition-all italic flex items-center gap-2 cursor-pointer"
+                                    className="px-4 py-2 border border-gray-100 hover:border-brand-pink bg-gray-50 hover:bg-rose-500/5 text-gray-700 hover:text-brand-pink rounded-md text-nano font-semibold  transition-all  flex items-center gap-2 cursor-pointer"
                                 >
                                     💳 KARTLARIM
                                 </button>
                             </div>
-                            <div className="bg-gradient-to-br from-slate-50 to-rose-50/40 rounded-md p-6 text-gray-900 relative overflow-hidden shadow-sm border border-rose-100/50 transition-all duration-300">
+                            <div className="bg-gradient-to-br from-slate-50 to-rose-50/40 dark:from-zinc-900 dark:to-zinc-950/80 rounded-md p-6 text-gray-900 dark:text-zinc-100 relative overflow-hidden shadow-sm border border-rose-100/50 dark:border-zinc-800/80 transition-all duration-300">
                                 {/* Elegant diagonal glass reflection wave / sheen tilted at 30 degrees */}
-                                <div className="absolute top-[-30%] left-[-20%] w-[50%] h-[160%] bg-gradient-to-r from-transparent via-white/80 to-transparent transform rotate-[30deg] pointer-events-none"></div>
+                                <div className="absolute top-[-30%] left-[-20%] w-[50%] h-[160%] bg-gradient-to-r from-transparent via-white/20 dark:via-white/5 to-transparent transform rotate-[30deg] pointer-events-none"></div>
                                 <div className="relative z-10">
                                     <div className="flex justify-between items-start mb-5">
                                         <div className="flex items-center gap-4">
@@ -500,26 +510,29 @@ const CheckoutPage: React.FC = () => {
                                             </div>
                                             {cardInfo.bank && (
                                                 <div className="flex flex-col animate-in fade-in duration-300 leading-none">
-                                                    <span className="text-10px font-semibold uppercase italic leading-none text-brand-pink">{cardInfo.bank}</span>
-                                                    <span className="text-atomic font-extrabold text-slate-400/80  uppercase mt-1">{cardInfo.country} {cardInfo.flag}</span>
+                                                    <span className="text-10px font-semibold uppercase  leading-none text-brand-pink">{cardInfo.bank}</span>
+                                                    <span className="text-atomic font-extrabold text-slate-400/80 dark:text-zinc-500 uppercase mt-1">{cardInfo.country} {cardInfo.flag}</span>
                                                 </div>
                                             )}
                                         </div>
                                         {activeBrand ? (
                                             <div className="flex flex-col items-end gap-1 animate-in slide-in-from-right-4 duration-300">
-                                                <div className="px-2.5 py-1 bg-white/95 rounded border border-gray-100 shadow-xs flex items-center justify-center min-h-[26px] min-w-[42px]">
+                                                <div
+                                                    className="px-2.5 py-1 rounded border border-gray-100 dark:border-zinc-700 shadow-xs flex items-center justify-center min-h-[26px] min-w-[42px]"
+                                                    style={{ backgroundColor: '#ffffff' }}
+                                                >
                                                     {renderBrandLogo(activeBrand)}
                                                 </div>
-                                                <span className="text-atomic font-semibold  text-slate-400/80 uppercase leading-none">{cardInfo.type} CARD</span>
+                                                <span className="text-atomic font-semibold  text-slate-400/80 dark:text-zinc-500 uppercase leading-none">{cardInfo.type} CARD</span>
                                             </div>
                                         ) : (
-                                            <div className="text-micro font-semibold  text-gray-400">CREDIT CARD</div>
+                                            <div className="text-micro font-semibold  text-gray-400 dark:text-zinc-500">CREDIT CARD</div>
                                         )}
                                     </div>
                                     <div className="space-y-6">
                                         <input
                                             type="text"
-                                            className="w-full bg-transparent border-none text-xl font-[1000]  focus:outline-none placeholder:text-slate-400/40 italic text-current"
+                                            className="payment-card-input w-full bg-transparent border-none text-xl font-[1000] focus:outline-none placeholder:text-slate-400/40 dark:placeholder:text-zinc-600  text-current"
                                             placeholder="XXXX XXXX XXXX XXXX"
                                             maxLength={19}
                                             value={checkout.cardDetails.number}
@@ -527,20 +540,20 @@ const CheckoutPage: React.FC = () => {
                                         />
                                         <div className="flex justify-between items-end">
                                             <div className="flex-1 mr-6">
-                                                <label className="text-atomic font-semibold text-slate-400/80   mb-2 block">CARD HOLDER <span className="text-brand-pink">*</span></label>
+                                                <label className="text-atomic font-semibold text-slate-400/80 dark:text-zinc-500 mb-2 block">CARD HOLDER <span className="text-brand-pink">*</span></label>
                                                 <input
                                                     type="text"
-                                                    className="w-full bg-transparent border-none text-xs font-semibold focus:outline-none placeholder:text-slate-400/40 italic text-current"
+                                                    className="payment-card-input w-full bg-transparent border-none text-xs font-semibold focus:outline-none placeholder:text-slate-400/40 dark:placeholder:text-zinc-600  text-current"
                                                     placeholder="NAME SURNAME"
                                                     value={checkout.cardDetails.holder}
                                                     onChange={(e) => checkout.updateCardDetails({ holder: e.target.value })}
                                                 />
                                             </div>
                                             <div className="w-16 shrink-0">
-                                                <label className="text-atomic font-semibold text-slate-400/80   mb-2 block">EXPIRES <span className="text-brand-pink">*</span></label>
+                                                <label className="text-atomic font-semibold text-slate-400/80 dark:text-zinc-500 mb-2 block">EXPIRES <span className="text-brand-pink">*</span></label>
                                                 <input
                                                     type="text"
-                                                    className="w-full bg-transparent border-none text-xs font-semibold focus:outline-none placeholder:text-slate-400/40 italic text-center text-current"
+                                                    className="payment-card-input w-full bg-transparent border-none text-xs font-semibold focus:outline-none placeholder:text-slate-400/40 dark:placeholder:text-zinc-600  text-center text-current"
                                                     placeholder="MM/YY"
                                                     maxLength={5}
                                                     value={checkout.cardDetails.expiry}
@@ -548,10 +561,10 @@ const CheckoutPage: React.FC = () => {
                                                 />
                                             </div>
                                             <div className="w-14 ml-4 shrink-0">
-                                                <label className="text-atomic font-semibold text-slate-400/80   mb-2 block">CVV <span className="text-brand-pink">*</span></label>
+                                                <label className="text-atomic font-semibold text-slate-400/80 dark:text-zinc-500 mb-2 block">CVV <span className="text-brand-pink">*</span></label>
                                                 <input
                                                     type="password"
-                                                    className="w-full bg-transparent border-none text-xs font-semibold focus:outline-none placeholder:text-slate-400/40 italic text-center text-current"
+                                                    className="payment-card-input w-full bg-transparent border-none text-xs font-semibold focus:outline-none placeholder:text-slate-400/40 dark:placeholder:text-zinc-600  text-center text-current"
                                                     placeholder="***"
                                                     maxLength={3}
                                                     value={checkout.cardDetails.cvv}
@@ -571,7 +584,7 @@ const CheckoutPage: React.FC = () => {
                                     onChange={(e) => setSaveCardOnSubmit(e.target.checked)}
                                     className="w-4 h-4 accent-indigo-600 cursor-pointer"
                                 />
-                                <label htmlFor="saveCardCheckbox" className="text-10px font-bold text-slate-400 cursor-pointer select-none italic r">
+                                <label htmlFor="saveCardCheckbox" className="text-10px font-bold text-slate-400 cursor-pointer select-none  r">
                                     Bu kartı sonraki alışverişlerim için güvenle kaydet.
                                 </label>
                             </div>
@@ -580,42 +593,42 @@ const CheckoutPage: React.FC = () => {
                                 <div className="w-12 h-12 bg-emerald-500/10 rounded-md flex items-center justify-center text-emerald-500">
                                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
                                 </div>
-                                <p className="text-10px font-semibold text-gray-400   leading-relaxed italic">Ödemeleriniz <span className="text-gray-900 leading-none">256-Bit SSL</span> şifreleme alt yapısıyla güvence altındadır.</p>
+                                <p className="text-10px font-semibold text-gray-400   leading-relaxed ">Ödemeleriniz <span className="text-gray-900 leading-none">256-Bit SSL</span> şifreleme alt yapısıyla güvence altındadır.</p>
                             </div>
                         </div>
                     )}
 
                     {checkout.step === 'review' && (
                         <div className="space-y-12 animate-in slide-in-from-left-4 duration-500">
-                            <h3 className="text-2xl font-[1000] text-gray-900  italic  mb-4 leading-none">SON <span className="text-brand-pink">KONTROLLER</span></h3>
+                            <h3 className="text-2xl font-[1000] text-gray-900    mb-4 leading-none">SON <span className="text-brand-pink">KONTROLLER</span></h3>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
                                 <div className="p-10 rounded-md bg-gray-50 border border-gray-100">
-                                    <span className="text-nano font-semibold text-gray-300   mb-4 block italic">TESLİMAT ADRESİ</span>
-                                    <h4 className="text-sm font-semibold text-gray-900 mb-2 italic ">{checkout.shippingAddress.fullName}</h4>
-                                    <p className="text-xs font-bold text-gray-400 leading-relaxed italic ">
+                                    <span className="text-nano font-semibold text-gray-300   mb-4 block ">TESLİMAT ADRESİ</span>
+                                    <h4 className="text-sm font-semibold text-gray-900 mb-2  ">{checkout.shippingAddress.fullName}</h4>
+                                    <p className="text-xs font-bold text-gray-400 leading-relaxed  ">
                                         {checkout.shippingAddress.neighborhood} {checkout.shippingAddress.district ? `${checkout.shippingAddress.district}` : ''}<br />
                                         {checkout.shippingAddress.address}<br />
                                         {checkout.shippingAddress.city}, {checkout.shippingAddress.zipCode}
                                     </p>
                                 </div>
                                 <div className="p-10 rounded-md bg-gray-50 border border-gray-100">
-                                    <span className="text-nano font-semibold text-gray-300   mb-4 block italic">ÖDEME YÖNTEMİ</span>
-                                    <h4 className="text-sm font-semibold text-gray-900 mb-2 italic ">{checkout.cardDetails.holder || 'Kredi Kartı'}</h4>
-                                    <p className="text-xs font-bold text-gray-400 leading-relaxed italic ">
+                                    <span className="text-nano font-semibold text-gray-300   mb-4 block ">ÖDEME YÖNTEMİ</span>
+                                    <h4 className="text-sm font-semibold text-gray-900 mb-2  ">{checkout.cardDetails.holder || 'Kredi Kartı'}</h4>
+                                    <p className="text-xs font-bold text-gray-400 leading-relaxed  ">
                                         {checkout.cardDetails.number ? `**** **** **** ${checkout.cardDetails.number.slice(-4)}` : '**** **** **** 4242'}
                                     </p>
                                 </div>
                             </div>
                             <div className="p-10 rounded-md bg-gray-50 border border-gray-100">
-                                <span className="text-nano font-semibold text-gray-300   mb-6 block italic">SEPET ÖZETİ</span>
+                                <span className="text-nano font-semibold text-gray-300   mb-6 block ">SEPET ÖZETİ</span>
                                 <div className="space-y-6">
                                     {items.map((item, idx) => (
                                         <div key={`${item.id}-${item.variant ?? idx}`} className="flex justify-between items-center">
                                             <div className="flex items-center gap-4">
-                                                <span className="text-xs font-semibold text-gray-900 italic  truncate max-w-[200px]">{item.name}</span>
-                                                <span className="text-10px font-semibold text-gray-300 italic">x{item.quantity}</span>
+                                                <span className="text-xs font-semibold text-gray-900   truncate max-w-[200px]">{item.name}</span>
+                                                <span className="text-10px font-semibold text-gray-300 ">x{item.quantity}</span>
                                             </div>
-                                            <span className="text-xs font-semibold text-gray-900 italic">{(item.price * item.quantity).toLocaleString()} ₺</span>
+                                            <span className="text-xs font-semibold text-gray-900 ">{(item.price * item.quantity).toLocaleString()} ₺</span>
                                         </div>
                                     ))}
                                 </div>
@@ -627,7 +640,7 @@ const CheckoutPage: React.FC = () => {
                         {checkout.step !== 'address' && (
                             <button
                                 onClick={checkout.prevStep}
-                                className="px-10 py-5 text-10px font-semibold text-gray-400   hover:text-gray-900 transition-all italic flex items-center gap-4"
+                                className="px-10 py-5 text-10px font-semibold text-gray-400   hover:text-gray-900 transition-all  flex items-center gap-4"
                             >
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M7 16l-4-4m0 0l4-4m-4 4h18" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
                                 GERİ DÖN
@@ -647,30 +660,30 @@ const CheckoutPage: React.FC = () => {
                 {/* Right Summary Column */}
                 <div className="col-span-1">
                     <div className="bg-gray-50/50 p-12 rounded-md border border-gray-100 sticky top-32">
-                        <h2 className="text-2xl font-[1000] text-gray-900  italic  mb-5 leading-none">ÖDEME <span className="text-brand-pink">ÖZETİ</span></h2>
+                        <h2 className="text-2xl font-[1000] text-gray-900    mb-5 leading-none">ÖDEME <span className="text-brand-pink">ÖZETİ</span></h2>
                         <div className="space-y-6 pb-10 border-b border-gray-100">
                             <div className="flex justify-between items-center">
                                 <span className="text-10px font-semibold text-gray-400  ">ARA TOPLAM</span>
-                                <span className="text-sm font-semibold text-gray-900 italic">{total.toLocaleString()} ₺</span>
+                                <span className="text-sm font-semibold text-gray-900 ">{total.toLocaleString()} ₺</span>
                             </div>
                             <div className="flex justify-between items-center">
                                 <span className="text-10px font-semibold text-gray-400  ">KARGO ({selectedCompany?.name || 'Seçilmedi'})</span>
-                                <span className="text-10px font-semibold text-brand-pink  italic">
+                                <span className="text-10px font-semibold text-brand-pink  ">
                                     {shippingCost > 0 ? `${shippingCost.toFixed(2)} ₺` : 'ÜCRETSİZ'}
                                 </span>
                             </div>
                             <div className="flex justify-between items-center">
                                 <span className="text-10px font-semibold text-gray-400  ">KDV (%20)</span>
-                                <span className="text-sm font-semibold text-gray-900 italic">{(total * 0.2).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₺</span>
+                                <span className="text-sm font-semibold text-gray-900 ">{(total * 0.2).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₺</span>
                             </div>
                         </div>
                         <div className="pt-10 mb-4">
-                            <span className="text-10px font-[1000] text-gray-400   mb-1 block italic">TOPLAM ÖDENECEK</span>
-                            <span className="text-4xl font-[1000] text-gray-900 leading-none  italic whitespace-nowrap">
+                            <span className="text-10px font-[1000] text-gray-400   mb-1 block ">TOPLAM ÖDENECEK</span>
+                            <span className="text-4xl font-[1000] text-gray-900 leading-none   whitespace-nowrap">
                                 {(total + shippingCost + (total * 0.2)).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₺
                             </span>
                         </div>
-                        <p className="text-nano font-bold text-gray-300   leading-relaxed italic">Siparişi tamamlayarak Kullanım Koşulları ve İptal/İade Politikalarını kabul etmiş sayılırsınız.</p>
+                        <p className="text-nano font-bold text-gray-300   leading-relaxed ">Siparişi tamamlayarak Kullanım Koşulları ve İptal/İade Politikalarını kabul etmiş sayılırsınız.</p>
                     </div>
                 </div>
             </div>
@@ -694,6 +707,17 @@ const CheckoutPage: React.FC = () => {
                 onClose={() => setShowCardModal(false)}
                 onSelectCard={handleSelectCard}
                 activeCardNumber={checkout.cardDetails.number}
+            />
+
+            {/* Simulated Iyzico 3D Secure Verification Modal */}
+            <IyzicoThreeDSecureModal
+                isOpen={isIyzicoModalOpen}
+                onClose={() => setIsIyzicoModalOpen(false)}
+                onVerifySuccess={handleIyzicoSuccess}
+                onVerifyFailure={handleIyzicoFailure}
+                amount={total + shippingCost + (total * 0.2)}
+                cardNumber={checkout.cardDetails.number}
+                phoneNumber={checkout.shippingAddress.phone}
             />
         </div>
     );

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../features/auth/useAuth';
 import GeolocationTracker from '../../shared/components/GeolocationTracker';
@@ -7,6 +7,7 @@ const VendorLayout: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const { logout, merchant } = useAuth();
+    const [mobileOpen, setMobileOpen] = useState(false);
 
     const handleLogout = () => {
         logout();
@@ -55,16 +56,25 @@ const VendorLayout: React.FC = () => {
     return (
         <div className="flex h-screen bg-[#f1f5f9] overflow-hidden font-sans">
             <GeolocationTracker />
+
+            {/* Mobile Sidebar Overlay */}
+            {mobileOpen && (
+                <div
+                    className="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm lg:hidden"
+                    onClick={() => setMobileOpen(false)}
+                />
+            )}
+
             {/* Sidebar */}
-            <aside className="w-72 bg-white border-r border-slate-200 flex flex-col">
+            <aside className={`fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-slate-200 flex flex-col transform transition-transform duration-300 lg:translate-x-0 lg:static lg:z-auto ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                 <div className="p-8">
                     <div className="flex items-center gap-4">
                         <div className="w-12 h-12 bg-brand-pink rounded-2xl flex items-center justify-center text-white shadow-lg shadow-brand-pink/20">
                             <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
                         </div>
                         <div>
-                            <span className="text-lg font-semibold text-slate-900 leading-none block italic">Satıcı Paneli</span>
-                            <span className="text-10px font-bold text-brand-pink r  italic">FUIRA Enterprise</span>
+                            <span className="text-lg font-semibold text-slate-900 leading-none block ">Satıcı Paneli</span>
+                            <span className="text-10px font-bold text-brand-pink r  ">FUIRA Enterprise</span>
                         </div>
                     </div>
                 </div>
@@ -78,6 +88,7 @@ const VendorLayout: React.FC = () => {
                             <Link
                                 key={item.path}
                                 to={item.path}
+                                onClick={() => setMobileOpen(false)}
                                 className={`flex items-center gap-4 px-6 py-4 rounded-2xl text-sm font-bold transition-all cursor-pointer ${isActive ? 'bg-rose-50 text-brand-pink shadow-sm shadow-rose-100/50' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}`}
                             >
                                 <span className={isActive ? 'text-brand-pink' : 'text-slate-400'}>{item.icon}</span>
@@ -93,7 +104,7 @@ const VendorLayout: React.FC = () => {
                             <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(merchant?.contactPerson || merchant?.companyName || 'Satıcı')}&background=fb7185&color=fff&bold=true`} alt="Profile" className="w-full h-full object-cover" />
                         </div>
                         <div className="flex-1 min-w-0">
-                            <span className="text-sm font-semibold text-slate-900 block truncate leading-tight italic">{merchant?.contactPerson || 'Furkan Kılınç'}</span>
+                            <span className="text-sm font-semibold text-slate-900 block truncate leading-tight ">{merchant?.contactPerson || 'Furkan Kılınç'}</span>
                             <span className="text-nano font-semibold text-slate-400 block truncate r mt-0.5">{merchant?.companyName || 'FUIRA Enterprise'}</span>
                         </div>
                     </div>
@@ -111,9 +122,15 @@ const VendorLayout: React.FC = () => {
 
             {/* Main Content */}
             <main className="flex-1 overflow-y-auto">
-                <header className="h-24 bg-white/80 backdrop-blur-md border-b border-slate-100 flex items-center justify-between px-12 sticky top-0 z-20">
+                <header className="h-20 bg-white/80 backdrop-blur-md border-b border-slate-100 flex items-center justify-between px-6 lg:px-12 sticky top-0 z-20">
                     <div className="flex items-center gap-4">
-                        <h2 className="text-xl font-semibold text-slate-900   italic">
+                        <button
+                            onClick={() => setMobileOpen(true)}
+                            className="lg:hidden p-2 rounded-xl text-slate-500 hover:bg-slate-50 transition-colors"
+                        >
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 6h16M4 12h16M4 18h16" /></svg>
+                        </button>
+                        <h2 className="text-lg lg:text-xl font-semibold text-slate-900 ">
                             {menuItems.find(m => location.pathname.startsWith(m.path))?.label || 'Dashboard'}
                         </h2>
                     </div>
@@ -122,7 +139,7 @@ const VendorLayout: React.FC = () => {
                     </div>
                 </header>
 
-                <div className="p-12">
+                <div className="p-4 sm:p-6 lg:p-12">
                     <Outlet />
                 </div>
             </main>

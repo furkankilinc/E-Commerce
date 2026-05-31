@@ -105,7 +105,7 @@ const SupportPage: React.FC = () => {
             await apiClient.put(`/api/admin/products/support/sessions/${id}/read-admin`, {});
             // Local count reset
             setSessions(prev => prev.map(s => s.id === id ? { ...s, unreadAdminCount: 0 } : s));
-        } catch (err) {}
+        } catch (err) { }
     };
 
     // Close/Resolve Session
@@ -213,8 +213,8 @@ const SupportPage: React.FC = () => {
             {/* Page Title Header */}
             <div className="flex items-center justify-between mb-8 flex-shrink-0">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-800 tracking-tight italic">CANLI DESTEK MERKEZİ</h1>
-                    <p className="text-xs font-bold text-slate-400 mt-1 italic">Müşterilerden gelen canlı yardım taleplerini anında yanıtlayın ve yönetin.</p>
+                    <h1 className="text-3xl font-black text-slate-800 ">CANLI DESTEK MERKEZİ</h1>
+                    <p className="text-xs font-bold text-slate-400 mt-1 ">Müşterilerden gelen canlı yardım taleplerini anında yanıtlayın ve yönetin.</p>
                 </div>
             </div>
 
@@ -229,14 +229,14 @@ const SupportPage: React.FC = () => {
                             placeholder="Müşteri adı veya e-posta..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full h-11 bg-slate-50 border border-slate-100 rounded-xl px-4 text-xs font-bold text-slate-800 focus:outline-none focus:border-brand-pink transition-all italic"
+                            className="w-full h-11 bg-slate-50 border border-slate-100 rounded-xl px-4 text-xs font-bold text-slate-800 focus:outline-none focus:border-brand-pink transition-all "
                         />
                         <div className="flex gap-2 bg-slate-50 p-1 rounded-xl">
                             {(['active', 'closed', 'all'] as const).map(tab => (
                                 <button
                                     key={tab}
                                     onClick={() => setStatusFilter(tab)}
-                                    className={`flex-1 py-2 text-[10px] font-black rounded-lg transition-all italic ${statusFilter === tab ? 'bg-white text-brand-pink shadow-sm' : 'text-slate-400 hover:text-slate-700'}`}
+                                    className={`flex-1 py-2 text-[10px] font-black rounded-lg transition-all  ${statusFilter === tab ? 'bg-white text-brand-pink shadow-sm' : 'text-slate-400 hover:text-slate-700'}`}
                                 >
                                     {tab === 'active' ? 'AKTİF' : tab === 'closed' ? 'KAPALI' : 'TÜMÜ'}
                                 </button>
@@ -261,7 +261,7 @@ const SupportPage: React.FC = () => {
                                         onClick={() => handleSelectSession(session)}
                                         className={`w-full p-5 text-left transition-all hover:bg-slate-50/30 flex items-center gap-4 ${isSelected ? 'bg-slate-50/60 border-l-4 border-brand-pink' : ''}`}
                                     >
-                                        <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 font-bold text-base italic flex-shrink-0 relative">
+                                        <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 font-bold text-base  flex-shrink-0 relative">
                                             {session.userName[0].toUpperCase()}
                                             {isBlocked && (
                                                 <span className="absolute -top-1.5 -right-1.5 bg-rose-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-[9px] font-bold border-2 border-white">
@@ -271,22 +271,22 @@ const SupportPage: React.FC = () => {
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center justify-between">
-                                                <h4 className="text-xs font-black text-slate-800 truncate italic">{session.userName}</h4>
+                                                <h4 className="text-xs font-black text-slate-800 truncate ">{session.userName}</h4>
                                                 <div className="flex items-center gap-2">
                                                     {session.unreadAdminCount && session.unreadAdminCount > 0 ? (
                                                         <span className="bg-rose-500 text-white font-black text-[9px] rounded-full h-5 px-1.5 flex items-center justify-center animate-bounce shadow-md">
                                                             {session.unreadAdminCount}
                                                         </span>
                                                     ) : null}
-                                                    <span className="text-[9px] font-bold text-slate-400 italic">
+                                                    <span className="text-[9px] font-bold text-slate-400 ">
                                                         {new Date(session.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                                     </span>
                                                 </div>
                                             </div>
-                                            <p className="text-[10px] text-slate-400 truncate italic mt-1 font-semibold">{lastMsg?.text || 'Yeni konuşma başlatıldı'}</p>
+                                            <p className="text-[10px] text-slate-400 truncate  mt-1 font-semibold">{lastMsg?.text || 'Yeni konuşma başlatıldı'}</p>
                                             <div className="flex items-center gap-2 mt-2">
                                                 <span className={`w-1.5 h-1.5 rounded-full ${session.status === 'active' ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}`}></span>
-                                                <span className="text-[8px] font-black text-slate-400 italic tracking-wider uppercase">
+                                                <span className="text-[8px] font-black text-slate-400   uppercase">
                                                     {session.status === 'active' ? 'Aktif Chat' : 'Çözüldü'}
                                                 </span>
                                             </div>
@@ -295,7 +295,7 @@ const SupportPage: React.FC = () => {
                                 );
                             })
                         ) : (
-                            <div className="py-20 text-center text-slate-300 font-bold text-[10px] italic">
+                            <div className="py-20 text-center text-slate-300 font-bold text-[10px] ">
                                 HİÇ DESTEK TALEBİ BULUNAMADI
                             </div>
                         )}
@@ -309,7 +309,7 @@ const SupportPage: React.FC = () => {
                             {/* Chat Header */}
                             <div className="p-6 bg-white border-b border-slate-50 flex items-center justify-between flex-shrink-0">
                                 <div className="flex items-center gap-4">
-                                    <div className="w-10 h-10 rounded-full bg-brand-pink/10 text-brand-pink flex items-center justify-center font-bold text-sm italic relative">
+                                    <div className="w-10 h-10 rounded-full bg-brand-pink/10 text-brand-pink flex items-center justify-center font-bold text-sm  relative">
                                         {activeSession.userName[0].toUpperCase()}
                                         {isUserBlocked && (
                                             <span className="absolute -top-1 -right-1 text-xs">🚫</span>
@@ -317,12 +317,12 @@ const SupportPage: React.FC = () => {
                                     </div>
                                     <div>
                                         <div className="flex items-center gap-2">
-                                            <h3 className="text-xs font-black text-slate-800 italic">{activeSession.userName}</h3>
+                                            <h3 className="text-xs font-black text-slate-800 ">{activeSession.userName}</h3>
                                             {isUserBlocked && (
-                                                <span className="px-2 py-0.5 bg-rose-100 text-rose-600 text-[8px] font-black tracking-wide rounded italic uppercase">YASAKLI</span>
+                                                <span className="px-2 py-0.5 bg-rose-100 text-rose-600 text-[8px] font-black  rounded  uppercase">YASAKLI</span>
                                             )}
                                         </div>
-                                        <span className="text-[10px] font-bold text-slate-400 italic">{activeSession.email}</span>
+                                        <span className="text-[10px] font-bold text-slate-400 ">{activeSession.email}</span>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-3">
@@ -334,15 +334,14 @@ const SupportPage: React.FC = () => {
                                     >
                                         🗑️
                                     </button>
-                                    
+
                                     {/* Yasakla/Engelle Butonu */}
                                     <button
                                         onClick={() => handleBlockToggle(activeSession.email)}
-                                        className={`px-5 py-2.5 rounded-xl text-[10px] font-bold tracking-wide italic active:scale-95 transition-all shadow-sm ${
-                                            isUserBlocked 
-                                                ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' 
-                                                : 'bg-rose-100 text-rose-700 hover:bg-rose-200'
-                                        }`}
+                                        className={`px-5 py-2.5 rounded-xl text-[10px] font-bold   active:scale-95 transition-all shadow-sm ${isUserBlocked
+                                            ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200'
+                                            : 'bg-rose-100 text-rose-700 hover:bg-rose-200'
+                                            }`}
                                     >
                                         {isUserBlocked ? '🚫 YASAĞI KALDIR' : '🚫 KULLANICIYI YASAKLA'}
                                     </button>
@@ -350,12 +349,12 @@ const SupportPage: React.FC = () => {
                                     {activeSession.status === 'active' ? (
                                         <button
                                             onClick={() => handleCloseSession(activeSession.id)}
-                                            className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-[10px] font-bold tracking-wide italic active:scale-95 transition-all shadow-lg shadow-slate-900/10"
+                                            className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-[10px] font-bold   active:scale-95 transition-all shadow-lg shadow-slate-900/10"
                                         >
                                             ✔️ TALEBİ KAPAT
                                         </button>
                                     ) : (
-                                        <span className="px-4 py-2 bg-slate-100 text-slate-500 text-[10px] font-bold rounded-xl italic">TALEB KAPALI</span>
+                                        <span className="px-4 py-2 bg-slate-100 text-slate-500 text-[10px] font-bold rounded-xl ">TALEB KAPALI</span>
                                     )}
                                 </div>
                             </div>
@@ -370,15 +369,14 @@ const SupportPage: React.FC = () => {
                                             className={`flex flex-col ${isAdmin ? 'items-end' : 'items-start'}`}
                                         >
                                             <div
-                                                className={`max-w-[70%] px-4 py-3 rounded-2xl text-xs font-bold shadow-sm ${
-                                                    isAdmin
-                                                        ? 'bg-slate-950 text-white rounded-tr-none'
-                                                        : 'bg-white text-slate-800 border border-slate-100 rounded-tl-none'
-                                                }`}
+                                                className={`max-w-[70%] px-4 py-3 rounded-2xl text-xs font-bold shadow-sm ${isAdmin
+                                                    ? 'bg-slate-950 text-white rounded-tr-none'
+                                                    : 'bg-white text-slate-800 border border-slate-100 rounded-tl-none'
+                                                    }`}
                                             >
                                                 {msg.text}
                                             </div>
-                                            <span className="text-[8px] font-semibold text-slate-400 italic mt-1 px-1">
+                                            <span className="text-[8px] font-semibold text-slate-400  mt-1 px-1">
                                                 {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                             </span>
                                         </div>
@@ -395,11 +393,11 @@ const SupportPage: React.FC = () => {
                                         value={inputText}
                                         onChange={(e) => setInputText(e.target.value)}
                                         placeholder="Müşteriye yanıt yazın..."
-                                        className="flex-grow bg-slate-50 border border-slate-100 rounded-xl px-4 py-3.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-brand-pink focus:bg-white transition-all italic"
+                                        className="flex-grow bg-slate-50 border border-slate-100 rounded-xl px-4 py-3.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-brand-pink focus:bg-white transition-all "
                                     />
                                     <button
                                         type="submit"
-                                        className="px-6 bg-brand-pink text-white rounded-xl text-[10px] font-bold tracking-wide shadow-lg shadow-brand-pink/20 hover:scale-105 active:scale-95 transition-all italic"
+                                        className="px-6 bg-brand-pink text-white rounded-xl text-[10px] font-bold  shadow-lg shadow-brand-pink/20 hover:scale-105 active:scale-95 transition-all "
                                     >
                                         GÖNDER
                                     </button>
@@ -407,7 +405,7 @@ const SupportPage: React.FC = () => {
                             )}
 
                             {isUserBlocked && (
-                                <div className="p-4 bg-rose-50 border-t border-rose-100 text-rose-700 text-center text-xs font-bold italic">
+                                <div className="p-4 bg-rose-50 border-t border-rose-100 text-rose-700 text-center text-xs font-bold ">
                                     Kullanıcı yasaklandığı için mesaj gönderilemez. Mesajlaşmayı başlatmak için yasağı kaldırınız.
                                 </div>
                             )}
@@ -418,8 +416,8 @@ const SupportPage: React.FC = () => {
                             <div className="w-20 h-20 bg-slate-100 rounded-3xl flex items-center justify-center mb-6 border border-slate-200 shadow-inner">
                                 <span className="text-4xl">💬</span>
                             </div>
-                            <h3 className="text-lg font-black text-slate-800 italic">Destek Talebi Seçilmedi</h3>
-                            <p className="text-xs font-semibold text-slate-400 mt-2 max-w-sm leading-relaxed italic">
+                            <h3 className="text-lg font-black text-slate-800 ">Destek Talebi Seçilmedi</h3>
+                            <p className="text-xs font-semibold text-slate-400 mt-2 max-w-sm leading-relaxed ">
                                 Sol taraftaki listeden aktif bir müşteri oturumu seçerek görüşmeyi anlık sürdürebilirsiniz.
                             </p>
                         </div>

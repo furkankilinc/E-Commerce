@@ -463,15 +463,22 @@ button,
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 1.5rem;
-    margin-top: 5rem;
+    gap: 0.5rem; /* smaller gap on mobile to prevent sliding */
+    margin-top: 3rem;
+    flex-wrap: wrap;
+}
+
+@media (min-width: 640px) {
+    .ui-pagination-container {
+        gap: 1rem;
+        margin-top: 5rem;
+    }
 }
 
 .ui-pagination-btn {
-    width: 3rem;
-    height: 3rem;
-    border-radius: 0.75rem;
-    /* rounded-xl */
+    width: 2.25rem; /* 36px on mobile - fits beautifully! */
+    height: 2.25rem; /* 36px on mobile */
+    border-radius: 0.5rem;
     background-color: var(--color-bg-primary);
     border: 2px solid var(--color-border-primary);
     display: flex;
@@ -483,12 +490,17 @@ button,
     font-weight: 600;
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    flex-shrink: 0;
 }
 
-.ui-pagination-btn:hover:not(:disabled) {
-    color: var(--brand-hover-color) !important;
-    border-color: var(--brand-hover-color) !important;
+@media (min-width: 640px) {
+    .ui-pagination-btn {
+        width: 3rem; /* 48px on desktop */
+        height: 3rem; /* 48px on desktop */
+        border-radius: 0.75rem;
+    }
 }
+
 
 .ui-pagination-btn:disabled {
     opacity: 0.2;
@@ -506,4 +518,32 @@ button,
 .ui-pagination-dots {
     color: var(--color-text-secondary);
     font-weight: 600;
+}
+
+/* Dark mode pagination override to make text white */
+.dark .ui-pagination-btn:not(.active) {
+    color: #ffffff !important;
+}
+
+.dark .ui-pagination-dots {
+    color: #ffffff !important;
+}
+
+/* Elegant checkout payment card input overrides for dark mode to prevent black rectangles */
+.dark input.payment-card-input,
+.dark input.payment-card-input:focus {
+    background-color: transparent !important;
+    border-color: transparent !important;
+    border-style: none !important;
+    box-shadow: none !important;
+}
+
+/* Shake animation for incorrect İyzico OTP code entries */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-6px); }
+  20%, 40%, 60%, 80% { transform: translateX(6px); }
+}
+.animate-shake {
+  animation: shake 0.5s ease-in-out;
 }

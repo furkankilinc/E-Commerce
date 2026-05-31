@@ -246,7 +246,7 @@ const MainLayout: React.FC = () => {
                         {/* Logo & Nav */}
                         <div className="flex items-center gap-16">
                             <Link to="/" className="flex items-center">
-                                <span className="text-2xl font-extrabold  text-gray-900 italic ">
+                                <span className="text-2xl font-extrabold  text-gray-900  ">
                                     <span className="text-brand-pink">FUI & </span>RA
                                 </span>
                             </Link>
@@ -318,7 +318,7 @@ const MainLayout: React.FC = () => {
                                                         e.stopPropagation();
                                                         clearRecentSearches();
                                                     }}
-                                                    className="text-micro font-semibold text-brand-pink/50 hover:text-brand-pink   transition-colors italic"
+                                                    className="text-micro font-semibold text-brand-pink/50 hover:text-brand-pink   transition-colors "
                                                 >
                                                     {t('search.clear')}
                                                 </button>
@@ -340,7 +340,7 @@ const MainLayout: React.FC = () => {
                                                         <div className="w-8 h-8 rounded-md bg-gray-50 flex items-center justify-center group-hover:bg-white transition-colors border border-transparent group-hover:border-gray-100">
                                                             <svg className="w-3 h-3 text-gray-300 group-hover:text-brand-pink transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                                         </div>
-                                                        <span className="text-caption font-bold text-gray-500 group-hover:text-gray-900  italic transition-colors truncate">{term}</span>
+                                                        <span className="text-caption font-bold text-gray-500 group-hover:text-gray-900   transition-colors truncate">{term}</span>
                                                     </div>
                                                     <button
                                                         onClick={(e) => {
@@ -362,7 +362,7 @@ const MainLayout: React.FC = () => {
                                             {isSuggesting && suggestions.length === 0 ? (
                                                 <div className="p-8 text-center">
                                                     <div className="w-6 h-6 border-2 border-brand-pink border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-                                                    <span className="text-10px font-semibold text-gray-300   italic">{t('search.searching')}</span>
+                                                    <span className="text-10px font-semibold text-gray-300   ">{t('search.searching')}</span>
                                                 </div>
                                             ) : suggestions.length > 0 ? (
                                                 <div className="py-4">
@@ -389,19 +389,19 @@ const MainLayout: React.FC = () => {
                                                                 />
                                                             </div>
                                                             <div className="flex-1 truncate">
-                                                                <h4 className="text-caption font-bold text-gray-900  italic truncate leading-none mb-1.5">{product.name}</h4>
+                                                                <h4 className="text-caption font-bold text-gray-900   truncate leading-none mb-1.5">{product.name}</h4>
                                                                 <div className="flex items-center gap-3">
                                                                     {product.discountPrice ? (
                                                                         <>
-                                                                            <span className="text-micro font-bold text-gray-400 line-through italic opacity-60">
+                                                                            <span className="text-micro font-bold text-gray-400 line-through  opacity-60">
                                                                                 {product.price.toLocaleString()} ₺
                                                                             </span>
-                                                                            <span className="text-10px font-semibold text-brand-pink italic">
+                                                                            <span className="text-10px font-semibold text-brand-pink ">
                                                                                 {product.discountPrice.toLocaleString()} ₺
                                                                             </span>
                                                                         </>
                                                                     ) : (
-                                                                        <span className="text-10px font-semibold text-brand-pink italic">
+                                                                        <span className="text-10px font-semibold text-brand-pink ">
                                                                             {product.price.toLocaleString()} ₺
                                                                         </span>
                                                                     )}
@@ -419,7 +419,7 @@ const MainLayout: React.FC = () => {
                                                     <div className="w-12 h-12 bg-gray-50 rounded-md flex items-center justify-center mx-auto mb-4 border border-gray-100">
                                                         <svg className="w-6 h-6 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                                                     </div>
-                                                    <p className="text-10px font-semibold text-gray-300   italic leading-relaxed">{t('search.noResults')}<br /></p>
+                                                    <p className="text-10px font-semibold text-gray-300    leading-relaxed">{t('search.noResults')}<br /></p>
                                                 </div>
                                             )}
                                         </>
@@ -431,7 +431,7 @@ const MainLayout: React.FC = () => {
                                             <div className="w-12 h-12 bg-gray-50 rounded-md flex items-center justify-center mx-auto mb-4 border border-gray-100">
                                                 <svg className="w-6 h-6 text-brand-pink/20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.246.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
                                             </div>
-                                            <p className="text-10px font-semibold text-gray-300   italic leading-relaxed">{t('search.start')}<br /></p>
+                                            <p className="text-10px font-semibold text-gray-300    leading-relaxed">{t('search.start')}<br /></p>
                                         </div>
                                     )}
                                 </div>
@@ -495,14 +495,14 @@ const MainLayout: React.FC = () => {
                                         <div className="p-8 border-b border-gray-50 bg-gray-50/30">
                                             <div className="flex justify-between items-center mb-1">
                                                 <p className="text-10px font-semibold text-gray-400  ">{t('cart.title')}</p>
-                                                <span className="text-10px font-semibold text-brand-pink bg-brand-pink/5 px-3 py-1 rounded-full italic">{t('cart.itemsCount', { count: itemCount })}</span>
+                                                <span className="text-10px font-semibold text-brand-pink bg-brand-pink/5 px-3 py-1 rounded-full ">{t('cart.itemsCount', { count: itemCount })}</span>
                                             </div>
                                         </div>
 
                                         <div className="max-h-[400px] overflow-y-auto p-4 space-y-4">
                                             {items.length === 0 ? (
                                                 <div className="py-20 text-center">
-                                                    <p className="text-10px font-semibold text-gray-300   italic">{t('cart.empty')}</p>
+                                                    <p className="text-10px font-semibold text-gray-300   ">{t('cart.empty')}</p>
                                                 </div>
                                             ) : (
                                                 items.map((item) => (
@@ -511,26 +511,26 @@ const MainLayout: React.FC = () => {
                                                             <img src={getSizedImageUrl(item.image, 'small')} alt={item.name} width="80" height="80" className="w-full h-full object-contain" />
                                                         </div>
                                                         <div className="flex-1 min-w-0 flex flex-col justify-center">
-                                                            <h4 className="text-caption font-[1000] text-gray-900  italic truncate mb-1">{item.name}</h4>
+                                                            <h4 className="text-caption font-[1000] text-gray-900   truncate mb-1">{item.name}</h4>
                                                             <p className="text-nano font-bold text-gray-400   mb-2">{item.variant || t('cart.standardEdition')}</p>
                                                             <div className="flex justify-between items-center">
                                                                 <div className="flex items-center gap-2">
                                                                     {item.originalPrice ? (
                                                                         <>
-                                                                            <span className="text-10px font-bold text-gray-400 line-through italic opacity-60">
+                                                                            <span className="text-10px font-bold text-gray-400 line-through  opacity-60">
                                                                                 {item.originalPrice.toLocaleString()} ₺
                                                                             </span>
-                                                                            <span className="text-xs font-semibold text-brand-pink italic">
+                                                                            <span className="text-xs font-semibold text-brand-pink ">
                                                                                 {item.price.toLocaleString()} ₺
                                                                             </span>
                                                                         </>
                                                                     ) : (
-                                                                        <span className="text-xs font-semibold text-brand-pink italic">
+                                                                        <span className="text-xs font-semibold text-brand-pink ">
                                                                             {item.price.toLocaleString()} ₺
                                                                         </span>
                                                                     )}
                                                                 </div>
-                                                                <span className="text-10px font-semibold text-gray-300 italic">x {item.quantity}</span>
+                                                                <span className="text-10px font-semibold text-gray-300 ">x {item.quantity}</span>
                                                             </div>
                                                         </div>
                                                         <button
@@ -549,21 +549,21 @@ const MainLayout: React.FC = () => {
 
                                         <div className="p-8 bg-gray-50/50 border-t border-gray-50">
                                             <div className="flex justify-between items-center mb-4">
-                                                <span className="text-10px font-bold text-gray-400   italic">{t('cart.total')}</span>
-                                                <span className="text-xl font-bold text-gray-900  italic leading-none">{total.toLocaleString()}&nbsp;₺</span>
+                                                <span className="text-10px font-bold text-gray-400   ">{t('cart.total')}</span>
+                                                <span className="text-xl font-bold text-gray-900   leading-none">{total.toLocaleString()}&nbsp;₺</span>
                                             </div>
                                             <div className="grid grid-cols-2 gap-4">
                                                 <Link
                                                     to="/cart"
                                                     onClick={() => setShowCart(false)}
-                                                    className="py-4 rounded-md bg-white border border-gray-100 text-12px font-semibold text-gray-900   text-center hover:bg-gray-50  transition-all italic"
+                                                    className="py-4 rounded-md bg-white border border-gray-100 text-12px font-semibold text-gray-900   text-center hover:bg-gray-50  transition-all "
                                                 >
                                                     {t('cart.goToCart')}
                                                 </Link>
                                                 <Link
                                                     to="/checkout"
                                                     onClick={() => setShowCart(false)}
-                                                    className="py-4 rounded-md bg-brand-pink text-white text-12px font-semibold   text-center hover:bg-brand-pink/90 shadow-brand-pink/20 transition-all italic"
+                                                    className="py-4 rounded-md bg-brand-pink text-white text-12px font-semibold   text-center hover:bg-brand-pink/90 shadow-brand-pink/20 transition-all "
                                                 >
                                                     {t('cart.checkout')}
                                                 </Link>
@@ -590,13 +590,13 @@ const MainLayout: React.FC = () => {
                                             <div className="absolute top-full right-0 mt-2 w-60 bg-white rounded-md shadow-xl border border-gray-50 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-300">
                                                 <div className="p-4 border-b border-gray-50 bg-gray-50/50">
                                                     <p className="text-nano font-semibold text-gray-400   mb-1">{t('user.welcome')}</p>
-                                                    <p className="text-xs font-semibold text-gray-900 truncate italic ">{user?.name || 'Kullanıcı'}</p>
+                                                    <p className="text-xs font-semibold text-gray-900 truncate  ">{user?.name || 'Kullanıcı'}</p>
                                                 </div>
                                                 <div className="p-3">
                                                     <Link
                                                         to="/profile"
                                                         onClick={() => setShowUserMenu(false)}
-                                                        className="flex items-center gap-4 px-5 py-3.5 rounded-md text-10px font-semibold text-gray-400   hover:bg-gray-50 hover:text-gray-900 transition-all italic"
+                                                        className="flex items-center gap-4 px-5 py-3.5 rounded-md text-10px font-semibold text-gray-400   hover:bg-gray-50 hover:text-gray-900 transition-all "
                                                     >
                                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                                                         {t('user.profile')}
@@ -604,7 +604,7 @@ const MainLayout: React.FC = () => {
                                                     <Link
                                                         to="/profile/orders"
                                                         onClick={() => setShowUserMenu(false)}
-                                                        className="flex items-center gap-4 px-5 py-3.5 rounded-md text-10px font-semibold text-gray-400   hover:bg-gray-50 hover:text-gray-900 transition-all italic"
+                                                        className="flex items-center gap-4 px-5 py-3.5 rounded-md text-10px font-semibold text-gray-400   hover:bg-gray-50 hover:text-gray-900 transition-all "
                                                     >
                                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
                                                         {t('user.orders')}
@@ -614,7 +614,7 @@ const MainLayout: React.FC = () => {
                                                     <Link
                                                         to="/collections"
                                                         onClick={() => setShowUserMenu(false)}
-                                                        className="flex md:hidden items-center gap-4 px-5 py-3.5 rounded-md text-10px font-semibold text-gray-400 hover:bg-gray-50 hover:text-gray-900 transition-all italic"
+                                                        className="flex md:hidden items-center gap-4 px-5 py-3.5 rounded-md text-10px font-semibold text-gray-400 hover:bg-gray-50 hover:text-gray-900 transition-all "
                                                     >
                                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
@@ -628,7 +628,7 @@ const MainLayout: React.FC = () => {
                                                             setIsDarkMode(prev => !prev);
                                                             setShowUserMenu(false);
                                                         }}
-                                                        className="flex md:hidden w-full items-center gap-4 px-5 py-3.5 rounded-md text-10px font-semibold text-gray-400 hover:bg-gray-50 hover:text-gray-900 transition-all italic text-left"
+                                                        className="flex md:hidden w-full items-center gap-4 px-5 py-3.5 rounded-md text-10px font-semibold text-gray-400 hover:bg-gray-50 hover:text-gray-900 transition-all  text-left"
                                                     >
                                                         {isDarkMode ? (
                                                             <>
@@ -651,7 +651,7 @@ const MainLayout: React.FC = () => {
                                                     <div className="h-px bg-gray-50 my-2 mx-5" />
                                                     <button
                                                         onClick={handleLogout}
-                                                        className="w-full flex cursor-pointer items-center gap-4 px-5 py-3.5 rounded-md text-10px font-semibold text-red-400   hover:bg-red-50 transition-all italic"
+                                                        className="w-full flex cursor-pointer items-center gap-4 px-5 py-3.5 rounded-md text-10px font-semibold text-red-400   hover:bg-red-50 transition-all "
                                                     >
                                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
                                                         {t('user.logout')}
@@ -685,13 +685,13 @@ const MainLayout: React.FC = () => {
                                             <div className="absolute top-full right-0 mt-2 w-60 bg-white rounded-md shadow-xl border border-gray-50 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-300">
                                                 <div className="p-4 border-b border-gray-50 bg-gray-50/50">
                                                     <p className="text-nano font-semibold text-gray-400 mb-1">{t('user.welcome')}</p>
-                                                    <p className="text-xs font-semibold text-gray-900 truncate italic">Ziyaretçi</p>
+                                                    <p className="text-xs font-semibold text-gray-900 truncate ">Ziyaretçi</p>
                                                 </div>
                                                 <div className="p-3">
                                                     <Link
                                                         to="/login"
                                                         onClick={() => setShowUserMenu(false)}
-                                                        className="flex items-center gap-4 px-5 py-3.5 rounded-md text-10px font-semibold text-gray-400 hover:bg-gray-50 hover:text-gray-900 transition-all italic"
+                                                        className="flex items-center gap-4 px-5 py-3.5 rounded-md text-10px font-semibold text-gray-400 hover:bg-gray-50 hover:text-gray-900 transition-all "
                                                     >
                                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M11 16l-4-4m0 0l-4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
                                                         {t('user.login')}
@@ -700,7 +700,7 @@ const MainLayout: React.FC = () => {
                                                     <Link
                                                         to="/collections"
                                                         onClick={() => setShowUserMenu(false)}
-                                                        className="flex items-center gap-4 px-5 py-3.5 rounded-md text-10px font-semibold text-gray-400 hover:bg-gray-50 hover:text-gray-900 transition-all italic"
+                                                        className="flex items-center gap-4 px-5 py-3.5 rounded-md text-10px font-semibold text-gray-400 hover:bg-gray-50 hover:text-gray-900 transition-all "
                                                     >
                                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
@@ -713,7 +713,7 @@ const MainLayout: React.FC = () => {
                                                             setIsDarkMode(prev => !prev);
                                                             setShowUserMenu(false);
                                                         }}
-                                                        className="flex w-full items-center gap-4 px-5 py-3.5 rounded-md text-10px font-semibold text-gray-400 hover:bg-gray-50 hover:text-gray-900 transition-all italic text-left"
+                                                        className="flex w-full items-center gap-4 px-5 py-3.5 rounded-md text-10px font-semibold text-gray-400 hover:bg-gray-50 hover:text-gray-900 transition-all  text-left"
                                                     >
                                                         {isDarkMode ? (
                                                             <>
@@ -754,11 +754,11 @@ const MainLayout: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-20 mb-32">
                         <div className="col-span-1 md:col-span-1">
                             <Link to="/" className="inline-block mb-5">
-                                <span className="text-2xl font-extrabold  text-gray-900 italic ">
+                                <span className="text-2xl font-extrabold  text-gray-900  ">
                                     <span className="text-brand-pink">F</span>UIRA
                                 </span>
                             </Link>
-                            <p className="text-gray-600 text-xs font-bold leading-relaxed mb-5 italic">
+                            <p className="text-gray-600 text-xs font-bold leading-relaxed mb-5 ">
                                 {t('footer.about')}
                             </p>
                             <div className="flex gap-6">
@@ -771,8 +771,8 @@ const MainLayout: React.FC = () => {
                         </div>
 
                         <div>
-                            <h4 className="text-10px font-semibold text-gray-900 mb-5   italic">{t('footer.helpTitle')}</h4>
-                            <ul className="space-y-6 text-caption font-[900] text-gray-500   italic">
+                            <h4 className="text-10px font-semibold text-gray-900 mb-5   ">{t('footer.helpTitle')}</h4>
+                            <ul className="space-y-6 text-caption font-[900] text-gray-500   ">
                                 <li><a href="#" className="hover:text-brand-pink transition-colors">{t('footer.shipping')}</a></li>
                                 <li><a href="#" className="hover:text-brand-pink transition-colors">{t('footer.returns')}</a></li>
                                 <li><a href="#" className="hover:text-brand-pink transition-colors">{t('footer.sizeGuide')}</a></li>
@@ -781,8 +781,8 @@ const MainLayout: React.FC = () => {
                         </div>
 
                         <div>
-                            <h4 className="text-10px font-semibold text-gray-900 mb-5   italic">{t('footer.categoriesTitle')}</h4>
-                            <ul className="space-y-6 text-caption font-[900] text-gray-500   italic">
+                            <h4 className="text-10px font-semibold text-gray-900 mb-5   ">{t('footer.categoriesTitle')}</h4>
+                            <ul className="space-y-6 text-caption font-[900] text-gray-500   ">
                                 <li><a href="#" className="hover:text-brand-pink transition-colors">{t('footer.accessories')}</a></li>
                                 <li><a href="#" className="hover:text-brand-pink transition-colors">{t('footer.clothing')}</a></li>
                                 <li><a href="#" className="hover:text-brand-pink transition-colors">{t('footer.electronics')}</a></li>
@@ -791,11 +791,11 @@ const MainLayout: React.FC = () => {
                         </div>
 
                         <div>
-                            <h4 className="text-10px font-bold text-gray-900 mb-5   italic">{t('footer.newsletterTitle')}</h4>
-                            <p className="text-caption font-bold text-gray-600 mb-4 italic">{t('footer.newsletterDesc')}</p>
+                            <h4 className="text-10px font-bold text-gray-900 mb-5   ">{t('footer.newsletterTitle')}</h4>
+                            <p className="text-caption font-bold text-gray-600 mb-4 ">{t('footer.newsletterDesc')}</p>
                             <div className="flex flex-col gap-4">
                                 <input aria-label={t('footer.emailPlaceholder')} type="email" placeholder={t('footer.emailPlaceholder')} className="w-full bg-gray-50 border border-gray-100 rounded-md px-6 py-4 text-xs font-bold focus:ring-4 focus:ring-brand-pink/5" />
-                                <button className="w-full bg-brand-pink text-gray-900 py-3 rounded-md text-10px font-bold   shadow-lg shadow-brand-pink/20 hover:bg-brand-pink-hover transition-all italic">{t('footer.subscribe')}</button>
+                                <button className="w-full bg-brand-pink text-gray-900 py-3 rounded-md text-10px font-bold   shadow-lg shadow-brand-pink/20 hover:bg-brand-pink-hover transition-all ">{t('footer.subscribe')}</button>
                             </div>
                         </div>
                     </div>

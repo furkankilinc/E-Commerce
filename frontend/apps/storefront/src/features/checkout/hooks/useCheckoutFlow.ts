@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useCheckout } from '../checkout.store';
 import { useCart } from '../../cart/cart.store';
 import { authStore } from '../../auth/auth.store';
@@ -8,6 +8,7 @@ export const useCheckoutFlow = () => {
     const checkout = useCheckout();
     const { items, total, clearCart, refreshCart } = useCart();
     const toast = useToast();
+    const [isIyzicoModalOpen, setIsIyzicoModalOpen] = useState(false);
 
     useEffect(() => {
         refreshCart();
@@ -42,7 +43,11 @@ export const useCheckoutFlow = () => {
         if (!validateStep()) return;
 
         if (checkout.step === 'review') {
-            handlePlaceOrder();
+            if (checkout.paymentMethod === 'credit_card') {
+                setIsIyzicoModalOpen(true);
+            } else {
+                handlePlaceOrder();
+            }
         } else {
             checkout.nextStep();
         }
@@ -62,10 +67,23 @@ export const useCheckoutFlow = () => {
         }
     };
 
+    const handleIyzicoSuccess = () => {
+        setIsIyzicoModalOpen(false);
+        handlePlaceOrder();
+    };
+
+    const handleIyzicoFailure = (err: string) => {
+        toast.error(err || 'İyzico 3D Secure doğrulaması başarısız.');
+    };
+
     return {
         checkout,
         items,
         total,
-        handleNext
+        handleNext,
+        isIyzicoModalOpen,
+        setIsIyzicoModalOpen,
+        handleIyzicoSuccess,
+        handleIyzicoFailure
     };
 };

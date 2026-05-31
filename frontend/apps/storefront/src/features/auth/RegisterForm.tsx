@@ -31,7 +31,7 @@ const RegisterForm: React.FC = () => {
             {/* Header */}
             <div className="mb-5 text-center">
                 <h2 className="text-3xl md:text-4xl font-extrabold mb-3  text-gray-900 ">
-                    Hesap <span className="italic text-brand-pink underline underline-offset-[6px] decoration-gray-900/5">Oluştur</span>
+                    Hesap <span className=" text-brand-pink underline underline-offset-[6px] decoration-gray-900/5">Oluştur</span>
                 </h2>
                 <p className="text-gray-400 text-xs md:text-sm font-medium px-4">
                     Fuira'ya katıl, premium alışveriş deneyimini yaşa.

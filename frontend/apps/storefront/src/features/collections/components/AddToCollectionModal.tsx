@@ -54,8 +54,8 @@ const AddToCollectionModal: React.FC<AddToCollectionModalProps> = ({ product, on
                 {/* Header */}
                 <div className="flex items-center justify-between px-8 pt-8 pb-6 border-b border-gray-50">
                     <div>
-                        <p className="text-nano font-semibold text-brand-pink   italic mb-1">Kaydet</p>
-                        <h2 className="text-xl font-[1000] text-gray-900 italic  ">Koleksiyona Ekle</h2>
+                        <p className="text-nano font-semibold text-brand-pink    mb-1">Kaydet</p>
+                        <h2 className="text-xl font-[1000] text-gray-900   ">Koleksiyona Ekle</h2>
                     </div>
                     <button
                         onClick={onClose}
@@ -72,7 +72,7 @@ const AddToCollectionModal: React.FC<AddToCollectionModalProps> = ({ product, on
                         <img src={product.images[0].url} alt={product.name} className="w-12 h-12 rounded-md object-contain bg-white border border-gray-100 p-1" />
                     )}
                     <div className="flex-1 min-w-0">
-                        <p className="text-10px font-semibold text-gray-900 italic  truncate">{product.name}</p>
+                        <p className="text-10px font-semibold text-gray-900   truncate">{product.name}</p>
                         <p className="text-caption font-semibold text-brand-pink">{(product.discountPrice ?? product.price)?.toLocaleString('tr-TR')} ₺</p>
                     </div>
                 </div>
@@ -80,7 +80,7 @@ const AddToCollectionModal: React.FC<AddToCollectionModalProps> = ({ product, on
                 {/* Collections List */}
                 <div className="px-8 py-6 max-h-64 overflow-y-auto space-y-3">
                     {(collections || []).length === 0 && !isCreating && (
-                        <p className="text-center text-xs font-bold text-gray-400 italic py-4">Henüz koleksiyonunuz yok.</p>
+                        <p className="text-center text-xs font-bold text-gray-400  py-4">Henüz koleksiyonunuz yok.</p>
                     )}
                     {(collections || []).map(col => {
                         const inCol = isInCollection(col.id, product.id);
@@ -95,7 +95,7 @@ const AddToCollectionModal: React.FC<AddToCollectionModalProps> = ({ product, on
                             >
                                 <span className="text-xl">{col.emoji}</span>
                                 <div className="flex-1 min-w-0">
-                                    <p className="text-caption font-semibold  italic  truncate">{col.name}</p>
+                                    <p className="text-caption font-semibold    truncate">{col.name}</p>
                                     <p className="text-nano font-bold text-gray-400">{(col.items || []).length} ürün</p>
                                 </div>
                                 <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${inCol ? 'border-brand-pink bg-brand-pink' : 'border-gray-200'}`}>
@@ -130,7 +130,7 @@ const AddToCollectionModal: React.FC<AddToCollectionModalProps> = ({ product, on
                                 placeholder="Koleksiyon adı... (örn: Laptoplar)"
                                 autoFocus
                                 aria-label="Koleksiyon adı"
-                                className="w-full h-14 px-5 bg-gray-50 border-2 border-transparent focus:border-brand-pink rounded-md text-12px font-semibold italic outline-none transition-all placeholder:text-gray-300"
+                                className="w-full h-14 px-5 bg-gray-50 border-2 border-transparent focus:border-brand-pink rounded-md text-12px font-semibold  outline-none transition-all placeholder:text-gray-300"
                             />
                             <div className="flex gap-3">
                                 <button
@@ -147,7 +147,7 @@ const AddToCollectionModal: React.FC<AddToCollectionModalProps> = ({ product, on
                     ) : (
                         <button
                             onClick={() => setIsCreating(true)}
-                            className="w-full mt-4 h-14 border-2 border-dashed border-gray-200 rounded-md text-caption font-semibold text-gray-400   italic hover:border-brand-pink hover:text-brand-pink transition-all flex items-center justify-center gap-2"
+                            className="w-full mt-4 h-14 border-2 border-dashed border-gray-200 rounded-md text-caption font-semibold text-gray-400    hover:border-brand-pink hover:text-brand-pink transition-all flex items-center justify-center gap-2"
                         >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4" strokeWidth="3" /></svg>
                             Yeni Koleksiyon

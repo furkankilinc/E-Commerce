@@ -205,7 +205,7 @@ const SellerDetailPage: React.FC = () => {
                             <tbody className="divide-y divide-slate-50">
                                 {sessions.length === 0 ? (
                                     <tr>
-                                        <td colSpan={5} className="py-12 text-center text-slate-300 font-bold italic   text-xs">Oturum verisi bulunamadı</td>
+                                        <td colSpan={5} className="py-12 text-center text-slate-300 font-bold    text-xs">Oturum verisi bulunamadı</td>
                                     </tr>
                                 ) : (
                                     sessions.map(session => (

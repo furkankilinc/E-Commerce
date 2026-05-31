@@ -136,7 +136,7 @@ const SellersPage: React.FC = () => {
 
                 {/* Table */}
                 <div className="overflow-x-auto">
-                    <table className="w-full">
+                    <table className="w-full min-w-[900px]">
                         <thead>
                             <tr className="bg-slate-50/50">
                                 <th className="text-left py-5 px-8 text-xs font-semibold text-slate-400  ">Mağaza Bilgisi</th>
@@ -191,18 +191,16 @@ const SellersPage: React.FC = () => {
                                         </td>
                                         <td className="py-6 px-8">
                                             <div className="flex flex-wrap gap-2">
-                                                <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-nano font-bold ${
-                                                    merchant.isActive 
-                                                        ? 'bg-emerald-50 text-emerald-600 border border-emerald-100/50' 
+                                                <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-nano font-bold ${merchant.isActive
+                                                        ? 'bg-emerald-50 text-emerald-600 border border-emerald-100/50'
                                                         : 'bg-rose-50 text-rose-600 border border-rose-100/50'
-                                                }`}>
+                                                    }`}>
                                                     {merchant.isActive ? 'AKTİF' : 'PASİF'}
                                                 </span>
-                                                <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-nano font-bold ${
-                                                    merchant.isVerified 
-                                                        ? 'bg-blue-50 text-blue-600 border border-blue-100/50' 
+                                                <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-nano font-bold ${merchant.isVerified
+                                                        ? 'bg-blue-50 text-blue-600 border border-blue-100/50'
                                                         : 'bg-amber-50 text-amber-600 border border-amber-100/50'
-                                                }`}>
+                                                    }`}>
                                                     {merchant.isVerified ? 'ONAYLI' : 'ONAY BEKLİYOR'}
                                                 </span>
                                             </div>
@@ -227,7 +225,7 @@ const SellersPage: React.FC = () => {
 
                 {/* Footer / Pagination Placeholder */}
                 <div className="p-6 bg-slate-50/30 border-t border-slate-50 flex flex-col md:flex-row items-center justify-between gap-6">
-                    <div className="text-slate-400 text-xs font-semibold   italic">
+                    <div className="text-slate-400 text-xs font-semibold   ">
                         Toplam <span className="text-admin-dark">{total}</span> satıcı bulundu
                     </div>
                     <Pagination

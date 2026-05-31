@@ -33,7 +33,7 @@ const SupportChatBubble: React.FC = () => {
         const key = getStorageKey();
         const storedId = localStorage.getItem(key);
         setSessionId(storedId);
-        
+
         // Reset chat state for the new session context
         setMessages([]);
         setIsBlocked(false);
@@ -227,8 +227,8 @@ const SupportChatBubble: React.FC = () => {
                         <div className="flex items-center gap-3">
                             <span className="text-2xl">👩‍💼</span>
                             <div>
-                                <h4 className="text-xs font-black tracking-wide italic leading-none mb-1">FUIRA CANLI DESTEK</h4>
-                                <span className="text-[9px] font-bold text-rose-100 italic flex items-center gap-1">
+                                <h4 className="text-xs font-black   leading-none mb-1">FUIRA CANLI DESTEK</h4>
+                                <span className="text-[9px] font-bold text-rose-100  flex items-center gap-1">
                                     <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-ping"></span>
                                     {isBlocked ? 'Erişim Askıya Alındı' : 'Müşteri Temsilcisi Çevrimiçi'}
                                 </span>
@@ -259,8 +259,8 @@ const SupportChatBubble: React.FC = () => {
                             /* Blocked User Warning */
                             <div className="flex-grow flex flex-col items-center justify-center text-center p-4">
                                 <span className="text-5xl mb-4 animate-bounce">🚫</span>
-                                <h4 className="text-xs font-black text-rose-600 italic tracking-wider uppercase mb-2">Destek Erişiminiz Engellendi</h4>
-                                <p className="text-[10px] font-bold text-slate-400 max-w-[220px] leading-relaxed italic">
+                                <h4 className="text-xs font-black text-rose-600   uppercase mb-2">Destek Erişiminiz Engellendi</h4>
+                                <p className="text-[10px] font-bold text-slate-400 max-w-[220px] leading-relaxed ">
                                     Destek sistemini kötüye kullandığınız tespit edildiği için canlı yardım erişiminiz askıya alınmıştır.
                                 </p>
                             </div>
@@ -273,8 +273,8 @@ const SupportChatBubble: React.FC = () => {
                                         <span className="text-3xl">💬</span>
                                     </div>
                                     <div>
-                                        <h4 className="text-xs font-black text-slate-800 italic tracking-wide mb-1">Canlı Destek'e Hoş Geldiniz</h4>
-                                        <p className="text-[10px] font-semibold text-slate-400 italic leading-relaxed max-w-[220px] mx-auto">
+                                        <h4 className="text-xs font-black text-slate-800   mb-1">Canlı Destek'e Hoş Geldiniz</h4>
+                                        <p className="text-[10px] font-semibold text-slate-400  leading-relaxed max-w-[220px] mx-auto">
                                             Destek temsilcimiz sizinle gerçek zamanlı ilgilenecek.
                                         </p>
                                     </div>
@@ -283,7 +283,7 @@ const SupportChatBubble: React.FC = () => {
                                 {/* Fields */}
                                 <div className="flex flex-col gap-3">
                                     <div className="flex flex-col gap-1">
-                                        <label className="text-[9px] font-black text-slate-400 italic ml-1 tracking-widest uppercase">E-Posta Adresiniz *</label>
+                                        <label className="text-[9px] font-black text-slate-400  ml-1 st uppercase">E-Posta Adresiniz *</label>
                                         <div className="relative">
                                             <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-300 pointer-events-none" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -304,7 +304,7 @@ const SupportChatBubble: React.FC = () => {
                                 <button
                                     type="submit"
                                     disabled={isConnecting}
-                                    className="w-full py-3.5 bg-brand-pink text-white rounded-xl text-[10px] font-black tracking-widest uppercase shadow-lg shadow-brand-pink/25 flex items-center justify-center gap-2 hover:opacity-95 active:scale-95 transition-all italic disabled:opacity-60"
+                                    className="w-full py-3.5 bg-brand-pink text-white rounded-xl text-[10px] font-black st uppercase shadow-lg shadow-brand-pink/25 flex items-center justify-center gap-2 hover:opacity-95 active:scale-95 transition-all  disabled:opacity-60"
                                 >
                                     {isConnecting ? (
                                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -328,13 +328,13 @@ const SupportChatBubble: React.FC = () => {
                                     >
                                         <div
                                             className={`max-w-[80%] rounded-2xl px-4 py-3 text-xs font-bold shadow-sm ${msg.sender === 'user'
-                                                    ? 'bg-brand-pink text-white rounded-tr-none'
-                                                    : 'bg-white text-slate-800 border border-slate-100 rounded-tl-none'
+                                                ? 'bg-brand-pink text-white rounded-tr-none'
+                                                : 'bg-white text-slate-800 border border-slate-100 rounded-tl-none'
                                                 }`}
                                         >
                                             {msg.text}
                                         </div>
-                                        <span className="text-[8px] font-semibold text-slate-400 italic mt-1 px-1">
+                                        <span className="text-[8px] font-semibold text-slate-400  mt-1 px-1">
                                             {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                         </span>
                                     </div>
@@ -352,7 +352,7 @@ const SupportChatBubble: React.FC = () => {
                                 value={inputText}
                                 onChange={(e) => setInputText(e.target.value)}
                                 placeholder="Mesajınızı buraya yazın..."
-                                className="flex-grow bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-xs font-bold text-slate-800 focus:outline-none focus:border-brand-pink focus:bg-white transition-all italic"
+                                className="flex-grow bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-xs font-bold text-slate-800 focus:outline-none focus:border-brand-pink focus:bg-white transition-all "
                             />
                             <button
                                 type="submit"

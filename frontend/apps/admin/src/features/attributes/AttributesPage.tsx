@@ -124,7 +124,7 @@ const AttributeModal: React.FC<{
 
                                 <div className="flex flex-wrap gap-2 p-4 bg-slate-50 rounded-2xl border border-slate-100 min-h-[100px]">
                                     {values.length === 0 && (
-                                        <span className="text-slate-400 text-xs italic">Henüz değer eklenmedi...</span>
+                                        <span className="text-slate-400 text-xs ">Henüz değer eklenmedi...</span>
                                     )}
                                     {values.map(val => (
                                         <span key={val} className="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-slate-700 shadow-sm transition-all ">
@@ -142,7 +142,7 @@ const AttributeModal: React.FC<{
                         <div>
                             <label className="block text-xs font-bold text-slate-500   mb-3">Geçerli Kategoriler</label>
                             <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 h-[320px] overflow-y-auto space-y-2 custom-scrollbar">
-                                {allCategories.length === 0 && <p className="text-slate-400 text-xs p-4 italic">Kategori bulunamadı.</p>}
+                                {allCategories.length === 0 && <p className="text-slate-400 text-xs p-4 ">Kategori bulunamadı.</p>}
                                 {allCategories.map(cat => (
                                     <label key={cat.id} className="flex items-center gap-3 p-3 bg-white border border-slate-100 rounded-xl cursor-pointer hover:border-pink-200 hover:bg-pink-50/30 transition-all group">
                                         <input
@@ -160,7 +160,7 @@ const AttributeModal: React.FC<{
                                     </label>
                                 ))}
                             </div>
-                            <p className="mt-2 text-10px text-slate-400 font-medium italic">* Kategori seçilmezse "Global" olarak kabul edilir.</p>
+                            <p className="mt-2 text-10px text-slate-400 font-medium ">* Kategori seçilmezse "Global" olarak kabul edilir.</p>
                         </div>
                     </div>
 
@@ -249,21 +249,21 @@ const AttributesPage: React.FC = () => {
     };
 
     return (
-        <div className="p-8 max-w-6xl mx-auto">
+        <div className="p-4 md:p-8 max-w-6xl mx-auto space-y-6">
             {toast && (
-                <div className={`fixed top-6 right-6 z-50 px-6 py-3 rounded-2xl text-sm font-bold shadow-xl animate-slideIn ${toast.ok ? 'bg-emerald-500 text-white' : 'bg-red-500 text-white'}`}>
+                <div className={`fixed top-6 right-6 z-50 px-6 py-3 rounded-2xl text-sm font-bold shadow-lg animate-slideIn ${toast.ok ? 'bg-emerald-500 text-white' : 'bg-red-500 text-white'}`}>
                     {toast.msg}
                 </div>
             )}
 
-            <div className="flex items-center justify-between mb-5">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <h1 className="text-3xl font-semibold text-slate-800 ">Ürün Seçenekleri</h1>
-                    <p className="text-slate-500 font-medium mt-1">Varyantlar için kullanılabilecek global özellikleri yönetin.</p>
+                    <h1 className="text-2xl md:text-3xl font-semibold text-slate-800 ">Ürün Seçenekleri</h1>
+                    <p className="text-slate-500 font-medium mt-1 text-xs sm:text-sm">Varyantlar için kullanılabilecek global özellikleri yönetin.</p>
                 </div>
                 <button
                     onClick={() => { setEditTarget(null); setModalOpen(true); }}
-                    className="flex items-center gap-2 px-6 py-3 bg-pink-500 text-white text-sm font-semibold rounded-2xl shadow-lg shadow-pink-500/20  transition-transform"
+                    className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-pink-500 text-white text-xs sm:text-sm font-semibold rounded-2xl shadow-lg shadow-pink-500/20 transition-transform whitespace-nowrap"
                 >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4" strokeWidth="3" /></svg>
                     Yeni Ekle
@@ -283,7 +283,7 @@ const AttributesPage: React.FC = () => {
                     </div>
                 ) : (
                     <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
+                        <table className="w-full min-w-[800px] text-left border-collapse">
                             <thead>
                                 <tr className="bg-slate-50/50 border-b border-slate-100">
                                     <th className="px-6 py-4 text-xs font-semibold text-slate-400  ">Özellik</th>

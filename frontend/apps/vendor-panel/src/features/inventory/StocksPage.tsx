@@ -123,30 +123,30 @@ const StocksPage: React.FC = () => {
     const outOfStockCount = pagination.outOfStockCount;
 
     return (
-        <div className="max-w-[1400px] mx-auto min-h-screen pb-20">
+        <div className="max-w-[1400px] mx-auto min-h-screen pb-20 space-y-6">
             {/* Page Header */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 gap-6">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
-                    <h1 className="text-4xl font-semibold text-slate-800  mb-2">
+                    <h1 className="text-2xl md:text-4xl font-semibold text-slate-800  mb-2">
                         Stok <span className="text-indigo-600">Yönetimi</span>
                     </h1>
-                    <p className="text-slate-500 font-medium text-sm max-w-lg">
+                    <p className="text-slate-500 font-medium text-xs sm:text-sm max-w-lg">
                         Tüm ürünlerinizin stok seviyelerini buradan görüntüleyin ve toplu olarak düzenleyin.
                     </p>
                 </div>
-                <div className="flex gap-3">
+                <div className="flex gap-3 w-full md:w-auto">
                     {changedCount > 0 && (
                         <>
                             <button
                                 onClick={handleResetChanges}
-                                className="px-6 py-3 bg-white border border-slate-200 rounded-md text-xs font-bold  r text-slate-400 hover:bg-slate-50 transition-all"
+                                className="w-full md:w-auto px-6 py-3 bg-white border border-slate-200 rounded-md text-xs font-bold  r text-slate-400 hover:bg-slate-50 transition-all"
                             >
                                 SIFIRLA
                             </button>
                             <button
                                 onClick={handleSaveAll}
                                 disabled={isSaving}
-                                className="px-8 py-3 bg-indigo-600 text-white rounded-md text-xs font-bold   shadow-lg shadow-indigo-100 transition-all active:scale-95 flex items-center gap-2"
+                                className="w-full md:w-auto px-8 py-3 bg-indigo-600 text-white rounded-md text-xs font-bold   shadow-lg shadow-indigo-100 transition-all active:scale-95 flex items-center justify-center gap-2 whitespace-nowrap"
                             >
                                 {isSaving && <div className="w-4 h-4 border-2 border-white/50 border-t-white rounded-full animate-spin"></div>}
                                 {changedCount} ÜRÜN KAYDET
@@ -157,45 +157,45 @@ const StocksPage: React.FC = () => {
             </div>
 
             {/* Stats Bar */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                <div className="bg-white rounded-md p-6 border border-slate-100 shadow-sm col-span-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <div className="bg-white rounded-md p-4 sm:p-6 border border-slate-100 shadow-sm">
                     <div className="flex items-center gap-3 mb-3">
                         <div className="w-10 h-10 bg-indigo-50 rounded-md flex items-center justify-center">
                             <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-14L4 7m8 4v10M4 7v10l8 4" /></svg>
                         </div>
                         <span className="text-10px font-semibold text-slate-400  ">TOPLAM STOK ADEDİ</span>
                     </div>
-                    <span className="text-3xl font-semibold text-indigo-600">{(totalStockVolume || 0).toLocaleString()}</span>
+                    <span className="text-2xl sm:text-3xl font-semibold text-indigo-600">{(totalStockVolume || 0).toLocaleString()}</span>
                 </div>
                 {/* Product count card removed as requested */}
-                <div className="bg-white rounded-md p-6 border border-slate-100 shadow-sm">
+                <div className="bg-white rounded-md p-4 sm:p-6 border border-slate-100 shadow-sm">
                     <div className="flex items-center gap-3 mb-3">
                         <div className="w-10 h-10 bg-amber-50 rounded-md flex items-center justify-center">
                             <svg className="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.072 16.5c-.77.833.192 2.5 1.732 2.5z" /></svg>
                         </div>
                         <span className="text-10px font-semibold text-slate-400  ">DÜŞÜK STOK (SAYFA)</span>
                     </div>
-                    <span className="text-3xl font-semibold text-amber-600">{lowStockCount}</span>
+                    <span className="text-2xl sm:text-3xl font-semibold text-amber-600">{lowStockCount}</span>
                 </div>
-                <div className="bg-white rounded-md p-6 border border-slate-100 shadow-sm">
+                <div className="bg-white rounded-md p-4 sm:p-6 border border-slate-100 shadow-sm">
                     <div className="flex items-center gap-3 mb-3">
                         <div className="w-10 h-10 bg-rose-50 rounded-md flex items-center justify-center">
                             <svg className="w-5 h-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
                         </div>
                         <span className="text-10px font-semibold text-slate-400  ">TÜKENMİŞ (SAYFA)</span>
                     </div>
-                    <span className="text-3xl font-semibold text-rose-600">{outOfStockCount}</span>
+                    <span className="text-2xl sm:text-3xl font-semibold text-rose-600">{outOfStockCount}</span>
                 </div>
             </div>
 
             {/* Filter Bar */}
-            <div className="bg-white rounded-md p-4 border border-slate-100 shadow-sm mb-6 flex flex-col md:flex-row gap-4 items-center justify-end">
+            <div className="bg-white rounded-md p-4 border border-slate-100 shadow-sm flex flex-row gap-4 items-center justify-start md:justify-end overflow-x-auto">
                 <div className="flex gap-2">
                     {(['all', 'low', 'out'] as const).map(f => (
                         <button
                             key={f}
                             onClick={() => setStockFilter(f)}
-                            className={`px-5 py-3 rounded-md text-10px font-semibold  r transition-all ${stockFilter === f
+                            className={`px-4 sm:px-5 py-2.5 sm:py-3 rounded-md text-10px font-semibold  r transition-all whitespace-nowrap ${stockFilter === f
                                 ? 'bg-indigo-600 text-white shadow-md'
                                 : 'bg-slate-50 text-slate-500 hover:bg-slate-100 border border-slate-200'
                                 }`}
@@ -215,96 +215,98 @@ const StocksPage: React.FC = () => {
                     </div>
                 ) : filteredProducts.length === 0 ? (
                     <div className="p-20 text-center">
-                        <p className="text-slate-400 font-bold text-sm italic">Ürün bulunamadı.</p>
+                        <p className="text-slate-400 font-bold text-sm ">Ürün bulunamadı.</p>
                     </div>
                 ) : (
-                    <table className="w-full text-left">
-                        <thead className="bg-slate-50 border-b border-slate-100">
-                            <tr>
-                                <th className="px-6 py-4 text-10px font-semibold text-slate-400  ">ÜRÜN</th>
-                                <th className="px-6 py-4 text-10px font-semibold text-slate-400  ">SKU</th>
-                                <th className="px-6 py-4 text-10px font-semibold text-slate-400  ">KATEGORİ</th>
-                                <th className="px-6 py-4 text-10px font-semibold text-slate-400  ">FİYAT</th>
-                                <th className="px-6 py-4 text-10px font-semibold text-slate-400  ">MEVCUT STOK</th>
-                                <th className="px-6 py-4 text-10px font-semibold text-slate-400  ">YENİ STOK</th>
-                                <th className="px-6 py-4 text-10px font-semibold text-slate-400  ">DURUM</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-50">
-                            {filteredProducts.map(product => {
-                                const isEdited = editedStocks[product.id] !== undefined;
-                                const mainImage = product.images?.find(i => i.isMain) || product.images?.[0];
-                                const stockLevel = product.stock <= 0 ? 'out' : product.stock <= 10 ? 'low' : 'ok';
+                    <div className="overflow-x-auto">
+                        <table className="w-full min-w-[900px] text-left">
+                            <thead className="bg-slate-50 border-b border-slate-100">
+                                <tr>
+                                    <th className="px-6 py-4 text-10px font-semibold text-slate-400  ">ÜRÜN</th>
+                                    <th className="px-6 py-4 text-10px font-semibold text-slate-400  ">SKU</th>
+                                    <th className="px-6 py-4 text-10px font-semibold text-slate-400  ">KATEGORİ</th>
+                                    <th className="px-6 py-4 text-10px font-semibold text-slate-400  ">FİYAT</th>
+                                    <th className="px-6 py-4 text-10px font-semibold text-slate-400  ">MEVCUT STOK</th>
+                                    <th className="px-6 py-4 text-10px font-semibold text-slate-400  ">YENİ STOK</th>
+                                    <th className="px-6 py-4 text-10px font-semibold text-slate-400  ">DURUM</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-50">
+                                {filteredProducts.map(product => {
+                                    const isEdited = editedStocks[product.id] !== undefined;
+                                    const mainImage = product.images?.find(i => i.isMain) || product.images?.[0];
+                                    const stockLevel = product.stock <= 0 ? 'out' : product.stock <= 10 ? 'low' : 'ok';
 
-                                return (
-                                    <tr key={product.id} className={`hover:bg-slate-50/50 transition-colors ${isEdited ? 'bg-indigo-50/30' : ''}`}>
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center gap-4">
-                                                <div className="w-12 h-12 rounded-md bg-slate-50 border border-slate-100 overflow-hidden flex-shrink-0">
-                                                    {mainImage ? (
-                                                        <img src={mainImage.url} alt="" className="w-full h-full object-contain" />
-                                                    ) : (
-                                                        <div className="w-full h-full flex items-center justify-center text-slate-300">
-                                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                                                        </div>
-                                                    )}
+                                    return (
+                                        <tr key={product.id} className={`hover:bg-slate-50/50 transition-colors ${isEdited ? 'bg-indigo-50/30' : ''}`}>
+                                            <td className="px-6 py-4">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="w-12 h-12 rounded-md bg-slate-50 border border-slate-100 overflow-hidden flex-shrink-0">
+                                                        {mainImage ? (
+                                                            <img src={mainImage.url} alt="" className="w-full h-full object-contain" />
+                                                        ) : (
+                                                            <div className="w-full h-full flex items-center justify-center text-slate-300">
+                                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    <span className="text-sm font-bold text-slate-800 truncate max-w-[200px]">{product.name}</span>
                                                 </div>
-                                                <span className="text-sm font-bold text-slate-800 truncate max-w-[200px]">{product.name}</span>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <span className="text-xs font-mono font-bold text-slate-500 bg-slate-50 px-2 py-1 rounded">{product.sku}</span>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <span className="text-xs font-bold text-slate-500">{product.category?.name || '-'}</span>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <span className="text-sm font-semibold text-slate-800">{product.price.toLocaleString()} ₺</span>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <span className={`text-lg font-semibold ${stockLevel === 'out' ? 'text-rose-600' : stockLevel === 'low' ? 'text-amber-600' : 'text-emerald-600'}`}>
-                                                {product.stock}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <input
-                                                type="number"
-                                                min="0"
-                                                value={isEdited ? editedStocks[product.id] : ''}
-                                                placeholder={product.stock.toString()}
-                                                onChange={(e) => {
-                                                    const val = e.target.value;
-                                                    if (val === '' || parseInt(val) === product.stock) {
-                                                        setEditedStocks(prev => {
-                                                            const next = { ...prev };
-                                                            delete next[product.id];
-                                                            return next;
-                                                        });
-                                                    } else {
-                                                        handleStockChange(product.id, val);
-                                                    }
-                                                }}
-                                                className={`w-28 h-10 px-4 rounded-md border text-sm font-bold outline-none transition-all ${isEdited
-                                                    ? 'bg-indigo-50 border-indigo-300 text-indigo-700 focus:border-indigo-500'
-                                                    : 'bg-white border-slate-200 text-slate-700 focus:border-indigo-500'
-                                                    }`}
-                                            />
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <span className={`px-3 py-1.5 rounded-md text-nano font-semibold  r ${stockLevel === 'out'
-                                                ? 'bg-rose-50 text-rose-600'
-                                                : stockLevel === 'low'
-                                                    ? 'bg-amber-50 text-amber-600'
-                                                    : 'bg-emerald-50 text-emerald-600'
-                                                }`}>
-                                                {stockLevel === 'out' ? 'TÜKENDİ' : stockLevel === 'low' ? 'DÜŞÜK' : 'YETERLİ'}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </table>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <span className="text-xs font-mono font-bold text-slate-500 bg-slate-50 px-2 py-1 rounded">{product.sku}</span>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <span className="text-xs font-bold text-slate-500">{product.category?.name || '-'}</span>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <span className="text-sm font-semibold text-slate-800">{product.price.toLocaleString()} ₺</span>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <span className={`text-lg font-semibold ${stockLevel === 'out' ? 'text-rose-600' : stockLevel === 'low' ? 'text-amber-600' : 'text-emerald-600'}`}>
+                                                    {product.stock}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    value={isEdited ? editedStocks[product.id] : ''}
+                                                    placeholder={product.stock.toString()}
+                                                    onChange={(e) => {
+                                                        const val = e.target.value;
+                                                        if (val === '' || parseInt(val) === product.stock) {
+                                                            setEditedStocks(prev => {
+                                                                const next = { ...prev };
+                                                                delete next[product.id];
+                                                                return next;
+                                                            });
+                                                        } else {
+                                                            handleStockChange(product.id, val);
+                                                        }
+                                                    }}
+                                                    className={`w-28 h-10 px-4 rounded-md border text-sm font-bold outline-none transition-all ${isEdited
+                                                        ? 'bg-indigo-50 border-indigo-300 text-indigo-700 focus:border-indigo-500'
+                                                        : 'bg-white border-slate-200 text-slate-700 focus:border-indigo-500'
+                                                        }`}
+                                                />
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <span className={`px-3 py-1.5 rounded-md text-nano font-semibold  r ${stockLevel === 'out'
+                                                    ? 'bg-rose-50 text-rose-600'
+                                                    : stockLevel === 'low'
+                                                        ? 'bg-amber-50 text-amber-600'
+                                                        : 'bg-emerald-50 text-emerald-600'
+                                                    }`}>
+                                                    {stockLevel === 'out' ? 'TÜKENDİ' : stockLevel === 'low' ? 'DÜŞÜK' : 'YETERLİ'}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    </div>
                 )}
             </div>
 
@@ -319,7 +321,7 @@ const StocksPage: React.FC = () => {
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                     </button>
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-1.5 sm:gap-3">
                         {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
                             let pageNum = pagination.page;
                             if (pagination.page <= 3) pageNum = i + 1;

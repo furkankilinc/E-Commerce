@@ -1,0 +1,60 @@
+name: E-Commerce System CI
+
+on:
+  push:
+    branches: [ main, master, dev, developer ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  lint-and-compile:
+    name: Lint & Type-Check Frontend Workspaces
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js (v20)
+        uses: actions/setup-node@v4
+        with:
+          node-size: 20
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: './package-lock.json'
+
+      - name: Install Root Dependencies
+        run: |
+          npm ci --legacy-peer-deps
+
+      - name: Install Frontend Workspace Dependencies
+        run: |
+          cd frontend
+          npm ci --legacy-peer-deps
+
+      - name: Verify Storefront Compilation
+        run: |
+          cd frontend
+          npx tsc --project apps/storefront/tsconfig.json --noEmit
+
+      - name: Verify Admin Panel Compilation
+        run: |
+          cd frontend
+          npx tsc --project apps/admin/tsconfig.json --noEmit
+
+      - name: Verify Vendor Panel Compilation
+        run: |
+          cd frontend
+          npx tsc --project apps/vendor-panel/tsconfig.json --noEmit
+
+  docker-validate:
+    name: Validate Docker Compose Orchestration
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Validate Docker Compose Configuration
+        run: |
+          docker compose config --quiet

@@ -108,8 +108,8 @@ export const ProfileOrders: React.FC = () => {
         <div className="space-y-16 animate-in fade-in duration-500">
             <div className="pb-12 border-b border-gray-100/50 text-left flex justify-between items-end">
                 <div>
-                    <h2 className="text-4xl font-[1000] text-gray-900   italic leading-none mb-4">SİPARİŞ <span className="text-brand-pink">GEÇMİŞİM</span></h2>
-                    <p className="text-sm font-bold text-gray-400 italic">Geçmiş siparişlerini ve durumlarını kontrol et.</p>
+                    <h2 className="text-4xl font-[1000] text-gray-900    leading-none mb-4">SİPARİŞ <span className="text-brand-pink">GEÇMİŞİM</span></h2>
+                    <p className="text-sm font-bold text-gray-400 ">Geçmiş siparişlerini ve durumlarını kontrol et.</p>
                 </div>
             </div>
 
@@ -124,7 +124,7 @@ export const ProfileOrders: React.FC = () => {
                     <div className="w-32 h-32 border-4 border-dashed border-gray-900 rounded-md flex items-center justify-center">
                         <svg className="text-gray-900 w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
                     </div>
-                    <h3 className="text-2xl font-semibold italic  ">HİÇ SİPARİŞİN YOK</h3>
+                    <h3 className="text-2xl font-semibold   ">HİÇ SİPARİŞİN YOK</h3>
                 </div>
             ) : (
                 <div className="space-y-8">
@@ -139,9 +139,9 @@ export const ProfileOrders: React.FC = () => {
                                         <svg className="w-8 h-8 sm:w-10 sm:h-10 text-gray-400 group-hover:text-brand-pink transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
                                     </div>
                                     <div>
-                                        <span className="text-lg sm:text-xl font-semibold text-gray-900  italic  mb-1 block">#{order.orderNumber}</span>
-                                        <span className="text-10px font-semibold text-gray-400   block mb-4 italic">{new Date(order.createdAt).toLocaleDateString()} • {order.items.length} ÜRÜN</span>
-                                        <div className={`inline-flex px-4 py-1.5 rounded-full text-nano font-semibold   ${getStatusColor(order.status, order.paymentStatus)} items-center gap-2 italic`}>
+                                        <span className="text-lg sm:text-xl font-semibold text-gray-900    mb-1 block">#{order.orderNumber}</span>
+                                        <span className="text-10px font-semibold text-gray-400   block mb-4 ">{new Date(order.createdAt).toLocaleDateString()} • {order.items.length} ÜRÜN</span>
+                                        <div className={`inline-flex px-4 py-1.5 rounded-full text-nano font-semibold   ${getStatusColor(order.status, order.paymentStatus)} items-center gap-2 `}>
                                             <div className="w-1.5 h-1.5 rounded-full bg-current"></div>
                                             {getStatusText(order.status, order.paymentStatus)}
                                         </div>
@@ -149,12 +149,12 @@ export const ProfileOrders: React.FC = () => {
                                 </div>
 
                                 <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-center gap-4 shrink-0 w-full md:w-auto pt-4 md:pt-0 border-t border-gray-50 md:border-none">
-                                    <span className="text-xl sm:text-2xl font-[1000] text-gray-900 italic ">{order.totalAmount.toLocaleString()} ₺</span>
+                                    <span className="text-xl sm:text-2xl font-[1000] text-gray-900  ">{order.totalAmount.toLocaleString()} ₺</span>
                                     <div className="flex items-center gap-2">
                                         {isCancelable && (
                                             <button
                                                 onClick={() => handleCancel(order.id)}
-                                                className="px-4 sm:px-6 py-2.5 sm:py-3 bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white rounded-xl text-nano font-semibold   transition-all italic shadow-sm"
+                                                className="px-4 sm:px-6 py-2.5 sm:py-3 bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white rounded-xl text-nano font-semibold   transition-all  shadow-sm"
                                             >
                                                 İPTAL ET
                                             </button>
@@ -162,14 +162,14 @@ export const ProfileOrders: React.FC = () => {
                                         {isReturnable && (
                                             <button
                                                 onClick={() => handleReturn(order.id)}
-                                                className="px-4 sm:px-6 py-2.5 sm:py-3 bg-amber-50 text-amber-500 hover:bg-amber-500 hover:text-white rounded-xl text-nano font-semibold   transition-all italic shadow-sm"
+                                                className="px-4 sm:px-6 py-2.5 sm:py-3 bg-amber-50 text-amber-500 hover:bg-amber-500 hover:text-white rounded-xl text-nano font-semibold   transition-all  shadow-sm"
                                             >
                                                 İADE ET
                                             </button>
                                         )}
                                         <Link
                                             to={`/profile/orders/${order.id}`}
-                                            className="px-4 sm:px-6 py-2.5 sm:py-3 bg-gray-900 text-white hover:bg-brand-pink rounded-xl text-nano font-semibold   transition-all italic shadow-sm flex items-center justify-center border-none outline-none"
+                                            className="px-4 sm:px-6 py-2.5 sm:py-3 bg-gray-900 text-white hover:bg-brand-pink rounded-xl text-nano font-semibold   transition-all  shadow-sm flex items-center justify-center border-none outline-none"
                                         >
                                             DETAYLAR
                                         </Link>

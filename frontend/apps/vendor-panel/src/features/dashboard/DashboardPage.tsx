@@ -39,7 +39,7 @@ const DashboardPage: React.FC = () => {
             <div className="flex items-center justify-center min-h-[60vh]">
                 <div className="flex flex-col items-center gap-4">
                     <div className="w-12 h-12 border-4 border-brand-pink border-t-transparent rounded-full animate-spin"></div>
-                    <span className="text-10px font-semibold text-slate-400   italic animate-pulse">VERİLER YÜKLENİYOR...</span>
+                    <span className="text-10px font-semibold text-slate-400    animate-pulse">VERİLER YÜKLENİYOR...</span>
                 </div>
             </div>
         );
@@ -90,22 +90,22 @@ const DashboardPage: React.FC = () => {
         <div className="space-y-8 animate-in fade-in duration-700">
             {/* Header */}
             <div>
-                <h1 className="text-heading font-semibold text-slate-900 leading-none mb-3 italic">
+                <h1 className="text-2xl md:text-3xl lg:text-heading font-semibold text-slate-900 leading-none mb-3 ">
                     PERFORMANS <span className="text-brand-pink">MERKEZİ</span>
                 </h1>
-                <p className="text-slate-400 font-bold text-lg italic opacity-80">Mağazanızın nabzını buradan tutun.</p>
+                <p className="text-slate-400 font-bold text-sm sm:text-lg  opacity-80">Mağazanızın nabzını buradan tutun.</p>
             </div>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
                 {stats?.map((stat, i) => (
-                    <div key={i} className="bg-white p-10 rounded-xl shadow-sm border border-slate-50 flex flex-col gap-6 group hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-500 cursor-pointer overflow-hidden relative">
+                    <div key={i} className="bg-white p-6 sm:p-10 rounded-xl shadow-sm border border-slate-50 flex flex-col gap-4 sm:gap-6 group hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-500 cursor-pointer overflow-hidden relative">
                         <div className={`w-14 h-14 ${stat.bg} ${stat.color} rounded-2xl flex items-center justify-center group- transition-transform relative z-10`}>
                             {stat.icon}
                         </div>
                         <div className="relative z-10">
                             <span className="text-10px font-semibold text-slate-400   block mb-2">{stat.label}</span>
-                            <span className="text-4xl font-semibold text-slate-900 leading-none  italic">{stat.value}</span>
+                            <span className="text-2xl sm:text-4xl font-semibold text-slate-900 leading-none  ">{stat.value}</span>
                         </div>
                         <div className={`absolute -right-4 -bottom-4 w-24 h-24 ${stat?.bg} opacity-20 rounded-full blur-2xl  transition-transform duration-700`}></div>
                     </div>
@@ -115,35 +115,35 @@ const DashboardPage: React.FC = () => {
             {/* Main Content Area */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* Sales Chart Section */}
-                <div className="lg:col-span-8 bg-white rounded-xl p-12 shadow-sm border border-slate-50 min-h-[580px] flex flex-col relative overflow-hidden group">
+                <div className="lg:col-span-8 bg-white rounded-xl p-6 sm:p-10 lg:p-12 shadow-sm border border-slate-50 min-h-[480px] sm:min-h-[580px] flex flex-col relative overflow-hidden group">
                     {/* Background Grid Pattern */}
                     <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#000 1px, transparent 1px)', backgroundSize: '30px 30px' }}></div>
 
-                    <div className="flex items-center justify-between mb-6 relative z-10">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 relative z-10">
                         <div>
-                            <h3 className="text-2xl font-semibold text-slate-900  italic ">SATIŞ ANALİZİ</h3>
+                            <h3 className="text-xl sm:text-2xl font-semibold text-slate-900   ">SATIŞ ANALİZİ</h3>
                             <p className="text-10px font-semibold text-slate-400   mt-1">Son 7 Günlük Finansal Durum</p>
                         </div>
-                        <div className="bg-slate-50 p-1.5 rounded-2xl flex gap-1">
-                            <button className="px-6 py-2 bg-white rounded-xl text-10px font-semibold  text-slate-900 shadow-sm italic">HAFTALIK</button>
-                            <button className="px-6 py-2 rounded-xl text-10px font-semibold  text-slate-400 italic opacity-50 cursor-not-allowed">AYLIK</button>
+                        <div className="bg-slate-50 p-1.5 rounded-2xl flex gap-1 self-start sm:self-auto">
+                            <button className="px-4 sm:px-6 py-2 bg-white rounded-xl text-[9px] sm:text-10px font-semibold  text-slate-900 shadow-sm ">HAFTALIK</button>
+                            <button className="px-4 sm:px-6 py-2 rounded-xl text-[9px] sm:text-10px font-semibold  text-slate-400  opacity-50 cursor-not-allowed">AYLIK</button>
                         </div>
                     </div>
 
                     <div className="flex-1 flex flex-col justify-end relative z-10">
-                        <div className="h-[300px] flex items-end justify-between relative px-2">
+                        <div className="h-[220px] sm:h-[300px] flex items-end justify-between relative px-2 gap-1 sm:gap-2">
                             {/* Chart Bars */}
                             {data?.chartData?.map((d, i) => {
                                 const height = Math.max(8, (d.amount / maxChartValue) * 100);
                                 return (
-                                    <div key={i} className="flex flex-col items-center gap-6 group/bar flex-1">
+                                    <div key={i} className="flex flex-col items-center gap-4 sm:gap-6 group/bar flex-1">
                                         <div className="relative w-full flex justify-center">
                                             <div className="absolute -top-12 bg-slate-900 text-white text-10px font-semibold px-3 py-1.5 rounded-lg opacity-0 group-hover/bar:opacity-100 transition-all transform translate-y-2 group-hover/bar:translate-y-0 whitespace-nowrap  z-20">
                                                 {d.amount?.toLocaleString() || 0} ₺
                                             </div>
                                             <div
-                                                className="w-4 rounded-full bg-slate-50 group-hover/bar:bg-brand-pink/20 transition-all duration-700 relative overflow-hidden flex flex-col justify-end shadow-inner"
-                                                style={{ height: '260px' }}
+                                                className="w-3 sm:w-4 rounded-full bg-slate-50 group-hover/bar:bg-brand-pink/20 transition-all duration-700 relative overflow-hidden flex flex-col justify-end shadow-inner"
+                                                style={{ height: '180px' }}
                                             >
                                                 <div
                                                     className="w-full bg-brand-pink rounded-full transition-all duration-1000 origin-bottom shadow-lg"
@@ -151,7 +151,7 @@ const DashboardPage: React.FC = () => {
                                                 ></div>
                                             </div>
                                         </div>
-                                        <span className="text-caption font-semibold text-slate-300 group-hover/bar:text-slate-900 transition-colors  italic ">{d.day}</span>
+                                        <span className="text-[9px] sm:text-caption font-semibold text-slate-300 group-hover/bar:text-slate-900 transition-colors   ">{d.day}</span>
                                     </div>
                                 );
                             })}
@@ -162,23 +162,23 @@ const DashboardPage: React.FC = () => {
                 {/* Right Side: Critical Stock & Actions */}
                 <div className="lg:col-span-4 flex flex-col gap-8">
                     {/* Critical Stock Alerts - White background now */}
-                    <div className="bg-white rounded-xl p-10 shadow-sm border border-slate-50 flex-1 flex flex-col group min-h-[350px]">
+                    <div className="bg-white rounded-xl p-6 sm:p-10 shadow-sm border border-slate-50 flex-1 flex flex-col group min-h-[300px] sm:min-h-[350px]">
                         <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-xl font-semibold text-slate-900  italic ">Kritik Stok</h3>
-                            <Link to="/stocks" className="text-nano font-semibold text-brand-pink   hover:underline italic">TÜMÜNÜ GÖR</Link>
+                            <h3 className="text-xl font-semibold text-slate-900   ">Kritik Stok</h3>
+                            <Link to="/stocks" className="text-nano font-semibold text-brand-pink   hover:underline ">TÜMÜNÜ GÖR</Link>
                         </div>
 
-                        <div className="space-y-8 flex-1">
+                        <div className="space-y-6 sm:space-y-8 flex-1">
                             {!data?.lowStock || data.lowStock.length === 0 ? (
                                 <div className="h-full flex items-center justify-center py-10 opacity-50">
-                                    <p className="text-slate-400 font-semibold italic text-sm text-center">ENVERTER GÜVENDE 🚀</p>
+                                    <p className="text-slate-400 font-semibold  text-sm text-center">ENVANTER GÜVENDE 🚀</p>
                                 </div>
                             ) : (
                                 data?.lowStock?.map((item, i) => (
                                     <div key={i} className="group/item">
                                         <div className="flex justify-between items-end mb-3">
-                                            <span className="text-xs font-semibold text-slate-800 truncate max-w-[150px]  italic ">{item.name}</span>
-                                            <span className="text-10px font-semibold text-rose-500 bg-rose-50 px-3 py-1 rounded-full  italic">{item.stock} KALDI</span>
+                                            <span className="text-xs font-semibold text-slate-800 truncate max-w-[120px] sm:max-w-[150px]   ">{item.name}</span>
+                                            <span className="text-10px font-semibold text-rose-500 bg-rose-50 px-3 py-1 rounded-full  ">{item.stock} KALDI</span>
                                         </div>
                                         <div className="h-2.5 bg-slate-50 rounded-full overflow-hidden border border-slate-100 shadow-inner">
                                             <div

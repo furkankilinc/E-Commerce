@@ -131,11 +131,11 @@ const DashboardPage: React.FC = () => {
                 {/* Sales Activity Preview */}
                 <div className="bg-white rounded-xl p-10 border border-slate-50 shadow-sm overflow-hidden flex flex-col group">
                     <div className="flex items-center justify-between mb-5">
-                        <h3 className="text-xl font-semibold text-admin-navy   italic flex items-center gap-3">
+                        <h3 className="text-xl font-semibold text-admin-navy    flex items-center gap-3">
                             <span className="w-2 h-2 bg-indigo-500 rounded-full"></span>
                             Son 30 Günlük Aktivite
                         </h3>
-                        <a href="/analytics" className="text-10px font-semibold text-slate-400   hover:text-indigo-500 transition-colors italic">DETAYLI ANALİZ</a>
+                        <a href="/analytics" className="text-10px font-semibold text-slate-400   hover:text-indigo-500 transition-colors ">DETAYLI ANALİZ</a>
                     </div>
                     <div className="flex-1 min-h-[300px] flex items-end justify-between px-4 pb-4">
                         {/* Simplistic bar chart preview with brand-pink */}
@@ -156,7 +156,7 @@ const DashboardPage: React.FC = () => {
             {/* Map Section */}
             <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-50 mb-6">
                 <div className="p-8 pb-4">
-                    <h2 className="text-2xl font-semibold text-slate-800  mb-2  italic">Platform Aktivite Haritası</h2>
+                    <h2 className="text-2xl font-semibold text-slate-800  mb-2  ">Platform Aktivite Haritası</h2>
                     <p className="text-slate-400 font-medium text-sm text-left">Satıcıların ve aktif kullanıcıların konumlarını anlık olarak takip edin.</p>
                 </div>
                 <DashboardMap points={mapData} />

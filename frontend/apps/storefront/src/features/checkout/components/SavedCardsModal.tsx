@@ -30,7 +30,7 @@ const renderBrandLogo = (brand: CardInfo['brand']) => {
     switch (brand) {
         case 'Visa':
             return (
-                <span className="text-[#1434CB] font-[1000] italic text-12px  leading-none flex items-center select-none">
+                <span className="text-[#1434CB] font-[1000]  text-12px  leading-none flex items-center select-none">
                     VISA
                 </span>
             );
@@ -49,13 +49,13 @@ const renderBrandLogo = (brand: CardInfo['brand']) => {
             );
         case 'Troy':
             return (
-                <div className="px-1.5 py-0.5 bg-[#002C6C] rounded text-micro font-semibold text-white italic  leading-none flex items-center justify-center gap-0.5 h-4 select-none shrink-0">
+                <div className="px-1.5 py-0.5 bg-[#002C6C] rounded text-micro font-semibold text-white   leading-none flex items-center justify-center gap-0.5 h-4 select-none shrink-0">
                     <span className="text-[#FF5C39]">tr</span><span>oy</span>
                 </div>
             );
         default:
             return brand ? (
-                <span className="text-slate-800 font-[1000] italic text-nano uppercase r select-none shrink-0">
+                <span className="text-slate-800 font-[1000]  text-nano uppercase r select-none shrink-0">
                     {brand}
                 </span>
             ) : null;
@@ -169,7 +169,7 @@ export const SavedCardsModal: React.FC<SavedCardsModalProps> = ({
     if (!isOpen) return null;
 
     return (
-        <div 
+        <div
             onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300"
         >
@@ -178,7 +178,7 @@ export const SavedCardsModal: React.FC<SavedCardsModalProps> = ({
                 <div className="flex justify-between items-center px-8 py-6 border-b border-gray-100 bg-slate-50/50">
                     <div className="flex items-center gap-3">
                         <span className="text-xl">💳</span>
-                        <h3 className="text-xl font-[1000] text-gray-900 italic ">KART <span className="text-brand-pink">DEFTERİM</span></h3>
+                        <h3 className="text-xl font-[1000] text-gray-900  ">KART <span className="text-brand-pink">DEFTERİM</span></h3>
                     </div>
                     <button
                         onClick={() => {
@@ -197,10 +197,10 @@ export const SavedCardsModal: React.FC<SavedCardsModalProps> = ({
                     {/* Left Section: Saved Cards List */}
                     <div className="lg:col-span-2 overflow-y-auto p-6 border-r border-gray-100 bg-gray-50/30 flex flex-col justify-between">
                         <div className="space-y-4">
-                            <span className="text-nano font-semibold text-gray-400  block mb-4 italic">KAYITLI KARTLARINIZ</span>
+                            <span className="text-nano font-semibold text-gray-400  block mb-4 ">KAYITLI KARTLARINIZ</span>
 
                             {savedCards.length === 0 ? (
-                                <div className="text-center py-12 text-gray-400 text-xs font-bold italic">
+                                <div className="text-center py-12 text-gray-400 text-xs font-bold ">
                                     Kayıtlı kart bulunamadı.
                                 </div>
                             ) : (
@@ -214,19 +214,19 @@ export const SavedCardsModal: React.FC<SavedCardsModalProps> = ({
                                         >
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                                                    <span className="text-nano font-semibold  text-brand-pink uppercase italic truncate max-w-[100px]">{card.title}</span>
+                                                    <span className="text-nano font-semibold  text-brand-pink uppercase  truncate max-w-[100px]">{card.title}</span>
                                                     <div className="px-1.5 py-0.5 bg-slate-50 border border-slate-100 rounded shrink-0">
                                                         {renderBrandLogo(card.brand)}
                                                     </div>
-                                                    <span className="text-10px font-semibold r text-slate-700 italic uppercase truncate max-w-[80px]">{card.bank}</span>
-                                                    {isSelected && <span className="text-emerald-500 text-micro font-semibold italic  ml-auto">AKTİF</span>}
+                                                    <span className="text-10px font-semibold r text-slate-700  uppercase truncate max-w-[80px]">{card.bank}</span>
+                                                    {isSelected && <span className="text-emerald-500 text-micro font-semibold   ml-auto">AKTİF</span>}
                                                 </div>
 
                                                 <h4 className="text-caption font-semibold text-gray-900 mb-0.5 r font-mono">
                                                     •••• •••• •••• {card.number.replace(/\D/g, '').slice(-4)}
                                                 </h4>
                                                 <div className="flex justify-between items-center pr-2 mt-1">
-                                                    <p className="text-nano font-bold text-gray-400 italic truncate max-w-[120px]">{card.holder}</p>
+                                                    <p className="text-nano font-bold text-gray-400  truncate max-w-[120px]">{card.holder}</p>
                                                     <p className="text-nano font-bold text-slate-500 font-mono shrink-0">{card.expiry}</p>
                                                 </div>
                                             </div>
@@ -268,7 +268,7 @@ export const SavedCardsModal: React.FC<SavedCardsModalProps> = ({
                                 setEditingCardId(null);
                                 setNewCardForm({ title: '', number: '', holder: '', expiry: '', cvv: '' });
                             }}
-                            className="w-full mt-6 py-4 border border-dashed border-gray-200 hover:border-brand-pink text-gray-400 hover:text-brand-pink rounded-md text-10px font-semibold  transition-all italic flex items-center justify-center gap-2 cursor-pointer bg-white"
+                            className="w-full mt-6 py-4 border border-dashed border-gray-200 hover:border-brand-pink text-gray-400 hover:text-brand-pink rounded-md text-10px font-semibold  transition-all  flex items-center justify-center gap-2 cursor-pointer bg-white"
                         >
                             ＋ YENİ KART FORMU AÇ
                         </button>
@@ -277,65 +277,65 @@ export const SavedCardsModal: React.FC<SavedCardsModalProps> = ({
                     {/* Right Section: Add/Edit Form */}
                     <div className="lg:col-span-3 overflow-y-auto p-8 flex flex-col justify-between">
                         <div className="space-y-6">
-                            <span className="text-nano font-semibold text-gray-400  block italic mb-2">
+                            <span className="text-nano font-semibold text-gray-400  block  mb-2">
                                 {editingCardId ? 'KARTI DÜZENLE' : 'YENİ KART EKLE'}
                             </span>
 
                             <div className="space-y-4 text-slate-800">
                                 <div className="space-y-1.5">
-                                    <label className="text-nano font-semibold text-gray-400  ml-2 italic">KART ETİKETİ (Örn: Maaş Kartım, Bonus) <span className="text-brand-pink">*</span></label>
+                                    <label className="text-nano font-semibold text-gray-400  ml-2 ">KART ETİKETİ (Örn: Maaş Kartım, Bonus) <span className="text-brand-pink">*</span></label>
                                     <input
                                         type="text"
                                         value={newCardForm.title}
                                         onChange={(e) => setNewCardForm({ ...newCardForm, title: e.target.value })}
-                                        className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all italic text-slate-800"
+                                        className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800"
                                         placeholder="Örn: Benim Kartım"
                                     />
                                 </div>
 
                                 <div className="space-y-1.5">
-                                    <label className="text-nano font-semibold text-gray-400  ml-2 italic">KART NUMARASI <span className="text-brand-pink">*</span></label>
+                                    <label className="text-nano font-semibold text-gray-400  ml-2 ">KART NUMARASI <span className="text-brand-pink">*</span></label>
                                     <input
                                         type="text"
                                         maxLength={19}
                                         value={newCardForm.number}
                                         onChange={(e) => setNewCardForm({ ...newCardForm, number: e.target.value.replace(/\D/g, '').replace(/(.{4})/g, '$1 ').trim() })}
-                                        className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all italic text-slate-800 font-mono r"
+                                        className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800 font-mono r"
                                         placeholder="4242 4242 4242 4242"
                                     />
                                 </div>
 
                                 <div className="space-y-1.5">
-                                    <label className="text-nano font-semibold text-gray-400  ml-2 italic">KART ÜZERİNDEKİ İSİM <span className="text-brand-pink">*</span></label>
+                                    <label className="text-nano font-semibold text-gray-400  ml-2 ">KART ÜZERİNDEKİ İSİM <span className="text-brand-pink">*</span></label>
                                     <input
                                         type="text"
                                         value={newCardForm.holder}
                                         onChange={(e) => setNewCardForm({ ...newCardForm, holder: e.target.value.toUpperCase() })}
-                                        className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all italic text-slate-800"
+                                        className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800"
                                         placeholder="FURKAN KILINÇ"
                                     />
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-1.5">
-                                        <label className="text-nano font-semibold text-gray-400  ml-2 italic">SON KULLANMA TARİHİ <span className="text-brand-pink">*</span></label>
+                                        <label className="text-nano font-semibold text-gray-400  ml-2 ">SON KULLANMA TARİHİ <span className="text-brand-pink">*</span></label>
                                         <input
                                             type="text"
                                             maxLength={5}
                                             value={newCardForm.expiry}
                                             onChange={(e) => setNewCardForm({ ...newCardForm, expiry: e.target.value })}
-                                            className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all italic text-slate-800 text-center"
+                                            className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800 text-center"
                                             placeholder="MM/YY"
                                         />
                                     </div>
                                     <div className="space-y-1.5">
-                                        <label className="text-nano font-semibold text-gray-400  ml-2 italic">GÜVENLİK KODU (CVV) <span className="text-brand-pink">*</span></label>
+                                        <label className="text-nano font-semibold text-gray-400  ml-2 ">GÜVENLİK KODU (CVV) <span className="text-brand-pink">*</span></label>
                                         <input
                                             type="password"
                                             maxLength={3}
                                             value={newCardForm.cvv}
                                             onChange={(e) => setNewCardForm({ ...newCardForm, cvv: e.target.value.replace(/\D/g, '') })}
-                                            className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all italic text-slate-800 text-center"
+                                            className="w-full h-10 bg-gray-50 border border-gray-100 rounded-md px-6 text-xs font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all  text-slate-800 text-center"
                                             placeholder="***"
                                         />
                                     </div>
@@ -345,7 +345,7 @@ export const SavedCardsModal: React.FC<SavedCardsModalProps> = ({
 
                         <button
                             onClick={handleSaveCard}
-                            className="w-full mt-8 py-5 bg-brand-pink text-white rounded-md text-10px font-semibold  shadow-xs cursor-pointer flex items-center justify-center gap-2 hover:bg-rose-600 transition-colors italic"
+                            className="w-full mt-8 py-5 bg-brand-pink text-white rounded-md text-10px font-semibold  shadow-xs cursor-pointer flex items-center justify-center gap-2 hover:bg-rose-600 transition-colors "
                         >
                             💾 {editingCardId ? 'KARTI GÜNCELLE' : 'KARTI DEFTERE KAYDET'}
                         </button>

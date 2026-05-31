@@ -75,7 +75,7 @@ const CategoryRow: React.FC<{
                 <td className="py-3 px-4 text-sm text-slate-500">
                     {cat.filterValues && Object.keys(cat.filterValues).length > 0
                         ? Object.keys(cat.filterValues).join(', ')
-                        : <span className="text-slate-300 italic">Yok</span>}
+                        : <span className="text-slate-300 ">Yok</span>}
                 </td>
                 <td className="py-3 px-4">
                     <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold ${cat.isActive ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-400'}`}>
@@ -578,7 +578,7 @@ const CategoriesPage: React.FC = () => {
     const totalPages = Math.ceil(treeRoots.length / limit) || 1;
 
     return (
-        <div className="p-8">
+        <div className="p-4 md:p-8 space-y-6">
             {/* Toast */}
             {toast && (
                 <div className={`fixed top-6 right-6 z-50 px-5 py-3 rounded-2xl text-sm font-bold shadow-lg ${toast.ok ? 'bg-emerald-500 text-white' : 'bg-red-500 text-white'}`}>
@@ -587,14 +587,14 @@ const CategoriesPage: React.FC = () => {
             )}
 
             {/* Header */}
-            <div className="flex items-start justify-between mb-4 gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-4">
                 <div>
-                    <h1 className="text-3xl font-extrabold text-admin-dark ">Kategoriler</h1>
-                    <p className="text-slate-500 mt-1 font-medium">{categories.length} kategori — hiyerarşik özel filtrelerle yönetin</p>
+                    <h1 className="text-2xl md:text-3xl font-extrabold text-admin-dark ">Kategoriler</h1>
+                    <p className="text-slate-500 mt-1 font-medium text-xs sm:text-sm">{categories.length} kategori — hiyerarşik özel filtrelerle yönetin</p>
                 </div>
                 <button
                     onClick={() => { setEditTarget(null); setModalOpen(true); }}
-                    className="flex items-center gap-2 px-5 py-2.5 bg-brand-pink text-white text-sm font-bold rounded-xl shadow-lg shadow-brand-pink/20 hover:opacity-90 transition-opacity"
+                    className="flex items-center gap-2 px-5 py-2.5 bg-brand-pink text-white text-xs sm:text-sm font-bold rounded-xl shadow-lg shadow-brand-pink/20 hover:opacity-90 transition-opacity"
                 >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4" strokeWidth="3" strokeLinecap="round" /></svg>
                     Yeni Kategori
@@ -620,37 +620,39 @@ const CategoriesPage: React.FC = () => {
                         <span className="font-semibold text-sm">Yükleniyor...</span>
                     </div>
                 ) : (
-                    <table className="w-full">
-                        <thead>
-                            <tr className="border-b border-slate-100 bg-slate-50">
-                                <th className="text-left py-3 px-4 text-xs font-bold text-slate-400  ">Kategori</th>
-                                <th className="text-left py-3 px-4 text-xs font-bold text-slate-400  ">Tip</th>
-                                <th className="text-left py-3 px-4 text-xs font-bold text-slate-400  ">Ürün</th>
-                                <th className="text-left py-3 px-4 text-xs font-bold text-slate-400  ">Özel Filtreler</th>
-                                <th className="text-left py-3 px-4 text-xs font-bold text-slate-400  ">Durum</th>
-                                <th className="text-left py-3 px-4 text-xs font-bold text-slate-400  ">İşlem</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {paginatedTreeRoots.length === 0 ? (
-                                <tr>
-                                    <td colSpan={6} className="py-16 text-center text-slate-400 text-sm font-medium">
-                                        {search ? 'Sonuç bulunamadı.' : 'Henüz kategori yok. İlk kategoriyi oluşturun!'}
-                                    </td>
+                    <div className="overflow-x-auto">
+                        <table className="w-full min-w-[800px]">
+                            <thead>
+                                <tr className="border-b border-slate-100 bg-slate-50">
+                                    <th className="text-left py-3 px-4 text-xs font-bold text-slate-400  ">Kategori</th>
+                                    <th className="text-left py-3 px-4 text-xs font-bold text-slate-400  ">Tip</th>
+                                    <th className="text-left py-3 px-4 text-xs font-bold text-slate-400  ">Ürün</th>
+                                    <th className="text-left py-3 px-4 text-xs font-bold text-slate-400  ">Özel Filtreler</th>
+                                    <th className="text-left py-3 px-4 text-xs font-bold text-slate-400  ">Durum</th>
+                                    <th className="text-left py-3 px-4 text-xs font-bold text-slate-400  ">İşlem</th>
                                 </tr>
-                            ) : (
-                                paginatedTreeRoots.map(cat => (
-                                    <CategoryRow
-                                        key={cat.id}
-                                        cat={cat}
-                                        depth={0}
-                                        onEdit={c => { setEditTarget(c); setModalOpen(true); }}
-                                        onDelete={setDeleteTarget}
-                                    />
-                                ))
-                            )}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {paginatedTreeRoots.length === 0 ? (
+                                    <tr>
+                                        <td colSpan={6} className="py-16 text-center text-slate-400 text-sm font-medium">
+                                            {search ? 'Sonuç bulunamadı.' : 'Henüz kategori yok. İlk kategoriyi oluşturun!'}
+                                        </td>
+                                    </tr>
+                                ) : (
+                                    paginatedTreeRoots.map(cat => (
+                                        <CategoryRow
+                                            key={cat.id}
+                                            cat={cat}
+                                            depth={0}
+                                            onEdit={c => { setEditTarget(c); setModalOpen(true); }}
+                                            onDelete={setDeleteTarget}
+                                        />
+                                    ))
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
                 )}
             </div>
 

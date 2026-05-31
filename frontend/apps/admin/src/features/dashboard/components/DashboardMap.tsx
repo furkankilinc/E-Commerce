@@ -96,11 +96,11 @@ const DashboardMap: React.FC<DashboardMapProps> = ({ points }) => {
                 <div className="space-y-3">
                     <div className="flex items-center gap-3">
                         <div className="w-3.5 h-3.5 rounded-full bg-indigo-500 shadow-lg shadow-indigo-500/30 border-2 border-white"></div>
-                        <span className="text-10px font-semibold text-slate-700   italic">Satıcılar</span>
+                        <span className="text-10px font-semibold text-slate-700   ">Satıcılar</span>
                     </div>
                     <div className="flex items-center gap-3">
                         <div className="w-3.5 h-3.5 rounded-full bg-pink-500 shadow-lg shadow-pink-500/30 border-2 border-white"></div>
-                        <span className="text-10px font-semibold text-slate-700   italic">Aktif Kullanıcılar</span>
+                        <span className="text-10px font-semibold text-slate-700   ">Aktif Kullanıcılar</span>
                     </div>
                 </div>
             </div>
@@ -109,7 +109,7 @@ const DashboardMap: React.FC<DashboardMapProps> = ({ points }) => {
                 <div className="absolute inset-0 flex items-center justify-center bg-slate-50/80 backdrop-blur-sm z-[20]">
                     <div className="text-center">
                         <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                        <p className="text-sm font-semibold text-slate-400   italic">Google Maps Yükleniyor...</p>
+                        <p className="text-sm font-semibold text-slate-400   ">Google Maps Yükleniyor...</p>
                     </div>
                 </div>
             )}

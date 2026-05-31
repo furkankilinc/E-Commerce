@@ -64,7 +64,7 @@ const VendorLoginPage: React.FC = () => {
                     </div>
 
                     <div className="mt-20 max-w-lg">
-                        <h1 className="text-4xl font-bold leading-tight mb-6  italic ">
+                        <h1 className="text-4xl font-bold leading-tight mb-6   ">
                             Kurumsal Seviye<br />
                             Ticaret<br />
                             Altyapısı.
