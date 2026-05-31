@@ -15,3 +15,21 @@ body {
     margin: 0;
     min-height: 100vh;
 }
+
+/* Custom Interactive Cursor Pointer & Focus Reset */
+button,
+[role="button"],
+select,
+input[type="submit"],
+input[type="button"],
+input[type="reset"],
+.cursor-pointer {
+    cursor: pointer !important;
+}
+
+*:focus,
+*:focus-visible,
+*:focus-within {
+    outline: none !important;
+    box-shadow: none !important;
+}

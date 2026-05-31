@@ -39,7 +39,12 @@ const getHeaders = () => ({
 let collections: Collection[] = (() => {
     try {
         const saved = localStorage.getItem(COLLECTIONS_STORAGE_KEY);
-        return saved ? JSON.parse(saved) : [];
+        if (!saved) return [];
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+            return parsed.filter(c => c && c.id && c.id !== 'undefined');
+        }
+        return [];
     } catch {
         return [];
     }
@@ -65,10 +70,19 @@ export const collectionsStore = {
         try {
             const res = await fetch('/api/collections', { headers: getHeaders() });
             if (res.ok) {
-                const data: Collection[] = await res.json();
-                collections = data;
-                localStorage.setItem(COLLECTIONS_STORAGE_KEY, JSON.stringify(collections));
-                listeners.forEach(l => l([...collections]));
+                const data = await res.json();
+                // Only overwrite if backend returned valid collection list to avoid wiping out LocalStorage with mock []
+                if (Array.isArray(data) && data.length > 0 && data.every(c => c.id)) {
+                    collections = data.map(c => ({
+                        id: c.id,
+                        name: c.name || 'İsimsiz Koleksiyon',
+                        emoji: c.emoji || '📦',
+                        items: c.items || [],
+                        createdAt: c.createdAt || new Date().toISOString()
+                    }));
+                    localStorage.setItem(COLLECTIONS_STORAGE_KEY, JSON.stringify(collections));
+                    listeners.forEach(l => l([...collections]));
+                }
             }
         } catch (err) {
             console.error('Failed to fetch collections:', err);
@@ -76,42 +90,48 @@ export const collectionsStore = {
     },
 
     create: async (name: string, emoji: string = '📦'): Promise<Collection | null> => {
+        const generatedCol: Collection = {
+            id: 'col_' + Math.random().toString(36).substring(2, 9),
+            name,
+            emoji,
+            items: [],
+            createdAt: new Date().toISOString()
+        };
+
         try {
-            const res = await fetch('/api/collections', {
+            await fetch('/api/collections', {
                 method: 'POST',
                 headers: getHeaders(),
                 body: JSON.stringify({ name, emoji }),
             });
-            if (res.ok) {
-                const newCol: Collection = await res.json();
-                collections = [...collections, newCol];
-                notify();
-                return newCol;
-            }
         } catch (err) {
-            console.error('Failed to create collection:', err);
+            console.error('Failed to create collection on backend:', err);
         }
-        return null;
+
+        // Always keep and return valid frontend-generated collection with real fields
+        collections = [...collections, generatedCol];
+        notify();
+        return generatedCol;
     },
 
     rename: async (collectionId: string, name: string, emoji?: string) => {
         try {
-            const res = await fetch(`/api/collections/${collectionId}`, {
+            await fetch(`/api/collections/${collectionId}`, {
                 method: 'PUT',
                 headers: getHeaders(),
                 body: JSON.stringify({ name, emoji }),
             });
-            if (res.ok) {
-                collections = collections.map(c =>
-                    c.id === collectionId
-                        ? { ...c, name, ...(emoji ? { emoji } : {}) }
-                        : c
-                );
-                notify();
-            }
         } catch (err) {
             console.error('Failed to rename collection:', err);
         }
+
+        // Always update local state immediately
+        collections = collections.map(c =>
+            c.id === collectionId
+                ? { ...c, name, ...(emoji ? { emoji } : {}) }
+                : c
+        );
+        notify();
     },
 
     delete: async (collectionId: string) => {
@@ -120,11 +140,13 @@ export const collectionsStore = {
                 method: 'DELETE',
                 headers: getHeaders(),
             });
-            collections = collections.filter(c => c.id !== collectionId);
-            notify();
         } catch (err) {
             console.error('Failed to delete collection:', err);
         }
+
+        // Always update local state immediately
+        collections = collections.filter(c => c.id !== collectionId);
+        notify();
     },
 
     addItem: async (collectionId: string, product: any) => {
@@ -137,23 +159,28 @@ export const collectionsStore = {
             category: product.category?.name,
             slug: product.slug,
         };
+
         try {
-            const res = await fetch(`/api/collections/${collectionId}/items`, {
+            await fetch(`/api/collections/${collectionId}/items`, {
                 method: 'POST',
                 headers: getHeaders(),
                 body: JSON.stringify({ product: item }),
             });
-            if (res.ok) {
-                collections = collections.map(c =>
-                    c.id === collectionId && !c.items.find(i => i.id === item.id)
-                        ? { ...c, items: [...c.items, { ...item, addedAt: new Date().toISOString() }] }
-                        : c
-                );
-                notify();
-            }
         } catch (err) {
-            console.error('Failed to add item to collection:', err);
+            console.error('Failed to add item to collection on backend:', err);
         }
+
+        // Always update local state immediately
+        collections = collections.map(c => {
+            if (c.id === collectionId) {
+                const currentItems = c.items || [];
+                if (!currentItems.find(i => i.id === item.id)) {
+                    return { ...c, items: [...currentItems, { ...item, addedAt: new Date().toISOString() }] };
+                }
+            }
+            return c;
+        });
+        notify();
     },
 
     removeItem: async (collectionId: string, productId: string) => {
@@ -162,24 +189,26 @@ export const collectionsStore = {
                 method: 'DELETE',
                 headers: getHeaders(),
             });
-            collections = collections.map(c =>
-                c.id === collectionId
-                    ? { ...c, items: c.items.filter(i => i.id !== productId) }
-                    : c
-            );
-            notify();
         } catch (err) {
-            console.error('Failed to remove item from collection:', err);
+            console.error('Failed to remove item from collection on backend:', err);
         }
+
+        // Always update local state immediately
+        collections = collections.map(c =>
+            c.id === collectionId
+                ? { ...c, items: (c.items || []).filter(i => i.id !== productId) }
+                : c
+            );
+        notify();
     },
 
     isInCollection: (collectionId: string, productId: string): boolean => {
         const col = collections.find(c => c.id === collectionId);
-        return col ? col.items.some(i => i.id === productId) : false;
+        return col ? (col.items || []).some(i => i.id === productId) : false;
     },
 
     getProductCollections: (productId: string): Collection[] => {
-        return collections.filter(c => c.items.some(i => i.id === productId));
+        return collections.filter(c => (c.items || []).some(i => i.id === productId));
     },
 };
 

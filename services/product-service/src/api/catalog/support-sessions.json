@@ -1,0 +1,117 @@
+[
+  {
+    "id": "sess-1779228916763",
+    "userName": "Test Ben",
+    "email": "test@test.com",
+    "status": "active",
+    "unreadAdminCount": 0,
+    "unreadUserCount": 1,
+    "createdAt": "2026-05-19T22:15:16.763Z",
+    "messages": [
+      {
+        "sender": "admin",
+        "text": "Merhaba Test Ben, size nasıl yardımcı olabilirim?",
+        "createdAt": "2026-05-19T22:15:16.763Z"
+      },
+      {
+        "sender": "user",
+        "text": "Orospu çocuu Yakup tv",
+        "createdAt": "2026-05-19T22:15:24.293Z"
+      },
+      {
+        "sender": "admin",
+        "text": "SElam aleyküğm",
+        "createdAt": "2026-05-30T20:24:17.798Z"
+      }
+    ]
+  },
+  {
+    "id": "sess-1779229755980",
+    "userName": "Misafir",
+    "email": "Yarramnaber@g.com",
+    "status": "active",
+    "unreadAdminCount": 0,
+    "unreadUserCount": 0,
+    "createdAt": "2026-05-19T22:29:15.981Z",
+    "messages": [
+      {
+        "sender": "admin",
+        "text": "Merhaba Misafir, size nasıl yardımcı olabilirim?",
+        "createdAt": "2026-05-19T22:29:15.981Z"
+      },
+      {
+        "sender": "user",
+        "text": "?",
+        "createdAt": "2026-05-19T22:29:19.609Z"
+      }
+    ]
+  },
+  {
+    "id": "sess-1779305588777",
+    "userName": "Furkan Kılınç",
+    "email": "furkaankilinc35@gmail.com",
+    "status": "active",
+    "unreadAdminCount": 0,
+    "unreadUserCount": 0,
+    "createdAt": "2026-05-20T19:33:08.777Z",
+    "messages": [
+      {
+        "sender": "admin",
+        "text": "Merhaba Furkan Kılınç, size nasıl yardımcı olabilirim?",
+        "createdAt": "2026-05-20T19:33:08.777Z"
+      },
+      {
+        "sender": "user",
+        "text": "Sa",
+        "createdAt": "2026-05-30T20:24:22.362Z"
+      },
+      {
+        "sender": "admin",
+        "text": "Merhaba",
+        "createdAt": "2026-05-30T20:24:26.957Z"
+      }
+    ]
+  },
+  {
+    "id": "sess-1779428153590",
+    "userName": "Misafir",
+    "email": "furkan@furkan.com",
+    "status": "active",
+    "unreadAdminCount": 0,
+    "unreadUserCount": 0,
+    "createdAt": "2026-05-22T05:35:53.590Z",
+    "messages": [
+      {
+        "sender": "admin",
+        "text": "Merhaba Misafir, size nasıl yardımcı olabilirim?",
+        "createdAt": "2026-05-22T05:35:53.590Z"
+      },
+      {
+        "sender": "user",
+        "text": "meraba",
+        "createdAt": "2026-05-22T05:36:17.597Z"
+      }
+    ]
+  },
+  {
+    "id": "sess-1779428198928",
+    "userName": "Misafir",
+    "email": "safas@fsa.com",
+    "status": "active",
+    "unreadAdminCount": 0,
+    "unreadUserCount": 0,
+    "createdAt": "2026-05-22T05:36:38.928Z",
+    "messages": [
+      {
+        "sender": "admin",
+        "text": "Merhaba Misafir, size nasıl yardımcı olabilirim?",
+        "createdAt": "2026-05-22T05:36:38.928Z"
+      },
+      {
+        "sender": "user",
+        "text": "fas",
+        "createdAt": "2026-05-22T05:36:41.674Z"
+      }
+    ]
+  }
+]

@@ -7,6 +7,8 @@ export interface Address {
     phone: string;
     address: string;
     city: string;
+    district: string;
+    neighborhood: string;
     zipCode: string;
     country: string;
 }
@@ -36,6 +38,8 @@ const initialAddress: Address = {
     phone: '',
     address: '',
     city: '',
+    district: '',
+    neighborhood: '',
     zipCode: '',
     country: 'Türkiye'
 };

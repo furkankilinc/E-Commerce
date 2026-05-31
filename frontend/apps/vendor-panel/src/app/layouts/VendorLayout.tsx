@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../features/auth/useAuth';
 import GeolocationTracker from '../../shared/components/GeolocationTracker';
@@ -7,6 +7,7 @@ const VendorLayout: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const { logout, merchant } = useAuth();
+    const [mobileOpen, setMobileOpen] = useState(false);
 
     const handleLogout = () => {
         logout();
@@ -41,6 +42,11 @@ const VendorLayout: React.FC = () => {
             )
         },
         {
+            label: 'Müşteri Soruları', path: '/questions', icon: (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            )
+        },
+        {
             label: 'Ayarlar', path: '/settings', icon: (
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
             )
@@ -50,28 +56,40 @@ const VendorLayout: React.FC = () => {
     return (
         <div className="flex h-screen bg-[#f1f5f9] overflow-hidden font-sans">
             <GeolocationTracker />
+
+            {/* Mobile Sidebar Overlay */}
+            {mobileOpen && (
+                <div
+                    className="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm lg:hidden"
+                    onClick={() => setMobileOpen(false)}
+                />
+            )}
+
             {/* Sidebar */}
-            <aside className="w-72 bg-white border-r border-slate-200 flex flex-col">
+            <aside className={`fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-slate-200 flex flex-col transform transition-transform duration-300 lg:translate-x-0 lg:static lg:z-auto ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                 <div className="p-8">
                     <div className="flex items-center gap-4">
                         <div className="w-12 h-12 bg-brand-pink rounded-2xl flex items-center justify-center text-white shadow-lg shadow-brand-pink/20">
                             <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
                         </div>
                         <div>
-                            <span className="text-lg font-black text-slate-900 leading-none block italic">Satıcı Paneli</span>
-                            <span className="text-[10px] font-bold text-brand-pink tracking-wider uppercase italic">FUIRA Enterprise</span>
+                            <span className="text-lg font-semibold text-slate-900 leading-none block ">Satıcı Paneli</span>
+                            <span className="text-10px font-bold text-brand-pink r  ">FUIRA Enterprise</span>
                         </div>
                     </div>
                 </div>
 
                 <nav className="flex-1 px-4 space-y-2 overflow-y-auto">
                     {menuItems.map((item) => {
-                        const isActive = location.pathname.startsWith(item.path);
+                        const isActive = item.path === '/products'
+                            ? (location.pathname.startsWith('/products') && !location.pathname.startsWith('/products/drafts'))
+                            : location.pathname.startsWith(item.path);
                         return (
                             <Link
                                 key={item.path}
                                 to={item.path}
-                                className={`flex items-center gap-4 px-6 py-4 rounded-2xl text-sm font-bold transition-all ${isActive ? 'bg-rose-50 text-brand-pink shadow-sm shadow-rose-100/50' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}`}
+                                onClick={() => setMobileOpen(false)}
+                                className={`flex items-center gap-4 px-6 py-4 rounded-2xl text-sm font-bold transition-all cursor-pointer ${isActive ? 'bg-rose-50 text-brand-pink shadow-sm shadow-rose-100/50' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}`}
                             >
                                 <span className={isActive ? 'text-brand-pink' : 'text-slate-400'}>{item.icon}</span>
                                 {item.label}
@@ -80,24 +98,39 @@ const VendorLayout: React.FC = () => {
                     })}
                 </nav>
 
-                <div className="p-6">
+                <div className="p-6 space-y-4">
                     <div className="bg-slate-50 p-4 rounded-3xl flex items-center gap-4 border border-white shadow-sm">
-                        <div className="w-12 h-12 rounded-2xl bg-white border border-slate-200 overflow-hidden shadow-sm">
-                            <img src="https://ui-avatars.com/api/?name=Alex+Rivera&background=fb7185&color=fff" alt="Alex Rivera" className="w-full h-full object-cover" />
+                        <div className="w-12 h-12 rounded-2xl bg-white border border-slate-200 overflow-hidden shadow-sm shrink-0">
+                            <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(merchant?.contactPerson || merchant?.companyName || 'Satıcı')}&background=fb7185&color=fff&bold=true`} alt="Profile" className="w-full h-full object-cover" />
                         </div>
                         <div className="flex-1 min-w-0">
-                            <span className="text-sm font-black text-slate-900 block truncate leading-tight italic">{merchant?.companyName || 'Alex Rivera'}</span>
-                            <span className="text-[10px] font-bold text-brand-pink uppercase tracking-widest italic opacity-70">PROFESYONEL SATICI</span>
+                            <span className="text-sm font-semibold text-slate-900 block truncate leading-tight ">{merchant?.contactPerson || 'Furkan Kılınç'}</span>
+                            <span className="text-nano font-semibold text-slate-400 block truncate r mt-0.5">{merchant?.companyName || 'FUIRA Enterprise'}</span>
                         </div>
                     </div>
+                    <button
+                        onClick={handleLogout}
+                        className="w-full h-12 rounded-2xl border border-slate-200 hover:border-red-200 hover:bg-red-50/50 text-slate-500 hover:text-red-500 flex items-center justify-center gap-3 text-xs font-semibold transition-all active:scale-[0.98] cursor-pointer"
+                    >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                        OTURUMU KAPAT
+                    </button>
                 </div>
             </aside>
 
             {/* Main Content */}
             <main className="flex-1 overflow-y-auto">
-                <header className="h-24 bg-white/80 backdrop-blur-md border-b border-slate-100 flex items-center justify-between px-12 sticky top-0 z-20">
+                <header className="h-20 bg-white/80 backdrop-blur-md border-b border-slate-100 flex items-center justify-between px-6 lg:px-12 sticky top-0 z-20">
                     <div className="flex items-center gap-4">
-                        <h2 className="text-xl font-black text-slate-900 uppercase tracking-tight italic">
+                        <button
+                            onClick={() => setMobileOpen(true)}
+                            className="lg:hidden p-2 rounded-xl text-slate-500 hover:bg-slate-50 transition-colors"
+                        >
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 6h16M4 12h16M4 18h16" /></svg>
+                        </button>
+                        <h2 className="text-lg lg:text-xl font-semibold text-slate-900 ">
                             {menuItems.find(m => location.pathname.startsWith(m.path))?.label || 'Dashboard'}
                         </h2>
                     </div>
@@ -106,7 +139,7 @@ const VendorLayout: React.FC = () => {
                     </div>
                 </header>
 
-                <div className="p-12">
+                <div className="p-4 sm:p-6 lg:p-12">
                     <Outlet />
                 </div>
             </main>

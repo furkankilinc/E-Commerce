@@ -22,6 +22,8 @@ const ProductListPage: React.FC = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [search, setSearch] = useState('');
     const [debouncedSearch, setDebouncedSearch] = useState('');
+    const [sortBy, setSortBy] = useState('newest');
+    const [statusFilter, setStatusFilter] = useState('ALL');
     const [pagination, setPagination] = useState({
         page: 1,
         totalPages: 1,
@@ -30,10 +32,14 @@ const ProductListPage: React.FC = () => {
     });
     const navigate = useNavigate();
 
-    const fetchProducts = async (page: number, searchQuery: string = debouncedSearch) => {
+    const fetchProducts = async (page: number, searchQuery: string = debouncedSearch, sortVal: string = sortBy, statusVal: string = statusFilter) => {
         setIsLoading(true);
         try {
-            const res = await apiClient.get(`/api/merchant/products?page=${page}&limit=10&search=${encodeURIComponent(searchQuery)}`);
+            let url = `/api/merchant/products?page=${page}&limit=10&search=${encodeURIComponent(searchQuery)}&sort=${sortVal}`;
+            if (statusVal !== 'ALL') {
+                url += `&status=${statusVal}`;
+            }
+            const res = await apiClient.get(url);
             if (res.ok) {
                 const data = await res.json();
                 setProducts(data.products);
@@ -55,12 +61,12 @@ const ProductListPage: React.FC = () => {
     }, [search]);
 
     useEffect(() => {
-        fetchProducts(1, debouncedSearch);
-    }, [debouncedSearch]);
+        fetchProducts(1, debouncedSearch, sortBy, statusFilter);
+    }, [debouncedSearch, sortBy, statusFilter]);
 
     const handlePageChange = (newPage: number) => {
         if (newPage >= 1 && newPage <= pagination.totalPages) {
-            fetchProducts(newPage);
+            fetchProducts(newPage, debouncedSearch, sortBy, statusFilter);
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     };
@@ -77,10 +83,10 @@ const ProductListPage: React.FC = () => {
             cancelButtonText: 'Vazgeç',
             background: '#ffffff',
             customClass: {
-                title: 'font-black italic uppercase tracking-tighter',
-                popup: 'rounded-[3rem]',
-                confirmButton: 'rounded-2xl px-6 py-4 font-black uppercase tracking-widest text-[10px]',
-                cancelButton: 'rounded-2xl px-6 py-4 font-black uppercase tracking-widest text-[10px]'
+                title: 'font-semibold   ',
+                popup: 'rounded-xl',
+                confirmButton: 'rounded-2xl px-6 py-4 font-semibold   text-10px',
+                cancelButton: 'rounded-2xl px-6 py-4 font-semibold   text-10px'
             }
         });
 
@@ -101,44 +107,90 @@ const ProductListPage: React.FC = () => {
     };
 
     return (
-        <div className="space-y-10">
+        <div className="space-y-6 md:space-y-10">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
-                    <h1 className="text-[40px] font-[1000] text-slate-900 tracking-tighter mb-2 italic leading-none">Ürün <span className="text-brand-pink">Envanteri</span></h1>
-                    <p className="text-slate-400 font-bold text-lg italic opacity-70">Vitrinini yönet ve stok seviyelerini gerçek zamanlı takip et.</p>
+                    <h1 className="text-2xl md:text-4xl font-[1000] text-slate-900  mb-2  leading-none">Ürün <span className="text-brand-pink">Envanteri</span></h1>
+                    <p className="text-sm md:text-lg text-slate-400 font-bold  opacity-70">Vitrinini yönet ve stok seviyelerini gerçek zamanlı takip et.</p>
                 </div>
+                <Link
+                    to="/products/create"
+                    className="w-full md:w-auto px-6 py-4 md:px-12 md:py-6 bg-brand-pink text-white rounded-2xl text-xs md:text-caption font-semibold  shadow-xl shadow-brand-pink/20 hover:bg-brand-pink-hover  transition-all active:scale-95 flex items-center justify-center gap-4  whitespace-nowrap"
+                >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4" /></svg>
+                    YENİ ÜRÜN EKLE
+                </Link>
             </div>
 
             {/* Filters Bar */}
-            <div className="bg-white p-8 rounded-[3rem] shadow-sm border border-slate-50 flex flex-col md:flex-row items-center gap-10">
-                <div className="flex-1 relative w-full group">
+            <div className="bg-white p-4 sm:p-6 lg:p-8 rounded-2xl shadow-xs border border-slate-100 flex flex-col lg:flex-row items-stretch lg:items-center gap-4 lg:gap-6">
+                {/* Search */}
+                <div className="flex-grow relative group">
                     <input
                         type="text"
                         placeholder="Ürün adı veya SKU ile ara..."
                         value={search}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
-                        className="w-full h-16 pl-16 pr-6 bg-slate-50 border-2 border-transparent rounded-[2rem] text-sm font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all italic shadow-inner"
+                        className="w-full h-12 sm:h-14 pl-14 pr-6 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold focus:outline-none focus:border-brand-pink focus:bg-white transition-all "
                     />
-                    <svg className="absolute left-6 top-1/2 -translate-y-1/2 w-6 h-6 text-slate-300 group-focus-within:text-brand-pink transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                    <svg className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-brand-pink transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                 </div>
-                <div className="flex items-center gap-6 w-full md:w-auto text-[10px] font-black text-slate-400 uppercase tracking-widest px-4 italic">
+
+                {/* Status Dropdown */}
+                <div className="relative w-full lg:w-48">
+                    <select
+                        aria-label="Durum Filtresi"
+                        value={statusFilter}
+                        onChange={(e) => setStatusFilter(e.target.value)}
+                        className="w-full h-12 sm:h-14 px-6 bg-slate-50 border border-slate-100 rounded-xl text-10px font-semibold  text-slate-600 focus:outline-none focus:border-brand-pink focus:bg-white transition-all cursor-pointer appearance-none uppercase "
+                    >
+                        <option className="cursor-pointer font-bold" value="ALL">TÜM DURUMLAR</option>
+                        <option className="cursor-pointer font-bold" value="PUBLISHED">YAYINDA</option>
+                        <option className="cursor-pointer font-bold" value="DRAFT">TASLAK</option>
+                    </select>
+                    <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7" /></svg>
+                    </div>
+                </div>
+
+                {/* Sort Dropdown */}
+                <div className="relative w-full lg:w-56">
+                    <select
+                        aria-label="Sıralama Ölçütü"
+                        value={sortBy}
+                        onChange={(e) => setSortBy(e.target.value)}
+                        className="w-full h-12 sm:h-14 px-6 bg-slate-50 border border-slate-100 rounded-xl text-10px font-semibold  text-slate-600 focus:outline-none focus:border-brand-pink focus:bg-white transition-all cursor-pointer appearance-none uppercase "
+                    >
+                        <option className="cursor-pointer font-bold" value="newest">EN YENİLER</option>
+                        <option className="cursor-pointer font-bold" value="price-asc">FİYAT: DÜŞÜKTEN YÜKSEĞE</option>
+                        <option className="cursor-pointer font-bold" value="price-desc">FİYAT: YÜKSEKTEN DÜŞÜĞE</option>
+                        <option className="cursor-pointer font-bold" value="stock-asc">STOK: DÜŞÜKTEN YÜKSEĞE</option>
+                        <option className="cursor-pointer font-bold" value="stock-desc">STOK: YÜKSEKTEN DÜŞÜĞE</option>
+                    </select>
+                    <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7" /></svg>
+                    </div>
+                </div>
+
+                {/* Summary Info */}
+                <div className="flex items-center justify-center lg:justify-end gap-3 text-nano font-semibold text-slate-400  px-4  border-t border-slate-50 lg:border-t-0 pt-4 lg:pt-0">
                     <span className="text-slate-900">{pagination.total} Üründen</span> {products.length} Tanesi Gösteriliyor
                 </div>
             </div>
 
             {/* Products Table */}
-            <div className="bg-white rounded-[3.5rem] shadow-sm border border-slate-50 overflow-hidden">
+            <div className="bg-white rounded-xl shadow-sm border border-slate-50 overflow-hidden">
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
+                    <table className="w-full min-w-[900px] text-left border-collapse">
                         <thead>
-                            <tr className="border-b border-slate-50 italic">
-                                <th className="px-12 py-10 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Ürün Detayları</th>
-                                <th className="px-6 py-10 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 text-center">Stok Durumu</th>
-                                <th className="px-6 py-10 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 text-center">Birim Fiyat</th>
-                                <th className="px-6 py-10 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 text-center">Seçenekler</th>
-                                <th className="px-6 py-10 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 text-center">Durum</th>
-                                <th className="px-12 py-10 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 text-right">İşlemler</th>
+                            <tr className="border-b border-slate-50 ">
+                                <th className="px-12 py-10 text-10px font-semibold   text-slate-400">Ürün Detayları</th>
+                                <th className="px-6 py-10 text-10px font-semibold   text-slate-400 text-center">Stok Durumu</th>
+                                <th className="px-6 py-10 text-10px font-semibold   text-slate-400 text-center">Birim Fiyat</th>
+                                <th className="px-6 py-10 text-10px font-semibold   text-slate-400 text-center">Seçenekler</th>
+                                <th className="px-6 py-10 text-10px font-semibold   text-slate-400 text-center">Durum</th>
+                                <th className="px-12 py-10 text-10px font-semibold   text-slate-400 text-right">İşlemler</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-50">
@@ -156,20 +208,27 @@ const ProductListPage: React.FC = () => {
                             ) : products.length === 0 ? (
                                 <tr>
                                     <td colSpan={6} className="px-10 py-40 text-center">
-                                        <div className="flex flex-col items-center gap-8 opacity-20 group">
-                                            <div className="w-32 h-32 bg-slate-50 rounded-[3rem] flex items-center justify-center border-4 border-dashed border-slate-100 group-hover:rotate-12 transition-transform">
+                                        <div className="flex flex-col items-center gap-8 group">
+                                            <div className="w-32 h-32 bg-slate-50 rounded-xl flex items-center justify-center border-4 border-dashed border-slate-100 group-hover:rotate-12 transition-transform opacity-30">
                                                 <svg className="w-14 h-14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-14L4 7m8 4v10M4 7v10l8 4" /></svg>
                                             </div>
-                                            <span className="text-3xl font-black uppercase tracking-[0.4em] italic leading-none">HENÜZ ÜRÜN YOK</span>
+                                            <span className="text-3xl font-semibold   leading-none text-slate-300">HENÜZ ÜRÜN YOK</span>
+                                            <Link
+                                                to="/products/create"
+                                                className="mt-4 px-8 py-4 bg-brand-pink text-white rounded-xl text-10px font-semibold  hover:bg-brand-pink-hover transition-all active:scale-95 flex items-center gap-3  shadow-lg shadow-brand-pink/20"
+                                            >
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4" /></svg>
+                                                İLK ÜRÜNÜNÜZÜ EKLEYİN
+                                            </Link>
                                         </div>
                                     </td>
                                 </tr>
                             ) : (
                                 products.map((product) => (
                                     <tr key={product.id} className="group hover:bg-slate-50/30 transition-all">
-                                        <td className="px-12 py-10">
+                                        <td className="px-8 py-10">
                                             <div className="flex items-center gap-8">
-                                                <div className="w-20 h-20 rounded-[2rem] bg-[#fdfaf5] border border-slate-100 overflow-hidden shadow-sm group-hover:scale-105 transition-transform duration-500 p-2">
+                                                <div className="w-20 h-16 rounded-2xl bg-[#fdfaf5] border border-slate-100 overflow-hidden shadow-sm transition-transform duration-500">
                                                     <img
                                                         src={getSizedImageUrl(product.images?.[0]?.url, 'small') || 'https://via.placeholder.com/64'}
                                                         alt={product.name}
@@ -177,13 +236,13 @@ const ProductListPage: React.FC = () => {
                                                     />
                                                 </div>
                                                 <div>
-                                                    <span className="text-lg font-black text-slate-900 block group-hover:text-brand-pink transition-colors italic leading-tight">{product.name}</span>
-                                                    <span className="text-[10px] font-bold text-slate-400 tracking-widest uppercase mt-1 block">{product.sku || 'SKU-BEKLEMEDE'}</span>
+                                                    <span className="text-lg font-semibold text-slate-900 block group-hover:text-brand-pink transition-colors  leading-tight">{product.name}</span>
+                                                    <span className="text-10px font-bold text-slate-400   mt-1 block text-nowrap">{product.sku || 'SKU-BEKLEMEDE'}</span>
                                                 </div>
                                             </div>
                                         </td>
                                         <td className="px-6 py-10 text-center">
-                                            <div className={`inline-flex px-5 py-2.5 rounded-2xl text-[11px] font-black italic items-center gap-3 ${product.stock < 10 ? 'bg-rose-50 text-rose-500 shadow-sm shadow-rose-100/50' : 'bg-emerald-50 text-emerald-600 shadow-sm shadow-emerald-100/50'}`}>
+                                            <div className={`inline-flex px-5 py-2.5 rounded-2xl text-caption font-semibold  items-center gap-3 text-nowrap ${product.stock < 10 ? 'bg-rose-50 text-rose-500 shadow-sm shadow-rose-100/50' : 'bg-emerald-50 text-emerald-600 shadow-sm shadow-emerald-100/50'}`}>
                                                 <div className={`w-2 h-2 rounded-full ${product.stock < 10 ? 'bg-rose-500 animate-pulse' : 'bg-emerald-500'}`}></div>
                                                 {product.stock} Adet Stok
                                             </div>
@@ -192,15 +251,15 @@ const ProductListPage: React.FC = () => {
                                             <div className="flex flex-col items-center">
                                                 {product.discountPrice ? (
                                                     <>
-                                                        <span className="text-[10px] font-bold text-slate-400 line-through opacity-60 italic mb-1">
+                                                        <span className="text-10px font-bold text-slate-400 line-through opacity-60  mb-1">
                                                             {product.price.toLocaleString()} ₺
                                                         </span>
-                                                        <span className="text-lg font-black text-slate-900 italic tracking-tighter leading-none">
+                                                        <span className="text-lg font-semibold text-slate-900   leading-none">
                                                             {product.discountPrice.toLocaleString()} ₺
                                                         </span>
                                                     </>
                                                 ) : (
-                                                    <span className="text-lg font-black text-slate-900 italic tracking-tighter leading-none">
+                                                    <span className="text-lg font-semibold text-slate-900   leading-none">
                                                         {product.price.toLocaleString()} ₺
                                                     </span>
                                                 )}
@@ -208,23 +267,23 @@ const ProductListPage: React.FC = () => {
                                         </td>
                                         <td className="px-6 py-10 text-center">
                                             <div className="flex flex-col items-center gap-1">
-                                                <span className="text-[10px] font-black text-indigo-500 uppercase">{product.variants?.length || 0} SEÇENEK</span>
+                                                <span className="text-10px font-semibold text-indigo-500 ">{product.variants?.length || 0} SEÇENEK</span>
                                                 <div className="flex flex-wrap justify-center gap-1 max-w-[120px]">
                                                     {Array.from(new Set(product.variants?.map(v => v.name))).slice(0, 2).map(name => (
-                                                        <span key={name} className="px-2 py-0.5 bg-indigo-50 text-indigo-400 rounded-md text-[8px] font-bold">{name}</span>
+                                                        <span key={name} className="px-2 py-0.5 bg-indigo-50 text-indigo-400 rounded-md text-micro font-bold">{name}</span>
                                                     ))}
                                                 </div>
                                             </div>
                                         </td>
                                         <td className="px-6 py-10 text-center">
                                             {product.status === 'PUBLISHED' ? (
-                                                <span className="px-5 py-2.5 rounded-2xl bg-indigo-900 text-white text-[9px] font-black uppercase tracking-widest shadow-xl shadow-indigo-900/20 italic">YAYINDA</span>
+                                                <span className="px-5 py-2.5 rounded-2xl bg-indigo-900 text-white text-nano font-semibold    shadow-indigo-900/20 ">YAYINDA</span>
                                             ) : (
-                                                <span className="px-5 py-2.5 rounded-2xl bg-slate-100 text-slate-400 text-[9px] font-black uppercase tracking-widest italic border border-slate-200">TASLAK</span>
+                                                <span className="px-5 py-2.5 rounded-2xl bg-slate-100 text-slate-400 text-nano font-semibold    border border-slate-200">TASLAK</span>
                                             )}
                                         </td>
-                                        <td className="px-12 py-10 text-right">
-                                            <div className="flex items-center justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all transform translate-x-4 group-hover:translate-x-0">
+                                        <td className="px-6 sm:px-12 py-10 text-right">
+                                            <div className="flex items-center justify-end gap-3 lg:opacity-0 lg:group-hover:opacity-100 transition-all transform lg:translate-x-4 lg:group-hover:translate-x-0">
                                                 <button
                                                     onClick={() => navigate(`/products/edit/${product.id}`)}
                                                     className="w-12 h-12 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-indigo-600 hover:border-indigo-600 shadow-sm transition-all active:scale-90"
@@ -251,16 +310,16 @@ const ProductListPage: React.FC = () => {
 
             {/* Premium Pagination */}
             {pagination.totalPages > 1 && (
-                <div className="flex justify-center items-center gap-6 py-16">
+                <div className="ui-pagination-container">
                     <button
                         onClick={() => handlePageChange(pagination.page - 1)}
                         disabled={pagination.page === 1}
-                        className="w-16 h-16 rounded-[2rem] bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-brand-pink disabled:opacity-20 transition-all shadow-sm active:scale-90"
+                        className="ui-pagination-btn"
                     >
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                     </button>
 
-                    <div className="flex items-center gap-3 bg-white px-8 py-3 rounded-[3rem] border border-slate-50 shadow-sm">
+                    <div className="flex items-center gap-1.5 sm:gap-3">
                         {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
                             let pageNum = pagination.page;
                             if (pagination.page <= 3) pageNum = i + 1;
@@ -273,7 +332,7 @@ const ProductListPage: React.FC = () => {
                                 <button
                                     key={pageNum}
                                     onClick={() => handlePageChange(pageNum)}
-                                    className={`w-12 h-12 rounded-2xl text-[11px] font-black transition-all ${pagination.page === pageNum ? 'bg-brand-pink text-white shadow-xl shadow-brand-pink/30 scale-110' : 'text-slate-400 hover:text-slate-900 italic'}`}
+                                    className={`ui-pagination-btn ${pagination.page === pageNum ? 'active' : ''}`}
                                 >
                                     {pageNum}
                                 </button>
@@ -284,9 +343,9 @@ const ProductListPage: React.FC = () => {
                     <button
                         onClick={() => handlePageChange(pagination.page + 1)}
                         disabled={pagination.page === pagination.totalPages}
-                        className="w-16 h-16 rounded-[2rem] bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-brand-pink disabled:opacity-20 transition-all shadow-sm active:scale-90"
+                        className="ui-pagination-btn"
                     >
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                     </button>
                 </div>
             )}

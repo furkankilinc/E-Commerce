@@ -43,7 +43,7 @@ model OrderItem {
   orderId         String
   order           Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
   productId       String   // DİKKAT: Bağıntı Koptu (Ürün detayları Product Service'ten istenir)
-  merchantId      String   // DİKKAT: Bağıntı Koptu (Satıcı detayı Auth Service'ten istenir)
+  merchantId      String?  // DİKKAT: Bağıntı Koptu (Satıcı detayı Auth Service'ten istenir)
   quantity        Int
   price           Float    
   variantName     String?  

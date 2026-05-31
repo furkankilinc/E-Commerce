@@ -97,7 +97,7 @@ const SellerDetailPage: React.FC = () => {
 
     // Aktif süre hesaplama (Basit format: HH:mm:ss)
     const calculateDuration = (start: string, end: string, isRevoked: boolean) => {
-        if (!isRevoked) return <span className="text-emerald-500 font-black animate-pulse">Devam Ediyor</span>;
+        if (!isRevoked) return <span className="text-emerald-500 font-semibold animate-pulse">Devam Ediyor</span>;
 
         const s = new Date(start).getTime();
         const e = new Date(end).getTime();
@@ -115,7 +115,7 @@ const SellerDetailPage: React.FC = () => {
     return (
         <div className="p-10 font-['Inter'] bg-slate-50/20 min-h-screen">
             {/* Nav Back */}
-            <Link to="/sellers" className="inline-flex items-center gap-2 mb-8 text-slate-400 hover:text-indigo-600 font-bold transition-all group">
+            <Link to="/sellers" className="inline-flex items-center gap-2 mb-4 text-slate-400 hover:text-indigo-600 font-bold transition-all group">
                 <svg className="w-5 h-5 transition-transform group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
@@ -123,19 +123,19 @@ const SellerDetailPage: React.FC = () => {
             </Link>
 
             {/* Main Header */}
-            <div className="bg-white p-10 rounded-[3rem] border-2 border-slate-50 shadow-2xl shadow-slate-200/50 mb-10 flex flex-col lg:flex-row justify-between gap-10 sticky top-4 z-10 backdrop-blur-xl bg-white/90 translate-y-0">
+            <div className="bg-white p-10 rounded-xl border-2 border-slate-50 shadow-xl shadow-slate-200/50 mb-5 flex flex-col lg:flex-row justify-between gap-10 sticky top-4 z-10 backdrop-blur-xl bg-white/90 translate-y-0">
                 <div className="flex items-center gap-8">
-                    <div className="w-24 h-24 bg-gradient-to-br from-indigo-500 to-indigo-700 text-white rounded-[2rem] flex items-center justify-center text-3xl font-black shadow-2xl shadow-indigo-500/30 uppercase ring-8 ring-indigo-500/10">
+                    <div className="w-24 h-24 bg-gradient-to-br from-indigo-500 to-indigo-700 text-white rounded-2xl flex items-center justify-center text-3xl font-semibold shadow-xl shadow-indigo-500/30  ring-8 ring-indigo-500/10">
                         {merchant.companyName.substring(0, 2)}
                     </div>
                     <div className="space-y-2">
                         <div className="flex items-center gap-3">
-                            <h1 className="text-4xl font-black text-admin-dark tracking-tighter">{merchant.companyName}</h1>
-                            <span className={`px-4 py-1 rounded-xl text-[10px] font-black tracking-widest uppercase border ${merchant.isVerified ? 'bg-blue-50 text-blue-600 border-blue-100' : 'bg-amber-50 text-amber-600 border-amber-100'}`}>
+                            <h1 className="text-4xl font-semibold text-admin-dark ">{merchant.companyName}</h1>
+                            <span className={`px-4 py-1 rounded-xl text-10px font-semibold   border ${merchant.isVerified ? 'bg-blue-50 text-blue-600 border-blue-100' : 'bg-amber-50 text-amber-600 border-amber-100'}`}>
                                 {merchant.isVerified ? '✓ DOGRULANMIS' : '⚠ DOGRULAMA BEKLIYOR'}
                             </span>
                         </div>
-                        <div className="flex items-center gap-6 text-slate-400 font-bold text-sm tracking-wide">
+                        <div className="flex items-center gap-6 text-slate-400 font-bold text-sm ">
                             <div className="flex items-center gap-2">
                                 <svg className="w-4 h-4 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" strokeWidth={2} /></svg>
                                 {merchant.email}
@@ -153,7 +153,7 @@ const SellerDetailPage: React.FC = () => {
                         <button
                             disabled={isUpdating}
                             onClick={() => handleUpdateStatus(undefined, true)}
-                            className="px-8 py-4 bg-emerald-500 text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-emerald-600 transition-all shadow-xl shadow-emerald-500/20 active:scale-95 disabled:opacity-50"
+                            className="px-8 py-4 bg-emerald-500 text-white rounded-2xl font-semibold text-sm   hover:bg-emerald-600 transition-all  shadow-emerald-500/20 active:scale-95 disabled:opacity-50"
                         >
                             Satıcıyı Onayla
                         </button>
@@ -161,18 +161,18 @@ const SellerDetailPage: React.FC = () => {
                     <button
                         disabled={isUpdating}
                         onClick={() => handleUpdateStatus(!merchant.isActive)}
-                        className={`px-8 py-4 ${merchant.isActive ? 'bg-red-50 text-red-600 border-2 border-red-100' : 'bg-indigo-500 text-white'} rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-opacity-80 transition-all active:scale-95 disabled:opacity-50`}
+                        className={`px-8 py-4 ${merchant.isActive ? 'bg-red-50 text-red-600 border-2 border-red-100' : 'bg-indigo-500 text-white'} rounded-2xl font-semibold text-sm   hover:bg-opacity-80 transition-all active:scale-95 disabled:opacity-50`}
                     >
                         {merchant.isActive ? 'Hesabı Askıya Al' : 'Hesabı Aktifleştir'}
                     </button>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 mb-10">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 mb-5">
                 {/* Details Card */}
-                <section className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-100 h-full">
-                    <h3 className="text-xl font-black text-admin-dark mb-8 flex items-center gap-3">
-                        <span className="w-2 h-8 bg-indigo-500 rounded-full"></span>
+                <section className="bg-white p-8 rounded-[2.5rem] border border-slate-100  shadow-slate-100 h-full">
+                    <h3 className="text-xl font-semibold text-admin-dark mb-4 flex items-center gap-3">
+                        <span className="w-2 h-16 bg-indigo-500 rounded-full"></span>
                         Firma Detayları
                     </h3>
                     <div className="space-y-6">
@@ -185,9 +185,9 @@ const SellerDetailPage: React.FC = () => {
                 </section>
 
                 {/* Session DataGrid */}
-                <section className="lg:col-span-2 bg-white p-8 rounded-[3rem] border border-slate-100 shadow-xl shadow-slate-100 h-full overflow-hidden flex flex-col">
-                    <h3 className="text-xl font-black text-admin-dark mb-8 flex items-center gap-3">
-                        <span className="w-2 h-8 bg-emerald-500 rounded-full"></span>
+                <section className="lg:col-span-2 bg-white p-8 rounded-xl border border-slate-100  shadow-slate-100 h-full overflow-hidden flex flex-col">
+                    <h3 className="text-xl font-semibold text-admin-dark mb-4 flex items-center gap-3">
+                        <span className="w-2 h-16 bg-emerald-500 rounded-full"></span>
                         Oturum Geçmişi (DataGrid)
                     </h3>
 
@@ -195,17 +195,17 @@ const SellerDetailPage: React.FC = () => {
                         <table className="w-full text-left">
                             <thead>
                                 <tr className="bg-slate-50/50">
-                                    <th className="py-4 px-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Giriş Zamanı</th>
-                                    <th className="py-4 px-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Çıkış Zamanı</th>
-                                    <th className="py-4 px-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Aktif Süre</th>
-                                    <th className="py-4 px-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">IP Adresi</th>
-                                    <th className="py-4 px-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Durum</th>
+                                    <th className="py-4 px-6 text-10px font-semibold text-slate-400  ">Giriş Zamanı</th>
+                                    <th className="py-4 px-6 text-10px font-semibold text-slate-400  ">Çıkış Zamanı</th>
+                                    <th className="py-4 px-6 text-10px font-semibold text-slate-400  ">Aktif Süre</th>
+                                    <th className="py-4 px-6 text-10px font-semibold text-slate-400  ">IP Adresi</th>
+                                    <th className="py-4 px-6 text-10px font-semibold text-slate-400   text-right">Durum</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-50">
                                 {sessions.length === 0 ? (
                                     <tr>
-                                        <td colSpan={5} className="py-12 text-center text-slate-300 font-bold italic uppercase tracking-widest text-xs">Oturum verisi bulunamadı</td>
+                                        <td colSpan={5} className="py-12 text-center text-slate-300 font-bold    text-xs">Oturum verisi bulunamadı</td>
                                     </tr>
                                 ) : (
                                     sessions.map(session => (
@@ -218,7 +218,7 @@ const SellerDetailPage: React.FC = () => {
                                                     ? new Date(session.updatedAt).toLocaleString('tr-TR', { hour: '2-digit', minute: '2-digit' })
                                                     : '-'}
                                             </td>
-                                            <td className="py-5 px-6 font-black text-indigo-600 text-sm">
+                                            <td className="py-5 px-6 font-semibold text-indigo-600 text-sm">
                                                 {calculateDuration(session.createdAt, session.updatedAt, session.revoked)}
                                             </td>
                                             <td className="py-5 px-6 font-mono text-xs text-slate-400">
@@ -238,13 +238,13 @@ const SellerDetailPage: React.FC = () => {
 
             <div className="grid grid-cols-1 gap-10">
                 {/* Right Column - Logs */}
-                <section className="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-xl shadow-slate-100 min-h-[600px] flex flex-col">
-                    <div className="flex items-center justify-between mb-8">
-                        <h3 className="text-xl font-black text-admin-dark flex items-center gap-3">
-                            <span className="w-2 h-8 bg-amber-500 rounded-full"></span>
+                <section className="bg-white p-10 rounded-xl border border-slate-100  shadow-slate-100 min-h-[600px] flex flex-col">
+                    <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-xl font-semibold text-admin-dark flex items-center gap-3">
+                            <span className="w-2 h-16 bg-amber-500 rounded-full"></span>
                             Aktivite Logları
                         </h3>
-                        <div className="px-5 py-2 bg-slate-50 rounded-xl text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                        <div className="px-5 py-2 bg-slate-50 rounded-xl text-10px font-semibold text-slate-400  ">
                             Son 100 Kayıt
                         </div>
                     </div>
@@ -253,28 +253,28 @@ const SellerDetailPage: React.FC = () => {
                         {logs.length === 0 ? (
                             <div className="h-full flex flex-col items-center justify-center text-center opacity-40 py-20">
                                 <div className="text-6xl mb-6">📜</div>
-                                <div className="text-slate-500 font-bold uppercase tracking-widest text-sm">Henüz aktivite kaydı bulunmuyor.</div>
+                                <div className="text-slate-500 font-bold   text-sm">Henüz aktivite kaydı bulunmuyor.</div>
                             </div>
                         ) : (
                             logs.map(log => (
                                 <div key={log.id} className="p-6 bg-slate-50/50 rounded-3xl border border-slate-50 group hover:shadow-lg transition-all border-l-4 border-l-slate-200 hover:border-l-indigo-500">
                                     <div className="flex justify-between items-start mb-2">
                                         <div className="flex items-center gap-2">
-                                            <span className={`px-2 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-widest ${log.level === 'error' ? 'bg-red-50 text-red-500' :
+                                            <span className={`px-2 py-0.5 rounded-lg text-10px font-semibold   ${log.level === 'error' ? 'bg-red-50 text-red-500' :
                                                 log.level === 'warn' ? 'bg-amber-50 text-amber-500' :
                                                     'bg-indigo-50 text-indigo-500'
                                                 }`}>
                                                 {log.level}
                                             </span>
-                                            <span className="font-black text-slate-800 tracking-tight">{log.action}</span>
+                                            <span className="font-semibold text-slate-800 ">{log.action}</span>
                                         </div>
-                                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
+                                        <span className="text-10px font-bold text-slate-400  ">
                                             {new Date(log.createdAt).toLocaleString('tr-TR')}
                                         </span>
                                     </div>
                                     <p className="text-slate-600 font-medium leading-relaxed">{log.message}</p>
                                     {log.meta && Object.keys(log.meta).length > 0 && (
-                                        <div className="mt-3 p-3 bg-white rounded-xl border border-slate-100 text-[10px] font-mono text-slate-400 overflow-hidden text-ellipsis">
+                                        <div className="mt-3 p-3 bg-white rounded-xl border border-slate-100 text-10px font-mono text-slate-400 overflow-hidden text-ellipsis">
                                             {JSON.stringify(log.meta)}
                                         </div>
                                     )}
@@ -283,8 +283,8 @@ const SellerDetailPage: React.FC = () => {
                         )}
                     </div>
 
-                    <div className="mt-8 p-6 bg-slate-50 rounded-[2rem] border-2 border-dashed border-slate-100 text-center">
-                        <p className="text-xs text-slate-400 font-bold uppercase tracking-widest leading-loose">
+                    <div className="mt-8 p-6 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-100 text-center">
+                        <p className="text-xs text-slate-400 font-bold   leading-loose">
                             Log kayıtları sistem güvenliği için 2 yıl boyunca saklanır. <br />
                             Şüpheli bir işlem olması durumunda "Audit Team" ile iletişime geçin.
                         </p>
@@ -297,8 +297,8 @@ const SellerDetailPage: React.FC = () => {
 
 const DetailRow: React.FC<{ label: string; value: string; isBold?: boolean }> = ({ label, value, isBold }) => (
     <div className="space-y-1">
-        <div className="text-[10px] uppercase font-black text-slate-400 tracking-widest">{label}</div>
-        <div className={`${isBold ? 'text-indigo-600 font-black' : 'text-slate-700 font-bold'} text-lg tracking-tight`}>{value}</div>
+        <div className="text-10px  font-semibold text-slate-400 ">{label}</div>
+        <div className={`${isBold ? 'text-indigo-600 font-semibold' : 'text-slate-700 font-bold'} text-lg `}>{value}</div>
     </div>
 );
 

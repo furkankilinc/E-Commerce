@@ -13,9 +13,12 @@ import CategoriesPage from './features/categories/pages/CategoriesPage';
 import AttributesPage from './features/attributes/AttributesPage';
 import ProductsPage from './features/products/ProductsPage';
 import SellersPage from './features/sellers/pages/SellersPage';
+import SellerDetailPage from './features/sellers/pages/SellerDetailPage';
 import UsersPage from './features/users/UsersPage';
 import AnalyticsPage from './features/analytics/AnalyticsPage';
 import OrderDetailPage from './features/orders/OrderDetailPage';
+import ShippingPage from './features/shipping/ShippingPage';
+import SupportPage from './features/support/SupportPage';
 
 function App() {
   return (
@@ -34,8 +37,11 @@ function App() {
             <Route path="/orders" element={<OrdersPage />} />
             <Route path="/orders/:id" element={<OrderDetailPage />} />
             <Route path="/sellers" element={<SellersPage />} />
+            <Route path="/sellers/:id" element={<SellerDetailPage />} />
             <Route path="/users" element={<UsersPage />} />
             <Route path="/analytics" element={<AnalyticsPage />} />
+            <Route path="/shipping" element={<ShippingPage />} />
+            <Route path="/support" element={<SupportPage />} />
           </Route>
 
           {/* Default */}

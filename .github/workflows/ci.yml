@@ -1,0 +1,55 @@
+name: E-Commerce System CI
+
+on:
+  push:
+    branches: [ main, master, dev, developer, development ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  lint-and-compile:
+    name: Lint & Type-Check Frontend Workspaces
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js (v20)
+        uses: actions/setup-node@v4
+        with:
+          node-size: 20
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: './package-lock.json'
+
+      - name: Install Root & Workspace Dependencies
+        run: |
+          npm ci --legacy-peer-deps
+
+      - name: Verify Storefront Integration
+        run: |
+          npx tsc --noEmit --skipLibCheck --jsx react-jsx --moduleResolution node --target esnext --allowSyntheticDefaultImports --esModuleInterop --lib es2015,dom frontend/apps/storefront/src/features/checkout/CheckoutPage.tsx
+
+      - name: Verify Admin Panel Integration
+        run: |
+          npx tsc --noEmit --skipLibCheck --jsx react-jsx --moduleResolution node --target esnext --allowSyntheticDefaultImports --esModuleInterop --lib es2015,dom frontend/apps/admin/src/layout/AdminLayout.tsx
+
+      - name: Verify Vendor Panel Integration
+        run: |
+          npx tsc --noEmit --skipLibCheck --jsx react-jsx --moduleResolution node --target esnext --allowSyntheticDefaultImports --esModuleInterop --lib es2015,dom frontend/apps/vendor-panel/src/features/products/ProductListPage.tsx
+
+  docker-validate:
+    name: Validate Docker Compose Orchestration
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Create .env from template for port validation
+        run: cp .env.example .env
+
+      - name: Validate Docker Compose Configuration
+        run: |
+          docker compose config --quiet

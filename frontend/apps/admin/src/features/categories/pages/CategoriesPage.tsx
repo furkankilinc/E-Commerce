@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { apiClient } from '../../../shared/api/apiClient';
+import Pagination from '../../../shared/components/Pagination';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface Category {
@@ -74,7 +75,7 @@ const CategoryRow: React.FC<{
                 <td className="py-3 px-4 text-sm text-slate-500">
                     {cat.filterValues && Object.keys(cat.filterValues).length > 0
                         ? Object.keys(cat.filterValues).join(', ')
-                        : <span className="text-slate-300 italic">Yok</span>}
+                        : <span className="text-slate-300 ">Yok</span>}
                 </td>
                 <td className="py-3 px-4">
                     <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold ${cat.isActive ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-400'}`}>
@@ -177,7 +178,7 @@ const FilterSpecBuilder: React.FC<{
                             className="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-brand-pink/5 transition-all"
                         />
                         {showSuggestions && (
-                            <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-100 shadow-2xl rounded-2xl z-20 max-h-60 overflow-y-auto py-2 animate-in fade-in slide-in-from-top-2">
+                            <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-100 shadow-xl rounded-2xl z-20 max-h-60 overflow-y-auto py-2 animate-in fade-in slide-in-from-top-2">
                                 {availableAttributes
                                     .filter(a => a.name.toLowerCase().includes(newName.toLowerCase()) && !specs.some(s => s.name === a.name))
                                     .map(attr => (
@@ -191,19 +192,19 @@ const FilterSpecBuilder: React.FC<{
                                                 <span className="w-1.5 h-1.5 bg-slate-200 rounded-full"></span>
                                                 {attr.name}
                                             </span>
-                                            <span className="text-[9px] bg-slate-100 px-2 py-0.5 rounded-full text-slate-400 uppercase tracking-tighter">
+                                            <span className="text-nano bg-slate-100 px-2 py-0.5 rounded-full text-slate-400  ">
                                                 {attr.values.length} seçenek
                                             </span>
                                         </button>
                                     ))}
-                                <button onClick={() => setShowSuggestions(false)} className="w-full py-2 text-[10px] text-slate-300 font-bold hover:text-slate-500 uppercase tracking-widest border-t border-slate-50 mt-1">Kapat</button>
+                                <button onClick={() => setShowSuggestions(false)} className="w-full py-2 text-10px text-slate-300 font-bold hover:text-slate-500   border-t border-slate-50 mt-1">Kapat</button>
                             </div>
                         )}
                     </div>
                     <button
                         type="button"
                         onClick={() => addSpec()}
-                        className="px-6 py-3 bg-brand-pink text-white text-sm font-black rounded-2xl hover:opacity-90 transition-opacity shadow-lg shadow-brand-pink/20"
+                        className="px-6 py-3 bg-brand-pink text-white text-sm font-semibold rounded-2xl hover:opacity-90 transition-opacity shadow-lg shadow-brand-pink/20"
                     >
                         + EKLE
                     </button>
@@ -213,19 +214,19 @@ const FilterSpecBuilder: React.FC<{
             {/* Spec list */}
             <div className="grid grid-cols-1 gap-4">
                 {specs.map((spec, idx) => (
-                    <div key={idx} className="bg-white border border-slate-200 rounded-2xl p-5 hover:border-brand-pink/30 hover:shadow-xl hover:shadow-slate-200/50 transition-all group">
+                    <div key={idx} className="bg-white border border-slate-200 rounded-2xl p-5 hover:border-brand-pink/30 hover: hover:shadow-slate-200/50 transition-all group">
                         <div className="flex items-center justify-between mb-4 border-b border-slate-50 pb-3">
-                            <span className="font-black text-xs text-admin-dark uppercase tracking-widest flex items-center gap-2">
+                            <span className="font-semibold text-xs text-admin-dark   flex items-center gap-2">
                                 <span className="w-1.5 h-4 bg-indigo-500 rounded-full"></span>
                                 {spec.name}
                             </span>
-                            <button type="button" onClick={() => removeSpec(idx)} className="text-[10px] text-red-400 hover:text-red-500 font-black uppercase tracking-tighter transition-colors">Kaldır</button>
+                            <button type="button" onClick={() => removeSpec(idx)} className="text-10px text-red-400 hover:text-red-500 font-semibold   transition-colors">Kaldır</button>
                         </div>
 
                         {/* Values */}
                         <div className="flex flex-wrap gap-2 mb-4">
                             {spec.values.map(val => (
-                                <span key={val} className="inline-flex items-center gap-2 px-3 py-1 bg-slate-50 border border-slate-100 rounded-xl text-[10px] font-black text-slate-500 uppercase">
+                                <span key={val} className="inline-flex items-center gap-2 px-3 py-1 bg-slate-50 border border-slate-100 rounded-xl text-10px font-semibold text-slate-500 ">
                                     {val}
                                     <button type="button" onClick={() => removeValue(idx, val)} className="text-slate-300 hover:text-red-500 transition-colors">×</button>
                                 </span>
@@ -243,7 +244,7 @@ const FilterSpecBuilder: React.FC<{
                             <button
                                 type="button"
                                 onClick={() => addValue(idx, newVal[idx] || '')}
-                                className="px-4 py-2 bg-slate-100 text-slate-500 text-[10px] font-black rounded-xl hover:bg-slate-200 transition-colors uppercase tracking-widest"
+                                className="px-4 py-2 bg-slate-100 text-slate-500 text-10px font-semibold rounded-xl hover:bg-slate-200 transition-colors  "
                             >
                                 EKLE
                             </button>
@@ -363,14 +364,14 @@ const CategoryModal: React.FC<{
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-            <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col transform transition-all animate-in zoom-in-95">
+            <div className="bg-white rounded-3xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col transform transition-all animate-in zoom-in-95">
                 {/* Header */}
                 <div className="flex items-center justify-between px-8 py-5 border-b border-slate-50">
                     <div>
-                        <h2 className="text-xl font-black text-admin-dark tracking-tight">
+                        <h2 className="text-xl font-semibold text-admin-dark ">
                             {initial ? 'Kategoriyi Düzenle' : 'Yeni Kategori'}
                         </h2>
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Kategori Yapılandırması</p>
+                        <p className="text-10px font-bold text-slate-400   mt-0.5">Kategori Yapılandırması</p>
                     </div>
                     <button onClick={onClose} className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-50 text-slate-400 hover:text-red-500 transition-all">
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" strokeWidth="2.5" /></svg>
@@ -389,7 +390,7 @@ const CategoryModal: React.FC<{
 
                         <div className="grid grid-cols-2 gap-6">
                             <div className="space-y-1.5">
-                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                <label className="text-10px font-semibold text-slate-400   flex items-center gap-2">
                                     <span className="w-1 h-3 bg-brand-pink rounded-full"></span>
                                     Kategori Adı *
                                 </label>
@@ -402,7 +403,7 @@ const CategoryModal: React.FC<{
                                 />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Slug *</label>
+                                <label className="text-10px font-semibold text-slate-400  ">Slug *</label>
                                 <input
                                     required
                                     value={slug}
@@ -414,7 +415,7 @@ const CategoryModal: React.FC<{
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Üst Kategori</label>
+                            <label className="text-10px font-semibold text-slate-400  ">Üst Kategori</label>
                             <select
                                 value={parentId}
                                 onChange={e => setParentId(e.target.value)}
@@ -428,7 +429,7 @@ const CategoryModal: React.FC<{
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Açıklama</label>
+                            <label className="text-10px font-semibold text-slate-400  ">Açıklama</label>
                             <textarea
                                 value={description}
                                 onChange={e => setDescription(e.target.value)}
@@ -440,7 +441,7 @@ const CategoryModal: React.FC<{
 
                         <div className="grid grid-cols-2 gap-6">
                             <div className="space-y-1.5">
-                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Görsel URL</label>
+                                <label className="text-10px font-semibold text-slate-400  ">Görsel URL</label>
                                 <input
                                     value={image}
                                     onChange={e => setImage(e.target.value)}
@@ -454,7 +455,7 @@ const CategoryModal: React.FC<{
                                         <input type="checkbox" checked={isActive} onChange={e => setIsActive(e.target.checked)} className="sr-only peer" />
                                         <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
                                     </label>
-                                    <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Aktif Kategori</span>
+                                    <span className="text-10px font-semibold text-slate-600  ">Aktif Kategori</span>
                                 </div>
                             </div>
                         </div>
@@ -464,10 +465,10 @@ const CategoryModal: React.FC<{
                             <div className="flex items-center justify-between mb-4">
                                 <div className="flex items-center gap-2">
                                     <span className="w-2 h-6 bg-emerald-500 rounded-full"></span>
-                                    <h3 className="text-sm font-black text-admin-dark uppercase tracking-wide">Ürün Özellikleri</h3>
+                                    <h3 className="text-sm font-semibold text-admin-dark  ">Ürün Özellikleri</h3>
                                 </div>
                             </div>
-                            <div className="bg-slate-50/50 border-2 border-dashed border-slate-100 rounded-[2rem] p-6">
+                            <div className="bg-slate-50/50 border-2 border-dashed border-slate-100 rounded-2xl p-6">
                                 <FilterSpecBuilder
                                     specs={filterSpecs}
                                     availableAttributes={allAvailableAttributes}
@@ -505,6 +506,7 @@ const CategoriesPage: React.FC = () => {
     const [editTarget, setEditTarget] = useState<Category | null>(null);
     const [deleteTarget, setDeleteTarget] = useState<Category | null>(null);
     const [deleting, setDeleting] = useState(false);
+    const [page, setPage] = useState(1);
     const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
 
     const showToast = (msg: string, ok = true) => {
@@ -557,15 +559,26 @@ const CategoriesPage: React.FC = () => {
         }
     };
 
+    useEffect(() => {
+        setPage(1);
+    }, [search]);
+
     const filtered = categories.filter(c =>
         c.name.toLowerCase().includes(search.toLowerCase()) ||
         c.slug.includes(search.toLowerCase())
     );
 
     const treeRoots = buildTree(filtered);
+    const limit = 10;
+    const paginatedTreeRoots = useMemo(() => {
+        const start = (page - 1) * limit;
+        return treeRoots.slice(start, start + limit);
+    }, [treeRoots, page]);
+
+    const totalPages = Math.ceil(treeRoots.length / limit) || 1;
 
     return (
-        <div className="p-8">
+        <div className="p-4 md:p-8 space-y-6">
             {/* Toast */}
             {toast && (
                 <div className={`fixed top-6 right-6 z-50 px-5 py-3 rounded-2xl text-sm font-bold shadow-lg ${toast.ok ? 'bg-emerald-500 text-white' : 'bg-red-500 text-white'}`}>
@@ -574,14 +587,14 @@ const CategoriesPage: React.FC = () => {
             )}
 
             {/* Header */}
-            <div className="flex items-start justify-between mb-8 gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-4">
                 <div>
-                    <h1 className="text-3xl font-extrabold text-admin-dark tracking-tight">Kategoriler</h1>
-                    <p className="text-slate-500 mt-1 font-medium">{categories.length} kategori — hiyerarşik özel filtrelerle yönetin</p>
+                    <h1 className="text-2xl md:text-3xl font-extrabold text-admin-dark ">Kategoriler</h1>
+                    <p className="text-slate-500 mt-1 font-medium text-xs sm:text-sm">{categories.length} kategori — hiyerarşik özel filtrelerle yönetin</p>
                 </div>
                 <button
                     onClick={() => { setEditTarget(null); setModalOpen(true); }}
-                    className="flex items-center gap-2 px-5 py-2.5 bg-brand-pink text-white text-sm font-bold rounded-xl shadow-lg shadow-brand-pink/20 hover:opacity-90 transition-opacity"
+                    className="flex items-center gap-2 px-5 py-2.5 bg-brand-pink text-white text-xs sm:text-sm font-bold rounded-xl shadow-lg shadow-brand-pink/20 hover:opacity-90 transition-opacity"
                 >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4" strokeWidth="3" strokeLinecap="round" /></svg>
                     Yeni Kategori
@@ -607,39 +620,51 @@ const CategoriesPage: React.FC = () => {
                         <span className="font-semibold text-sm">Yükleniyor...</span>
                     </div>
                 ) : (
-                    <table className="w-full">
-                        <thead>
-                            <tr className="border-b border-slate-100 bg-slate-50">
-                                <th className="text-left py-3 px-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Kategori</th>
-                                <th className="text-left py-3 px-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Tip</th>
-                                <th className="text-left py-3 px-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Ürün</th>
-                                <th className="text-left py-3 px-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Özel Filtreler</th>
-                                <th className="text-left py-3 px-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Durum</th>
-                                <th className="text-left py-3 px-4 text-xs font-bold text-slate-400 uppercase tracking-widest">İşlem</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {treeRoots.length === 0 ? (
-                                <tr>
-                                    <td colSpan={6} className="py-16 text-center text-slate-400 text-sm font-medium">
-                                        {search ? 'Sonuç bulunamadı.' : 'Henüz kategori yok. İlk kategoriyi oluşturun!'}
-                                    </td>
+                    <div className="overflow-x-auto">
+                        <table className="w-full min-w-[800px]">
+                            <thead>
+                                <tr className="border-b border-slate-100 bg-slate-50">
+                                    <th className="text-left py-3 px-4 text-xs font-bold text-slate-400  ">Kategori</th>
+                                    <th className="text-left py-3 px-4 text-xs font-bold text-slate-400  ">Tip</th>
+                                    <th className="text-left py-3 px-4 text-xs font-bold text-slate-400  ">Ürün</th>
+                                    <th className="text-left py-3 px-4 text-xs font-bold text-slate-400  ">Özel Filtreler</th>
+                                    <th className="text-left py-3 px-4 text-xs font-bold text-slate-400  ">Durum</th>
+                                    <th className="text-left py-3 px-4 text-xs font-bold text-slate-400  ">İşlem</th>
                                 </tr>
-                            ) : (
-                                treeRoots.map(cat => (
-                                    <CategoryRow
-                                        key={cat.id}
-                                        cat={cat}
-                                        depth={0}
-                                        onEdit={c => { setEditTarget(c); setModalOpen(true); }}
-                                        onDelete={setDeleteTarget}
-                                    />
-                                ))
-                            )}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {paginatedTreeRoots.length === 0 ? (
+                                    <tr>
+                                        <td colSpan={6} className="py-16 text-center text-slate-400 text-sm font-medium">
+                                            {search ? 'Sonuç bulunamadı.' : 'Henüz kategori yok. İlk kategoriyi oluşturun!'}
+                                        </td>
+                                    </tr>
+                                ) : (
+                                    paginatedTreeRoots.map(cat => (
+                                        <CategoryRow
+                                            key={cat.id}
+                                            cat={cat}
+                                            depth={0}
+                                            onEdit={c => { setEditTarget(c); setModalOpen(true); }}
+                                            onDelete={setDeleteTarget}
+                                        />
+                                    ))
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
                 )}
             </div>
+
+            {totalPages > 1 && (
+                <div className="mt-8">
+                    <Pagination
+                        currentPage={page}
+                        totalPages={totalPages}
+                        onPageChange={setPage}
+                    />
+                </div>
+            )}
 
             {/* Modal */}
             {modalOpen && (
@@ -654,7 +679,7 @@ const CategoriesPage: React.FC = () => {
             {/* Delete Confirm */}
             {deleteTarget && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-                    <div className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-sm">
+                    <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm">
                         <h3 className="text-lg font-extrabold text-admin-dark mb-2">Kategoriyi Sil</h3>
                         <p className="text-sm text-slate-500 mb-1">
                             <span className="font-bold text-admin-dark">{deleteTarget.name}</span> kategorisini silmek istediğinizden emin misiniz?

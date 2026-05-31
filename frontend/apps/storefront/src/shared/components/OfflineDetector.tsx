@@ -20,8 +20,8 @@ const OfflineDetector: React.FC = () => {
 
     return (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-gray-900/60 backdrop-blur-md animate-fadeIn">
-            <div className="bg-white rounded-md p-12 max-w-md w-full mx-4 shadow-2xl border border-gray-100 text-center transform scale-110">
-                <div className="w-24 h-24 bg-red-50 rounded-md flex items-center justify-center mx-auto mb-8 relative">
+            <div className="bg-white rounded-md p-12 max-w-md w-full mx-4 shadow-xl border border-gray-100 text-center transform scale-110">
+                <div className="w-24 h-24 bg-red-50 rounded-md flex items-center justify-center mx-auto mb-4 relative">
                     <div className="absolute inset-0 bg-red-500/10 rounded-md animate-ping"></div>
                     <svg className="w-12 h-12 text-red-500 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                         <line x1="12" y1="20" x2="12.01" y2="20" strokeWidth="4" className="animate-[wifi_1.5s_infinite_0ms]" />
@@ -39,14 +39,14 @@ const OfflineDetector: React.FC = () => {
                 `}</style>
 
 
-                <h2 className="text-3xl font-black text-gray-900 mb-4 uppercase tracking-tighter italic">Bağlantı Kesildi</h2>
-                <p className="text-gray-500 font-bold mb-10 leading-relaxed italic">
+                <h2 className="text-3xl font-semibold text-gray-900 mb-4   ">Bağlantı Kesildi</h2>
+                <p className="text-gray-500 font-bold mb-5 leading-relaxed ">
                     İnternet bağlantınız şu an aktif değil. Bağlantı geri geldiğinde uygulama otomatik olarak yenilenecektir.
                 </p>
 
                 <div className="flex items-center justify-center gap-3 py-4 px-6 bg-gray-50 rounded-md border border-gray-100">
                     <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-                    <span className="text-[11px] font-black text-gray-400 uppercase tracking-[0.2em] italic">Bağlantı Bekleniyor...</span>
+                    <span className="text-caption font-semibold text-gray-400   ">Bağlantı Bekleniyor...</span>
                 </div>
             </div>
         </div>

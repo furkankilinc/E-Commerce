@@ -52,19 +52,19 @@ const VendorLoginPage: React.FC = () => {
                 <div className="absolute bottom-[-5%] left-[-5%] w-72 h-72 bg-brand-pink/5 rounded-full blur-2xl"></div>
 
                 <div className="relative z-10">
-                    <div className="flex items-center gap-2 mb-12">
+                    <div className="flex items-center gap-2 mb-6">
                         <div className="w-10 h-10 bg-brand-pink rounded-lg flex items-center justify-center">
                             <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                             </svg>
                         </div>
-                        <span className="text-2xl font-bold tracking-tight">
-                            Merchant.<span className="text-brand-pink font-extrabold uppercase">Fuira</span>
+                        <span className="text-2xl font-bold ">
+                            Merchant.<span className="text-brand-pink font-extrabold ">Fuira</span>
                         </span>
                     </div>
 
                     <div className="mt-20 max-w-lg">
-                        <h1 className="text-[40px] font-bold leading-tight mb-6 uppercase italic tracking-tighter">
+                        <h1 className="text-4xl font-bold leading-tight mb-6   ">
                             Kurumsal Seviye<br />
                             Ticaret<br />
                             Altyapısı.
@@ -95,7 +95,7 @@ const VendorLoginPage: React.FC = () => {
             <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-8 lg:p-16">
                 <div className="w-full max-w-md space-y-8">
                     <div className="text-left">
-                        <h2 className="text-[40px] font-bold text-slate-900 mb-2">Tekrar Hoş Geldiniz</h2>
+                        <h2 className="text-4xl font-bold text-slate-900 mb-2">Tekrar Hoş Geldiniz</h2>
                         <p className="text-slate-500">Satıcı panelinize erişmek için lütfen bilgilerinizi girin.</p>
                     </div>
 

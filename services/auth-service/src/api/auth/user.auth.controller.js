@@ -4,6 +4,7 @@ const {
     generateAccessToken,
     generateRefreshToken,
     refreshTokenExpiryDate,
+    verifyRefreshToken,
 } = require('../../utils/token.util');
 
 const AUDIENCE = 'user';
@@ -39,17 +40,30 @@ const sendAuthResponse = async (req, res, statusCode, person, message, audience)
     res.cookie(`${audience}_accessToken`, accessToken, { ...COOKIE_OPTIONS, maxAge: 15 * 60 * 1000 });
     res.cookie(`${audience}_refreshToken`, refreshToken, { ...COOKIE_OPTIONS, maxAge: 7 * 24 * 60 * 60 * 1000 });
 
-    return res.status(statusCode).json({
+    const responsePayload = {
         success: true,
         message,
         user: {
             id: person.id,
             email: person.email,
-            name: person.name,
-            role: person.role || (audience === 'user' ? 'USER' : 'ADMIN')
+            name: audience === 'merchant' ? (person.companyName || person.contactPerson) : person.name,
+            role: audience === 'merchant' ? 'MERCHANT' : (person.role || (audience === 'user' ? 'USER' : 'ADMIN'))
         },
-        accessToken
-    });
+        accessToken,
+        refreshToken
+    };
+
+    if (audience === 'merchant') {
+        responsePayload.merchant = {
+            id: person.id,
+            email: person.email,
+            companyName: person.companyName,
+            contactPerson: person.contactPerson,
+            isVerified: person.isVerified || false
+        };
+    }
+
+    return res.status(statusCode).json(responsePayload);
 };
 
 const userRegister = async (req, res) => {
@@ -115,7 +129,7 @@ const merchantLogin = async (req, res) => {
     try {
         const { email, password } = req.body;
         console.log('[MERCHANT_LOGIN] Start for:', email);
-        
+
         const merchant = await prisma.merchant.findUnique({ where: { email } });
         if (!merchant) {
             console.log('[MERCHANT_LOGIN] No merchant with email:', email);
@@ -135,4 +149,82 @@ const merchantLogin = async (req, res) => {
     }
 };
 
-module.exports = { userRegister, userLogin, adminLogin, merchantRegister, merchantLogin };
+const refreshSession = async (req, res, audience) => {
+    try {
+        let token = req.body.refreshToken || req.cookies[`${audience}_refreshToken`];
+
+        if (!token) {
+            return res.status(401).json({ success: false, message: 'Refresh token bulunamadı.' });
+        }
+
+        let decoded;
+        try {
+            decoded = verifyRefreshToken(token);
+        } catch (err) {
+            return res.status(401).json({ success: false, message: 'Geçersiz veya süresi geçmiş refresh token.' });
+        }
+
+        if (decoded.audience !== audience) {
+            return res.status(401).json({ success: false, message: 'Yetkisiz token tipi.' });
+        }
+
+        let dbSession;
+        if (audience === 'user') {
+            dbSession = await prisma.userRefreshToken.findUnique({ where: { token } });
+        } else if (audience === 'admin') {
+            dbSession = await prisma.adminRefreshToken.findUnique({ where: { token } });
+        } else if (audience === 'merchant') {
+            dbSession = await prisma.merchantRefreshToken.findUnique({ where: { token } });
+        }
+
+        if (!dbSession || new Date(dbSession.expiresAt) < new Date()) {
+            return res.status(401).json({ success: false, message: 'Süresi geçmiş veya geçersiz oturum.' });
+        }
+
+        // Delete old token for rotation
+        if (audience === 'user') {
+            await prisma.userRefreshToken.delete({ where: { token } });
+        } else if (audience === 'admin') {
+            await prisma.adminRefreshToken.delete({ where: { token } });
+        } else if (audience === 'merchant') {
+            await prisma.merchantRefreshToken.delete({ where: { token } });
+        }
+
+        let person;
+        if (audience === 'user') {
+            person = await prisma.user.findUnique({ where: { id: decoded.sub } });
+        } else if (audience === 'admin') {
+            person = await prisma.admin.findUnique({ where: { id: decoded.sub } });
+        } else if (audience === 'merchant') {
+            person = await prisma.merchant.findUnique({ where: { id: decoded.sub } });
+        }
+
+        if (!person) {
+            return res.status(404).json({ success: false, message: 'Kullanıcı bulunamadı.' });
+        }
+
+        return sendAuthResponse(req, res, 200, person, 'Token başarıyla yenilendi.', audience);
+    } catch (err) {
+        console.error(`[REFRESH_${audience.toUpperCase()}] Error:`, err);
+        return res.status(500).json({ success: false, message: 'Token yenileme işlemi başarısız.' });
+    }
+};
+
+const userRefresh = (req, res) => refreshSession(req, res, 'user');
+const merchantRefresh = (req, res) => refreshSession(req, res, 'merchant');
+const adminRefresh = (req, res) => refreshSession(req, res, 'admin');
+
+const getPublicMerchants = async (req, res) => {
+    try {
+        const merchants = await prisma.merchant.findMany({
+            where: { isActive: true },
+            select: { id: true, companyName: true }
+        });
+        return res.json(merchants);
+    } catch (err) {
+        console.error('[GET_PUBLIC_MERCHANTS] Error:', err);
+        return res.status(500).json({ success: false, message: 'Satıcılar alınamadı.' });
+    }
+};
+
+module.exports = { userRegister, userLogin, adminLogin, merchantRegister, merchantLogin, userRefresh, merchantRefresh, adminRefresh, getPublicMerchants };

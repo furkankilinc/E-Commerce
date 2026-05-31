@@ -1,0 +1,81 @@
+{
+  "nav": {
+    "home": "HOME",
+    "allProducts": "ALL PRODUCTS",
+    "newArrivals": "NEW ARRIVALS",
+    "sale": "SALE"
+  },
+  "search": {
+    "placeholder": "Search products...",
+    "recent": "RECENT SEARCHES",
+    "clear": "CLEAR",
+    "searching": "Searching...",
+    "recommended": "RECOMMENDED PRODUCTS",
+    "noResults": "No results found.",
+    "start": "Type something to start searching..."
+  },
+  "cart": {
+    "title": "SHOPPING CART",
+    "itemsCount": "{{count}} ITEMS",
+    "empty": "Your cart is empty.",
+    "standardEdition": "Standard Edition",
+    "total": "TOTAL AMOUNT",
+    "goToCart": "GO TO CART",
+    "checkout": "CHECKOUT"
+  },
+  "user": {
+    "welcome": "WELCOME",
+    "profile": "Profile Settings",
+    "orders": "My Orders",
+    "logout": "Log Out",
+    "login": "LOG IN"
+  },
+  "footer": {
+    "about": "We bring together the world's most vibrant and modern products for those seeking aesthetics. Quality and style, at your door.",
+    "helpTitle": "HELP & SUPPORT",
+    "shipping": "Shipping Policy",
+    "returns": "Returns & Exchanges",
+    "sizeGuide": "Size Guide",
+    "faq": "FAQ",
+    "categoriesTitle": "PRODUCT CATEGORIES",
+    "accessories": "Accessories",
+    "clothing": "Clothing",
+    "electronics": "Electronics",
+    "wearable": "Wearables",
+    "newsletterTitle": "JOIN OUR NEWSLETTER",
+    "newsletterDesc": "Subscribe for exclusive offers and first looks.",
+    "emailPlaceholder": "Email address",
+    "subscribe": "SUBSCRIBE"
+  },
+  "home": {
+    "titleNew": "NEW ARRIVALS",
+    "titleSale": "HOT DEALS",
+    "titleDefault": "FUI & RA",
+    "descNew": "Be the first to have the latest and most technological products.",
+    "descSale": "Unmissable opportunities and huge discounts are here.",
+    "descDefault": "The newest technologies at your doorstep with Fuira assurance.",
+    "filters": "FILTERS"
+  },
+  "sidebar": {
+    "filters": "FILTERS",
+    "search": "Search in Filters",
+    "searchPlaceholder": "Model, specification or merchant...",
+    "category": "CATEGORY",
+    "all": "All",
+    "priceRange": "PRICE RANGE",
+    "min": "MIN",
+    "max": "MAX",
+    "color": "COLOR",
+    "size": "SIZE",
+    "merchants": "MERCHANTS",
+    "reset": "RESET FILTERS"
+  },
+  "sort": {
+    "placeholder": "Sort Options",
+    "popular": "Popularity",
+    "newest": "Newest",
+    "priceLow": "Price: Low to High",
+    "priceHigh": "Price: High to Low",
+    "rating": "Rating"
+  }
+}

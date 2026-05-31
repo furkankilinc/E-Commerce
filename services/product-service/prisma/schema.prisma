@@ -32,7 +32,9 @@ model Category {
 
 enum ProductStatus {
   DRAFT
+  PENDING_APPROVAL
   PUBLISHED
+  REJECTED
   ARCHIVED
 }
 

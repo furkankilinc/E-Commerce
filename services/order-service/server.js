@@ -32,6 +32,7 @@ app.use('/api/collections', (req, res, next) => {
     r(req, res, next);
 });
 app.use('/api/admin/orders', adminRoutes);
+app.use('/api/merchant/orders', require('./src/api/orders/merchant.order.routes'));
 
 app.get('/health', (req, res) => {
     res.json({ status: 'OK', service: 'Order Service', timestamp: new Date() });

@@ -1,0 +1,30 @@
+[
+  {
+    "id": "yurtici",
+    "name": "Yurtiçi Kargo",
+    "logo": "🚚",
+    "basePrice": 35,
+    "deliveryTime": "1-3 İş Günü"
+  },
+  {
+    "id": "aras",
+    "name": "Aras Kargo",
+    "logo": "⚡",
+    "basePrice": 30,
+    "deliveryTime": "2-4 İş Günü"
+  },
+  {
+    "id": "mng",
+    "name": "MNG Kargo",
+    "logo": "📦",
+    "basePrice": 25,
+    "deliveryTime": "3-5 İş Günü"
+  },
+  {
+    "id": "sa-1638",
+    "name": "Sa",
+    "logo": "🚚",
+    "basePrice": 0,
+    "deliveryTime": "2-3 İş Günü"
+  }
+]

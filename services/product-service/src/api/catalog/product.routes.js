@@ -7,21 +7,33 @@ const {
     updateProduct,
     deleteProduct
 } = require('./product.controller');
+const { getShippingCompanies } = require('./shipping-companies');
+const { 
+    startSupportSession, 
+    sendSupportMessage, 
+    getSupportMessages, 
+    markReadByUser,
+    askProductQuestion, 
+    getProductQuestions 
+} = require('./messaging.controller');
 const { authMiddleware, authorize } = require('../../middlewares/auth.middleware');
 
 const router = Router();
 
 // Public Routes
+router.get('/shipping-companies', getShippingCompanies);
 router.get('/', getAllProducts);
 router.get('/filters', getProductMeta); 
 router.get('/:id', getProductById);
 
-// Merchant Specific Product List (Filtered by their ID)
-router.get('/merchant/products', authMiddleware, authorize('MERCHANT', 'ADMIN'), getAllProducts);
+// Live Support Chat Routes
+router.post('/support/sessions', startSupportSession);
+router.post('/support/sessions/:id/messages', sendSupportMessage);
+router.get('/support/sessions/:id/messages', getSupportMessages);
+router.put('/support/sessions/:id/read-user', markReadByUser);
 
-// Merchant CRUD
-router.post('/merchant/products', authMiddleware, authorize('MERCHANT'), createProduct);
-router.put('/merchant/products/:id', authMiddleware, authorize('MERCHANT'), updateProduct);
-router.delete('/merchant/products/:id', authMiddleware, authorize('MERCHANT'), deleteProduct);
+// Product Questions Routes
+router.post('/:productId/questions', askProductQuestion);
+router.get('/:productId/questions', getProductQuestions);
 
 module.exports = router;

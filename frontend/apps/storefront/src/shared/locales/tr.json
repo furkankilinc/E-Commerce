@@ -1,0 +1,81 @@
+{
+  "nav": {
+    "home": "ANASAYFA",
+    "allProducts": "TÜM ÜRÜNLER",
+    "newArrivals": "YENİ GELENLER",
+    "sale": "İNDİRİM"
+  },
+  "search": {
+    "placeholder": "Ürünleri ara...",
+    "recent": "SON ARANANLAR",
+    "clear": "TEMİZLE",
+    "searching": "Aranıyor...",
+    "recommended": "ÖNERİLEN ÜRÜNLER",
+    "noResults": "Sonuç bulunamadı.",
+    "start": "Aramaya başlamak için bir şeyler yazın..."
+  },
+  "cart": {
+    "title": "ALIŞVERİŞ SEPETİ",
+    "itemsCount": "{{count}} ÜRÜN",
+    "empty": "Sepetiniz boş.",
+    "standardEdition": "Standard Edition",
+    "total": "TOPLAM TUTAR",
+    "goToCart": "SEPETE GİT",
+    "checkout": "ÖDEME YAP"
+  },
+  "user": {
+    "welcome": "HOŞ GELDİN",
+    "profile": "Profil Ayarları",
+    "orders": "Siparişlerim",
+    "logout": "Çıkış Yap",
+    "login": "GİRİŞ YAP"
+  },
+  "footer": {
+    "about": "Dünyanın en canlı ve modern ürünlerini estetik arayanlar için bir araya getiriyoruz. Kalite ve stil, kapınızda.",
+    "helpTitle": "YARDIM VE DESTEK",
+    "shipping": "Kargo Politikası",
+    "returns": "İade ve Değişim",
+    "sizeGuide": "Beden Rehberi",
+    "faq": "SSS",
+    "categoriesTitle": "ÜRÜN KATEGORİLERİ",
+    "accessories": "Aksesuarlar",
+    "clothing": "Giyim",
+    "electronics": "Elektronik",
+    "wearable": "Giyilebilir",
+    "newsletterTitle": "BÜLTENİMİZE KATILIN",
+    "newsletterDesc": "Özel teklifler ve ilk bakış için abone olun.",
+    "emailPlaceholder": "E-posta adresi",
+    "subscribe": "ABONE OL"
+  },
+  "home": {
+    "titleNew": "YENİ GELENLER",
+    "titleSale": "FIRSAT ÜRÜNLERİ",
+    "titleDefault": "FUI & RA",
+    "descNew": "En son çıkan, en teknolojik ürünler ilk sizin olsun.",
+    "descSale": "Kaçırılmayacak fırsatlar ve dev indirimler burada.",
+    "descDefault": "En yeni teknolojiler, Fuira güvencesiyle kapınızda.",
+    "filters": "FİLTRELER"
+  },
+  "sidebar": {
+    "filters": "FİLTRELER",
+    "search": "Filtrelerde Ara",
+    "searchPlaceholder": "Model, özellik veya satici...",
+    "category": "KATEGORİ",
+    "all": "Hepsi",
+    "priceRange": "FİYAT ARALIĞI",
+    "min": "MİN",
+    "max": "MAX",
+    "color": "RENK",
+    "size": "BEDEN",
+    "merchants": "SATICILAR",
+    "reset": "FİLTRELERİ SIFIRLA"
+  },
+  "sort": {
+    "placeholder": "Sıralama Seçeneği",
+    "popular": "Popülerlik",
+    "newest": "En Yeniler",
+    "priceLow": "Fiyat: Artan",
+    "priceHigh": "Fiyat: Azalan",
+    "rating": "Puan"
+  }
+}

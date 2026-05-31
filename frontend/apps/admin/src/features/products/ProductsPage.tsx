@@ -19,7 +19,7 @@ const ProductsPage: React.FC = () => {
             const data = await apiClient.handleResponse(res);
             if (data.success) {
                 setProducts(data.products);
-                setTotalPages(data.pages);
+                setTotalPages(Math.ceil((data.pagination?.total || 0) / (data.pagination?.limit || 10)) || 1);
             }
         } catch (err) {
             console.error(err);
@@ -62,109 +62,110 @@ const ProductsPage: React.FC = () => {
     };
 
     return (
-        <div className="p-10 space-y-10">
-            <div className="flex justify-between items-end">
+        <div className="p-4 md:p-10 space-y-6 md:space-y-10">
+            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
                 <div>
-                   <h1 className="text-4xl font-[1000] text-admin-navy tracking-tighter italic uppercase leading-none mb-4">ÜRÜN <span className="text-brand-pink">MODERASYONU</span></h1>
-                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic opacity-70">Sitedeki tüm ürünleri incele ve onayla</p>
+                    <h1 className="text-2xl md:text-4xl font-[1000] text-admin-navy    leading-none mb-4">ÜRÜN <span className="text-brand-pink">MODERASYONU</span></h1>
+                    <p className="text-10px font-semibold text-slate-400    opacity-70">Sitedeki tüm ürünleri incele ve onayla</p>
                 </div>
-                
-                <div className="flex bg-white p-2 rounded-3xl border border-slate-100 shadow-sm">
+
+                <div className="flex bg-white dark:bg-slate-900 p-1.5 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-x-auto max-w-full">
                     {['ALL', 'PENDING_APPROVAL', 'PUBLISHED', 'REJECTED'].map((f) => (
                         <button
                             key={f}
                             onClick={() => setFilter(f)}
-                            className={`px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all italic ${filter === f ? 'bg-admin-navy text-white shadow-lg' : 'text-slate-400 hover:text-slate-600'}`}
+                            className={`px-3 sm:px-6 py-2 sm:py-3 rounded-2xl text-[9px] sm:text-10px font-semibold transition-all  whitespace-nowrap ${filter === f ? 'bg-admin-navy text-white shadow-lg' : 'text-slate-400 hover:text-slate-600'}`}
                         >
-                            {f === 'ALL' ? 'TÜMÜ' : f.replace('_', ' ')}
+                            {f === 'ALL' ? 'TÜMÜ' : f === 'PENDING_APPROVAL' ? 'ONAY BEKLEYEN' : f === 'PUBLISHED' ? 'YAYINLANAN' : 'REDDEDİLEN'}
                         </button>
                     ))}
                 </div>
             </div>
 
-            <div className="bg-white rounded-[3rem] border border-slate-100 shadow-sm overflow-hidden">
-                <table className="w-full">
-                    <thead>
-                        <tr className="border-b border-slate-50 bg-slate-50/50">
-                            <th className="px-10 py-8 text-[10px] font-black text-slate-400 uppercase tracking-widest italic">Ürün</th>
-                            <th className="px-10 py-8 text-[10px] font-black text-slate-400 uppercase tracking-widest italic">Satıcı</th>
-                            <th className="px-10 py-8 text-[10px] font-black text-slate-400 uppercase tracking-widest italic">Fiyat</th>
-                            <th className="px-10 py-8 text-[10px] font-black text-slate-400 uppercase tracking-widest italic">Durum</th>
-                            <th className="px-10 py-8 text-[10px] font-black text-slate-400 uppercase tracking-widest italic text-right">İşlemler</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-50">
-                        {loading ? (
-                            <tr><td colSpan={5} className="py-20 text-center text-slate-400 font-bold italic uppercase tracking-widest">Yükleniyor...</td></tr>
-                        ) : products.length === 0 ? (
-                            <tr><td colSpan={5} className="py-20 text-center text-slate-400 font-bold italic uppercase tracking-widest">Ürün bulunamadı.</td></tr>
-                        ) : (
-                            products.map(product => (
-                                <tr key={product.id} className="hover:bg-slate-50/50 transition-colors">
-                                    <td className="px-10 py-8">
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-12 h-12 rounded-xl bg-slate-100 overflow-hidden flex-shrink-0 border border-slate-200">
-                                                <img src={product.images?.[0]?.url || 'https://via.placeholder.com/50'} className="w-full h-full object-cover" alt="" />
+            <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
+                <div className="overflow-x-auto">
+                    <table className="w-full min-w-[800px]">
+                        <thead>
+                            <tr className="border-b border-slate-50 bg-slate-50/50">
+                                <th className="px-10 py-8 text-10px font-semibold text-slate-400   ">Ürün</th>
+                                <th className="px-10 py-8 text-10px font-semibold text-slate-400   ">Satıcı</th>
+                                <th className="px-10 py-8 text-10px font-semibold text-slate-400   ">Fiyat</th>
+                                <th className="px-10 py-8 text-10px font-semibold text-slate-400   ">Durum</th>
+                                <th className="px-10 py-8 text-10px font-semibold text-slate-400    text-right">İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-50">
+                            {loading ? (
+                                <tr><td colSpan={5} className="py-20 text-center text-slate-400 font-bold   ">Yükleniyor...</td></tr>
+                            ) : products.length === 0 ? (
+                                <tr><td colSpan={5} className="py-20 text-center text-slate-400 font-bold   ">Ürün bulunamadı.</td></tr>
+                            ) : (
+                                products.map(product => (
+                                    <tr key={product.id} className="hover:bg-slate-50/50 transition-colors">
+                                        <td className="px-10 py-8">
+                                            <div className="flex items-center gap-4">
+                                                <div className="w-12 h-12 rounded-xl bg-slate-100 overflow-hidden flex-shrink-0 border border-slate-200">
+                                                    <img src={product.images?.[0]?.url || 'https://via.placeholder.com/50'} className="w-full h-full object-contain" alt="" />
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <span className="text-xs font-semibold text-slate-900  ">{product.name}</span>
+                                                    <span className="text-nano font-bold text-slate-400   ">{product.category?.name}</span>
+                                                </div>
                                             </div>
+                                        </td>
+                                        <td className="px-10 py-8">
                                             <div className="flex flex-col">
-                                                <span className="text-xs font-black text-slate-900 italic uppercase">{product.name}</span>
-                                                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest italic">{product.category?.name}</span>
+                                                <span className="text-xs font-semibold text-slate-900  ">{product.merchant?.companyName}</span>
+                                                <span className="text-nano font-bold text-slate-400   ">{product.merchant?.email}</span>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td className="px-10 py-8">
-                                        <div className="flex flex-col">
-                                            <span className="text-xs font-black text-slate-900 italic uppercase">{product.merchant?.companyName}</span>
-                                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest italic">{product.merchant?.email}</span>
-                                        </div>
-                                    </td>
-                                    <td className="px-10 py-8">
-                                        <span className="text-xs font-black text-slate-900 italic">${product.price.toLocaleString()}</span>
-                                    </td>
-                                    <td className="px-10 py-8">
-                                        <span className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest italic ${
-                                            product.status === 'PUBLISHED' ? 'bg-emerald-100 text-emerald-600' :
-                                            product.status === 'PENDING_APPROVAL' ? 'bg-amber-100 text-amber-600' :
-                                            'bg-rose-100 text-rose-600'
-                                        }`}>
-                                            {product.status}
-                                        </span>
-                                    </td>
-                                    <td className="px-10 py-8 text-right space-x-2">
-                                        {product.status === 'PENDING_APPROVAL' && (
-                                            <button 
-                                                onClick={() => handleStatusUpdate(product.id, 'PUBLISHED')}
-                                                className="px-4 py-2 bg-emerald-500 text-white rounded-xl text-[9px] font-black uppercase tracking-widest italic shadow-lg shadow-emerald-500/20 hover:bg-emerald-600"
+                                        </td>
+                                        <td className="px-10 py-8">
+                                            <span className="text-xs font-semibold text-slate-900 ">${product.price.toLocaleString()}</span>
+                                        </td>
+                                        <td className="px-10 py-8">
+                                            <span className={`px-4 py-1.5 rounded-full text-nano font-semibold    ${product.status === 'PUBLISHED' ? 'bg-emerald-100 text-emerald-600' :
+                                                product.status === 'PENDING_APPROVAL' ? 'bg-amber-100 text-amber-600' :
+                                                    'bg-rose-100 text-rose-600'
+                                                }`}>
+                                                {product.status}
+                                            </span>
+                                        </td>
+                                        <td className="px-10 py-8 text-right space-x-2">
+                                            {product.status === 'PENDING_APPROVAL' && (
+                                                <button
+                                                    onClick={() => handleStatusUpdate(product.id, 'PUBLISHED')}
+                                                    className="px-4 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 border border-emerald-200 rounded-xl text-nano font-[800] uppercase  transition-all"
+                                                >
+                                                    Onayla
+                                                </button>
+                                            )}
+                                            {product.status !== 'REJECTED' && (
+                                                <button
+                                                    onClick={() => handleStatusUpdate(product.id, 'REJECTED')}
+                                                    className="px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 rounded-xl text-nano font-[800] uppercase  transition-all"
+                                                >
+                                                    Reddet
+                                                </button>
+                                            )}
+                                            <button
+                                                onClick={() => handleDelete(product.id)}
+                                                className="px-4 py-2 bg-slate-50 hover:bg-slate-100 text-slate-500 border border-slate-200 rounded-xl text-nano font-[800] uppercase  transition-all"
                                             >
-                                                Onayla
+                                                Sil
                                             </button>
-                                        )}
-                                        {product.status !== 'REJECTED' && (
-                                            <button 
-                                                onClick={() => handleStatusUpdate(product.id, 'REJECTED')}
-                                                className="px-4 py-2 bg-amber-500 text-white rounded-xl text-[9px] font-black uppercase tracking-widest italic shadow-lg shadow-amber-500/20 hover:bg-amber-600"
-                                            >
-                                                Reddet
-                                            </button>
-                                        )}
-                                        <button 
-                                            onClick={() => handleDelete(product.id)}
-                                            className="px-4 py-2 bg-rose-500 text-white rounded-xl text-[9px] font-black uppercase tracking-widest italic shadow-lg shadow-rose-500/20 hover:bg-rose-600"
-                                        >
-                                            Sil
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
-            <Pagination 
-                currentPage={page} 
-                totalPages={totalPages} 
-                onPageChange={setPage} 
+            <Pagination
+                currentPage={page}
+                totalPages={totalPages}
+                onPageChange={setPage}
             />
         </div>
     );

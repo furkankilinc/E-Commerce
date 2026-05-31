@@ -23,6 +23,14 @@ export default defineConfig({
         target: 'http://api-gateway:80',
         changeOrigin: true,
       },
+      '/binlist': {
+        target: 'https://lookup.binlist.net',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/binlist/, ''),
+        headers: {
+          'Accept-Version': '3',
+        },
+      },
     },
   },
   build: {

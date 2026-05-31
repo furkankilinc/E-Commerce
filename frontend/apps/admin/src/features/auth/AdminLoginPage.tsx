@@ -65,17 +65,17 @@ const AdminLoginPage = () => {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                             </svg>
                         </div>
-                        <span className="text-xl font-bold text-white tracking-tight">Fuira Yönetim Paneli</span>
+                        <span className="text-xl font-bold text-white ">Fuira Yönetim Paneli</span>
                     </div>
 
                     {/* Hero Content */}
                     <div className="max-w-xl">
-                        <h1 className="text-6xl font-extrabold text-white leading-tight mb-8">
+                        <h1 className="text-6xl font-extrabold text-white leading-tight mb-4">
                             Sistem <br />
                             <span className="text-brand-pink">Yönetimi</span>
                         </h1>
                         <p className="text-slate-300 text-lg leading-relaxed font-medium">
-                            Tüm platform için merkezi kontrol, güvenlik ve gerçek zamanlı izleme. 
+                            Tüm platform için merkezi kontrol, güvenlik ve gerçek zamanlı izleme.
                             Yönetici ekibinizi profesyonel seviyede araçlarla güçlendirin.
                         </p>
                     </div>
@@ -102,7 +102,7 @@ const AdminLoginPage = () => {
             <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white">
                 <div className="w-full max-w-md space-y-10">
                     <div className="text-left space-y-3">
-                        <h2 className="text-4xl font-extrabold text-slate-900 tracking-tight">Hoş Geldiniz</h2>
+                        <h2 className="text-4xl font-extrabold text-slate-900 ">Hoş Geldiniz</h2>
                         <p className="text-slate-500 font-medium">Yönetim paneline erişmek için kimlik bilgilerinizi girin.</p>
                     </div>
 
@@ -175,7 +175,7 @@ const AdminLoginPage = () => {
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full bg-brand-pink text-white py-5 rounded-2xl font-black text-lg hover:bg-brand-pink-hover shadow-xl shadow-brand-pink/20 transform active:scale-[0.98] transition-all tracking-wide disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full bg-brand-pink text-white py-5 rounded-2xl font-semibold text-lg hover:bg-brand-pink-hover  shadow-brand-pink/20 transform active:scale-[0.98] transition-all  disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {isLoading ? 'Doğrulanıyor...' : 'Sisteme Giriş Yap'}
                         </button>
@@ -185,7 +185,7 @@ const AdminLoginPage = () => {
                 </div>
 
                 {/* Floating Footer */}
-                <div className="absolute bottom-10 flex gap-8 text-[11px] font-black uppercase tracking-widest text-slate-400">
+                <div className="absolute bottom-10 flex gap-8 text-caption font-semibold   text-slate-400">
                     <a href="#" className="hover:text-brand-pink transition-colors">Sistem Durumu</a>
                     <a href="#" className="hover:text-brand-pink transition-colors">Güvenlik Politikası</a>
                     <a href="#" className="hover:text-brand-pink transition-colors">Denetim Kayıtları</a>
