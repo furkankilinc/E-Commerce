@@ -2,7 +2,7 @@ name: E-Commerce System CI
 
 on:
   push:
-    branches: [ main, master, dev, developer ]
+    branches: [ main, master, dev, developer, development ]
   pull_request:
     branches: [ main, master ]
 
@@ -23,29 +23,21 @@ jobs:
           cache: 'npm'
           cache-dependency-path: './package-lock.json'
 
-      - name: Install Root Dependencies
+      - name: Install Root & Workspace Dependencies
         run: |
-          npm ci --legacy-peer-deps
-
-      - name: Install Frontend Workspace Dependencies
-        run: |
-          cd frontend
           npm ci --legacy-peer-deps
 
       - name: Verify Storefront Compilation
         run: |
-          cd frontend
-          npx tsc --project apps/storefront/tsconfig.json --noEmit
+          npx tsc --project frontend/apps/storefront/tsconfig.json --noEmit
 
       - name: Verify Admin Panel Compilation
         run: |
-          cd frontend
-          npx tsc --project apps/admin/tsconfig.json --noEmit
+          npx tsc --project frontend/apps/admin/tsconfig.json --noEmit
 
       - name: Verify Vendor Panel Compilation
         run: |
-          cd frontend
-          npx tsc --project apps/vendor-panel/tsconfig.json --noEmit
+          npx tsc --project frontend/apps/vendor-panel/tsconfig.json --noEmit
 
   docker-validate:
     name: Validate Docker Compose Orchestration
@@ -54,6 +46,9 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+
+      - name: Create .env from template for port validation
+        run: cp .env.example .env
 
       - name: Validate Docker Compose Configuration
         run: |
